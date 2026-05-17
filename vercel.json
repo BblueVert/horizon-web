@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/Pages/HORIZON_Landing_2026.html" },
+    { "source": "/plan-01", "destination": "/Pages/plan-01.html" },
+    { "source": "/plan-02", "destination": "/Pages/plan-02.html" },
+    { "source": "/plan-03", "destination": "/Pages/plan-03.html" },
+    { "source": "/plan-04", "destination": "/Pages/plan-04.html" }
+  ]
+}
