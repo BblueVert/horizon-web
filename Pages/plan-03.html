@@ -37,13 +37,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .ham-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 .ham-overlay{position:fixed;inset:0;background:rgba(7,6,14,.7);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
 .ham-overlay.active{opacity:1;pointer-events:all;}
-.ham-drawer{position:fixed;top:0;left:0;bottom:0;width:280px;background:var(--deep);border-right:1px solid var(--border);z-index:200;transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding:24px;}
+.ham-drawer{position:fixed;top:0;left:0;bottom:0;width:280px;background:var(--deep);border-right:1px solid var(--border);z-index:200;transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding:24px;overflow-y:auto;}
 .ham-drawer.open{transform:translateX(0);}
-.ham-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.ham-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 .ham-close{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px 8px;transition:color .2s;border-radius:4px;}
 .ham-close:hover{color:var(--text);}
 .ham-section-label{font-family:var(--fm);font-size:9px;letter-spacing:.3em;color:var(--text3);text-transform:uppercase;margin-bottom:12px;}
-.ham-nav{list-style:none;display:flex;flex-direction:column;gap:2px;flex:1;}
+.ham-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
 .ham-nav li a{display:block;font-family:var(--fb);font-size:14px;font-weight:500;color:var(--text2);text-decoration:none;padding:11px 14px;border-radius:8px;transition:background .2s,color .2s;}
 .ham-nav li a:hover,.ham-nav li a.active{background:var(--surface);}
 .ham-nav li a.active{color:var(--h4);}
@@ -162,6 +162,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
   <div class="ham-section-label">Navegación</div>
   <ul class="ham-nav">
     <li><a href="/">Home</a></li>
+    <li><a href="/servicios">Servicios</a></li>
     <li><a href="/plan-01">Presencia Digital</a></li>
     <li><a href="/plan-02">Ecosistema Digital</a></li>
     <li><a href="/plan-03">Sistema con IA</a></li>
