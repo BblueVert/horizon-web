@@ -1,0 +1,23 @@
+# Secretos y credenciales — NUNCA commitear
+.env
+.env.local
+.env.*.local
+.mcp.json
+*.key
+*.pem
+secrets.json
+credentials.json
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Caché de herramientas
+.playwright-mcp/
+node_modules/
+.cache/
+
+# Archivos temporales
+*.tmp
+*.log

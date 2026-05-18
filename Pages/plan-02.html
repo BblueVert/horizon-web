@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plan 02 · Ecosistema Digital — HORIZON</title>
+<title>Ecosistema Digital — HORIZON</title>
 <meta name="description" content="SEO avanzado, GEO, booking, chatbot completo, CRM y recorrido del cliente end-to-end. El sistema digital completo para tu negocio.">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --void:#07060E;--deep:#0D0B18;--surface:#13111F;--card:#1A1828;
@@ -13,7 +13,7 @@
   --h1:#FF6B35;--h2:#FF8C42;--h3:#FFB347;--h4:#E8637A;--h5:#C4467A;--h6:#7B3FA0;--h7:#4A3580;
   --accent:#FF8C42;--accent-soft:rgba(255,140,66,0.08);
   --text:#F5F2FF;--text2:#9B98B8;--text3:#504D6E;--white:#FAFAFF;
-  --fd:'Bebas Neue',sans-serif;--fs:'Instrument Serif',serif;--fm:'DM Mono',monospace;--fb:'Plus Jakarta Sans',sans-serif;
+  --fd:'Bebas Neue',sans-serif;--fs:'Helvetica Neue',sans-serif;--fm:'DM Mono',monospace;--fb:'Plus Jakarta Sans',sans-serif;
   --r:12px;--rl:20px;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -365,13 +365,16 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
   <div class="footer-meta">Plan 02 · Ecosistema Digital<br>horizonweb.cl · 2026</div>
 </footer>
 <script>
-const hamBtn=document.getElementById('hamBtn'),hamDrawer=document.getElementById('hamDrawer'),hamOverlay=document.getElementById('hamOverlay'),hamClose=document.getElementById('hamClose');
-function openDrawer(){hamDrawer.classList.add('open');hamOverlay.classList.add('active');hamBtn.classList.add('open');document.body.style.overflow='hidden';}
-function closeDrawer(){hamDrawer.classList.remove('open');hamOverlay.classList.remove('active');hamBtn.classList.remove('open');document.body.style.overflow='';}
-hamBtn.addEventListener('click',()=>hamDrawer.classList.contains('open')?closeDrawer():openDrawer());
-hamOverlay.addEventListener('click',closeDrawer);
-hamClose.addEventListener('click',closeDrawer);
-document.querySelectorAll('.ham-nav a').forEach(a=>{if(a.getAttribute('href')===location.pathname)a.classList.add('active');});
+(function(){
+  var hamBtn=document.getElementById('hamBtn'),hamDrawer=document.getElementById('hamDrawer'),hamOverlay=document.getElementById('hamOverlay'),hamClose=document.getElementById('hamClose');
+  if(!hamBtn||!hamDrawer||!hamOverlay||!hamClose)return;
+  function openDrawer(){hamDrawer.classList.add('open');hamOverlay.classList.add('active');hamBtn.classList.add('open');document.body.style.overflow='hidden';}
+  function closeDrawer(){hamDrawer.classList.remove('open');hamOverlay.classList.remove('active');hamBtn.classList.remove('open');document.body.style.overflow='';}
+  hamBtn.addEventListener('click',function(){hamDrawer.classList.contains('open')?closeDrawer():openDrawer();});
+  hamOverlay.addEventListener('click',closeDrawer);
+  hamClose.addEventListener('click',closeDrawer);
+  document.querySelectorAll('.ham-nav a').forEach(function(a){if(a.getAttribute('href')===location.pathname)a.classList.add('active');});
+})();
 </script>
 </body>
 </html>

@@ -84,6 +84,7 @@ header {
   border-bottom: 1px solid var(--border);
   transition: all 0.3s;
 }
+.header-left { display: flex; align-items: center; gap: 16px; }
 .header-logo-link { display:flex; align-items:center; text-decoration:none; }
 .header-logo-link img { height:34px; width:auto; display:block; }
 nav { display: flex; align-items: center; gap: 36px; }
@@ -112,7 +113,7 @@ nav a:hover { color: var(--text); }
 }
 .nav-cta:hover { opacity: 0.88 !important; }
 /* HAMBURGER */
-.ham-btn{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;width:44px;height:44px;}
+.ham-btn{display:flex;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;width:44px;height:44px;}
 .ham-btn span{display:block;width:20px;height:2px;background:var(--text);border-radius:1px;transition:transform .3s,opacity .3s;}
 .ham-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
 .ham-btn.open span:nth-child(2){opacity:0;}
@@ -763,8 +764,8 @@ footer {
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .wrap { padding: 0 24px; }
-  header { padding: 12px 20px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; }
-  .header-logo-link { justify-content: center; }
+  header { padding: 12px 20px; }
+  .header-left { gap: 12px; }
   nav { display: none; }
   .ham-btn { display: flex; }
   .hero-wrap { padding: 120px 24px 80px; }
@@ -787,8 +788,10 @@ footer {
 
 <!-- HEADER -->
 <header>
-  <button class="ham-btn" id="hamBtn" aria-label="Menú"><span></span><span></span><span></span></button>
-  <a href="/" class="header-logo-link"><img src="../Identidad/Logo-Vertical-png.png" alt="HORIZON"></a>
+  <div class="header-left">
+    <button class="ham-btn" id="hamBtn" aria-label="Menú"><span></span><span></span><span></span></button>
+    <a href="/" class="header-logo-link"><img src="../Identidad/Logo-Vertical-png.png" alt="HORIZON"></a>
+  </div>
   <nav>
     <a href="#sistema">El sistema</a>
     <a href="#planes">Planes</a>
@@ -1203,13 +1206,16 @@ footer {
   </div>
 </footer>
 <script>
-const hamBtn=document.getElementById('hamBtn'),hamDrawer=document.getElementById('hamDrawer'),hamOverlay=document.getElementById('hamOverlay'),hamClose=document.getElementById('hamClose');
-function openDrawer(){hamDrawer.classList.add('open');hamOverlay.classList.add('active');hamBtn.classList.add('open');document.body.style.overflow='hidden';}
-function closeDrawer(){hamDrawer.classList.remove('open');hamOverlay.classList.remove('active');hamBtn.classList.remove('open');document.body.style.overflow='';}
-hamBtn.addEventListener('click',()=>hamDrawer.classList.contains('open')?closeDrawer():openDrawer());
-hamOverlay.addEventListener('click',closeDrawer);
-hamClose.addEventListener('click',closeDrawer);
-document.querySelectorAll('.ham-drawer a[href^="#"]').forEach(a=>{a.addEventListener('click',closeDrawer);});
+(function(){
+  var hamBtn=document.getElementById('hamBtn'),hamDrawer=document.getElementById('hamDrawer'),hamOverlay=document.getElementById('hamOverlay'),hamClose=document.getElementById('hamClose');
+  if(!hamBtn||!hamDrawer||!hamOverlay||!hamClose)return;
+  function openDrawer(){hamDrawer.classList.add('open');hamOverlay.classList.add('active');hamBtn.classList.add('open');document.body.style.overflow='hidden';}
+  function closeDrawer(){hamDrawer.classList.remove('open');hamOverlay.classList.remove('active');hamBtn.classList.remove('open');document.body.style.overflow='';}
+  hamBtn.addEventListener('click',function(){hamDrawer.classList.contains('open')?closeDrawer():openDrawer();});
+  hamOverlay.addEventListener('click',closeDrawer);
+  hamClose.addEventListener('click',closeDrawer);
+  document.querySelectorAll('.ham-drawer a[href^="#"]').forEach(function(a){a.addEventListener('click',closeDrawer);});
+})();
 </script>
 </body>
 </html>
