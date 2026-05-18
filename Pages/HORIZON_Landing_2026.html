@@ -1197,10 +1197,10 @@ footer {
             PRECIO FUNDADOR
           </div>
           <div class="pf-slots-row" data-plan="plan01">
-            <span class="pf-slots-avail"><strong data-avail>6</strong> cupos disponibles de 10</span>
-            <span class="pf-slots-taken" data-taken>4 tomados</span>
+            <span class="pf-slots-avail"><strong data-avail>10</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken" data-taken>0 tomados</span>
           </div>
-          <div class="pf-bar"><div class="pf-bar-fill" data-width="40" data-plan-bar="plan01"></div></div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="0" data-plan-bar="plan01"></div></div>
           <div class="pf-price-row">
             <span class="pf-price">$295.000</span>
             <span class="pf-original">$590.000</span>
@@ -1238,10 +1238,10 @@ footer {
             PRECIO FUNDADOR
           </div>
           <div class="pf-slots-row" data-plan="plan02">
-            <span class="pf-slots-avail"><strong data-avail>7</strong> cupos disponibles de 10</span>
-            <span class="pf-slots-taken" data-taken>3 tomados</span>
+            <span class="pf-slots-avail"><strong data-avail>10</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken" data-taken>0 tomados</span>
           </div>
-          <div class="pf-bar"><div class="pf-bar-fill" data-width="30" data-plan-bar="plan02"></div></div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="0" data-plan-bar="plan02"></div></div>
           <div class="pf-price-row">
             <span class="pf-price">$495.000</span>
             <span class="pf-original">$990.000</span>
@@ -1279,10 +1279,10 @@ footer {
             PRECIO FUNDADOR
           </div>
           <div class="pf-slots-row" data-plan="plan03">
-            <span class="pf-slots-avail"><strong data-avail>8</strong> cupos disponibles de 10</span>
-            <span class="pf-slots-taken" data-taken>2 tomados</span>
+            <span class="pf-slots-avail"><strong data-avail>10</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken" data-taken>0 tomados</span>
           </div>
-          <div class="pf-bar"><div class="pf-bar-fill" data-width="20" data-plan-bar="plan03"></div></div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="0" data-plan-bar="plan03"></div></div>
           <div class="pf-price-row">
             <span class="pf-price">$995.000</span>
             <span class="pf-original">$1.990.000</span>
@@ -1321,10 +1321,10 @@ footer {
               PRECIO FUNDADOR
             </div>
             <div class="pf-slots-row" data-plan="plan04">
-              <span class="pf-slots-avail"><strong data-avail>8</strong> cupos disponibles de 10</span>
-              <span class="pf-slots-taken" data-taken>2 tomados</span>
+              <span class="pf-slots-avail"><strong data-avail>10</strong> cupos disponibles de 10</span>
+              <span class="pf-slots-taken" data-taken>0 tomados</span>
             </div>
-            <div class="pf-bar"><div class="pf-bar-fill" data-width="20" data-plan-bar="plan04"></div></div>
+            <div class="pf-bar"><div class="pf-bar-fill" data-width="0" data-plan-bar="plan04"></div></div>
             <div class="pf-price-row">
               <span class="pf-price">Desde $745.000</span>
               <span class="pf-original">$1.490.000</span>
@@ -1530,7 +1530,7 @@ footer {
 
 // Cupos en tiempo real — sync con CRM via localStorage
 (function(){
-  var DEFAULT={plan01:{tomados:4,total:10},plan02:{tomados:3,total:10},plan03:{tomados:2,total:10},plan04:{tomados:2,total:10}};
+  var DEFAULT={plan01:{tomados:0,total:10},plan02:{tomados:0,total:10},plan03:{tomados:0,total:10},plan04:{tomados:0,total:10}};
   function getCupos(){
     try{var s=localStorage.getItem('horizon_cupos');return s?JSON.parse(s):DEFAULT;}catch(e){return DEFAULT;}
   }

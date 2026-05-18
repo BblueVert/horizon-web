@@ -331,32 +331,32 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
         <div class="fs-plan-name">Plan 01 · Presencia Digital</div>
         <div class="fs-plan-price"><span class="fs-price-f">$295.000</span><span class="fs-price-n">$590.000</span></div>
         <div class="fs-cupos-row" data-plan="plan01">
-          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan01" data-width="40"></div></div>
-          <div class="fs-cupos-text"><strong data-avail>6</strong>/10 disponibles</div>
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan01" data-width="0"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>10</strong>/10 disponibles</div>
         </div>
       </div>
       <div class="fs-plan">
         <div class="fs-plan-name">Plan 02 · Ecosistema Digital</div>
         <div class="fs-plan-price"><span class="fs-price-f">$495.000</span><span class="fs-price-n">$990.000</span></div>
         <div class="fs-cupos-row" data-plan="plan02">
-          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan02" data-width="30"></div></div>
-          <div class="fs-cupos-text"><strong data-avail>7</strong>/10 disponibles</div>
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan02" data-width="0"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>10</strong>/10 disponibles</div>
         </div>
       </div>
       <div class="fs-plan">
         <div class="fs-plan-name">Plan 03 · Sistema con IA</div>
         <div class="fs-plan-price"><span class="fs-price-f">$995.000</span><span class="fs-price-n">$1.990.000</span></div>
         <div class="fs-cupos-row" data-plan="plan03">
-          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan03" data-width="20"></div></div>
-          <div class="fs-cupos-text"><strong data-avail>8</strong>/10 disponibles</div>
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan03" data-width="0"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>10</strong>/10 disponibles</div>
         </div>
       </div>
       <div class="fs-plan">
         <div class="fs-plan-name">Plan 04 · Agente IA Personalizado</div>
         <div class="fs-plan-price"><span class="fs-price-f">Desde $745.000</span><span class="fs-price-n">$1.490.000</span></div>
         <div class="fs-cupos-row" data-plan="plan04">
-          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan04" data-width="20"></div></div>
-          <div class="fs-cupos-text"><strong data-avail>8</strong>/10 disponibles</div>
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan04" data-width="0"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>10</strong>/10 disponibles</div>
         </div>
       </div>
     </div>
@@ -522,7 +522,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 <script>
 // Cupos Fundador — sync con CRM via localStorage
 (function(){
-  var DEFAULT={plan01:{tomados:4,total:10},plan02:{tomados:3,total:10},plan03:{tomados:2,total:10},plan04:{tomados:2,total:10}};
+  var DEFAULT={plan01:{tomados:0,total:10},plan02:{tomados:0,total:10},plan03:{tomados:0,total:10},plan04:{tomados:0,total:10}};
   function getCupos(){try{var s=localStorage.getItem('horizon_cupos');return s?JSON.parse(s):DEFAULT;}catch(e){return DEFAULT;}}
   function applyPlan(plan,data){
     var row=document.querySelector('.fs-cupos-row[data-plan="'+plan+'"]');
