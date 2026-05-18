@@ -138,10 +138,16 @@ nav a:hover { color: var(--text); }
 /* ── HERO ── */
 .hero-wrap {
   min-height: 100vh;
-  display: flex; flex-direction: column; justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 64px;
+  align-items: center;
   padding: 140px 48px 100px;
-  max-width: 1120px; margin: 0 auto;
+  max-width: 1280px; margin: 0 auto;
   position: relative;
+}
+.hero-left {
+  display: flex; flex-direction: column; justify-content: flex-start;
 }
 .hero-bg {
   position: fixed; inset: 0; z-index: -1;
@@ -256,6 +262,125 @@ nav a:hover { color: var(--text); }
   letter-spacing: 0.2em;
   color: var(--text3);
   text-transform: uppercase;
+}
+
+/* ── HERO ILLUSTRATION ── */
+.hero-right {
+  display: flex; align-items: center; justify-content: center;
+}
+.hi-widget {
+  width: 100%; max-width: 400px;
+  background: rgba(13,11,24,0.88);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,107,53,0.05), 0 40px 100px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(24px);
+  position: relative;
+}
+.hi-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+}
+.hi-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 7px rgba(34,197,94,0.65);
+  animation: hiPulse 2s ease-in-out infinite; flex-shrink: 0;
+}
+@keyframes hiPulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.hi-agent-name {
+  font-family: var(--font-m); font-size: 9px;
+  letter-spacing: 0.22em; color: var(--text);
+  text-transform: uppercase; flex: 1;
+}
+.hi-live-badge {
+  font-family: var(--font-m); font-size: 8px;
+  letter-spacing: 0.16em; color: #22c55e; text-transform: uppercase;
+  background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.18);
+  padding: 3px 8px; border-radius: 20px;
+}
+.hi-chat {
+  padding: 18px; min-height: 230px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.hi-src {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 2px;
+}
+.hi-src-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+}
+.hi-src-wa  { background: rgba(37,211,102,0.12); color: #25D366; }
+.hi-src-ig  { background: rgba(225,48,108,0.12); color: #E1306C; }
+.hi-src-web { background: rgba(100,162,255,0.12); color: #64A2FF; }
+.hi-src-name {
+  font-family: var(--font-m); font-size: 9px;
+  letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase;
+}
+.hi-bubble {
+  padding: 9px 13px; border-radius: 12px;
+  font-family: var(--font-s); font-size: 12px;
+  line-height: 1.5; max-width: 88%;
+}
+.hi-bubble-user {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text2); border-radius: 12px 12px 12px 2px; align-self: flex-start;
+}
+.hi-bot-wrap {
+  display: flex; flex-direction: column; gap: 4px;
+  align-self: flex-end; align-items: flex-end;
+}
+.hi-bot-label {
+  font-family: var(--font-m); font-size: 8px;
+  letter-spacing: 0.14em; color: var(--h1); text-transform: uppercase;
+  display: flex; align-items: center; gap: 4px;
+}
+.hi-bubble-bot {
+  background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(74,53,128,0.15));
+  border: 1px solid rgba(255,107,53,0.12);
+  color: var(--text); border-radius: 12px 12px 2px 12px;
+}
+.hi-typing {
+  display: flex; gap: 3px; align-items: center;
+  padding: 10px 14px;
+  background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.1);
+  border-radius: 12px 12px 2px 12px; width: fit-content; align-self: flex-end;
+}
+.hi-typing span {
+  width: 4px; height: 4px; border-radius: 50%; background: var(--h1);
+  animation: hiTypeDot 1.1s ease-in-out infinite;
+}
+.hi-typing span:nth-child(2) { animation-delay: 0.18s; }
+.hi-typing span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes hiTypeDot { 0%,60%,100%{transform:translateY(0);opacity:.3} 30%{transform:translateY(-4px);opacity:1} }
+.hi-badge-ok {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--font-m); font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #22c55e; background: rgba(34,197,94,0.07);
+  border: 1px solid rgba(34,197,94,0.13);
+  padding: 4px 10px; border-radius: 20px; align-self: flex-end;
+}
+.hi-footer {
+  padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.015);
+  display: flex; align-items: center; gap: 8px;
+}
+.hi-up-icon { color: #22c55e; display: flex; align-items: center; flex-shrink: 0; }
+.hi-count {
+  font-family: var(--font-d); font-size: 30px; line-height: 1;
+  background: linear-gradient(135deg, var(--h1), var(--h3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  flex-shrink: 0;
+}
+.hi-count-label {
+  font-family: var(--font-m); font-size: 8px;
+  letter-spacing: 0.16em; color: var(--text3); text-transform: uppercase; line-height: 1.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hi-dot, .hi-typing span { animation: none !important; }
 }
 
 /* ── DIVIDER ── */
@@ -763,6 +888,10 @@ footer {
 }
 
 /* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .hero-wrap { grid-template-columns: 1fr; gap: 0; }
+  .hero-right { display: none; }
+}
 @media (max-width: 900px) {
   .wrap { padding: 0 24px; }
   header { padding: 12px 20px; }
@@ -828,43 +957,64 @@ footer {
 
 <!-- HERO -->
 <div class="hero-wrap">
-  <div class="hero-eyebrow">Consultoría de Arquitectura Digital · Rancagua, Chile · 2026</div>
-  <h1 class="hero-title">
-    ESTA NOCHE<br>
-    <span class="gradient-word">5 CLIENTES</span><br>
-    TE ESCRIBEN.
-  </h1>
-  <p class="hero-statement">
-    Y ninguno va a recibir respuesta hasta mañana — cuando ya contrataron a la competencia.<br>
-    <strong>HORIZON construye el sistema que capta, responde y agenda mientras vos dormís.</strong>
-  </p>
-  <div class="hero-ctas">
-    <a href="https://cal.com/horizon" class="btn-primary">
-      → Ver cuántos clientes estás perdiendo hoy
-    </a>
-    <a href="https://wa.me/56912345678" class="btn-secondary">
-      <span class="wa-icon">💬</span> WhatsApp directo
-    </a>
+  <div class="hero-left">
+    <div class="hero-eyebrow">Consultoría de Arquitectura Digital · Rancagua, Chile · 2026</div>
+    <h1 class="hero-title">
+      ESTA NOCHE<br>
+      <span class="gradient-word">5 CLIENTES</span><br>
+      TE ESCRIBEN.
+    </h1>
+    <p class="hero-statement">
+      Y ninguno va a recibir respuesta hasta mañana — cuando ya contrataron a la competencia.<br>
+      <strong>HORIZON construye el sistema que capta, responde y agenda mientras vos dormís.</strong>
+    </p>
+    <div class="hero-ctas">
+      <a href="https://cal.com/horizon" class="btn-primary">
+        → Ver cuántos clientes estás perdiendo hoy
+      </a>
+      <a href="https://wa.me/56912345678" class="btn-secondary">
+        <span class="wa-icon">💬</span> WhatsApp directo
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-val">3–10</span>
+        <span class="stat-label">Leads perdidos por semana sin sistema</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">24/7</span>
+        <span class="stat-label">El agente atiende cuando vos no podés</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">SEO</span>
+        <span class="stat-label">+ GEO en cada entrega</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">3–4</span>
+        <span class="stat-label">Semanas de implementación</span>
+      </div>
+    </div>
+    <div class="hero-line"></div>
   </div>
-  <div class="hero-stats">
-    <div class="stat">
-      <span class="stat-val">3–10</span>
-      <span class="stat-label">Leads perdidos por semana sin sistema</span>
-    </div>
-    <div class="stat">
-      <span class="stat-val">24/7</span>
-      <span class="stat-label">El agente atiende cuando vos no podés</span>
-    </div>
-    <div class="stat">
-      <span class="stat-val">SEO</span>
-      <span class="stat-label">+ GEO en cada entrega</span>
-    </div>
-    <div class="stat">
-      <span class="stat-val">3–4</span>
-      <span class="stat-label">Semanas de implementación</span>
+
+  <!-- Ilustración animada -->
+  <div class="hero-right" aria-hidden="true">
+    <div class="hi-widget">
+      <div class="hi-header">
+        <div class="hi-dot"></div>
+        <span class="hi-agent-name">HORIZON AGENT</span>
+        <span class="hi-live-badge">LIVE 24/7</span>
+      </div>
+      <div class="hi-chat" id="hiChat"></div>
+      <div class="hi-footer">
+        <div class="hi-up-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+        </div>
+        <span class="hi-count" id="hiCount">43</span>
+        <span class="hi-count-label">LEADS CAPTADOS<br>ESTA SEMANA</span>
+      </div>
     </div>
   </div>
-  <div class="hero-line"></div>
 </div>
 
 <div class="divider"></div>
@@ -1218,6 +1368,80 @@ footer {
   hamOverlay.addEventListener('click',closeDrawer);
   hamClose.addEventListener('click',closeDrawer);
   document.querySelectorAll('.ham-drawer a[href^="#"]').forEach(function(a){a.addEventListener('click',closeDrawer);});
+})();
+
+// Hero illustration — conversation animation
+(function(){
+  var chat=document.getElementById('hiChat'),countEl=document.getElementById('hiCount');
+  if(!chat||!countEl)return;
+  var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var count=43,idx=0;
+  var convs=[
+    {src:'wa',srcLabel:'WHATSAPP · Sofía M.',
+     msg:'"Hola, tienen hora disponible el viernes?"',
+     reply:'¡Hola Sofía! Tenemos las 10 y las 15 hrs. ¿Te reservo una?',
+     badge:'Reserva confirmada · 2 seg'},
+    {src:'ig',srcLabel:'INSTAGRAM · carlos_r',
+     msg:'"cuánto cuesta el servicio básico?"',
+     reply:'El Plan 01 parte desde $590.000 CLP. Te envío el detalle ahora.',
+     badge:'Lead calificado · CRM actualizado'},
+    {src:'web',srcLabel:'CHAT WEB · Visitante',
+     msg:'"necesito una web para mi negocio"',
+     reply:'Perfecto. ¿Cuál es tu rubro? Te armo el diagnóstico en 2 min.',
+     badge:'Seguimiento activo · n8n'}
+  ];
+  var srcIcons={
+    wa:'<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>',
+    ig:'<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>',
+    web:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>'
+  };
+  var botSvg='<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="11"/><circle cx="8.5" cy="16" r="1" fill="currentColor"/><circle cx="15.5" cy="16" r="1" fill="currentColor"/></svg>';
+  var checkSvg='<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  function animIn(el,delay){
+    if(reduced){setTimeout(function(){chat.appendChild(el);},delay);return;}
+    el.style.cssText='opacity:0;transform:translateY(8px);';
+    setTimeout(function(){
+      chat.appendChild(el);
+      requestAnimationFrame(function(){
+        el.style.transition='opacity 0.25s ease-out,transform 0.25s ease-out';
+        el.style.opacity='1';el.style.transform='translateY(0)';
+      });
+    },delay);
+  }
+
+  function showConv(){
+    var c=convs[idx];chat.innerHTML='';
+    var srcEl=document.createElement('div');srcEl.className='hi-src';
+    srcEl.innerHTML='<span class="hi-src-icon hi-src-'+c.src+'">'+srcIcons[c.src]+'</span><span class="hi-src-name">'+c.srcLabel+'</span>';
+    animIn(srcEl,0);
+    var userEl=document.createElement('div');userEl.className='hi-bubble hi-bubble-user';
+    userEl.textContent=c.msg;animIn(userEl,280);
+    var typingEl=document.createElement('div');typingEl.className='hi-typing';
+    typingEl.innerHTML='<span></span><span></span><span></span>';
+    animIn(typingEl,900);
+    setTimeout(function(){
+      if(typingEl.parentNode){
+        if(!reduced){typingEl.style.transition='opacity 0.15s ease-in';typingEl.style.opacity='0';}
+        setTimeout(function(){if(typingEl.parentNode)typingEl.parentNode.removeChild(typingEl);},reduced?0:150);
+      }
+      var bw=document.createElement('div');bw.className='hi-bot-wrap';
+      bw.innerHTML='<div class="hi-bot-label">'+botSvg+' HORIZON AGENT</div><div class="hi-bubble hi-bubble-bot">'+c.reply+'</div>';
+      animIn(bw,reduced?0:80);
+    },reduced?900:1850);
+    setTimeout(function(){
+      var badge=document.createElement('div');badge.className='hi-badge-ok';
+      badge.innerHTML=checkSvg+' '+c.badge;animIn(badge,0);
+      count++;countEl.textContent=count;
+      if(!reduced){
+        countEl.style.transition='transform 0.2s ease-out';countEl.style.transform='scale(1.18)';
+        setTimeout(function(){countEl.style.transform='scale(1)';},200);
+      }
+    },reduced?1200:3000);
+    idx=(idx+1)%convs.length;
+  }
+  showConv();
+  setInterval(showConv,reduced?3000:5800);
 })();
 </script>
 </body>
