@@ -531,7 +531,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
     var strong=row.querySelector('[data-avail]');
     if(strong)strong.textContent=avail;
     var bar=document.querySelector('.fs-bar-fill[data-plan-bar="'+plan+'"]');
-    if(bar){var pct=Math.round((data.tomados/data.total)*100);bar.dataset.width=pct;if(bar.style.width&&bar.style.width!=='0%')bar.style.width=pct+'%';}
+    if(bar){var pct=Math.round((data.tomados/data.total)*100);bar.dataset.width=pct;if(bar.style.width!=='')bar.style.width=pct+'%';}
   }
   function renderCupos(){var c=getCupos();['plan01','plan02','plan03','plan04'].forEach(function(p){if(c[p])applyPlan(p,c[p]);});}
   renderCupos();

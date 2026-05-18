@@ -1546,7 +1546,7 @@ footer {
     if(bar){
       var pct=Math.round((data.tomados/data.total)*100);
       bar.dataset.width=pct;
-      if(bar.style.width&&bar.style.width!=='0%')bar.style.width=pct+'%';
+      if(bar.style.width!=='')bar.style.width=pct+'%';
     }
     if(avail===0){
       var founder=row.closest('.plan-founder');
