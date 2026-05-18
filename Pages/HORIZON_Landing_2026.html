@@ -685,6 +685,12 @@ section { padding: 100px 0; }
   font-family: var(--font-m); font-size: 9px; letter-spacing: 0.14em;
   color: var(--text3); text-transform: uppercase; margin-bottom: 11px;
 }
+.pf-agotado {
+  font-family: var(--font-m); font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--h1); background: rgba(255,107,53,0.1);
+  border: 1px solid rgba(255,107,53,0.25); border-radius: 4px;
+  padding: 5px 8px; text-align: center; margin-bottom: 10px;
+}
 .pf-benefits { display: flex; flex-direction: column; gap: 5px; }
 .pf-benefit {
   display: flex; align-items: flex-start; gap: 6px;
@@ -1190,11 +1196,11 @@ footer {
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             PRECIO FUNDADOR
           </div>
-          <div class="pf-slots-row">
-            <span class="pf-slots-avail"><strong>6</strong> cupos disponibles de 10</span>
-            <span class="pf-slots-taken">4 tomados</span>
+          <div class="pf-slots-row" data-plan="plan01">
+            <span class="pf-slots-avail"><strong data-avail>6</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken" data-taken>4 tomados</span>
           </div>
-          <div class="pf-bar"><div class="pf-bar-fill" data-width="40"></div></div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="40" data-plan-bar="plan01"></div></div>
           <div class="pf-price-row">
             <span class="pf-price">$295.000</span>
             <span class="pf-original">$590.000</span>
@@ -1231,11 +1237,11 @@ footer {
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             PRECIO FUNDADOR
           </div>
-          <div class="pf-slots-row">
-            <span class="pf-slots-avail"><strong>7</strong> cupos disponibles de 10</span>
-            <span class="pf-slots-taken">3 tomados</span>
+          <div class="pf-slots-row" data-plan="plan02">
+            <span class="pf-slots-avail"><strong data-avail>7</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken" data-taken>3 tomados</span>
           </div>
-          <div class="pf-bar"><div class="pf-bar-fill" data-width="30"></div></div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="30" data-plan-bar="plan02"></div></div>
           <div class="pf-price-row">
             <span class="pf-price">$495.000</span>
             <span class="pf-original">$990.000</span>
@@ -1272,11 +1278,11 @@ footer {
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             PRECIO FUNDADOR
           </div>
-          <div class="pf-slots-row">
-            <span class="pf-slots-avail"><strong>8</strong> cupos disponibles de 10</span>
-            <span class="pf-slots-taken">2 tomados</span>
+          <div class="pf-slots-row" data-plan="plan03">
+            <span class="pf-slots-avail"><strong data-avail>8</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken" data-taken>2 tomados</span>
           </div>
-          <div class="pf-bar"><div class="pf-bar-fill" data-width="20"></div></div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="20" data-plan-bar="plan03"></div></div>
           <div class="pf-price-row">
             <span class="pf-price">$995.000</span>
             <span class="pf-original">$1.990.000</span>
@@ -1314,11 +1320,11 @@ footer {
               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               PRECIO FUNDADOR
             </div>
-            <div class="pf-slots-row">
-              <span class="pf-slots-avail"><strong>8</strong> cupos disponibles de 10</span>
-              <span class="pf-slots-taken">2 tomados</span>
+            <div class="pf-slots-row" data-plan="plan04">
+              <span class="pf-slots-avail"><strong data-avail>8</strong> cupos disponibles de 10</span>
+              <span class="pf-slots-taken" data-taken>2 tomados</span>
             </div>
-            <div class="pf-bar"><div class="pf-bar-fill" data-width="20"></div></div>
+            <div class="pf-bar"><div class="pf-bar-fill" data-width="20" data-plan-bar="plan04"></div></div>
             <div class="pf-price-row">
               <span class="pf-price">Desde $745.000</span>
               <span class="pf-original">$1.490.000</span>
@@ -1520,6 +1526,43 @@ footer {
     });
   },{threshold:0.4});
   bars.forEach(function(b){obs.observe(b);});
+})();
+
+// Cupos en tiempo real — sync con CRM via localStorage
+(function(){
+  var DEFAULT={plan01:{tomados:4,total:10},plan02:{tomados:3,total:10},plan03:{tomados:2,total:10},plan04:{tomados:2,total:10}};
+  function getCupos(){
+    try{var s=localStorage.getItem('horizon_cupos');return s?JSON.parse(s):DEFAULT;}catch(e){return DEFAULT;}
+  }
+  function applyPlan(plan,data){
+    var row=document.querySelector('.pf-slots-row[data-plan="'+plan+'"]');
+    if(!row)return;
+    var avail=data.total-data.tomados;
+    var strong=row.querySelector('[data-avail]');
+    var taken=row.querySelector('[data-taken]');
+    if(strong)strong.textContent=avail;
+    if(taken)taken.textContent=data.tomados+' tomados';
+    var bar=document.querySelector('.pf-bar-fill[data-plan-bar="'+plan+'"]');
+    if(bar){
+      var pct=Math.round((data.tomados/data.total)*100);
+      bar.dataset.width=pct;
+      if(bar.style.width&&bar.style.width!=='0%')bar.style.width=pct+'%';
+    }
+    if(avail===0){
+      var founder=row.closest('.plan-founder');
+      if(founder&&!founder.querySelector('.pf-agotado')){
+        var ag=document.createElement('div');ag.className='pf-agotado';
+        ag.textContent='CUPOS AGOTADOS — LISTA DE ESPERA';
+        founder.insertBefore(ag,founder.querySelector('.pf-price-row'));
+      }
+    }
+  }
+  function renderCupos(){
+    var c=getCupos();
+    ['plan01','plan02','plan03','plan04'].forEach(function(p){if(c[p])applyPlan(p,c[p]);});
+  }
+  renderCupos();
+  window.addEventListener('storage',function(e){if(e.key==='horizon_cupos')renderCupos();});
 })();
 
 // Hero illustration — conversation animation

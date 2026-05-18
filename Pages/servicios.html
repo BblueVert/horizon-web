@@ -177,7 +177,32 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
   footer{padding:32px 20px;}
   .compare-table th:not(:first-child):not(:nth-child(2)){display:none;}
   .compare-table td:not(:first-child):not(:nth-child(2)){display:none;}
+  .fs-plans{grid-template-columns:1fr 1fr;}
 }
+@media(max-width:600px){
+  .fs-plans{grid-template-columns:1fr;}
+}
+</style>
+
+<style>
+/* Precio Fundador — servicios */
+.founder-section{padding:64px 0 48px;background:linear-gradient(180deg,rgba(123,63,160,.04) 0%,transparent 100%);}
+.fs-header{text-align:center;max-width:640px;margin:0 auto 40px;}
+.fs-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--h1);background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);padding:5px 10px;border-radius:20px;margin-bottom:16px;}
+.fs-title{font-family:var(--fb);font-size:clamp(22px,4vw,32px);font-weight:700;line-height:1.25;margin-bottom:14px;color:var(--text);}
+.fs-title span{color:var(--text2);font-weight:400;font-size:.85em;}
+.fs-desc{font-family:var(--fs);font-size:14px;color:var(--text2);line-height:1.65;}
+.fs-plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.fs-plan{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 16px;}
+.fs-plan-name{font-family:var(--fm);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-bottom:10px;}
+.fs-plan-price{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+.fs-price-f{font-family:var(--fb);font-size:17px;font-weight:700;color:var(--h1);}
+.fs-price-n{font-family:var(--fs);font-size:11px;color:var(--text3);text-decoration:line-through;}
+.fs-cupos-row{display:flex;flex-direction:column;gap:5px;}
+.fs-bar-wrap{height:4px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;}
+.fs-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--h1),var(--h3));border-radius:2px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.fs-cupos-text{font-family:var(--fm);font-size:9px;letter-spacing:.06em;color:var(--text2);}
+.fs-cupos-text strong{color:var(--text);font-weight:600;}
 </style>
 </head>
 <body>
@@ -286,6 +311,54 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
         <div class="sc-arrow">→</div>
       </a>
 
+    </div>
+  </div>
+</section>
+
+<!-- PRECIO FUNDADOR BANNER -->
+<section class="founder-section">
+  <div class="wrap">
+    <div class="fs-header">
+      <div class="fs-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        PRECIO FUNDADOR
+      </div>
+      <h2 class="fs-title">50% OFF en implementación<br><span>para los primeros 10 clientes por plan</span></h2>
+      <p class="fs-desc">El retainer se mantiene al precio normal. Esta oferta existe porque tus primeros proyectos se convierten en el portfolio que demuestra lo que HORIZON hace. Una vez se agoten los cupos, vuelve al precio regular.</p>
+    </div>
+    <div class="fs-plans">
+      <div class="fs-plan">
+        <div class="fs-plan-name">Plan 01 · Presencia Digital</div>
+        <div class="fs-plan-price"><span class="fs-price-f">$295.000</span><span class="fs-price-n">$590.000</span></div>
+        <div class="fs-cupos-row" data-plan="plan01">
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan01" data-width="40"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>6</strong>/10 disponibles</div>
+        </div>
+      </div>
+      <div class="fs-plan">
+        <div class="fs-plan-name">Plan 02 · Ecosistema Digital</div>
+        <div class="fs-plan-price"><span class="fs-price-f">$495.000</span><span class="fs-price-n">$990.000</span></div>
+        <div class="fs-cupos-row" data-plan="plan02">
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan02" data-width="30"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>7</strong>/10 disponibles</div>
+        </div>
+      </div>
+      <div class="fs-plan">
+        <div class="fs-plan-name">Plan 03 · Sistema con IA</div>
+        <div class="fs-plan-price"><span class="fs-price-f">$995.000</span><span class="fs-price-n">$1.990.000</span></div>
+        <div class="fs-cupos-row" data-plan="plan03">
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan03" data-width="20"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>8</strong>/10 disponibles</div>
+        </div>
+      </div>
+      <div class="fs-plan">
+        <div class="fs-plan-name">Plan 04 · Agente IA Personalizado</div>
+        <div class="fs-plan-price"><span class="fs-price-f">Desde $745.000</span><span class="fs-price-n">$1.490.000</span></div>
+        <div class="fs-cupos-row" data-plan="plan04">
+          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan04" data-width="20"></div></div>
+          <div class="fs-cupos-text"><strong data-avail>8</strong>/10 disponibles</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -447,6 +520,30 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 </footer>
 
 <script>
+// Cupos Fundador — sync con CRM via localStorage
+(function(){
+  var DEFAULT={plan01:{tomados:4,total:10},plan02:{tomados:3,total:10},plan03:{tomados:2,total:10},plan04:{tomados:2,total:10}};
+  function getCupos(){try{var s=localStorage.getItem('horizon_cupos');return s?JSON.parse(s):DEFAULT;}catch(e){return DEFAULT;}}
+  function applyPlan(plan,data){
+    var row=document.querySelector('.fs-cupos-row[data-plan="'+plan+'"]');
+    if(!row)return;
+    var avail=data.total-data.tomados;
+    var strong=row.querySelector('[data-avail]');
+    if(strong)strong.textContent=avail;
+    var bar=document.querySelector('.fs-bar-fill[data-plan-bar="'+plan+'"]');
+    if(bar){var pct=Math.round((data.tomados/data.total)*100);bar.dataset.width=pct;if(bar.style.width&&bar.style.width!=='0%')bar.style.width=pct+'%';}
+  }
+  function renderCupos(){var c=getCupos();['plan01','plan02','plan03','plan04'].forEach(function(p){if(c[p])applyPlan(p,c[p]);});}
+  renderCupos();
+  window.addEventListener('storage',function(e){if(e.key==='horizon_cupos')renderCupos();});
+  // Animate bars on scroll
+  var bars=document.querySelectorAll('.fs-bar-fill');
+  if(bars.length){
+    var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.style.width=e.target.dataset.width+'%';obs.unobserve(e.target);}});},{threshold:0.4});
+    bars.forEach(function(b){obs.observe(b);});
+  }
+})();
+
 (function(){
   var hamBtn=document.getElementById('hamBtn'),hamDrawer=document.getElementById('hamDrawer'),hamOverlay=document.getElementById('hamOverlay'),hamClose=document.getElementById('hamClose');
   if(!hamBtn||!hamDrawer||!hamOverlay||!hamClose)return;
