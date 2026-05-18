@@ -624,6 +624,74 @@ section { padding: 100px 0; }
   color: var(--text3);
   margin-bottom: 24px;
 }
+/* ── PRECIO FUNDADOR ── */
+.plan-founder {
+  border: 1px solid rgba(255,107,53,0.22);
+  border-radius: 10px;
+  background: rgba(255,107,53,0.03);
+  padding: 14px;
+  margin: 4px 0 20px;
+  position: relative;
+}
+.plan-founder::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20px; right: 20px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,107,53,0.45), transparent);
+}
+.pf-header {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-m); font-size: 8px;
+  letter-spacing: 0.22em; color: var(--h1);
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.pf-slots-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-m); font-size: 9px;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px;
+}
+.pf-slots-avail { color: var(--text2); }
+.pf-slots-avail strong { color: var(--white); }
+.pf-slots-taken { color: var(--text3); font-size: 8px; }
+.pf-bar {
+  height: 3px; background: rgba(255,255,255,0.07);
+  border-radius: 2px; overflow: hidden; margin-bottom: 12px;
+}
+.pf-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--h1), var(--h3));
+  border-radius: 2px; width: 0;
+  transition: width 1.2s cubic-bezier(.22,.61,.36,1);
+}
+.pf-price-row {
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 3px;
+}
+.pf-price {
+  font-family: var(--font-d); font-size: 26px; letter-spacing: 0.04em;
+  background: linear-gradient(135deg, var(--h1), var(--h3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.pf-original {
+  font-family: var(--font-m); font-size: 12px;
+  color: var(--text3); text-decoration: line-through; letter-spacing: 0.04em;
+}
+.pf-save {
+  font-family: var(--font-m); font-size: 8px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #22c55e;
+  background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.18);
+  padding: 2px 7px; border-radius: 10px;
+}
+.pf-currency {
+  font-family: var(--font-m); font-size: 9px; letter-spacing: 0.14em;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 11px;
+}
+.pf-benefits { display: flex; flex-direction: column; gap: 5px; }
+.pf-benefit {
+  display: flex; align-items: flex-start; gap: 6px;
+  font-family: var(--font-s); font-size: 11px;
+  color: var(--text2); line-height: 1.4;
+}
+.pf-check { color: var(--h1); flex-shrink: 0; margin-top: 2px; }
 .plan-items { display: flex; flex-direction: column; gap: 7px; margin-bottom: 28px; }
 .plan-item {
   display: flex; align-items: flex-start; gap: 10px;
@@ -1117,9 +1185,27 @@ footer {
         <div class="plan-num-tag">Plan 01</div>
         <div class="plan-name">PRESENCIA DIGITAL</div>
         <p class="plan-para">Para negocios que no existen digitalmente o tienen presencia inconsistente. Peluquerías, restaurantes, clínicas y comercios que dependen del boca a boca.</p>
-        <div class="plan-price-row">
-          <span class="plan-price">$590.000</span>
-          <span class="plan-currency">CLP · Proyecto</span>
+        <div class="plan-founder">
+          <div class="pf-header">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            PRECIO FUNDADOR
+          </div>
+          <div class="pf-slots-row">
+            <span class="pf-slots-avail"><strong>6</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken">4 tomados</span>
+          </div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="40"></div></div>
+          <div class="pf-price-row">
+            <span class="pf-price">$295.000</span>
+            <span class="pf-original">$590.000</span>
+            <span class="pf-save">50% OFF</span>
+          </div>
+          <div class="pf-currency">CLP · Proyecto · Solo primeros 10 clientes</div>
+          <div class="pf-benefits">
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Retainer desde el mes 2 al precio normal</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Tu caso se convierte en portfolio de HORIZON</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Soporte directo con el equipo fundador</div>
+          </div>
         </div>
         <div class="plan-retainer-tag">Retainer mes 2+ desde $120.000 CLP/mes</div>
         <div class="plan-items">
@@ -1140,9 +1226,27 @@ footer {
         <div class="plan-num-tag">Plan 02</div>
         <div class="plan-name">ECOSISTEMA DIGITAL</div>
         <p class="plan-para">Para negocios que ya tienen presencia pero no tienen sistema. Reciben clientes pero no pueden captarlos de forma constante ni predecible.</p>
-        <div class="plan-price-row">
-          <span class="plan-price">$990.000</span>
-          <span class="plan-currency">CLP · Proyecto</span>
+        <div class="plan-founder">
+          <div class="pf-header">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            PRECIO FUNDADOR
+          </div>
+          <div class="pf-slots-row">
+            <span class="pf-slots-avail"><strong>7</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken">3 tomados</span>
+          </div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="30"></div></div>
+          <div class="pf-price-row">
+            <span class="pf-price">$495.000</span>
+            <span class="pf-original">$990.000</span>
+            <span class="pf-save">50% OFF</span>
+          </div>
+          <div class="pf-currency">CLP · Proyecto · Solo primeros 10 clientes</div>
+          <div class="pf-benefits">
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Retainer desde el mes 2 al precio normal</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Tu caso se convierte en portfolio de HORIZON</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Acceso prioritario a nuevas funcionalidades</div>
+          </div>
         </div>
         <div class="plan-retainer-tag">Retainer mes 2+ desde $200.000 CLP/mes</div>
         <div class="plan-items">
@@ -1163,9 +1267,27 @@ footer {
         <div class="plan-num-tag">Plan 03</div>
         <div class="plan-name">SISTEMA CON IA</div>
         <p class="plan-para">Para negocios donde el dueño sigue siendo el cuello de botella. Quiere que el negocio funcione solo — que capte, responda, venda y registre sin que él tenga que intervenir.</p>
-        <div class="plan-price-row">
-          <span class="plan-price">$1.990.000</span>
-          <span class="plan-currency">CLP · Proyecto</span>
+        <div class="plan-founder">
+          <div class="pf-header">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            PRECIO FUNDADOR
+          </div>
+          <div class="pf-slots-row">
+            <span class="pf-slots-avail"><strong>8</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken">2 tomados</span>
+          </div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="20"></div></div>
+          <div class="pf-price-row">
+            <span class="pf-price">$995.000</span>
+            <span class="pf-original">$1.990.000</span>
+            <span class="pf-save">50% OFF</span>
+          </div>
+          <div class="pf-currency">CLP · Proyecto · Solo primeros 10 clientes</div>
+          <div class="pf-benefits">
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Retainer desde el mes 2 al precio normal</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Co-construcción — tu feedback da forma al sistema</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Caso de estudio con visibilidad de marca</div>
+          </div>
         </div>
         <div class="plan-retainer-tag">Retainer mes 2+ desde $350.000 CLP/mes · Fee Meta Ads incluido</div>
         <div class="plan-items">
@@ -1187,9 +1309,27 @@ footer {
           <div class="plan-num-tag">Plan 04</div>
           <div class="plan-name">AGENTE IA PERSONALIZADO</div>
           <p class="plan-para" style="max-width: 440px;">Un empleado virtual disponible 24/7 que conoce todo sobre tu negocio. Responde, agenda, vende y hace seguimiento. Aprende de cada conversación y mejora solo.</p>
-          <div class="plan-price-row">
-            <span class="plan-price">Desde $1.490.000</span>
-            <span class="plan-currency">CLP · Implementación</span>
+          <div class="plan-founder">
+            <div class="pf-header">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              PRECIO FUNDADOR
+            </div>
+            <div class="pf-slots-row">
+              <span class="pf-slots-avail"><strong>8</strong> cupos disponibles de 10</span>
+              <span class="pf-slots-taken">2 tomados</span>
+            </div>
+            <div class="pf-bar"><div class="pf-bar-fill" data-width="20"></div></div>
+            <div class="pf-price-row">
+              <span class="pf-price">Desde $745.000</span>
+              <span class="pf-original">$1.490.000</span>
+              <span class="pf-save">50% OFF</span>
+            </div>
+            <div class="pf-currency">CLP · Implementación · Solo primeros 10 clientes</div>
+            <div class="pf-benefits">
+              <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Retainer desde el mes 2 al precio normal</div>
+              <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Entrenamiento del agente con tu negocio real</div>
+              <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Caso de estudio con visibilidad de marca</div>
+            </div>
           </div>
           <div class="plan-retainer-tag">Retainer mes 2+ $290.000 CLP/mes · Disponible como plan independiente o add-on</div>
           <span class="plan-cta" style="margin-top: 12px;">Ver plan completo →</span>
@@ -1365,6 +1505,21 @@ footer {
   hamOverlay.addEventListener('click',closeDrawer);
   hamClose.addEventListener('click',closeDrawer);
   document.querySelectorAll('.ham-drawer a[href^="#"]').forEach(function(a){a.addEventListener('click',closeDrawer);});
+})();
+
+// Founder bars — animate on scroll into view
+(function(){
+  var bars=document.querySelectorAll('.pf-bar-fill');
+  if(!bars.length)return;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.style.width=e.target.dataset.width+'%';
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.4});
+  bars.forEach(function(b){obs.observe(b);});
 })();
 
 // Hero illustration — conversation animation
