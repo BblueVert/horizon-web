@@ -1714,6 +1714,12 @@ footer {
     var need   = document.getElementById('waf-necesidad').value;
     var msg = 'Hola! Soy ' + nombre + ', tengo un negocio de ' + rubro + '. Necesito: ' + need + '. Me contacté desde horizonweb.cl';
     var url = 'https://wa.me/56946513068?text=' + encodeURIComponent(msg);
+    // Enviar lead al backend (sin bloquear el flujo)
+    fetch('/api/leads', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({nombre: nombre, empresa: rubro, mensaje: need, fuente: 'landing-whatsapp'})
+    }).catch(function(){});
     closeModal();
     window.open(url, '_blank');
   });

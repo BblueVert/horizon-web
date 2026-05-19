@@ -21,3 +21,28 @@ node_modules/
 # Archivos temporales
 *.tmp
 *.log
+
+# Vercel
+.vercel
+
+# Screenshots de trabajo / pruebas (no pertenecen al repo)
+*.png
+*.jpg
+*.jpeg
+!Identidad/
+
+# Archivos internos de Claude / desarrollo
+.claude/
+.playwright-mcp/
+CLAUDE_HORIZON_2026.md
+Skills Horizon/
+Skills Juanpe/
+files/
+cal-*.png
+n8n-*.png
+test-*.png
+header-*.png
+hero-*.png
+landing-*.png
+planes-*.png
+seccion-*.png

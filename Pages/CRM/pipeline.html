@@ -775,7 +775,15 @@ function saveLead(){
   }
 
   if(currentId){ const i=leads.findIndex(l=>l.id===currentId); if(i>-1) leads[i]=lead; }
-  else leads.unshift(lead);
+  else {
+    leads.unshift(lead);
+    // Sync nuevo lead al backend
+    fetch('/api/leads', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({nombre: lead.nombre, empresa: lead.empresa, email: lead.email, telefono: lead.telefono, mensaje: lead.nota, fuente: 'crm-manual'})
+    }).catch(()=>{});
+  }
 
   saveLeads(); closeModal(); renderAll();
   showToast(currentId?'Lead actualizado':'Lead creado');
