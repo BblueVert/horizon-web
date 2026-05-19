@@ -159,9 +159,22 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline-offset: 0 !important;
   border-radius: 8px;
 }
+
+/* ── SCROLL PROGRESS ── */
+#scroll-progress {
+  position: fixed; top: 0; left: 0; z-index: 9999;
+  height: 2px; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--h3, #FFB347));
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+/* ── SCROLL REVEAL ── */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
+<div id="scroll-progress"></div>
 <div class="hero-bg"></div>
 
 <header>
@@ -233,7 +246,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 <div class="divider"></div>
 
-<section>
+<section class="reveal">
   <div class="wrap">
     <div class="section-label">Ítems del plan</div>
     <h2 class="section-title">QUÉ INCLUYE</h2>
@@ -303,7 +316,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 <div class="divider"></div>
 
-<section>
+<section class="reveal">
   <div class="wrap">
     <div class="section-label">Mes 2 en adelante</div>
     <h2 class="section-title">RETAINER<br>MENSUAL</h2>
@@ -492,6 +505,33 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     closeModal();
     window.open(url, '_blank');
   });
+})();
+</script>
+<script>
+(function(){
+  var bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  function update() {
+    var s = document.documentElement.scrollTop || document.body.scrollTop;
+    var t = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    bar.style.width = (t > 0 ? (s / t * 100) : 0) + '%';
+  }
+  window.addEventListener('scroll', update, {passive: true});
+  update();
+})();
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if (!els.length) return;
+  if (reduced) { els.forEach(function(el){ el.classList.add('visible'); }); return; }
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(function(el){ obs.observe(el); });
 })();
 </script>
 </body>
