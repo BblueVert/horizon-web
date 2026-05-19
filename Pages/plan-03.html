@@ -144,6 +144,21 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
   .hero-title{font-size:clamp(44px,14vw,80px);}
   footer{padding:32px 20px;}
 }
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
+
+/* ── FOCUS VISIBLE (accessibility) ── */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent, var(--h1));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+a:focus-visible, button:focus-visible { border-radius: 6px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent, var(--h1)) !important;
+  outline-offset: 0 !important;
+  border-radius: 8px;
+}
 </style>
 </head>
 <body>
@@ -405,21 +420,21 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 <!-- Pre-lead Modal WhatsApp -->
 <div id="wa-modal-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(7,6,14,.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
   <div id="wa-modal" style="background:#1A1828;border:1px solid #302D45;border-radius:16px;padding:32px 28px;width:90%;max-width:420px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.6);">
-    <button id="wa-modal-close" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#9B98B8;font-size:20px;cursor:pointer;line-height:1;">✕</button>
+    <button id="wa-modal-close" aria-label="Cerrar" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#9B98B8;font-size:20px;cursor:pointer;line-height:1;">✕</button>
     <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:#FF6B35;margin-bottom:8px;">ANTES DE CONTINUAR</div>
     <h3 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:700;color:#F5F2FF;margin:0 0 6px;">Cuéntanos un poco</h3>
     <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:#9B98B8;margin:0 0 24px;line-height:1.5;">Para darte una respuesta útil al tiro, necesitamos contexto básico.</p>
     <form id="wa-prelead-form" autocomplete="off">
       <div style="margin-bottom:14px;">
-        <label style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">TU NOMBRE</label>
+        <label for="waf-nombre" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">TU NOMBRE</label>
         <input id="waf-nombre" type="text" placeholder="Juan Pérez" required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 14px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
       </div>
       <div style="margin-bottom:14px;">
-        <label style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">RUBRO O TIPO DE NEGOCIO</label>
+        <label for="waf-rubro" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">RUBRO O TIPO DE NEGOCIO</label>
         <input id="waf-rubro" type="text" placeholder="Clínica dental, restaurant, e-commerce..." required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 14px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
       </div>
       <div style="margin-bottom:24px;">
-        <label style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">¿QUÉ NECESITAS?</label>
+        <label for="waf-necesidad" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">¿QUÉ NECESITAS?</label>
         <select id="waf-necesidad" required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 14px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;cursor:pointer;">
           <option value="" disabled selected>Selecciona una opción</option>
           <option value="Presencia digital (sitio web, SEO, Google Business)">Presencia digital básica</option>
