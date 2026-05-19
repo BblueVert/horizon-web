@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HORIZON — Consultoría de Arquitectura Digital · Rancagua, Chile</title>
 <meta name="description" content="No vendemos páginas web. Diseñamos el sistema digital que capta, atiende y vende por tu negocio. Consultoría de Arquitectura Digital · Rancagua, Chile.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://horizonweb.cl/">
+<meta property="og:title" content="HORIZON — Consultoría de Arquitectura Digital">
+<meta property="og:description" content="No vendemos páginas web. Diseñamos el sistema digital que capta, atiende y vende por tu negocio. Rancagua, Chile.">
+<meta property="og:image" content="https://horizonweb.cl/Identidad/og-image.png">
+<meta property="og:locale" content="es_CL">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HORIZON — Consultoría de Arquitectura Digital">
+<meta name="twitter:description" content="No vendemos páginas web. Diseñamos el sistema digital que capta, atiende y vende por tu negocio.">
+<meta name="twitter:image" content="https://horizonweb.cl/Identidad/og-image.png">
+<link rel="canonical" href="https://horizonweb.cl/">
+<meta name="robots" content="index, follow">
 <link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1019,10 +1031,19 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   border-color: var(--h1) !important;
   border-radius: 8px;
 }
+.skip-link {
+  position: absolute; top: -100px; left: 16px;
+  background: var(--h1); color: var(--void);
+  font-family: var(--font-b); font-size: 13px; font-weight: 700;
+  padding: 10px 20px; border-radius: 6px; text-decoration: none;
+  z-index: 10000; transition: top 0.2s;
+}
+.skip-link:focus { top: 8px; }
 </style>
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
 <div id="scroll-progress"></div>
 <div class="hero-bg"></div>
 
@@ -1066,7 +1087,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 </nav>
 
 <!-- HERO -->
-<div class="hero-wrap">
+<div class="hero-wrap" id="main-content">
   <div class="hero-left">
     <div class="hero-eyebrow">Consultoría de Arquitectura Digital · Rancagua, Chile · 2026</div>
     <h1 class="hero-title">
