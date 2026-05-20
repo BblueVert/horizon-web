@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>HORIZON · CRM Pipeline</title>
+<link rel="icon" type="image/png" href="../../Identidad/Logo ISO.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -984,7 +985,7 @@ function getStageActions(lead){
   switch(lead.status){
     case 'new': return `
       <div class="action-label">Primer contacto</div>
-      ${waBtn('💬 Enviar mensaje inicial', `Hola ${NAME}, vi que te interesaste en HORIZON. ¿Tenés unos minutos para contarme sobre tu negocio? Así llegamos mejor preparados a la sesión 🙌`)}
+      ${waBtn('💬 Enviar mensaje inicial', `Hola ${NAME}, vi que te interesaste en HORIZON. ¿Tenés unos minutos para contarme sobre tu negocio? Así llegamos mejor preparados a la sesión 👋`)}
       ${lead.origen ? `<div class="action-meta">Origen: <strong>${ORIGEN_LABELS[lead.origen]||lead.origen}</strong></div>` : ''}
     `;
 
@@ -1005,7 +1006,7 @@ function getStageActions(lead){
     case 'proposal': return `
       <div class="action-label">Propuesta enviada</div>
       ${lead.propuestaUrl ? actionBtn('📄 Ver propuesta', lead.propuestaUrl, '#ff8c42') : ''}
-      ${waBtn('💬 Follow-up propuesta', `Hola ${NAME}, ¿tuviste oportunidad de revisar la propuesta? Quedé a disposición para cualquier consulta 🙌`)}
+      ${waBtn('💬 Follow-up propuesta', `Hola ${NAME}, ¿tuviste oportunidad de revisar la propuesta? Quedé a disposición para cualquier consulta 👋`)}
       ${waBtn('💬 Follow-up 48h (si no responde)', `Hola ${NAME}, quería acercarme antes de que se cierre la posibilidad. ¿Qué dudas tenés sobre la propuesta?`)}
       ${extraField(lead.id,'propuestaUrl','Link de la propuesta','https://...',lead.propuestaUrl)}
     `;
