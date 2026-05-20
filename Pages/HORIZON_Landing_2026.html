@@ -1705,6 +1705,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .wa-float:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(37,211,102,.6);}
 .wa-float svg{width:30px;height:30px;}
 </style>
+<!-- Botón oculto que activa el popup de Cal.com (mecanismo nativo del embed) -->
+<button id="cal-hidden-trigger" data-cal-link="horizonweb/diagnostico-horizon" data-cal-config='{}' style="display:none;" aria-hidden="true"></button>
+
 <!-- Pre-lead Modal — pre-Cal.com -->
 <div id="wa-modal-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(7,6,14,.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
   <div id="wa-modal" style="background:#1A1828;border:1px solid #302D45;border-radius:16px;padding:32px 28px;width:90%;max-width:440px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.6);">
@@ -1827,14 +1830,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     } catch(err) {}
     pendingLeadEmail = email;
     closeModal();
-    // Abrir Cal.com como popup embed (gratis) con nombre y email pre-llenados
-    if(window.Cal){
-      Cal('modal', {
-        calLink: CAL_LINK,
-        config: { name: nombre, email: email }
-      });
+    // Abrir Cal.com popup usando el botón oculto con data-cal-link (mecanismo nativo)
+    var calBtn = document.getElementById('cal-hidden-trigger');
+    if(calBtn && window.Cal){
+      calBtn.setAttribute('data-cal-config', JSON.stringify({ name: nombre, email: email }));
+      calBtn.click();
     } else {
-      // fallback si el embed no cargó
+      // fallback: nueva pestaña
       window.open(CAL_URL + '?name=' + encodeURIComponent(nombre) + '&email=' + encodeURIComponent(email), '_blank');
     }
   });
