@@ -1859,9 +1859,11 @@ Cal("on", {
   action: "bookingSuccessful",
   callback: function(e) {
     try {
-      var data    = e.detail && e.detail.data;
-      var booking = data && data.booking;
-      if(!booking) return;
+      // DEBUG — ver payload real en consola
+      console.log('[Cal] bookingSuccessful payload:', JSON.stringify(e.detail||e));
+      var data    = e.detail && e.detail.data ? e.detail.data : (e.data || e);
+      var booking = data.booking || data;
+      if(!booking || !booking.startTime) return;
 
       var startTime = booking.startTime || '';
       var location  = booking.location  || '';
