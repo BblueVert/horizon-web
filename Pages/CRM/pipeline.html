@@ -808,12 +808,13 @@ function saveLead(){
     createdAt: prevLead?.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     // campos extras preservados
-    origen:       prevLead?.origen       || '',
-    calLink:      prevLead?.calLink      || '',
-    notionUrl:    prevLead?.notionUrl    || '',
-    githubUrl:    prevLead?.githubUrl    || '',
-    propuestaUrl: prevLead?.propuestaUrl || '',
-    contratoUrl:  prevLead?.contratoUrl  || '',
+    origen:        prevLead?.origen        || '',
+    calLink:       prevLead?.calLink       || '',
+    reunionFecha:  prevLead?.reunionFecha  || '',
+    notionUrl:     prevLead?.notionUrl     || '',
+    githubUrl:     prevLead?.githubUrl     || '',
+    propuestaUrl:  prevLead?.propuestaUrl  || '',
+    contratoUrl:   prevLead?.contratoUrl   || '',
     hooksRespuestas: prevLead?.hooksRespuestas || {},
   };
 
@@ -968,6 +969,44 @@ function extraField(leadId, field, label, placeholder, currentVal){
   </div>`;
 }
 
+// Helpers de fecha
+function parseFecha(str){
+  if(!str) return null;
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+function diasHasta(str){
+  const d = parseFecha(str);
+  if(!d) return null;
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+  const met = new Date(d); met.setHours(0,0,0,0);
+  return Math.round((met-hoy)/(1000*60*60*24));
+}
+function formatFechaReunion(str){
+  const d = parseFecha(str);
+  if(!d) return '';
+  return d.toLocaleString('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+}
+function labelDia(str){
+  const dias = diasHasta(str);
+  if(dias===null) return '';
+  if(dias<0) return 'reunión pasada';
+  if(dias===0) return 'HOY';
+  if(dias===1) return 'MAÑANA';
+  return 'en '+dias+' días';
+}
+
+function extraFieldDate(field, label, currentVal){
+  return `<div class="action-field-wrap">
+    <label class="action-field-label">${label}</label>
+    <div style="display:flex;gap:6px;">
+      <input class="fi" type="datetime-local" id="xf-${field}" value="${esc(currentVal||'')}" style="flex:1;font-size:11px;color-scheme:dark;">
+      <button class="btn btn-ghost btn-sm" onclick="saveExtraField('${field}','xf-${field}')">Guardar</button>
+    </div>
+  </div>`;
+}
+
 function getStageActions(lead){
   const PHONE = lead.telefono || '';
   const NAME  = lead.nombre   || 'cliente';
@@ -982,35 +1021,63 @@ function getStageActions(lead){
     'cta-seccion':'CTA inferior', 'landing':'Landing', 'crm-manual':'CRM manual'
   };
 
+  // fecha de reunión
+  const fReunion = lead.reunionFecha || '';
+  const diasR    = diasHasta(fReunion);
+  const labelR   = labelDia(fReunion);
+  const fechaStr = fReunion ? formatFechaReunion(fReunion) : '';
+  const linkRef  = lead.calLink ? `\nLink: ${lead.calLink}` : '';
+
   switch(lead.status){
     case 'new': return `
-      <div class="action-label">Diagnóstico ya agendado en Cal — primer contacto</div>
-      ${waBtn('💬 Enviar mensaje inicial', `Hola ${NAME}! Vi que agendaste tu diagnóstico HORIZON. Quería presentarme antes de la sesión — soy Benjamín. ¿Podés contarme brevemente a qué se dedica tu negocio? Así llego mejor preparado 👋`)}
+      <div class="action-label">Reunión agendada — primer contacto y hook de contexto</div>
+      ${waBtn('💬 Mensaje inicial + hook',
+        `Hola ${NAME}! Soy Benjamín de HORIZON.\n\nVi que agendaste tu diagnóstico${fechaStr ? ' para el '+fechaStr : ''} — buenísimo!\n\nAntes de la sesión quería hacerte una pregunta rápida para llegar bien preparado:\n\n*¿Cuál es el mayor desafío que tiene tu negocio ahora mismo para conseguir o mantener clientes?*\n\nCon eso llegamos con contexto real y aprovechamos mucho mejor los 30 minutos 👋`
+      )}
       ${lead.origen ? `<div class="action-meta">Origen: <strong>${ORIGEN_LABELS[lead.origen]||lead.origen}</strong></div>` : ''}
-      ${extraField(lead.id,'calLink','Link de la reserva en Cal.com (pegalo desde tu notificación)','https://cal.com/...',lead.calLink)}
+      ${fReunion ? `<div class="action-meta">Reunión: <strong>${fechaStr} (${labelR})</strong></div>` : ''}
+      ${extraField(lead.id,'calLink','Link de la reserva Cal.com (desde notificación)','https://cal.com/...',lead.calLink)}
+      ${extraFieldDate('reunionFecha','Fecha y hora de la reunión',fReunion)}
     `;
 
-    case 'contacted': return `
-      <div class="action-label">Respondió — reunión confirmada</div>
-      ${lead.calLink
-        ? actionBtn('📅 Ver reserva en Cal.com', lead.calLink, 'var(--h1)')
-        : `<div class="action-note">⚠️ Pegá el link de Cal.com en la etapa Nuevo para verlo acá</div>`}
-      ${actionBtn('📋 Preparar brief de reunión', '/reunion?id='+lead.id, '#a855f7')}
-      ${waBtn('💬 Recordatorio D-2', `Hola ${NAME}, te recuerdo que pasado mañana tenemos nuestra sesión de diagnóstico HORIZON. ${lead.calLink ? 'El link es: '+lead.calLink : ''} Cualquier cosa me avisás!`)}
-      ${waBtn('💬 Recordatorio D-1', `Hola ${NAME}! Mañana es nuestra sesión. ${lead.calLink ? 'Link: '+lead.calLink : ''} Nos vemos!`)}
-      ${!lead.calLink ? extraField(lead.id,'calLink','Link de la reserva Cal.com','https://cal.com/...',lead.calLink) : ''}
-    `;
+    case 'contacted': {
+      const msgHoy     = `Hola ${NAME}! Solo te confirmo que hoy tenemos nuestra sesión de diagnóstico HORIZON.${linkRef}\nCualquier duda antes de arrancar, avisame 👋`;
+      const msgMañana  = `Hola ${NAME}! Te recuerdo que mañana tenemos nuestra sesión.${linkRef}\n¿Confirmás que podés?`;
+      const msgGeneral = `Hola ${NAME}! Te recuerdo nuestra sesión de diagnóstico HORIZON${fechaStr ? ' el '+fechaStr : ''}.${linkRef}\n¿Confirmás asistencia?`;
+      const msgActivo  = diasR===0 ? msgHoy : (diasR===1 ? msgMañana : msgGeneral);
 
-    case 'diagnostic': return `
-      <div class="action-label">Hoy es la reunión — diagnóstico</div>
-      ${lead.calLink ? actionBtn('🔗 Entrar a la reunión', lead.calLink, '#3b82f6') : ''}
-      ${actionBtn('📋 Abrir brief completo', '/reunion?id='+lead.id, '#a855f7')}
-      ${waBtn('💬 Confirmación H-1h', `Hola ${NAME}, en una hora tenemos nuestra sesión! ${lead.calLink ? 'Te dejo el link por si lo necesitás: '+lead.calLink : ''} Nos vemos!`)}
-      ${waBtn('💬 Confirmación H-10min', `Hola ${NAME}, en 10 minutos arrancamos. Avisame cuando estés listo/a 👋`)}
-      <div class="action-label" style="margin-top:10px;">Después de la reunión</div>
-      <button class="action-btn" style="background:#10b98120;color:#10b981;border:1px solid #10b98140;" onclick="changeStage('proposal')">→ Pasó bien → Propuesta</button>
-      <button class="action-btn" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440;" onclick="changeStage('lost')">✗ No avanzó → Perdido</button>
-    `;
+      return `
+        <div class="action-label">Respondió — reunión confirmada${labelR ? ' · '+labelR : ''}</div>
+        ${lead.calLink ? actionBtn('📅 Ver reserva en Cal.com', lead.calLink, 'var(--h1)') : '<div class="action-note">⚠️ Pegá el link Cal.com en etapa Nuevo</div>'}
+        ${actionBtn('📋 Preparar brief de reunión', '/reunion?id='+lead.id, '#a855f7')}
+        ${fReunion
+          ? `<div class="action-meta" style="margin-bottom:6px;">Reunión: <strong>${fechaStr} (${labelR})</strong></div>
+             ${waBtn(`💬 ${diasR===0 ? 'Confirmar para hoy' : diasR===1 ? 'Recordatorio mañana' : 'Recordatorio'}`, msgActivo)}`
+          : waBtn('💬 Recordatorio de reunión', msgGeneral)
+        }
+        ${(diasR!==null && diasR>1) ? waBtn('💬 Recordatorio D-1 (enviar el día anterior)',
+          `Hola ${NAME}! Mañana tenemos nuestra sesión.${linkRef}\nNos vemos!`) : ''}
+        ${!fReunion ? extraFieldDate('reunionFecha','Fecha y hora de la reunión','') : ''}
+        ${!lead.calLink ? extraField(lead.id,'calLink','Link Cal.com','https://cal.com/...',lead.calLink) : ''}
+      `;
+    }
+
+    case 'diagnostic': {
+      const esHoy = diasR===0;
+      return `
+        <div class="action-label">${esHoy ? '📅 HOY ES LA REUNIÓN' : 'Diagnóstico agendado'+(labelR?' · '+labelR:'')}</div>
+        ${lead.calLink ? actionBtn('🔗 Entrar a la reunión', lead.calLink, '#3b82f6') : ''}
+        ${actionBtn('📋 Abrir brief completo', '/reunion?id='+lead.id, '#a855f7')}
+        ${esHoy
+          ? `${waBtn('💬 Confirmación H-1h', `Hola ${NAME}! En una hora tenemos nuestra sesión.${linkRef}\nNos vemos!`)}
+             ${waBtn('💬 Confirmación H-10min', `Hola ${NAME}, en 10 minutos arrancamos. Avisame cuando estés listo/a 👋`)}`
+          : waBtn('💬 Recordatorio', `Hola ${NAME}! Te recuerdo la sesión${fechaStr?' el '+fechaStr:''}.${linkRef}\nCualquier cosa avisame!`)
+        }
+        <div class="action-label" style="margin-top:10px;">Después de la reunión</div>
+        <button class="action-btn" style="background:#10b98120;color:#10b981;border:1px solid #10b98140;" onclick="changeStage('proposal')">→ Fue bien → Propuesta</button>
+        <button class="action-btn" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440;" onclick="changeStage('lost')">✗ No avanzó → Perdido</button>
+      `;
+    }
 
     case 'proposal': return `
       <div class="action-label">Propuesta enviada</div>
