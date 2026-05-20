@@ -235,6 +235,34 @@ select.fsel:focus{border-color:var(--h1);}
 </div>
 
 <script>
+// ── SUPABASE ──────────────────────────────────────────────
+const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
+
+async function sbFetch(method, path, body) {
+  const headers = { 'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY, 'Content-Type': 'application/json' };
+  if (method !== 'GET' && method !== 'DELETE') headers['Prefer'] = 'return=minimal';
+  const opts = { method, headers };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const r = await fetch(SB_URL + path, opts);
+  if (!r.ok) { const t = await r.text(); throw new Error(r.status+' '+t); }
+  if (method === 'GET') return r.json();
+  return null;
+}
+
+function fromDb(row) {
+  return {
+    id: row.id, nombre: row.nombre, empresa: row.empresa, email: row.email,
+    telefono: row.telefono, sector: row.sector, canal: row.canal, origen: row.origen,
+    plan: row.plan, tipoprecio: row.tipoprecio, status: row.status, prioridad: row.prioridad,
+    nota: row.nota, calLink: row.cal_link, reunionFecha: row.reunion_fecha,
+    hooksRespuestas: row.hooks_respuestas || {},
+    historial: row.historial || [],
+    sessionNotas: row.session_notas,
+    createdAt: row.created_at, updatedAt: row.updated_at,
+  };
+}
+
 // ── DATOS ─────────────────────────────────────────────────
 const HOOKS = [
   { key: 'h1', pregunta: '¿Cuál es el mayor desafío de tu negocio hoy?', label: 'DESAFÍO PRINCIPAL' },
@@ -282,20 +310,21 @@ let allLeads = [];
 let currentLead = null;
 let checkState = {};
 
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function loadLeads(){
-  try{ allLeads = JSON.parse(localStorage.getItem('horizon_leads'))||[]; }
-  catch(e){ allLeads=[]; }
+async function loadLeads(){
+  try {
+    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500');
+    allLeads = rows.map(fromDb);
+  } catch(e) {
+    console.error('loadLeads error:', e);
+    mostrarToast('Error conectando a Supabase');
+    allLeads = [];
+  }
 }
 
-function saveLeads(){
-  localStorage.setItem('horizon_leads', JSON.stringify(allLeads));
-}
-
-function recargarLeads(){
-  loadLeads();
+async function recargarLeads(){
+  await loadLeads();
   poblarSelector();
   if(currentLead){
     const updated = allLeads.find(l=>l.id===currentLead.id);
@@ -329,7 +358,7 @@ function cargarLead(){
   if(!currentLead){ ocultarBrief(); return; }
   checkState = JSON.parse(localStorage.getItem('horizon_check_'+id)||'{}');
   renderBrief();
-  document.getElementById('btnGuardar').style.display='inline-flex';
+  document.getElementById('btnGuardar').style.display = 'inline-flex';
 }
 
 function ocultarBrief(){
@@ -441,11 +470,10 @@ function actualizarHook(key, textarea){
   document.getElementById('hooksStatus').textContent = `${respondidas} / ${HOOKS.length} respondidas`;
 }
 
-function guardarTodo(){
+async function guardarTodo(){
   if(!currentLead) return;
   const notas = document.getElementById('sesionNotas').value.trim();
   currentLead.sessionNotas = notas;
-  // guardar hooks
   HOOKS.forEach(h=>{
     const el = document.getElementById('hook-'+h.key);
     if(el){
@@ -453,7 +481,6 @@ function guardarTodo(){
       currentLead.hooksRespuestas[h.key] = el.value.trim();
     }
   });
-  // agregar nota al historial si hay notas de sesión nuevas
   if(notas){
     if(!currentLead.historial) currentLead.historial=[];
     const yaExiste = currentLead.historial.some(h=>h.texto===('Notas de sesión: '+notas));
@@ -464,20 +491,34 @@ function guardarTodo(){
   currentLead.updatedAt = new Date().toISOString();
   const idx = allLeads.findIndex(l=>l.id===currentLead.id);
   if(idx>-1) allLeads[idx]=currentLead;
-  saveLeads();
-  mostrarToast('Guardado en el CRM ✓');
+  try {
+    await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentLead.id, {
+      session_notas:    currentLead.sessionNotas,
+      hooks_respuestas: currentLead.hooksRespuestas,
+      historial:        currentLead.historial,
+    });
+    mostrarToast('Guardado en el CRM ✓');
+  } catch(e) {
+    console.error('guardarTodo error:', e);
+    mostrarToast('Error al guardar');
+  }
 }
 
-function avanzarEtapa(newStatus){
+async function avanzarEtapa(newStatus){
   if(!currentLead) return;
-  guardarTodo();
+  await guardarTodo();
   currentLead.status = newStatus;
   currentLead.updatedAt = new Date().toISOString();
   if(!currentLead.historial) currentLead.historial=[];
   currentLead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: 'Etapa avanzada a: '+STATUS_LABELS[newStatus] });
   const idx = allLeads.findIndex(l=>l.id===currentLead.id);
   if(idx>-1) allLeads[idx]=currentLead;
-  saveLeads();
+  try {
+    await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentLead.id, {
+      status:    newStatus,
+      historial: currentLead.historial,
+    });
+  } catch(e) { console.error('avanzarEtapa error:', e); }
   renderBrief();
   poblarSelector();
   mostrarToast('Movido a '+STATUS_LABELS[newStatus]);
@@ -497,10 +538,9 @@ function mostrarToast(msg){
 }
 
 // ── INIT ──────────────────────────────────────────────────
-function init(){
-  loadLeads();
+async function init(){
+  await loadLeads();
   poblarSelector();
-  // Si viene con ?id= en la URL, cargar ese lead directamente
   const params = new URLSearchParams(window.location.search);
   const idParam = params.get('id');
   if(idParam){

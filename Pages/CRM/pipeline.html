@@ -441,6 +441,11 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
   </div>
 </div>
 
+<!-- LOADING BAR -->
+<div id="loadingBar" style="display:none;position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--h1),var(--h2));z-index:500;animation:loadpulse 1.2s ease-in-out infinite;">
+</div>
+<style>@keyframes loadpulse{0%,100%{opacity:.4}50%{opacity:1}}</style>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -476,16 +481,85 @@ const STATUS_COLORS = {
   in_progress:'#06b6d4', converted:'var(--green)', lost:'var(--red)'
 };
 
-const DEFAULT_CUPOS = {
-  plan01:{tomados:0,total:10},
-  plan02:{tomados:0,total:10},
-  plan03:{tomados:0,total:10},
-  plan04:{tomados:0,total:10},
-};
+const CUPOS_TOTAL = { plan01:10, plan02:10, plan03:10, plan04:10 };
+
+// ── SUPABASE ───────────────────────────────────────────
+const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
+
+async function sbFetch(method, path, body) {
+  const headers = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+  };
+  if (method !== 'GET' && method !== 'DELETE') headers['Prefer'] = 'return=minimal';
+  const opts = { method, headers };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const r = await fetch(SB_URL + path, opts);
+  if (!r.ok) { const t = await r.text(); throw new Error(r.status + ' ' + t); }
+  if (method === 'GET') return r.json();
+  return null;
+}
+
+function fromDb(row) {
+  return {
+    id:              row.id,
+    nombre:          row.nombre,
+    empresa:         row.empresa,
+    email:           row.email,
+    telefono:        row.telefono,
+    sector:          row.sector,
+    canal:           row.canal,
+    origen:          row.origen,
+    plan:            row.plan,
+    tipoprecio:      row.tipoprecio,
+    status:          row.status,
+    prioridad:       row.prioridad,
+    nota:            row.nota,
+    calLink:         row.cal_link,
+    reunionFecha:    row.reunion_fecha,
+    notionUrl:       row.notion_url,
+    githubUrl:       row.github_url,
+    propuestaUrl:    row.propuesta_url,
+    contratoUrl:     row.contrato_url,
+    hooksRespuestas: row.hooks_respuestas || {},
+    historial:       row.historial || [],
+    sessionNotas:    row.session_notas,
+    createdAt:       row.created_at,
+    updatedAt:       row.updated_at,
+  };
+}
+
+function toDb(lead) {
+  return {
+    id:               lead.id,
+    nombre:           lead.nombre,
+    empresa:          lead.empresa,
+    email:            lead.email,
+    telefono:         lead.telefono,
+    sector:           lead.sector,
+    canal:            lead.canal,
+    origen:           lead.origen,
+    plan:             lead.plan,
+    tipoprecio:       lead.tipoprecio,
+    status:           lead.status,
+    prioridad:        lead.prioridad,
+    nota:             lead.nota,
+    cal_link:         lead.calLink,
+    reunion_fecha:    lead.reunionFecha,
+    notion_url:       lead.notionUrl,
+    github_url:       lead.githubUrl,
+    propuesta_url:    lead.propuestaUrl,
+    contrato_url:     lead.contratoUrl,
+    hooks_respuestas: lead.hooksRespuestas || {},
+    historial:        lead.historial || [],
+    session_notas:    lead.sessionNotas,
+  };
+}
 
 // ── DATA ───────────────────────────────────────────────
 let leads = [];
-let cupos = {};
 let currentId = null;
 let currentView = 'kanban';
 let sortField = 'createdAt';
@@ -493,16 +567,23 @@ let sortDir = 'desc';
 
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
 
-function loadData(){
-  try{ leads = JSON.parse(localStorage.getItem('horizon_leads')) || []; }catch(e){ leads=[]; }
-  try{ cupos = JSON.parse(localStorage.getItem('horizon_cupos')) || DEFAULT_CUPOS; }
-  catch(e){ cupos = {...DEFAULT_CUPOS}; }
-  // ensure all plans exist
-  Object.keys(DEFAULT_CUPOS).forEach(p=>{ if(!cupos[p]) cupos[p]={...DEFAULT_CUPOS[p]}; });
+function showLoading(on){
+  document.getElementById('loadingBar').style.display = on ? 'block' : 'none';
 }
 
-function saveLeads(){ localStorage.setItem('horizon_leads', JSON.stringify(leads)); }
-function saveCupos(){ localStorage.setItem('horizon_cupos', JSON.stringify(cupos)); }
+async function loadData(){
+  showLoading(true);
+  try {
+    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500');
+    leads = rows.map(fromDb);
+  } catch(e) {
+    console.error('Supabase load error:', e);
+    showToast('Error conectando a Supabase', 'error');
+    leads = [];
+  }
+  showLoading(false);
+  renderAll();
+}
 
 function formatClp(n){
   if(!n||isNaN(n)) return '—';
@@ -514,8 +595,20 @@ function formatDate(s){
   catch(e){ return '—'; }
 }
 
-// ── CUPOS ──────────────────────────────────────────────
+// ── CUPOS (derivados de leads) ─────────────────────────
+function getCupos(){
+  const c = {};
+  Object.keys(CUPOS_TOTAL).forEach(p=>{
+    c[p] = {
+      total:   CUPOS_TOTAL[p],
+      tomados: leads.filter(l=>l.status==='converted'&&l.plan===p).length
+    };
+  });
+  return c;
+}
+
 function getCuposDisplay(){
+  const cupos = getCupos();
   return Object.entries(cupos).map(([p,v])=>`
     <div class="cp-row">
       <div class="cp-top">
@@ -531,26 +624,10 @@ function getCuposDisplay(){
 
 function renderCupos(){
   document.getElementById('cuposPanel').innerHTML = getCuposDisplay();
-  // Total cupos stat
+  const cupos = getCupos();
   const total = Object.values(cupos).reduce((a,v)=>a+v.total,0);
   const tomados = Object.values(cupos).reduce((a,v)=>a+v.tomados,0);
   document.getElementById('st-cupos').textContent = tomados+'/'+total;
-}
-
-// Llamado cuando un lead pasa a "converted"
-function incrementCupo(plan){
-  if(!plan||!cupos[plan]) return;
-  if(cupos[plan].tomados < cupos[plan].total) cupos[plan].tomados++;
-  saveCupos();
-  renderCupos();
-}
-
-// Llamado cuando un lead sale de "converted"
-function decrementCupo(plan){
-  if(!plan||!cupos[plan]) return;
-  if(cupos[plan].tomados > 0) cupos[plan].tomados--;
-  saveCupos();
-  renderCupos();
 }
 
 // ── STATS ──────────────────────────────────────────────
@@ -706,17 +783,12 @@ function onDrop(e, newStatus){
   const id = e.dataTransfer.getData('text/plain');
   const lead = leads.find(l=>l.id===id);
   if(!lead) return;
-  const prevStatus = lead.status;
   lead.status = newStatus;
   lead.updatedAt = new Date().toISOString();
-
-  // Cupos tracking
-  if(newStatus==='converted' && prevStatus!=='converted') incrementCupo(lead.plan);
-  if(prevStatus==='converted' && newStatus!=='converted') decrementCupo(lead.plan);
-
-  saveLeads();
   renderAll();
   showToast('Lead movido a '+COLS.find(c=>c.id===newStatus)?.label);
+  sbFetch('PATCH', '/rest/v1/leads?id=eq.'+id, { status: newStatus })
+    .catch(err=>{ showToast('Error al guardar','error'); console.error(err); });
 }
 
 function setSort(f){
@@ -781,77 +853,73 @@ function closeModal(){
   currentId=null;
 }
 
-function saveLead(){
+async function saveLead(){
   const nombre = document.getElementById('f-nombre').value.trim();
   if(!nombre){ showToast('El nombre es obligatorio','warn'); return; }
 
+  const isNew = !currentId;
   const prevLead = currentId ? leads.find(l=>l.id===currentId) : null;
-  const prevStatus = prevLead?.status;
-  const prevPlan = prevLead?.plan;
   const newStatus = document.getElementById('f-status').value;
   const newPlan = document.getElementById('f-plan').value;
 
   const lead = {
     id: currentId || uid(),
     nombre,
-    empresa: document.getElementById('f-empresa').value.trim(),
-    email: document.getElementById('f-email').value.trim(),
-    telefono: document.getElementById('f-telefono').value.trim(),
-    sector: document.getElementById('f-sector').value,
-    canal: document.getElementById('f-canal').value,
-    plan: newPlan,
-    tipoprecio: document.getElementById('f-tipoprecio').value,
-    status: newStatus,
-    prioridad: document.getElementById('f-prioridad').value,
-    nota: document.getElementById('f-nota').value.trim(),
-    historial: prevLead?.historial||[],
-    createdAt: prevLead?.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    // campos extras preservados
-    origen:        prevLead?.origen        || '',
-    calLink:       prevLead?.calLink       || '',
-    reunionFecha:  prevLead?.reunionFecha  || '',
-    notionUrl:     prevLead?.notionUrl     || '',
-    githubUrl:     prevLead?.githubUrl     || '',
-    propuestaUrl:  prevLead?.propuestaUrl  || '',
-    contratoUrl:   prevLead?.contratoUrl   || '',
-    hooksRespuestas: prevLead?.hooksRespuestas || {},
+    empresa:         document.getElementById('f-empresa').value.trim(),
+    email:           document.getElementById('f-email').value.trim(),
+    telefono:        document.getElementById('f-telefono').value.trim(),
+    sector:          document.getElementById('f-sector').value,
+    canal:           document.getElementById('f-canal').value,
+    plan:            newPlan,
+    tipoprecio:      document.getElementById('f-tipoprecio').value,
+    status:          newStatus,
+    prioridad:       document.getElementById('f-prioridad').value,
+    nota:            document.getElementById('f-nota').value.trim(),
+    historial:       prevLead?.historial || [],
+    createdAt:       prevLead?.createdAt || new Date().toISOString(),
+    updatedAt:       new Date().toISOString(),
+    origen:          prevLead?.origen          || 'crm-manual',
+    calLink:         prevLead?.calLink         || '',
+    reunionFecha:    prevLead?.reunionFecha     || '',
+    notionUrl:       prevLead?.notionUrl        || '',
+    githubUrl:       prevLead?.githubUrl        || '',
+    propuestaUrl:    prevLead?.propuestaUrl     || '',
+    contratoUrl:     prevLead?.contratoUrl      || '',
+    hooksRespuestas: prevLead?.hooksRespuestas  || {},
   };
 
-  // Cupos tracking on status change
-  if(prevStatus && prevStatus!==newStatus){
-    if(newStatus==='converted' && prevStatus!=='converted') incrementCupo(newPlan||prevPlan);
-    if(prevStatus==='converted' && newStatus!=='converted') decrementCupo(prevPlan||newPlan);
-  } else if(!prevStatus && newStatus==='converted'){
-    incrementCupo(newPlan);
-  }
-
+  // Optimistic update
   if(currentId){ const i=leads.findIndex(l=>l.id===currentId); if(i>-1) leads[i]=lead; }
-  else {
-    leads.unshift(lead);
-    // Sync nuevo lead al backend
-    fetch('/api/leads', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({nombre: lead.nombre, empresa: lead.empresa, email: lead.email, telefono: lead.telefono, mensaje: lead.nota, fuente: 'crm-manual'})
-    }).catch(()=>{});
+  else leads.unshift(lead);
+
+  closeModal(); renderAll();
+  showToast(isNew ? 'Lead creado' : 'Lead actualizado');
+
+  try {
+    if(isNew) await sbFetch('POST', '/rest/v1/leads', toDb(lead));
+    else      await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+lead.id, toDb(lead));
+  } catch(e) {
+    console.error('saveLead error:', e);
+    showToast('Error al guardar en Supabase','error');
   }
-
-  saveLeads(); closeModal(); renderAll();
-  showToast(currentId?'Lead actualizado':'Lead creado');
 }
 
-function deleteLead(){
+async function deleteLead(){
   if(!currentId) return;
-  const lead = leads.find(l=>l.id===currentId);
   if(!confirm('¿Eliminar este lead?')) return;
-  if(lead?.status==='converted') decrementCupo(lead.plan);
-  leads = leads.filter(l=>l.id!==currentId);
-  saveLeads(); closeModal(); renderAll();
+  const delId = currentId;
+  leads = leads.filter(l=>l.id!==delId);
+  closeModal(); renderAll();
   showToast('Lead eliminado','error');
+  try {
+    await sbFetch('DELETE', '/rest/v1/leads?id=eq.'+delId);
+  } catch(e) {
+    console.error('deleteLead error:', e);
+    showToast('Error al eliminar','error');
+  }
 }
 
-function addNota(){
+async function addNota(){
   if(!currentId) return;
   const texto = document.getElementById('nuevaNota').value.trim();
   if(!texto) return;
@@ -860,26 +928,21 @@ function addNota(){
   if(!lead.historial) lead.historial=[];
   lead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto });
   lead.updatedAt = new Date().toISOString();
-  saveLeads();
-  // refresh historial in modal
   const histList = document.getElementById('hist-list');
   histList.innerHTML = lead.historial.map(h=>`<div class="hist-block"><div class="hist-date">${h.fecha}</div><div class="hist-text">${esc(h.texto)}</div></div>`).join('');
   document.getElementById('nuevaNota').value='';
   showToast('Nota agregada');
+  try {
+    await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentId, { historial: lead.historial });
+  } catch(e) { console.error('addNota error:', e); }
 }
 
-function changeStage(newStatus){
+async function changeStage(newStatus){
   if(!currentId) return;
   const lead = leads.find(l=>l.id===currentId);
   if(!lead) return;
-  const prevStatus = lead.status;
   lead.status = newStatus;
   lead.updatedAt = new Date().toISOString();
-
-  if(newStatus==='converted' && prevStatus!=='converted') incrementCupo(lead.plan);
-  if(prevStatus==='converted' && newStatus!=='converted') decrementCupo(lead.plan);
-
-  // re-render stage buttons
   document.getElementById('stageMover').innerHTML = COLS.map(c=>`
     <button class="stage-btn${lead.status===c.id?' cur':''}"
       style="${lead.status===c.id?'background:'+c.color+';':''}color:${lead.status===c.id?'#fff':''}"
@@ -889,9 +952,11 @@ function changeStage(newStatus){
   `).join('');
   document.getElementById('f-status').value = newStatus;
   renderAcciones(lead);
-
-  saveLeads(); renderAll();
+  renderAll();
   showToast('Movido a '+COLS.find(c=>c.id===newStatus)?.label);
+  try {
+    await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentId, { status: newStatus });
+  } catch(e) { showToast('Error al guardar','error'); console.error(e); }
 }
 
 // ── VIEW ───────────────────────────────────────────────
@@ -1135,7 +1200,7 @@ function renderAcciones(lead){
   section.style.display='block';
 }
 
-function saveExtraField(field, inputId){
+async function saveExtraField(field, inputId){
   if(!currentId) return;
   const lead = leads.find(l=>l.id===currentId);
   if(!lead) return;
@@ -1144,23 +1209,32 @@ function saveExtraField(field, inputId){
   lead.updatedAt = new Date().toISOString();
   if(!lead.historial) lead.historial=[];
   lead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: field+' actualizado: '+val });
-  saveLeads();
   renderAcciones(lead);
   showToast('Guardado');
+  const fieldMap = {
+    calLink:'cal_link', reunionFecha:'reunion_fecha',
+    notionUrl:'notion_url', githubUrl:'github_url',
+    propuestaUrl:'propuesta_url', contratoUrl:'contrato_url',
+  };
+  const dbField = fieldMap[field] || field;
+  try {
+    await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentId, { [dbField]: val, historial: lead.historial });
+  } catch(e) { console.error('saveExtraField error:', e); }
 }
 
-function marcarAnticipoRecibido(){
+async function marcarAnticipoRecibido(){
   if(!currentId) return;
   const lead = leads.find(l=>l.id===currentId);
   if(!lead) return;
   if(!lead.historial) lead.historial=[];
   lead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: '✅ Anticipo recibido' });
   lead.updatedAt = new Date().toISOString();
-  saveLeads();
-  // refresh historial
   const histList = document.getElementById('hist-list');
   if(histList) histList.innerHTML = lead.historial.map(h=>`<div class="hist-block"><div class="hist-date">${h.fecha}</div><div class="hist-text">${esc(h.texto)}</div></div>`).join('');
   showToast('Anticipo marcado como recibido ✅');
+  try {
+    await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentId, { historial: lead.historial });
+  } catch(e) { console.error('marcarAnticipo error:', e); }
 }
 
 // ── UTIL ───────────────────────────────────────────────
@@ -1173,7 +1247,6 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
 // ── INIT ───────────────────────────────────────────────
 loadData();
-renderAll();
 </script>
 </body>
 </html>

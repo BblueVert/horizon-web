@@ -7,7 +7,6 @@ function sanitize(val, max = 255) {
   return String(val).replace(/<[^>]*>/g, '').replace(/['"`;\\]/g, '').trim().substring(0, max);
 }
 
-// Simple in-memory rate limit (resets per cold start — fine for Vercel)
 const rl = new Map();
 function rateLimit(ip) {
   const now = Date.now();
@@ -18,8 +17,32 @@ function rateLimit(ip) {
   return e.count > 10;
 }
 
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function httpsPost(urlStr, headers, body) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(urlStr);
+    const payload = JSON.stringify(body);
+    const options = {
+      hostname: u.hostname,
+      path: u.pathname + u.search,
+      method: 'POST',
+      headers: { ...headers, 'Content-Length': Buffer.byteLength(payload) },
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve({ status: res.statusCode, body: data }));
+    });
+    req.on('error', reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
 module.exports = async function handler(req, res) {
-  // CORS preflight
   res.setHeader('Access-Control-Allow-Origin', 'https://horizonweb.cl');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -30,37 +53,54 @@ module.exports = async function handler(req, res) {
   if (rateLimit(ip)) return res.status(429).json({ error: 'Demasiadas solicitudes' });
 
   const body = req.body || {};
-  const payload = JSON.stringify({
-    nombre:   sanitize(body.nombre),
-    email:    sanitize(body.email),
-    empresa:  sanitize(body.empresa),
-    telefono: sanitize(body.telefono, 30),
-    mensaje:  sanitize(body.mensaje, 1000),
-    fuente:   sanitize(body.fuente, 100) || 'web',
-  });
 
-  const N8N = process.env.N8N_WEBHOOK_URL;
-  if (!N8N) {
-    // Sin webhook configurado — igual responder OK (lead ya está en localStorage)
-    console.warn('[leads] N8N_WEBHOOK_URL no configurada');
-    return res.status(200).json({ ok: true });
+  const lead = {
+    id:               uid(),
+    nombre:           sanitize(body.nombre),
+    email:            sanitize(body.email),
+    empresa:          sanitize(body.empresa),
+    telefono:         sanitize(body.telefono, 30),
+    nota:             sanitize(body.mensaje, 1000),
+    canal:            sanitize(body.fuente, 100) || 'web',
+    origen:           sanitize(body.origen, 100),
+    status:           'new',
+    prioridad:        'Media',
+    tipoprecio:       'fundador',
+    historial:        [],
+    hooks_respuestas: {},
+  };
+
+  const SB_URL = process.env.SUPABASE_URL;
+  const SB_KEY = process.env.SUPABASE_ANON_KEY;
+
+  if (SB_URL && SB_KEY) {
+    try {
+      await httpsPost(
+        SB_URL + '/rest/v1/leads',
+        {
+          'apikey': SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        lead
+      );
+    } catch (err) {
+      console.error('[leads] Supabase error:', err.message);
+    }
+  } else {
+    console.warn('[leads] SUPABASE_URL/SUPABASE_ANON_KEY no configuradas');
   }
 
-  return new Promise((resolve) => {
-    const url = new URL(N8N);
-    const options = {
-      hostname: url.hostname,
-      path: url.pathname + url.search,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) },
-    };
-    const upstream = https.request(options, (r) => {
-      res.status(r.statusCode >= 200 && r.statusCode < 300 ? 200 : 502)
-         .json({ ok: r.statusCode < 300 });
-      resolve();
-    });
-    upstream.on('error', () => { res.status(502).json({ ok: false }); resolve(); });
-    upstream.write(payload);
-    upstream.end();
-  });
+  // También notificar n8n si está configurado
+  const N8N = process.env.N8N_WEBHOOK_URL;
+  if (N8N) {
+    try {
+      await httpsPost(N8N, { 'Content-Type': 'application/json' }, lead);
+    } catch (err) {
+      console.error('[leads] n8n error:', err.message);
+    }
+  }
+
+  return res.status(200).json({ ok: true, id: lead.id });
 };
