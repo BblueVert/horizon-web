@@ -984,23 +984,32 @@ function getStageActions(lead){
 
   switch(lead.status){
     case 'new': return `
-      <div class="action-label">Primer contacto</div>
-      ${waBtn('💬 Enviar mensaje inicial', `Hola ${NAME}, vi que te interesaste en HORIZON. ¿Tenés unos minutos para contarme sobre tu negocio? Así llegamos mejor preparados a la sesión 👋`)}
+      <div class="action-label">Diagnóstico ya agendado en Cal — primer contacto</div>
+      ${waBtn('💬 Enviar mensaje inicial', `Hola ${NAME}! Vi que agendaste tu diagnóstico HORIZON. Quería presentarme antes de la sesión — soy Benjamín. ¿Podés contarme brevemente a qué se dedica tu negocio? Así llego mejor preparado 👋`)}
       ${lead.origen ? `<div class="action-meta">Origen: <strong>${ORIGEN_LABELS[lead.origen]||lead.origen}</strong></div>` : ''}
+      ${extraField(lead.id,'calLink','Link de la reserva en Cal.com (pegalo desde tu notificación)','https://cal.com/...',lead.calLink)}
     `;
 
     case 'contacted': return `
-      <div class="action-label">Agendar diagnóstico</div>
-      ${actionBtn('📅 Abrir Cal.com', 'https://cal.com/horizonweb/diagnostico-horizon', 'var(--h1)')}
-      ${waBtn('💬 Recordatorio de agenda', `Hola ${NAME}! Te recuerdo que podés agendar tu diagnóstico HORIZON acá 👉 https://cal.com/horizonweb/diagnostico-horizon — 30 min, sin costo.`)}
+      <div class="action-label">Respondió — reunión confirmada</div>
+      ${lead.calLink
+        ? actionBtn('📅 Ver reserva en Cal.com', lead.calLink, 'var(--h1)')
+        : `<div class="action-note">⚠️ Pegá el link de Cal.com en la etapa Nuevo para verlo acá</div>`}
+      ${actionBtn('📋 Preparar brief de reunión', '/reunion?id='+lead.id, '#a855f7')}
+      ${waBtn('💬 Recordatorio D-2', `Hola ${NAME}, te recuerdo que pasado mañana tenemos nuestra sesión de diagnóstico HORIZON. ${lead.calLink ? 'El link es: '+lead.calLink : ''} Cualquier cosa me avisás!`)}
+      ${waBtn('💬 Recordatorio D-1', `Hola ${NAME}! Mañana es nuestra sesión. ${lead.calLink ? 'Link: '+lead.calLink : ''} Nos vemos!`)}
+      ${!lead.calLink ? extraField(lead.id,'calLink','Link de la reserva Cal.com','https://cal.com/...',lead.calLink) : ''}
     `;
 
     case 'diagnostic': return `
-      <div class="action-label">Reunión agendada</div>
-      ${lead.calLink ? actionBtn('🔗 Ir a la reunión', lead.calLink, '#3b82f6') : ''}
-      ${actionBtn('📋 Brief de reunión', '/reunion?id='+lead.id, '#a855f7')}
-      ${waBtn('💬 Confirmar asistencia', `Hola ${NAME}, te confirmo nuestra sesión HORIZON. ${lead.calLink ? 'Link: '+lead.calLink : ''} Nos vemos!`)}
-      ${extraField(lead.id,'calLink','Link de la reunión (Cal.com)','https://cal.com/...',lead.calLink)}
+      <div class="action-label">Hoy es la reunión — diagnóstico</div>
+      ${lead.calLink ? actionBtn('🔗 Entrar a la reunión', lead.calLink, '#3b82f6') : ''}
+      ${actionBtn('📋 Abrir brief completo', '/reunion?id='+lead.id, '#a855f7')}
+      ${waBtn('💬 Confirmación H-1h', `Hola ${NAME}, en una hora tenemos nuestra sesión! ${lead.calLink ? 'Te dejo el link por si lo necesitás: '+lead.calLink : ''} Nos vemos!`)}
+      ${waBtn('💬 Confirmación H-10min', `Hola ${NAME}, en 10 minutos arrancamos. Avisame cuando estés listo/a 👋`)}
+      <div class="action-label" style="margin-top:10px;">Después de la reunión</div>
+      <button class="action-btn" style="background:#10b98120;color:#10b981;border:1px solid #10b98140;" onclick="changeStage('proposal')">→ Pasó bien → Propuesta</button>
+      <button class="action-btn" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440;" onclick="changeStage('lost')">✗ No avanzó → Perdido</button>
     `;
 
     case 'proposal': return `
