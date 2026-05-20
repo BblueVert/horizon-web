@@ -121,7 +121,8 @@ const rewrites = {
   '/plan-04': '/Pages/plan-04.html',
   '/servicios': '/Pages/servicios.html',
   '/crm':    '/Pages/CRM/pipeline.html',
-  '/reunion':'/Pages/reunion/index.html',
+  '/reunion':         '/Pages/reunion/index.html',
+  '/booking-confirm': '/Pages/booking-confirm/index.html',
 };
 
 Object.entries(rewrites).forEach(([from, to]) => {
