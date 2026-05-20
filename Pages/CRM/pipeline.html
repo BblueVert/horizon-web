@@ -1032,7 +1032,7 @@ function getStageActions(lead){
     case 'new': return `
       <div class="action-label">Reunión agendada — primer contacto y hook de contexto</div>
       ${waBtn('💬 Mensaje inicial + hook',
-        `Hola ${NAME}! Soy Benjamín de HORIZON.\n\nVi que agendaste tu diagnóstico${fechaStr ? ' para el '+fechaStr : ''} — buenísimo!\n\nAntes de la sesión quería hacerte una pregunta rápida para llegar bien preparado:\n\n*¿Cuál es el mayor desafío que tiene tu negocio ahora mismo para conseguir o mantener clientes?*\n\nCon eso llegamos con contexto real y aprovechamos mucho mejor los 30 minutos 👋`
+        `Hola ${NAME}! Soy Benja, te escribo por el diagnóstico que agendaste con HORIZON.\n\nAntes de la sesión — ¿me contás brevemente en qué está el negocio y qué es lo que más querés resolver ahora mismo?\n\nAsí llego preparado y lo aprovechamos bien.`
       )}
       ${lead.origen ? `<div class="action-meta">Origen: <strong>${ORIGEN_LABELS[lead.origen]||lead.origen}</strong></div>` : ''}
       ${fReunion ? `<div class="action-meta">Reunión: <strong>${fechaStr} (${labelR})</strong></div>` : ''}
