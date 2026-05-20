@@ -1723,9 +1723,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
           <input id="waf-email" type="email" placeholder="tu@correo.com" required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 12px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
         </div>
       </div>
-      <div style="margin-bottom:12px;">
-        <label for="waf-rubro" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">RUBRO O TIPO DE NEGOCIO</label>
-        <input id="waf-rubro" type="text" placeholder="Clínica dental, restaurant, e-commerce..." required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 14px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label for="waf-rubro" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">RUBRO O NEGOCIO</label>
+          <input id="waf-rubro" type="text" placeholder="Clínica dental, restaurant..." required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 12px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+        </div>
+        <div>
+          <label for="waf-telefono" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">TELÉFONO / WHATSAPP</label>
+          <input id="waf-telefono" type="tel" placeholder="+569..." required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 12px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+        </div>
       </div>
       <div style="margin-bottom:22px;">
         <label for="waf-necesidad" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">¿QUÉ NECESITAS?</label>
@@ -1777,15 +1783,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    var nombre  = document.getElementById('waf-nombre').value.trim();
-    var email   = document.getElementById('waf-email').value.trim();
-    var rubro   = document.getElementById('waf-rubro').value.trim();
-    var need    = document.getElementById('waf-necesidad').value;
+    var nombre   = document.getElementById('waf-nombre').value.trim();
+    var email    = document.getElementById('waf-email').value.trim();
+    var rubro    = document.getElementById('waf-rubro').value.trim();
+    var telefono = document.getElementById('waf-telefono').value.trim();
+    var need     = document.getElementById('waf-necesidad').value;
     // Registrar lead en backend (non-blocking)
     fetch('/api/leads', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({nombre: nombre, email: email, empresa: rubro, mensaje: need, fuente: 'landing-cal'})
+      body: JSON.stringify({nombre: nombre, email: email, telefono: telefono, empresa: rubro, mensaje: need, fuente: 'landing-cal'})
     }).catch(function(){});
     closeModal();
     // Pre-fill Cal.com with name and email via query params
