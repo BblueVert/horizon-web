@@ -1756,8 +1756,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   var overlay=document.getElementById('wa-modal-overlay');
   var closeBtn=document.getElementById('wa-modal-close');
   var form=document.getElementById('wa-prelead-form');
-  var CAL_URL='https://cal.com/horizonweb/diagnostico-horizon';
+  var CAL_LINK='horizonweb/diagnostico-horizon';
+  var CAL_URL='https://cal.com/'+CAL_LINK;
   var currentOrigin = 'landing';
+  var pendingLeadEmail = '';
 
   function openModal(e){
     e.preventDefault();
@@ -1823,12 +1825,87 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       existingLeads.push(newLead);
       localStorage.setItem('horizon_leads', JSON.stringify(existingLeads));
     } catch(err) {}
+    pendingLeadEmail = email;
     closeModal();
-    // Pre-fill Cal.com with name and email via query params
-    var calUrl = CAL_URL + '?name=' + encodeURIComponent(nombre) + '&email=' + encodeURIComponent(email);
-    window.open(calUrl, '_blank');
+    // Abrir Cal.com como popup embed (gratis) con nombre y email pre-llenados
+    if(window.Cal){
+      Cal('modal', {
+        calLink: CAL_LINK,
+        config: { name: nombre, email: email }
+      });
+    } else {
+      // fallback si el embed no cargó
+      window.open(CAL_URL + '?name=' + encodeURIComponent(nombre) + '&email=' + encodeURIComponent(email), '_blank');
+    }
   });
 })();
+</script>
+
+<!-- Cal.com embed (gratis) — captura fecha y link al confirmar booking -->
+<script>
+(function(C,A,L){
+  let p=function(a,ar){a.q.push(ar);};
+  let d=C.document;
+  C.Cal=C.Cal||function(){let cal=C.Cal;let ar=arguments;if(!cal.loaded){cal.ns={};cal.q=cal.q||[];d.head.appendChild(d.createElement("script")).src=A;cal.loaded=true;}if(ar[0]===L){const api=function(){p(api,arguments);};const namespace=ar[1];api.q=api.q||[];if(typeof namespace==="string"){cal.ns[namespace]=cal.ns[namespace]||api;p(cal.ns[namespace],ar);p(cal,["initNamespace",namespace]);}else p(cal,ar);return;}p(cal,ar);};
+})(window,"https://app.cal.com/embed/embed.js","init");
+Cal("init", { origin:"https://cal.com" });
+Cal("ui", {
+  styles: { branding: { brandColor: "#ff6b35" } },
+  hideEventTypeDetails: false
+});
+
+// Escuchar cuando el booking es confirmado
+Cal("on", {
+  action: "bookingSuccessful",
+  callback: function(e) {
+    try {
+      var data    = e.detail && e.detail.data;
+      var booking = data && data.booking;
+      if(!booking) return;
+
+      var startTime = booking.startTime || '';
+      var location  = booking.location  || '';
+      var attendees = booking.attendees || [];
+      var attendeeEmail = attendees.length ? attendees[0].email : '';
+
+      // Normalizar fecha a datetime-local
+      function toLocal(iso){
+        if(!iso) return '';
+        var d = new Date(iso);
+        var off = d.getTimezoneOffset();
+        var loc = new Date(d.getTime() - off*60000);
+        return loc.toISOString().slice(0,16);
+      }
+
+      var leads = JSON.parse(localStorage.getItem('horizon_leads')||'[]');
+      var emailBuscar = attendeeEmail || (window._pendingLeadEmail||'');
+
+      var lead = null;
+      if(emailBuscar){
+        lead = leads.find(function(l){ return l.email && l.email.toLowerCase()===emailBuscar.toLowerCase(); });
+      }
+      if(!lead){
+        // fallback: lead más reciente
+        leads.sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+        lead = leads[0];
+      }
+      if(!lead) return;
+
+      if(startTime) lead.reunionFecha = toLocal(startTime);
+      if(location)  lead.calLink      = location;
+      if(!lead.historial) lead.historial=[];
+      lead.historial.push({
+        fecha: new Date().toLocaleString('es-CL'),
+        texto: 'Booking confirmado — Sesión: ' + (startTime ? new Date(startTime).toLocaleString('es-CL') : '') + (location ? ' · Link: '+location : '')
+      });
+      lead.updatedAt = new Date().toISOString();
+
+      var idx = leads.findIndex(function(l){ return l.id===lead.id; });
+      if(idx>-1) leads[idx]=lead;
+      localStorage.setItem('horizon_leads', JSON.stringify(leads));
+    } catch(err){}
+  }
+});
 </script>
 <script>
 // Scroll progress bar
