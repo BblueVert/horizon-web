@@ -1794,6 +1794,28 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({nombre: nombre, email: email, telefono: telefono, empresa: rubro, mensaje: need, fuente: 'landing-cal'})
     }).catch(function(){});
+    // Guardar en localStorage para que aparezca en el CRM inmediatamente
+    try {
+      var existingLeads = JSON.parse(localStorage.getItem('horizon_leads')) || [];
+      var newLead = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        nombre: nombre,
+        empresa: rubro,
+        email: email,
+        telefono: telefono,
+        sector: rubro,
+        canal: 'web',
+        plan: '',
+        tipoprecio: 'fundador',
+        status: 'new',
+        prioridad: 'Media',
+        nota: need,
+        createdAt: new Date().toISOString(),
+        historial: [{ fecha: new Date().toISOString(), texto: 'Lead ingresó desde landing — ' + need }]
+      };
+      existingLeads.push(newLead);
+      localStorage.setItem('horizon_leads', JSON.stringify(existingLeads));
+    } catch(err) {}
     closeModal();
     // Pre-fill Cal.com with name and email via query params
     var calUrl = CAL_URL + '?name=' + encodeURIComponent(nombre) + '&email=' + encodeURIComponent(email);
