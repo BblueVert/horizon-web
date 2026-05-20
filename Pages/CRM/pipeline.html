@@ -252,6 +252,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
         <option value="contacted">Contactado</option>
         <option value="diagnostic">Diagnóstico</option>
         <option value="proposal">Propuesta</option>
+        <option value="qualified">Calificado</option>
+        <option value="contract">Contrato enviado</option>
+        <option value="in_progress">Trabajo en proceso</option>
         <option value="converted">Cerrado ✓</option>
         <option value="lost">Perdido</option>
       </select>
@@ -373,6 +376,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
             <option value="contacted">Contactado</option>
             <option value="diagnostic">Diagnóstico agendado</option>
             <option value="proposal">Propuesta enviada</option>
+            <option value="qualified">Calificado</option>
+            <option value="contract">Contrato enviado</option>
+            <option value="in_progress">Trabajo en proceso</option>
             <option value="converted">Cerrado ✓</option>
             <option value="lost">Perdido</option>
           </select>
@@ -419,12 +425,15 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 <script>
 // ── CONSTANTES ─────────────────────────────────────────
 const COLS = [
-  { id:'new',        label:'Nuevo',              color:'#7b3fa0' },
-  { id:'contacted',  label:'Contactado',          color:'#f59e0b' },
-  { id:'diagnostic', label:'Diagnóstico',         color:'#e8637a' },
-  { id:'proposal',   label:'Propuesta enviada',   color:'#ff8c42' },
-  { id:'converted',  label:'Cerrado ✓',           color:'#10b981' },
-  { id:'lost',       label:'Perdido',             color:'#ef4444' },
+  { id:'new',         label:'Nuevo',              color:'#7b3fa0' },
+  { id:'contacted',   label:'Contactado',          color:'#f59e0b' },
+  { id:'diagnostic',  label:'Diagnóstico',         color:'#e8637a' },
+  { id:'proposal',    label:'Propuesta enviada',   color:'#ff8c42' },
+  { id:'qualified',   label:'Calificado',          color:'#3b82f6' },
+  { id:'contract',    label:'Contrato enviado',    color:'#a855f7' },
+  { id:'in_progress', label:'Trabajo en proceso',  color:'#06b6d4' },
+  { id:'converted',   label:'Cerrado ✓',           color:'#10b981' },
+  { id:'lost',        label:'Perdido',             color:'#ef4444' },
 ];
 
 const PLANS = {
@@ -441,7 +450,8 @@ const CANAL_LABELS = {
 
 const STATUS_COLORS = {
   new:'var(--violet)', contacted:'var(--amber)', diagnostic:'var(--rose)',
-  proposal:'var(--h1)', converted:'var(--green)', lost:'var(--red)'
+  proposal:'var(--h1)', qualified:'#3b82f6', contract:'#a855f7',
+  in_progress:'#06b6d4', converted:'var(--green)', lost:'var(--red)'
 };
 
 const DEFAULT_CUPOS = {
