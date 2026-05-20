@@ -212,9 +212,50 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .action-meta strong{color:var(--h1);}
 .action-note{font-family:var(--fm);font-size:10px;color:var(--text3);padding:6px 0;}
 .origen-tag{display:inline-flex;align-items:center;font-family:var(--fm);font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:3px;background:rgba(255,107,53,.1);color:var(--h2);margin-left:8px;}
+
+/* LOGIN OVERLAY */
+#loginOverlay{position:fixed;inset:0;background:var(--void);z-index:9999;
+  display:flex;align-items:center;justify-content:center;}
+#loginOverlay.hidden{display:none;}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:40px 36px;width:360px;display:flex;flex-direction:column;gap:20px;}
+.login-logo{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:3px;
+  color:var(--h1);text-align:center;}
+.login-logo span{font-family:var(--fm);font-size:9px;color:var(--text2);
+  letter-spacing:3px;display:block;margin-top:2px;}
+.login-field{display:flex;flex-direction:column;gap:6px;}
+.login-field label{font-family:var(--fm);font-size:9px;letter-spacing:2px;
+  color:var(--text3);text-transform:uppercase;}
+.login-field input{background:var(--card2);border:1px solid var(--border);
+  border-radius:6px;padding:10px 12px;color:var(--text);font-family:var(--fb);
+  font-size:13px;outline:none;transition:.15s;}
+.login-field input:focus{border-color:var(--h1);}
+.login-btn{background:var(--h1);color:#fff;border:none;border-radius:6px;
+  padding:11px;font-family:var(--fm);font-size:11px;letter-spacing:1px;
+  cursor:pointer;transition:.15s;text-transform:uppercase;}
+.login-btn:hover{background:#e55a28;}
+.login-err{font-family:var(--fm);font-size:10px;color:var(--rose);
+  text-align:center;min-height:14px;}
 </style>
 </head>
 <body>
+
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">HORIZON<span>· CRM PIPELINE</span></div>
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="correo@empresa.com" autocomplete="email">
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="login-err" id="loginErr"></div>
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+  </div>
+</div>
 
 <!-- HEADER -->
 <header class="hdr">
@@ -1244,6 +1285,29 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 document.getElementById('leadModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
 // Close modal on Escape
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── AUTH ───────────────────────────────────────────────
+const CRM_USER = 'soportebinks@gmail.com';
+const CRM_PASS = 'Binks751201.';
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('loginPass').value;
+  if (email === CRM_USER && pass === CRM_PASS) {
+    sessionStorage.setItem('crm_auth', '1');
+    document.getElementById('loginOverlay').classList.add('hidden');
+  } else {
+    document.getElementById('loginErr').textContent = 'Credenciales incorrectas.';
+  }
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+if (sessionStorage.getItem('crm_auth') === '1') {
+  document.getElementById('loginOverlay').classList.add('hidden');
+}
 
 // ── INIT ───────────────────────────────────────────────
 loadData();
