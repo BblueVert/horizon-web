@@ -196,6 +196,21 @@ select.fsel:hover{border-color:var(--border-h);}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px;}
 a:focus-visible,button:focus-visible{border-radius:6px;}
 input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent)!important;outline-offset:0!important;border-radius:8px;}
+
+/* ACCIONES CONTEXTUALES */
+.acciones-block{margin-top:18px;border-top:1px solid var(--border);padding-top:16px;}
+.acciones-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.acciones-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.acciones-grid{display:flex;flex-direction:column;gap:7px;}
+.action-btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--fm);font-size:10px;padding:8px 14px;border-radius:6px;text-decoration:none;cursor:pointer;border:none;letter-spacing:.4px;transition:.15s;width:100%;justify-content:flex-start;}
+.action-btn:hover{filter:brightness(1.15);transform:translateX(2px);}
+.action-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;margin-top:4px;}
+.action-field-wrap{background:var(--card3);border-radius:6px;padding:10px;margin-top:4px;}
+.action-field-label{font-family:var(--fm);font-size:8px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;display:block;margin-bottom:6px;}
+.action-meta{font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:6px;}
+.action-meta strong{color:var(--h1);}
+.action-note{font-family:var(--fm);font-size:10px;color:var(--text3);padding:6px 0;}
+.origen-tag{display:inline-flex;align-items:center;font-family:var(--fm);font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:3px;background:rgba(255,107,53,.1);color:var(--h2);margin-left:8px;}
 </style>
 </head>
 <body>
@@ -408,6 +423,12 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
         <div class="fl" style="margin-bottom:6px;">Mover etapa</div>
         <div class="stage-mover" id="stageMover"></div>
       </div>
+
+      <!-- Acciones contextuales por etapa -->
+      <div id="acciones-section" class="acciones-block" style="display:none;">
+        <div class="acciones-title">Acciones de esta etapa</div>
+        <div class="acciones-grid" id="accionesGrid"></div>
+      </div>
     </div>
     <div class="modal-ftr">
       <div class="modal-ftr-l">
@@ -614,11 +635,14 @@ function renderKanban(){
   });
 }
 
+const ORIGEN_SHORT = {'hero':'HERO','nav':'NAV','nav-mobile':'MOB','cta-seccion':'CTA','crm-manual':'CRM'};
+
 function cardHtml(l){
   const pLabel = l.plan && PLANS[l.plan] ? PLANS[l.plan].label.split('—')[0].trim() : '';
   const prio = l.prioridad||'Media';
+  const origenTag = l.origen ? `<span class="origen-tag">${ORIGEN_SHORT[l.origen]||l.origen.toUpperCase()}</span>` : '';
   return `<div class="kcard" data-id="${l.id}" draggable="true">
-    <div class="kcard-name">${esc(l.nombre||'Sin nombre')}</div>
+    <div class="kcard-name">${esc(l.nombre||'Sin nombre')}${origenTag}</div>
     <div class="kcard-empresa">${esc(l.empresa||'')}</div>
     ${pLabel?`<div class="kcard-plan">${pLabel}</div>`:''}
     <div class="kcard-foot">
@@ -745,6 +769,9 @@ function openModal(id){
     document.getElementById('stage-section').style.display='none';
   }
 
+  // Acciones contextuales
+  renderAcciones(lead);
+
   document.getElementById('leadModal').classList.add('open');
 }
 
@@ -779,6 +806,14 @@ function saveLead(){
     historial: prevLead?.historial||[],
     createdAt: prevLead?.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    // campos extras preservados
+    origen:       prevLead?.origen       || '',
+    calLink:      prevLead?.calLink      || '',
+    notionUrl:    prevLead?.notionUrl    || '',
+    githubUrl:    prevLead?.githubUrl    || '',
+    propuestaUrl: prevLead?.propuestaUrl || '',
+    contratoUrl:  prevLead?.contratoUrl  || '',
+    hooksRespuestas: prevLead?.hooksRespuestas || {},
   };
 
   // Cupos tracking on status change
@@ -851,6 +886,7 @@ function changeStage(newStatus){
     </button>
   `).join('');
   document.getElementById('f-status').value = newStatus;
+  renderAcciones(lead);
 
   saveLeads(); renderAll();
   showToast('Movido a '+COLS.find(c=>c.id===newStatus)?.label);
@@ -904,6 +940,150 @@ function showToast(msg, type=''){
   if(!type||type==='show') t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>t.className='toast',3000);
+}
+
+// ── ACCIONES CONTEXTUALES ──────────────────────────────
+function waUrl(phone, text){
+  const clean = String(phone||'').replace(/\D/g,'');
+  const num = clean.startsWith('56') ? clean : (clean.length>=9 ? '56'+clean : '');
+  if(!num) return null;
+  return 'https://wa.me/'+num+'?text='+encodeURIComponent(text);
+}
+
+function actionBtn(label, href, color, onclick){
+  if(onclick){
+    return `<button class="action-btn" style="background:${color}20;color:${color};border:1px solid ${color}40;" onclick="${onclick}">${label}</button>`;
+  }
+  return `<a href="${esc(href)}" target="_blank" rel="noopener" class="action-btn" style="background:${color}20;color:${color};border:1px solid ${color}40;">${label}</a>`;
+}
+
+function extraField(leadId, field, label, placeholder, currentVal){
+  return `<div class="action-field-wrap">
+    <label class="action-field-label">${label}</label>
+    <div style="display:flex;gap:6px;">
+      <input class="fi" id="xf-${field}" placeholder="${placeholder}" value="${esc(currentVal||'')}" style="flex:1;font-size:11px;">
+      <button class="btn btn-ghost btn-sm" onclick="saveExtraField('${field}','xf-${field}')">Guardar</button>
+    </div>
+  </div>`;
+}
+
+function getStageActions(lead){
+  const PHONE = lead.telefono || '';
+  const NAME  = lead.nombre   || 'cliente';
+  const wa    = (msg) => waUrl(PHONE, msg);
+  const waBtn = (label, msg) => {
+    const url = wa(msg);
+    return url ? actionBtn(label, url, '#25d366') : '';
+  };
+
+  const ORIGEN_LABELS = {
+    'hero':'Hero', 'nav':'Navegación', 'nav-mobile':'Menú móvil',
+    'cta-seccion':'CTA inferior', 'landing':'Landing', 'crm-manual':'CRM manual'
+  };
+
+  switch(lead.status){
+    case 'new': return `
+      <div class="action-label">Primer contacto</div>
+      ${waBtn('💬 Enviar mensaje inicial', `Hola ${NAME}, vi que te interesaste en HORIZON. ¿Tenés unos minutos para contarme sobre tu negocio? Así llegamos mejor preparados a la sesión 🙌`)}
+      ${lead.origen ? `<div class="action-meta">Origen: <strong>${ORIGEN_LABELS[lead.origen]||lead.origen}</strong></div>` : ''}
+    `;
+
+    case 'contacted': return `
+      <div class="action-label">Agendar diagnóstico</div>
+      ${actionBtn('📅 Abrir Cal.com', 'https://cal.com/horizonweb/diagnostico-horizon', 'var(--h1)')}
+      ${waBtn('💬 Recordatorio de agenda', `Hola ${NAME}! Te recuerdo que podés agendar tu diagnóstico HORIZON acá 👉 https://cal.com/horizonweb/diagnostico-horizon — 30 min, sin costo.`)}
+    `;
+
+    case 'diagnostic': return `
+      <div class="action-label">Reunión agendada</div>
+      ${lead.calLink ? actionBtn('🔗 Ir a la reunión', lead.calLink, '#3b82f6') : ''}
+      ${actionBtn('📋 Brief de reunión', '/reunion?id='+lead.id, '#a855f7')}
+      ${waBtn('💬 Confirmar asistencia', `Hola ${NAME}, te confirmo nuestra sesión HORIZON. ${lead.calLink ? 'Link: '+lead.calLink : ''} Nos vemos!`)}
+      ${extraField(lead.id,'calLink','Link de la reunión (Cal.com)','https://cal.com/...',lead.calLink)}
+    `;
+
+    case 'proposal': return `
+      <div class="action-label">Propuesta enviada</div>
+      ${lead.propuestaUrl ? actionBtn('📄 Ver propuesta', lead.propuestaUrl, '#ff8c42') : ''}
+      ${waBtn('💬 Follow-up propuesta', `Hola ${NAME}, ¿tuviste oportunidad de revisar la propuesta? Quedé a disposición para cualquier consulta 🙌`)}
+      ${waBtn('💬 Follow-up 48h (si no responde)', `Hola ${NAME}, quería acercarme antes de que se cierre la posibilidad. ¿Qué dudas tenés sobre la propuesta?`)}
+      ${extraField(lead.id,'propuestaUrl','Link de la propuesta','https://...',lead.propuestaUrl)}
+    `;
+
+    case 'qualified': return `
+      <div class="action-label">Listo para contrato</div>
+      ${waBtn('💬 Enviar contrato', `Hola ${NAME}, ¡genial que hayas dado el OK! Te envío el contrato para revisar y firmar. Cualquier duda me avisás 🤝`)}
+      ${actionBtn('📋 Ver brief de reunión', '/reunion?id='+lead.id, '#a855f7')}
+    `;
+
+    case 'contract': return `
+      <div class="action-label">Esperando contrato firmado</div>
+      ${lead.contratoUrl ? actionBtn('📝 Ver contrato', lead.contratoUrl, '#a855f7') : ''}
+      ${actionBtn('✅ Marcar anticipo recibido', '#', '#06b6d4', "marcarAnticipoRecibido()")}
+      ${waBtn('💬 Recordatorio contrato', `Hola ${NAME}, ¿ya pudiste revisar el contrato? Cuando lo firmes y tengamos el anticipo arrancamos 🚀`)}
+      ${extraField(lead.id,'contratoUrl','Link del contrato','https://...',lead.contratoUrl)}
+    `;
+
+    case 'in_progress': return `
+      <div class="action-label">Proyecto activo</div>
+      ${lead.notionUrl ? actionBtn('📝 Abrir en Notion', lead.notionUrl, '#a855f7') : ''}
+      ${lead.githubUrl ? actionBtn('🔗 Repositorio GitHub', lead.githubUrl, '#64a2ff') : ''}
+      ${waBtn('💬 Actualización al cliente', `Hola ${NAME}, te doy una actualización del proyecto: `)}
+      ${extraField(lead.id,'notionUrl','Notion URL','https://notion.so/...',lead.notionUrl)}
+      ${extraField(lead.id,'githubUrl','GitHub URL','https://github.com/...',lead.githubUrl)}
+    `;
+
+    case 'converted': return `
+      <div class="action-label">Proyecto cerrado 🎉</div>
+      ${waBtn('💬 Pedir testimonio', `Hola ${NAME}, fue un placer trabajar juntos! ¿Podés contarme brevemente:\n- ¿Qué problema querías resolver?\n- ¿Qué resultó del trabajo?\n- ¿Qué destacarías del proceso?\n\nUnas pocas líneas me ayudan muchísimo 🙏`)}
+      ${waBtn('💬 Oferta retainer (D+30)', `Hola ${NAME}, ¿cómo van los resultados? Te quería comentar sobre nuestros planes de continuidad para que el sistema siga creciendo 🚀`)}
+    `;
+
+    case 'lost': return `
+      <div class="action-label">Lead perdido</div>
+      ${waBtn('💬 Reactivar en 30 días', `Hola ${NAME}, pasé a saludarte. ¿Cómo va el negocio? Si en algún momento querés retomar la conversación, seguimos acá.`)}
+    `;
+
+    default: return '';
+  }
+}
+
+function renderAcciones(lead){
+  const section = document.getElementById('acciones-section');
+  const grid = document.getElementById('accionesGrid');
+  if(!lead){ section.style.display='none'; return; }
+  const html = getStageActions(lead);
+  if(!html.trim()){ section.style.display='none'; return; }
+  grid.innerHTML = html;
+  section.style.display='block';
+}
+
+function saveExtraField(field, inputId){
+  if(!currentId) return;
+  const lead = leads.find(l=>l.id===currentId);
+  if(!lead) return;
+  const val = document.getElementById(inputId)?.value.trim()||'';
+  lead[field] = val;
+  lead.updatedAt = new Date().toISOString();
+  if(!lead.historial) lead.historial=[];
+  lead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: field+' actualizado: '+val });
+  saveLeads();
+  renderAcciones(lead);
+  showToast('Guardado');
+}
+
+function marcarAnticipoRecibido(){
+  if(!currentId) return;
+  const lead = leads.find(l=>l.id===currentId);
+  if(!lead) return;
+  if(!lead.historial) lead.historial=[];
+  lead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: '✅ Anticipo recibido' });
+  lead.updatedAt = new Date().toISOString();
+  saveLeads();
+  // refresh historial
+  const histList = document.getElementById('hist-list');
+  if(histList) histList.innerHTML = lead.historial.map(h=>`<div class="hist-block"><div class="hist-date">${h.fecha}</div><div class="hist-text">${esc(h.texto)}</div></div>`).join('');
+  showToast('Anticipo marcado como recibido ✅');
 }
 
 // ── UTIL ───────────────────────────────────────────────

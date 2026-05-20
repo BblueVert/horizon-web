@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON · Brief de Reunión</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:#07060e; --card:#0f0e1a; --card2:#1a1828; --card3:#221f32;
+  --border:rgba(255,255,255,0.06); --border-h:rgba(255,255,255,0.13);
+  --h1:#ff6b35; --h2:#ff8c42; --amber:#f59e0b; --green:#10b981;
+  --rose:#e8637a; --violet:#a855f7; --blue:#64a2ff; --cyan:#06b6d4;
+  --text:#e8e6f0; --text2:#9a98a8; --text3:#4a4760;
+  --fm:"DM Mono",monospace; --fb:"Plus Jakarta Sans",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:100vh;font-size:13px;}
+
+/* HEADER */
+.hdr{height:52px;background:var(--card);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  position:sticky;top:0;z-index:100;}
+.hdr-logo{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:2px;
+  display:flex;align-items:center;gap:10px;}
+.hdr-logo span{font-family:var(--fm);font-size:9px;color:var(--text2);letter-spacing:3px;}
+.hdr-r{display:flex;align-items:center;gap:10px;}
+.btn{font-family:var(--fm);font-size:11px;border:none;cursor:pointer;border-radius:6px;
+  transition:.15s;display:inline-flex;align-items:center;gap:6px;letter-spacing:.5px;text-decoration:none;}
+.btn-primary{background:var(--h1);color:#fff;padding:7px 14px;}
+.btn-primary:hover{background:#e55a28;}
+.btn-ghost{background:var(--card2);color:var(--text2);padding:7px 12px;border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--border-h);color:var(--text);}
+.btn-sm{padding:5px 10px;font-size:10px;}
+.btn-green{background:#25d366;color:#fff;padding:7px 14px;}
+.btn-green:hover{background:#1db954;}
+
+/* LAYOUT */
+.page{max-width:860px;margin:0 auto;padding:28px 20px 60px;}
+
+/* SELECTOR */
+.lead-selector{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;}
+.sel-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.sel-row{display:flex;gap:10px;align-items:center;}
+select.fsel{background:var(--card2);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:var(--fb);font-size:13px;padding:8px 10px;
+  cursor:pointer;outline:none;flex:1;}
+select.fsel:focus{border-color:var(--h1);}
+
+/* BRIEF */
+.brief-wrap{display:none;}
+.brief-wrap.visible{display:block;}
+
+/* SECCIÓN */
+.section{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden;}
+.section-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.section-icon{font-size:16px;}
+.section-title{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:1px;}
+.section-status{font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.5px;margin-left:auto;}
+.section-body{padding:18px 20px;}
+
+/* INFO GRID */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.info-item{display:flex;flex-direction:column;gap:4px;}
+.info-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
+.info-value{font-size:13px;color:var(--text);font-weight:500;}
+.info-value a{color:var(--blue);text-decoration:none;}
+.info-value a:hover{text-decoration:underline;}
+.info-tag{display:inline-flex;font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(255,107,53,.1);color:var(--h2);letter-spacing:.5px;}
+
+/* STATUS BADGE */
+.status-pill{font-family:var(--fm);font-size:9px;padding:3px 10px;border-radius:4px;letter-spacing:.5px;}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:8px;}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;
+  background:var(--card2);border-radius:6px;cursor:pointer;transition:.15s;}
+.check-item:hover{background:var(--card3);}
+.check-item.done{opacity:.55;}
+.check-box{width:18px;height:18px;min-width:18px;border-radius:4px;border:1.5px solid var(--border-h);
+  display:flex;align-items:center;justify-content:center;transition:.15s;margin-top:1px;}
+.check-item.done .check-box{background:var(--green);border-color:var(--green);}
+.check-box svg{display:none;}
+.check-item.done .check-box svg{display:block;}
+.check-text{flex:1;font-size:12px;color:var(--text2);}
+.check-item.done .check-text{color:var(--text3);text-decoration:line-through;}
+.check-category{font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;margin-top:10px;}
+.check-category:first-child{margin-top:0;}
+
+/* HOOKS */
+.hook-block{margin-bottom:14px;}
+.hook-q{font-size:12px;color:var(--text2);margin-bottom:6px;line-height:1.5;}
+.hook-q strong{color:var(--h1);font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:3px;}
+.hook-resp{background:var(--card2);border:1px solid var(--border);border-radius:6px;
+  width:100%;color:var(--text);font-family:var(--fb);font-size:12px;padding:9px 12px;
+  outline:none;resize:vertical;min-height:56px;transition:border .15s;}
+.hook-resp:focus{border-color:var(--h1);}
+.hook-resp.filled{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
+
+/* NOTAS */
+.notes-area{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:var(--fb);font-size:13px;padding:12px;outline:none;
+  resize:vertical;min-height:120px;line-height:1.6;transition:border .15s;}
+.notes-area:focus{border-color:var(--h1);}
+
+/* ACCIONES FOOTER */
+.brief-actions{background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:16px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.brief-actions-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;flex:1;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);font-family:var(--fm);font-size:11px;letter-spacing:1px;}
+
+/* PRINT */
+@media print{
+  .hdr,.lead-selector,.brief-actions,.check-item{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .hdr-r,.sel-row button{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-logo">
+    HORIZON
+    <span>· BRIEF DE REUNIÓN</span>
+  </div>
+  <div class="hdr-r">
+    <a href="/crm" class="btn btn-ghost btn-sm">← CRM</a>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Imprimir</button>
+    <button class="btn btn-primary btn-sm" id="btnGuardar" onclick="guardarTodo()" style="display:none;">Guardar notas</button>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- SELECTOR DE LEAD -->
+  <div class="lead-selector">
+    <div class="sel-label">Seleccionar lead</div>
+    <div class="sel-row">
+      <select class="fsel" id="leadSelect" onchange="cargarLead()">
+        <option value="">— Elegir lead con diagnóstico agendado —</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="recargarLeads()">↺ Actualizar</button>
+    </div>
+  </div>
+
+  <!-- BRIEF -->
+  <div id="briefWrap" class="brief-wrap">
+
+    <!-- 1. PERFIL DEL LEAD -->
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-icon">👤</span>
+        <span class="section-title">Perfil del lead</span>
+        <span class="status-pill" id="leadStatusPill" style="margin-left:auto;"></span>
+      </div>
+      <div class="section-body">
+        <div class="info-grid" id="perfilGrid"></div>
+      </div>
+    </div>
+
+    <!-- 2. CONTEXTO DEL NEGOCIO -->
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-icon">🏢</span>
+        <span class="section-title">Contexto del negocio</span>
+      </div>
+      <div class="section-body">
+        <div id="contextoGrid" class="info-grid" style="margin-bottom:14px;"></div>
+        <div class="info-label" style="margin-bottom:6px;">Necesidad declarada</div>
+        <div id="necesidadBlock" style="background:var(--card2);border-radius:6px;padding:12px;font-size:13px;color:var(--text);border-left:3px solid var(--h1);"></div>
+      </div>
+    </div>
+
+    <!-- 3. RESPUESTAS A HOOKS PRE-REUNIÓN -->
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-icon">🎯</span>
+        <span class="section-title">Pre-calificación (hooks)</span>
+        <span class="section-status" style="background:rgba(245,158,11,.1);color:var(--amber);" id="hooksStatus">0 / 3 respondidas</span>
+      </div>
+      <div class="section-body">
+        <p style="font-family:var(--fm);font-size:10px;color:var(--text3);margin-bottom:16px;">
+          Respuestas del lead a los mensajes pre-reunión. Completar si llegaron por WhatsApp.
+        </p>
+        <div id="hooksContainer"></div>
+      </div>
+    </div>
+
+    <!-- 4. CHECKLIST PRE-SESIÓN -->
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-icon">✅</span>
+        <span class="section-title">Checklist pre-sesión</span>
+        <span class="section-status" id="checkStatus" style="background:rgba(16,185,129,.1);color:var(--green);">0 / 0 completados</span>
+      </div>
+      <div class="section-body">
+        <div class="checklist" id="checklist"></div>
+      </div>
+    </div>
+
+    <!-- 5. NOTAS DE LA SESIÓN -->
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-icon">📝</span>
+        <span class="section-title">Notas de la sesión</span>
+      </div>
+      <div class="section-body">
+        <p style="font-family:var(--fm);font-size:10px;color:var(--text3);margin-bottom:12px;">
+          Tomá notas durante la llamada. Se guardan en el historial del lead en el CRM.
+        </p>
+        <textarea class="notes-area" id="sesionNotas" placeholder="Anotar aquí: observaciones del negocio, objeciones, interés real, próximos pasos..."></textarea>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="brief-actions">
+      <span class="brief-actions-label">Después de la sesión</span>
+      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('proposal')">→ Pasar a Propuesta</button>
+      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('qualified')">→ Pasar a Calificado</button>
+      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('lost')" style="color:var(--red);">✗ Marcar perdido</button>
+      <button class="btn btn-primary btn-sm" onclick="guardarTodo()">Guardar todo</button>
+    </div>
+
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div id="emptyState" class="empty-state">
+    Seleccioná un lead para ver su brief de reunión
+  </div>
+
+</div>
+
+<script>
+// ── DATOS ─────────────────────────────────────────────────
+const HOOKS = [
+  { key: 'h1', pregunta: '¿Cuál es el mayor desafío de tu negocio hoy?', label: 'DESAFÍO PRINCIPAL' },
+  { key: 'h2', pregunta: '¿Tenés sitio web o redes activas? (mandame el link)', label: 'PRESENCIA DIGITAL' },
+  { key: 'h3', pregunta: '¿Cuántos clientes nuevos conseguís por mes aproximadamente?', label: 'VOLUMEN ACTUAL' },
+];
+
+const CHECKLIST_ITEMS = [
+  { cat: 'Investigación previa', items: [
+    'Revisar sitio web del cliente (si tiene)',
+    'Revisar Instagram / redes del cliente',
+    'Buscar Google Business / reseñas',
+    'Identificar 2-3 competidores directos',
+    'Leer el formulario pre-Cal respondido',
+  ]},
+  { cat: 'Preparación mental', items: [
+    'Revisar las respuestas a los hooks pre-reunión',
+    'Identificar el principal problema a resolver',
+    'Tener claro qué plan encaja mejor (Plan 01-04)',
+    'Preparar el "vacío de conocimiento" para el cierre',
+  ]},
+  { cat: 'Logística', items: [
+    'Confirmar que el link de Cal.com funciona',
+    'Abrir este brief antes de la llamada',
+    'Micrófono y cámara testeados',
+  ]},
+];
+
+const STATUS_LABELS = {
+  new:'Nuevo', contacted:'Contactado', diagnostic:'Diagnóstico',
+  proposal:'Propuesta', qualified:'Calificado', contract:'Contrato',
+  in_progress:'En proceso', converted:'Cerrado ✓', lost:'Perdido'
+};
+const STATUS_COLORS = {
+  new:'#7b3fa0', contacted:'#f59e0b', diagnostic:'#e8637a',
+  proposal:'#ff8c42', qualified:'#3b82f6', contract:'#a855f7',
+  in_progress:'#06b6d4', converted:'#10b981', lost:'#ef4444'
+};
+const ORIGEN_LABELS = {
+  hero:'Hero (CTA principal)', nav:'Navegación / Header', 'nav-mobile':'Menú móvil',
+  'cta-seccion':'CTA inferior de la landing', landing:'Landing', 'crm-manual':'Ingresado manual en CRM'
+};
+
+let allLeads = [];
+let currentLead = null;
+let checkState = {};
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function loadLeads(){
+  try{ allLeads = JSON.parse(localStorage.getItem('horizon_leads'))||[]; }
+  catch(e){ allLeads=[]; }
+}
+
+function saveLeads(){
+  localStorage.setItem('horizon_leads', JSON.stringify(allLeads));
+}
+
+function recargarLeads(){
+  loadLeads();
+  poblarSelector();
+  if(currentLead){
+    const updated = allLeads.find(l=>l.id===currentLead.id);
+    if(updated){ currentLead=updated; renderBrief(); }
+  }
+}
+
+function poblarSelector(){
+  const sel = document.getElementById('leadSelect');
+  const prevId = sel.value;
+  // Mostrar todos los leads, priorizando los de diagnóstico
+  const sorted = [...allLeads].sort((a,b)=>{
+    const pri = {'diagnostic':0,'contacted':1,'new':2};
+    const pa = pri[a.status]??3;
+    const pb = pri[b.status]??3;
+    return pa!==pb ? pa-pb : (b.createdAt||'').localeCompare(a.createdAt||'');
+  });
+  sel.innerHTML = '<option value="">— Elegir lead —</option>' +
+    sorted.map(l=>{
+      const stage = STATUS_LABELS[l.status]||l.status;
+      const fecha = l.createdAt ? new Date(l.createdAt).toLocaleDateString('es-CL',{day:'2-digit',month:'short'}) : '';
+      return `<option value="${esc(l.id)}">[${stage}] ${esc(l.nombre||'Sin nombre')} — ${esc(l.empresa||'')} ${fecha}</option>`;
+    }).join('');
+  if(prevId) sel.value = prevId;
+}
+
+function cargarLead(){
+  const id = document.getElementById('leadSelect').value;
+  if(!id){ ocultarBrief(); return; }
+  currentLead = allLeads.find(l=>l.id===id) || null;
+  if(!currentLead){ ocultarBrief(); return; }
+  checkState = JSON.parse(localStorage.getItem('horizon_check_'+id)||'{}');
+  renderBrief();
+  document.getElementById('btnGuardar').style.display='inline-flex';
+}
+
+function ocultarBrief(){
+  document.getElementById('briefWrap').classList.remove('visible');
+  document.getElementById('emptyState').style.display='block';
+  document.getElementById('btnGuardar').style.display='none';
+  currentLead=null;
+}
+
+function renderBrief(){
+  const l = currentLead;
+  if(!l) return;
+  document.getElementById('briefWrap').classList.add('visible');
+  document.getElementById('emptyState').style.display='none';
+
+  // STATUS
+  const color = STATUS_COLORS[l.status]||'#64a2ff';
+  document.getElementById('leadStatusPill').textContent = STATUS_LABELS[l.status]||l.status;
+  document.getElementById('leadStatusPill').style.cssText = `background:${color}20;color:${color};font-family:var(--fm);font-size:9px;padding:3px 10px;border-radius:4px;letter-spacing:.5px;margin-left:auto;`;
+
+  // PERFIL
+  const perfilItems = [
+    { label:'Nombre',     value: l.nombre||'—' },
+    { label:'Empresa / Negocio', value: l.empresa||'—' },
+    { label:'Email',      value: l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '—' },
+    { label:'Teléfono',   value: l.telefono ? `<a href="https://wa.me/${String(l.telefono).replace(/\D/g,'')}" target="_blank">+${esc(l.telefono)}</a>` : '—' },
+    { label:'Origen',     value: l.origen ? `<span class="info-tag">${ORIGEN_LABELS[l.origen]||l.origen}</span>` : '—' },
+    { label:'Creado',     value: l.createdAt ? new Date(l.createdAt).toLocaleString('es-CL') : '—' },
+    ...(l.calLink ? [{ label:'Link reunión', value: `<a href="${esc(l.calLink)}" target="_blank">Abrir reunión →</a>` }] : []),
+  ];
+  document.getElementById('perfilGrid').innerHTML = perfilItems.map(i=>
+    `<div class="info-item"><div class="info-label">${i.label}</div><div class="info-value">${i.value}</div></div>`
+  ).join('');
+
+  // CONTEXTO
+  const contextoItems = [
+    { label:'Sector / Rubro', value: l.sector||l.empresa||'—' },
+    { label:'Canal',          value: l.canal||'—' },
+    { label:'Plan de interés',value: l.plan ? l.plan.replace('plan0','Plan 0') : '—' },
+    { label:'Prioridad',      value: l.prioridad||'Media' },
+  ];
+  document.getElementById('contextoGrid').innerHTML = contextoItems.map(i=>
+    `<div class="info-item"><div class="info-label">${i.label}</div><div class="info-value">${esc(i.value)}</div></div>`
+  ).join('');
+  document.getElementById('necesidadBlock').textContent = l.nota||'Sin información declarada';
+
+  // HOOKS
+  const hooks = l.hooksRespuestas||{};
+  let respondidas = 0;
+  document.getElementById('hooksContainer').innerHTML = HOOKS.map(h=>{
+    const val = hooks[h.key]||'';
+    if(val) respondidas++;
+    return `<div class="hook-block">
+      <div class="hook-q"><strong>${h.label}</strong>${h.pregunta}</div>
+      <textarea class="hook-resp${val?' filled':''}" id="hook-${h.key}" placeholder="Respuesta del lead..."
+        oninput="actualizarHook('${h.key}',this)">${esc(val)}</textarea>
+    </div>`;
+  }).join('');
+  document.getElementById('hooksStatus').textContent = `${respondidas} / ${HOOKS.length} respondidas`;
+
+  // CHECKLIST
+  renderChecklist();
+
+  // NOTAS
+  const notas = l.sessionNotas||'';
+  document.getElementById('sesionNotas').value = notas;
+}
+
+function renderChecklist(){
+  let total=0, done=0;
+  let html='';
+  CHECKLIST_ITEMS.forEach(cat=>{
+    html += `<div class="check-category">${cat.cat}</div>`;
+    cat.items.forEach(item=>{
+      const key = btoa(item).slice(0,12);
+      const isDone = checkState[key]||false;
+      total++; if(isDone) done++;
+      html += `<div class="check-item${isDone?' done':''}" onclick="toggleCheck('${key}',this)">
+        <div class="check-box">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2,6 5,9 10,3"/>
+          </svg>
+        </div>
+        <span class="check-text">${esc(item)}</span>
+      </div>`;
+    });
+  });
+  document.getElementById('checklist').innerHTML = html;
+  document.getElementById('checkStatus').textContent = `${done} / ${total} completados`;
+}
+
+function toggleCheck(key, el){
+  checkState[key] = !checkState[key];
+  el.classList.toggle('done', checkState[key]);
+  if(currentLead) localStorage.setItem('horizon_check_'+currentLead.id, JSON.stringify(checkState));
+  // actualizar contador
+  const items = document.querySelectorAll('.check-item');
+  const done = document.querySelectorAll('.check-item.done').length;
+  document.getElementById('checkStatus').textContent = `${done} / ${items.length} completados`;
+}
+
+function actualizarHook(key, textarea){
+  if(!currentLead) return;
+  const val = textarea.value.trim();
+  if(!currentLead.hooksRespuestas) currentLead.hooksRespuestas={};
+  currentLead.hooksRespuestas[key] = val;
+  textarea.classList.toggle('filled', !!val);
+  let respondidas = HOOKS.filter(h=>currentLead.hooksRespuestas[h.key]).length;
+  document.getElementById('hooksStatus').textContent = `${respondidas} / ${HOOKS.length} respondidas`;
+}
+
+function guardarTodo(){
+  if(!currentLead) return;
+  const notas = document.getElementById('sesionNotas').value.trim();
+  currentLead.sessionNotas = notas;
+  // guardar hooks
+  HOOKS.forEach(h=>{
+    const el = document.getElementById('hook-'+h.key);
+    if(el){
+      if(!currentLead.hooksRespuestas) currentLead.hooksRespuestas={};
+      currentLead.hooksRespuestas[h.key] = el.value.trim();
+    }
+  });
+  // agregar nota al historial si hay notas de sesión nuevas
+  if(notas){
+    if(!currentLead.historial) currentLead.historial=[];
+    const yaExiste = currentLead.historial.some(h=>h.texto===('Notas de sesión: '+notas));
+    if(!yaExiste){
+      currentLead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: 'Notas de sesión: '+notas });
+    }
+  }
+  currentLead.updatedAt = new Date().toISOString();
+  const idx = allLeads.findIndex(l=>l.id===currentLead.id);
+  if(idx>-1) allLeads[idx]=currentLead;
+  saveLeads();
+  mostrarToast('Guardado en el CRM ✓');
+}
+
+function avanzarEtapa(newStatus){
+  if(!currentLead) return;
+  guardarTodo();
+  currentLead.status = newStatus;
+  currentLead.updatedAt = new Date().toISOString();
+  if(!currentLead.historial) currentLead.historial=[];
+  currentLead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: 'Etapa avanzada a: '+STATUS_LABELS[newStatus] });
+  const idx = allLeads.findIndex(l=>l.id===currentLead.id);
+  if(idx>-1) allLeads[idx]=currentLead;
+  saveLeads();
+  renderBrief();
+  poblarSelector();
+  mostrarToast('Movido a '+STATUS_LABELS[newStatus]);
+}
+
+// Toast
+function mostrarToast(msg){
+  let t = document.getElementById('toastR');
+  if(!t){
+    t=document.createElement('div');
+    t.id='toastR';
+    t.style.cssText='position:fixed;bottom:24px;right:24px;background:#10b981;color:#fff;font-family:var(--fm);font-size:11px;padding:10px 18px;border-radius:6px;z-index:400;transition:.3s;pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg; t.style.opacity='1';
+  setTimeout(()=>t.style.opacity='0', 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+function init(){
+  loadLeads();
+  poblarSelector();
+  // Si viene con ?id= en la URL, cargar ese lead directamente
+  const params = new URLSearchParams(window.location.search);
+  const idParam = params.get('id');
+  if(idParam){
+    document.getElementById('leadSelect').value = idParam;
+    cargarLead();
+  }
+}
+
+init();
+</script>
+</body>
+</html>

@@ -6,7 +6,8 @@
     { "source": "/plan-03", "destination": "/Pages/plan-03.html" },
     { "source": "/plan-04", "destination": "/Pages/plan-04.html" },
     { "source": "/servicios", "destination": "/Pages/servicios.html" },
-    { "source": "/crm", "destination": "/Pages/CRM/pipeline.html" }
+    { "source": "/crm", "destination": "/Pages/CRM/pipeline.html" },
+    { "source": "/reunion", "destination": "/Pages/reunion/index.html" }
   ],
   "headers": [
     {

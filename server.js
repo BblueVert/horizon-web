@@ -120,7 +120,8 @@ const rewrites = {
   '/plan-03': '/Pages/plan-03.html',
   '/plan-04': '/Pages/plan-04.html',
   '/servicios': '/Pages/servicios.html',
-  '/crm': '/Pages/CRM/pipeline.html',
+  '/crm':    '/Pages/CRM/pipeline.html',
+  '/reunion':'/Pages/reunion/index.html',
 };
 
 Object.entries(rewrites).forEach(([from, to]) => {

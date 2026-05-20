@@ -1058,7 +1058,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     <a href="#planes">Planes</a>
     <a href="#portfolio">Portfolio</a>
     <a href="#proceso">Proceso</a>
-    <a href="https://cal.com/horizonweb/diagnostico-horizon" class="nav-cta">Agendar diagnóstico</a>
+    <a href="https://cal.com/horizonweb/diagnostico-horizon" class="nav-cta" data-origin="nav">Agendar diagnóstico</a>
   </nav>
 </header>
 <div class="ham-overlay" id="hamOverlay"></div>
@@ -1083,7 +1083,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     <li><a href="/plan-03">Sistema con IA</a></li>
     <li><a href="/plan-04">Agente IA Personalizado</a></li>
   </ul>
-  <a href="https://cal.com/horizonweb/diagnostico-horizon" class="ham-cta-btn">Agendar diagnóstico →</a>
+  <a href="https://cal.com/horizonweb/diagnostico-horizon" class="ham-cta-btn" data-origin="nav-mobile">Agendar diagnóstico →</a>
 </nav>
 
 <!-- HERO -->
@@ -1100,7 +1100,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <strong>HORIZON construye el sistema que capta, responde y agenda mientras vos dormís.</strong>
     </p>
     <div class="hero-ctas">
-      <a href="https://cal.com/horizonweb/diagnostico-horizon" class="btn-primary">
+      <a href="https://cal.com/horizonweb/diagnostico-horizon" class="btn-primary" data-origin="hero">
         → Ver cuántos clientes estás perdiendo hoy
       </a>
     </div>
@@ -1529,7 +1529,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       En la llamada calculamos exactamente cuántos leads estás perdiendo por semana — con los datos reales de tu negocio. Salís con un número concreto, no con generalidades.
     </p>
     <div class="cta-btns">
-      <a href="https://cal.com/horizonweb/diagnostico-horizon" class="btn-primary">
+      <a href="https://cal.com/horizonweb/diagnostico-horizon" class="btn-primary" data-origin="cta-seccion">
         → Calcular mis leads perdidos
       </a>
       <a href="https://wa.me/56946513068?text=Hola%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20HORIZON%20%F0%9F%91%8B" class="btn-secondary">
@@ -1757,9 +1757,11 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   var closeBtn=document.getElementById('wa-modal-close');
   var form=document.getElementById('wa-prelead-form');
   var CAL_URL='https://cal.com/horizonweb/diagnostico-horizon';
+  var currentOrigin = 'landing';
 
   function openModal(e){
     e.preventDefault();
+    currentOrigin = (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.origin) || 'landing';
     overlay.style.display='flex';
     document.getElementById('waf-nombre').focus();
   }
@@ -1792,7 +1794,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     fetch('/api/leads', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({nombre: nombre, email: email, telefono: telefono, empresa: rubro, mensaje: need, fuente: 'landing-cal'})
+      body: JSON.stringify({nombre: nombre, email: email, telefono: telefono, empresa: rubro, mensaje: need, fuente: currentOrigin})
     }).catch(function(){});
     // Guardar en localStorage para que aparezca en el CRM inmediatamente
     try {
@@ -1805,13 +1807,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
         telefono: telefono,
         sector: rubro,
         canal: 'web',
+        origen: currentOrigin,
         plan: '',
         tipoprecio: 'fundador',
         status: 'new',
         prioridad: 'Media',
         nota: need,
+        calLink: '',
+        notionUrl: '',
+        githubUrl: '',
+        hooksRespuestas: {},
         createdAt: new Date().toISOString(),
-        historial: [{ fecha: new Date().toISOString(), texto: 'Lead ingresó desde landing — ' + need }]
+        historial: [{ fecha: new Date().toISOString(), texto: 'Lead ingresó desde ' + currentOrigin + ' — ' + need }]
       };
       existingLeads.push(newLead);
       localStorage.setItem('horizon_leads', JSON.stringify(existingLeads));
