@@ -78,6 +78,15 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .price-label{font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
 .price-val{font-family:var(--fd);font-size:52px;letter-spacing:.04em;background:linear-gradient(135deg,var(--h6),var(--h4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
 .price-currency{font-family:var(--fm);font-size:10px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-top:4px;}
+.price-tachado{font-family:var(--fd);font-size:22px;letter-spacing:.04em;color:var(--text3);text-decoration:line-through;opacity:.4;align-self:center;}
+.founder-badge{display:inline-block;font-family:var(--fm);font-size:7px;letter-spacing:.15em;color:var(--h6);background:rgba(123,63,160,.1);border:1px solid rgba(123,63,160,.2);border-radius:4px;padding:3px 8px;vertical-align:middle;margin-left:8px;}
+.cupos-strip{margin-top:0;margin-bottom:28px;padding:14px 20px;background:rgba(123,63,160,.04);border:1px solid rgba(123,63,160,.12);border-radius:10px;animation:fadeUp .6s .5s ease both;}
+.cupos-strip-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.cupos-strip-label{font-family:var(--fm);font-size:8px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;}
+.cupos-strip-num{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--h6);}
+.cupos-strip-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-bottom:8px;}
+.cupos-strip-fill{height:100%;background:linear-gradient(90deg,var(--h6),var(--h4));border-radius:2px;width:0%;transition:width 1s ease .7s;}
+.cupos-strip-sub{font-family:var(--fb);font-size:10px;color:var(--text3);}
 .price-divider{width:1px;height:60px;background:var(--border2);}
 .retainer-label{font-family:var(--fm);font-size:9px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
 .retainer-val{font-family:var(--fd);font-size:28px;letter-spacing:.04em;color:var(--text);line-height:1;margin-bottom:4px;}
@@ -237,9 +246,21 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
   <div class="hero-price-block">
     <div>
-      <div class="price-label">Implementación inicial</div>
-      <div class="price-val">Desde $1.490.000</div>
-      <div class="price-currency">CLP · Según complejidad del negocio</div>
+      <div class="price-label">Implementación inicial <span class="founder-badge">FUNDADOR · 50% OFF</span></div>
+      <div style="display:flex;align-items:baseline;gap:14px;">
+        <div class="price-val">$749.900</div>
+        <div class="price-tachado">$1.490.000</div>
+      </div>
+      <div class="price-currency">CLP · Según complejidad · Solo primeros 10 clientes</div>
+    </div>
+    <div class="price-divider"></div>
+    <div>
+      <div class="cupos-strip-label" style="margin-bottom:8px;">Cupos fundadores</div>
+      <div class="cupos-strip-head" style="margin-bottom:6px;">
+        <span style="font-family:var(--fb);font-size:11px;color:var(--text2);" id="cupos-sub">Cargando disponibilidad...</span>
+        <span class="cupos-strip-num" id="cupos-num">— / 10</span>
+      </div>
+      <div class="cupos-strip-bar"><div class="cupos-strip-fill" id="cupos-fill"></div></div>
     </div>
     <div class="price-divider"></div>
     <div>
@@ -510,19 +531,19 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
         <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h1);text-transform:uppercase;margin-bottom:12px;">Plan 01</div>
         <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">PRESENCIA DIGITAL</div>
         <p style="font-family:var(--fb);font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;">El primer sistema digital del negocio. Web, SEO local, WhatsApp y captación de leads.</p>
-        <div style="font-family:var(--fm);font-size:13px;color:var(--h1);">$590.000 CLP →</div>
+        <div style="font-family:var(--fm);font-size:13px;color:var(--h1);">$299.900 CLP →</div>
       </a>
       <a href="/plan-02" style="display:block;padding:28px;background:rgba(255,140,66,.04);border:1px solid rgba(255,140,66,.2);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s;" onmouseover="this.style.background='rgba(255,140,66,.08)';this.style.borderColor='rgba(255,140,66,.4)'" onmouseout="this.style.background='rgba(255,140,66,.04)';this.style.borderColor='rgba(255,140,66,.2)'">
         <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h2);text-transform:uppercase;margin-bottom:12px;">Plan 02</div>
         <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">ECOSISTEMA DIGITAL</div>
         <p style="font-family:var(--fb);font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Sistema completo con SEO avanzado, booking, CRM y chatbot personalizado.</p>
-        <div style="font-family:var(--fm);font-size:13px;color:var(--h2);">$990.000 CLP →</div>
+        <div style="font-family:var(--fm);font-size:13px;color:var(--h2);">$499.900 CLP →</div>
       </a>
       <a href="/plan-03" style="display:block;padding:28px;background:rgba(232,99,122,.04);border:1px solid rgba(232,99,122,.2);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s;" onmouseover="this.style.background='rgba(232,99,122,.08)';this.style.borderColor='rgba(232,99,122,.4)'" onmouseout="this.style.background='rgba(232,99,122,.04)';this.style.borderColor='rgba(232,99,122,.2)'">
         <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h4);text-transform:uppercase;margin-bottom:12px;">Plan 03</div>
         <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">SISTEMA CON IA</div>
         <p style="font-family:var(--fb);font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Agente IA integrado, automatizaciones n8n completas y Meta Ads gestionadas.</p>
-        <div style="font-family:var(--fm);font-size:13px;color:var(--h4);">$1.990.000 CLP →</div>
+        <div style="font-family:var(--fm);font-size:13px;color:var(--h4);">$999.900 CLP →</div>
       </a>
     </div>
     <div style="margin-top:32px;text-align:center;">
@@ -651,6 +672,27 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   els.forEach(function(el){ obs.observe(el); });
+})();
+</script>
+<script>
+(function(){
+  var SB='https://dkitbnrpwmwrfnmztdfc.supabase.co';
+  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
+  var PLAN='plan04', TOTAL=10;
+  fetch(SB+'/rest/v1/leads?select=id&plan=eq.'+PLAN+'&status=eq.converted',{
+    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'count=exact','Range-Unit':'items','Range':'0-0'}
+  }).then(function(r){
+    var ct=r.headers.get('Content-Range');
+    var tomados=ct?Math.max(0,parseInt(ct.split('/')[1])||0):0;
+    var libres=Math.max(0,TOTAL-tomados);
+    var n=document.getElementById('cupos-num');
+    var f=document.getElementById('cupos-fill');
+    var s=document.getElementById('cupos-sub');
+    if(n) n.textContent=libres+' / '+TOTAL;
+    if(f) f.style.width=Math.min(100,tomados/TOTAL*100)+'%';
+    if(s) s.textContent=libres===0?'Sin cupos fundadores disponibles':libres<=3?'⚡ Solo quedan '+libres+' cupos al precio fundador':libres+' cupos disponibles al precio fundador';
+    if(n&&libres<=3) n.style.color='var(--rose,#e8637a)';
+  }).catch(function(){});
 })();
 </script>
 </body>
