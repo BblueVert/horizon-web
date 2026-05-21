@@ -611,8 +611,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     form.reset();
   }
 
-  // Intercept WhatsApp directo buttons (btn-secondary with wa.me)
-  document.querySelectorAll('a.btn-secondary[href*="wa.me"]').forEach(function(btn){
+  var goToCal = false;
+
+  function openModal(e){
+    e.preventDefault();
+    goToCal = !!(e.currentTarget && e.currentTarget.href && e.currentTarget.href.includes('cal.com'));
+    overlay.style.display='flex';
+    document.getElementById('waf-nombre').focus();
+  }
+
+  document.querySelectorAll('a.btn-secondary[href*="wa.me"], a[href*="cal.com"]').forEach(function(btn){
     btn.addEventListener('click', openModal);
   });
 
@@ -625,16 +633,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     var nombre = document.getElementById('waf-nombre').value.trim();
     var rubro  = document.getElementById('waf-rubro').value.trim();
     var need   = document.getElementById('waf-necesidad').value;
-    var msg = 'Hola! Soy ' + nombre + ', tengo un negocio de ' + rubro + '. Necesito: ' + need + '. Me contacté desde horizonweb.cl';
-    var url = 'https://wa.me/56946513068?text=' + encodeURIComponent(msg);
-    // Enviar lead al backend (sin bloquear el flujo)
     fetch('/api/leads', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({nombre: nombre, empresa: rubro, mensaje: need, fuente: 'planes-whatsapp'})
+      body: JSON.stringify({nombre: nombre, empresa: rubro, mensaje: need, fuente: 'plan-04', plan: 'plan-04'})
     }).catch(function(){});
     closeModal();
-    window.open(url, '_blank');
+    if(goToCal){
+      window.open('https://cal.com/horizonweb/diagnostico-horizon?name='+encodeURIComponent(nombre), '_blank');
+    } else {
+      var msg = 'Hola! Soy ' + nombre + ', tengo un negocio de ' + rubro + '. Necesito: ' + need + '. Me contacté desde horizonweb.cl/plan-04';
+      window.open('https://wa.me/56946513068?text=' + encodeURIComponent(msg), '_blank');
+    }
   });
 })();
 </script>

@@ -61,6 +61,7 @@ module.exports = async function handler(req, res) {
     empresa:          sanitize(body.empresa),
     telefono:         sanitize(body.telefono, 30),
     nota:             sanitize(body.mensaje, 1000),
+    plan:             sanitize(body.plan, 100),
     canal:            sanitize(body.fuente, 100) || 'web',
     origen:           sanitize(body.origen, 100),
     status:           'new',

@@ -93,7 +93,11 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 .kb-col-title{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;}
 .kb-count{font-family:var(--fm);font-size:10px;color:var(--text3);
   background:var(--card2);padding:2px 7px;border-radius:10px;}
-.kb-body{flex:1;overflow-y:auto;padding:0 10px 10px;display:flex;flex-direction:column;gap:8px;}
+.kb-body{flex:1;overflow-y:auto;padding:0 10px 10px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:var(--h1) var(--card2);}
+.kb-body::-webkit-scrollbar{width:3px;}
+.kb-body::-webkit-scrollbar-track{background:var(--card2);border-radius:2px;}
+.kb-body::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--h1),var(--h2));border-radius:2px;}
+.kb-body::-webkit-scrollbar-thumb:hover{background:var(--h1);}
 .kb-body.drag-over{background:rgba(255,107,53,.04);border-radius:8px;}
 
 /* KANBAN CARD */
@@ -101,6 +105,15 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
   padding:12px;cursor:pointer;transition:.15s;position:relative;}
 .kcard:hover{border-color:var(--border-h);transform:translateY(-1px);}
 .kcard.dragging{opacity:.4;}
+.kcard.selected{border-color:var(--h1);background:rgba(255,107,53,.06);}
+.kcard-cb{position:absolute;top:10px;right:10px;width:16px;height:16px;border-radius:3px;
+  border:1.5px solid var(--text3);background:var(--card);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:10px;transition:.15s;}
+.kcard.selected .kcard-cb{border-color:var(--h1);background:var(--h1);color:#fff;}
+tr.selected td{background:rgba(255,107,53,.05);}
+tr.selected{outline:1px solid rgba(255,107,53,.3);}
+.row-cb{width:32px;text-align:center;}
+.row-cb input[type=checkbox]{accent-color:var(--h1);cursor:pointer;width:14px;height:14px;}
 .kcard-name{font-size:13px;font-weight:600;margin-bottom:2px;}
 .kcard-empresa{font-size:11px;color:var(--text2);margin-bottom:8px;}
 .kcard-plan{font-family:var(--fm);font-size:9px;letter-spacing:.5px;
@@ -359,7 +372,22 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
       <div class="view-toggle">
         <button class="vb active" id="vb-kanban" onclick="setView('kanban',null)">Kanban</button>
         <button class="vb" id="vb-list" onclick="setView('list',null)">Lista</button>
+        <button class="vb" id="vb-bulk" onclick="toggleBulkMode()" title="Selección múltiple">☑</button>
       </div>
+    </div>
+
+    <!-- BULK ACTION BAR -->
+    <div id="bulkBar" style="display:none;position:sticky;top:0;z-index:20;background:var(--card2);
+      border-bottom:1px solid var(--border);padding:8px 16px;display:none;
+      align-items:center;gap:10px;flex-wrap:wrap;">
+      <span id="bulkCount" style="font-family:var(--fm);font-size:10px;color:var(--text2);letter-spacing:.5px;"></span>
+      <button onclick="bulkDelete()" style="font-family:var(--fm);font-size:10px;padding:5px 12px;border-radius:4px;border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.1);color:#ef4444;cursor:pointer;letter-spacing:.5px;">✕ Eliminar</button>
+      <select id="bulkStageSelect" onchange="bulkMove(this.value);this.value=''"
+        style="font-family:var(--fm);font-size:10px;padding:5px 10px;border-radius:4px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;">
+        <option value="">→ Mover a etapa...</option>
+        ${(typeof COLS !== 'undefined' ? '' : '')}
+      </select>
+      <button onclick="bulkDeselect()" style="font-family:var(--fm);font-size:10px;padding:5px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;">Deseleccionar</button>
     </div>
 
     <!-- VIEWS -->
@@ -607,6 +635,8 @@ let currentId = null;
 let currentView = 'kanban';
 let sortField = 'createdAt';
 let sortDir = 'desc';
+let bulkMode = false;
+let selectedIds = new Set();
 
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
 
@@ -748,11 +778,11 @@ function renderKanban(){
     `;
   }).join('');
 
-  // bind drag
+  // bind drag & click
   wrap.querySelectorAll('.kcard').forEach(el=>{
-    el.addEventListener('dragstart', e=>{ el.classList.add('dragging'); e.dataTransfer.setData('text/plain',el.dataset.id); });
+    el.addEventListener('dragstart', e=>{ if(bulkMode){e.preventDefault();return;} el.classList.add('dragging'); e.dataTransfer.setData('text/plain',el.dataset.id); });
     el.addEventListener('dragend', ()=>{ el.classList.remove('dragging'); wrap.querySelectorAll('.kb-body').forEach(b=>b.classList.remove('drag-over')); });
-    el.addEventListener('click', ()=>openModal(el.dataset.id));
+    el.addEventListener('click', ()=>{ if(bulkMode) toggleSelect(el.dataset.id); else openModal(el.dataset.id); });
   });
 }
 
@@ -762,8 +792,12 @@ function cardHtml(l){
   const pLabel = l.plan && PLANS[l.plan] ? PLANS[l.plan].label.split('—')[0].trim() : '';
   const prio = l.prioridad||'Media';
   const origenTag = l.origen ? `<span class="origen-tag">${ORIGEN_SHORT[l.origen]||l.origen.toUpperCase()}</span>` : '';
-  return `<div class="kcard" data-id="${l.id}" draggable="true">
-    <div class="kcard-name">${esc(l.nombre||'Sin nombre')}${origenTag}</div>
+  const sel = selectedIds.has(l.id);
+  return `<div class="kcard${sel?' selected':''}" data-id="${l.id}" draggable="${!bulkMode}">
+    ${bulkMode ? `<div class="kcard-cb">${sel?'✓':''}</div>` : ''}
+    <div class="kcard-name" style="${bulkMode?'padding-right:24px':''}">
+      ${esc(l.nombre||'Sin nombre')}${origenTag}
+    </div>
     <div class="kcard-empresa">${esc(l.empresa||'')}</div>
     ${pLabel?`<div class="kcard-plan">${pLabel}</div>`:''}
     <div class="kcard-foot">
@@ -790,9 +824,11 @@ function renderList(){
     return `<th class="sortable" onclick="setSort('${f}')">${label} ${arrow}</th>`;
   };
 
+  const allSelected = sorted.length > 0 && sorted.every(l=>selectedIds.has(l.id));
   wrap.innerHTML=`
     <table>
       <thead><tr>
+        ${bulkMode ? `<th class="row-cb"><input type="checkbox" ${allSelected?'checked':''} title="Seleccionar todos" onchange="${allSelected?'bulkDeselect()':'selectAll()'}"></th>` : ''}
         ${thSort('nombre','Nombre')}
         ${thSort('empresa','Empresa')}
         <th>Plan</th>
@@ -804,7 +840,9 @@ function renderList(){
       </tr></thead>
       <tbody>
         ${sorted.map(l=>`
-          <tr onclick="openModal('${l.id}')">
+          <tr data-id="${l.id}" class="${selectedIds.has(l.id)?'selected':''}"
+            onclick="${bulkMode?`toggleSelect('${l.id}')`:`openModal('${l.id}')`}">
+            ${bulkMode ? `<td class="row-cb" onclick="event.stopPropagation();toggleSelect('${l.id}')"><input type="checkbox" ${selectedIds.has(l.id)?'checked':''} readonly></td>` : ''}
             <td><strong>${esc(l.nombre||'—')}</strong></td>
             <td>${esc(l.empresa||'—')}</td>
             <td style="font-size:11px;">${l.plan&&PLANS[l.plan]?PLANS[l.plan].label.split('—')[0].trim():'—'}</td>
@@ -1000,6 +1038,89 @@ async function changeStage(newStatus){
   try {
     await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentId, { status: newStatus });
   } catch(e) { showToast('Error al guardar','error'); console.error(e); }
+}
+
+// ── BULK ───────────────────────────────────────────────
+function toggleBulkMode(){
+  bulkMode = !bulkMode;
+  if(!bulkMode){ selectedIds.clear(); }
+  const btn = document.getElementById('vb-bulk');
+  btn.classList.toggle('active', bulkMode);
+  updateBulkBar();
+  renderAll();
+}
+
+function toggleSelect(id){
+  if(selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  updateBulkBar();
+  // update visual without full re-render
+  document.querySelectorAll(`[data-id="${id}"]`).forEach(el=>{
+    el.classList.toggle('selected', selectedIds.has(id));
+    const cb = el.querySelector('.kcard-cb');
+    if(cb) cb.textContent = selectedIds.has(id) ? '✓' : '';
+  });
+  document.querySelectorAll(`tr[data-id="${id}"]`).forEach(el=>{
+    el.classList.toggle('selected', selectedIds.has(id));
+    const cb = el.querySelector('input[type=checkbox]');
+    if(cb) cb.checked = selectedIds.has(id);
+  });
+}
+
+function updateBulkBar(){
+  const bar = document.getElementById('bulkBar');
+  const n = selectedIds.size;
+  if(!bulkMode || n === 0){ bar.style.display='none'; return; }
+  bar.style.display='flex';
+  document.getElementById('bulkCount').textContent = n + (n===1?' lead seleccionado':' leads seleccionados');
+  // Populate stage options once
+  const sel = document.getElementById('bulkStageSelect');
+  if(sel.options.length <= 1){
+    COLS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent='→ '+c.label; sel.appendChild(o); });
+  }
+}
+
+async function bulkDelete(){
+  const ids = [...selectedIds];
+  if(!ids.length) return;
+  if(!confirm(`¿Eliminar ${ids.length} lead(s)? Esta acción no se puede deshacer.`)) return;
+  leads = leads.filter(l=>!ids.includes(l.id));
+  selectedIds.clear();
+  updateBulkBar();
+  renderAll();
+  for(const id of ids){
+    sbFetch('DELETE','/rest/v1/leads?id=eq.'+id).catch(()=>{});
+  }
+  showToast(`${ids.length} lead(s) eliminado(s)`,'error');
+}
+
+async function bulkMove(status){
+  if(!status) return;
+  const ids = [...selectedIds];
+  if(!ids.length) return;
+  const label = COLS.find(c=>c.id===status)?.label||status;
+  leads.forEach(l=>{ if(ids.includes(l.id)){ l.status=status; l.updatedAt=new Date().toISOString(); } });
+  selectedIds.clear();
+  updateBulkBar();
+  renderAll();
+  for(const id of ids){
+    sbFetch('PATCH','/rest/v1/leads?id=eq.'+id,{status}).catch(()=>{});
+  }
+  showToast(`${ids.length} lead(s) → ${label}`);
+}
+
+function bulkDeselect(){
+  selectedIds.clear();
+  updateBulkBar();
+  document.querySelectorAll('.kcard.selected, tr.selected').forEach(el=>el.classList.remove('selected'));
+  document.querySelectorAll('.kcard-cb').forEach(el=>el.textContent='');
+  document.querySelectorAll('tr input[type=checkbox]').forEach(el=>el.checked=false);
+}
+
+function selectAll(){
+  getFiltered().forEach(l=>selectedIds.add(l.id));
+  updateBulkBar();
+  renderAll();
 }
 
 // ── VIEW ───────────────────────────────────────────────
