@@ -73,112 +73,83 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 
 <script>
 (function(){
-  const params = new URLSearchParams(window.location.search);
+  const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2MzM3NjgsImV4cCI6MjA2MzIwOTc2OH0.o82PRpHqX9r7yRuNXjbOuGT3_HF2N1bWRl7iRTJl-NA';
 
-  // Cal.com redirect variables: {startTime}, {email}, {name}, {location}
-  const fechaRaw  = params.get('fecha')  || params.get('startTime') || '';
-  const emailRaw  = params.get('email')  || '';
-  const nombreRaw = params.get('nombre') || params.get('name') || '';
-  const linkRaw   = params.get('link')   || params.get('location') || '';
+  const params    = new URLSearchParams(window.location.search);
+  const fechaRaw  = params.get('startTime') || params.get('fecha') || '';
+  const emailRaw  = (params.get('attendeeEmail') || params.get('email') || '').toLowerCase().trim();
+  const nombreRaw = params.get('attendeeName') || params.get('nombre') || params.get('name') || '';
+  const uidRaw    = params.get('uid') || '';
+  const linkRaw   = params.get('location') || params.get('link') || uidRaw;
 
-  // Formatear fecha para mostrar
   function formatFecha(str){
     if(!str) return '';
+    try{ return new Date(str).toLocaleString('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}); }
+    catch(e){ return str; }
+  }
+
+  if(nombreRaw){ document.getElementById('rowNombre').style.display='flex'; document.getElementById('valNombre').textContent=nombreRaw; document.getElementById('infoBlock').style.display='block'; }
+  if(fechaRaw){  document.getElementById('rowFecha').style.display='flex';  document.getElementById('valFecha').textContent=formatFecha(fechaRaw); document.getElementById('infoBlock').style.display='block'; }
+  if(emailRaw){  document.getElementById('rowEmail').style.display='flex';  document.getElementById('valEmail').textContent=emailRaw; document.getElementById('infoBlock').style.display='block'; }
+
+  async function sbFetch(method, path, body){
+    const r = await fetch(SB_URL + path, {
+      method,
+      headers:{ apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal' },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    return r;
+  }
+
+  async function actualizarLead(){
     try{
-      const d = new Date(str);
-      return d.toLocaleString('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
-    }catch(e){ return str; }
-  }
-
-  // Normalizar fecha a formato datetime-local (YYYY-MM-DDTHH:mm)
-  function toDatetimeLocal(str){
-    if(!str) return '';
-    try{
-      const d = new Date(str);
-      // Ajustar a hora local
-      const offset = d.getTimezoneOffset();
-      const local = new Date(d.getTime() - offset * 60000);
-      return local.toISOString().slice(0,16);
-    }catch(e){ return ''; }
-  }
-
-  // Mostrar info al usuario
-  if(nombreRaw){
-    document.getElementById('rowNombre').style.display='flex';
-    document.getElementById('valNombre').textContent = nombreRaw;
-    document.getElementById('infoBlock').style.display='block';
-  }
-  if(fechaRaw){
-    document.getElementById('rowFecha').style.display='flex';
-    document.getElementById('valFecha').textContent = formatFecha(fechaRaw);
-    document.getElementById('infoBlock').style.display='block';
-  }
-  if(emailRaw){
-    document.getElementById('rowEmail').style.display='flex';
-    document.getElementById('valEmail').textContent = emailRaw;
-    document.getElementById('infoBlock').style.display='block';
-  }
-
-  // Buscar el lead en localStorage y actualizar
-  function actualizarLead(){
-    try{
-      const leads = JSON.parse(localStorage.getItem('horizon_leads')) || [];
-      if(!leads.length){
-        document.getElementById('crmStatus').textContent = '⚠️ No se encontró el lead en CRM';
-        document.getElementById('crmNote').textContent = 'Actualizalo manualmente en horizonweb.cl/crm';
-        return false;
-      }
-
-      // Buscar por email (más confiable) o por nombre si no hay email
-      let lead = null;
+      // Buscar lead: primero por email, luego por nombre, luego el más reciente
+      let rows = [];
       if(emailRaw){
-        lead = leads.find(l => l.email && l.email.toLowerCase() === emailRaw.toLowerCase());
+        const r = await sbFetch('GET', `/rest/v1/leads?email=eq.${encodeURIComponent(emailRaw)}&limit=1`);
+        rows = await r.json();
       }
-      if(!lead && nombreRaw){
-        lead = leads.find(l => l.nombre && l.nombre.toLowerCase().includes(nombreRaw.toLowerCase().split(' ')[0]));
+      if(!rows.length && nombreRaw){
+        const r = await sbFetch('GET', `/rest/v1/leads?nombre=ilike.*${encodeURIComponent(nombreRaw.split(' ')[0])}*&limit=1`);
+        rows = await r.json();
       }
-      // Fallback: el lead más reciente
-      if(!lead){
-        lead = leads.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))[0];
+      if(!rows.length){
+        const r = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=1');
+        rows = await r.json();
       }
 
-      if(!lead){
+      if(!rows.length){
         document.getElementById('crmStatus').textContent = '⚠️ Lead no encontrado en CRM';
         document.getElementById('crmNote').textContent = 'Actualizalo manualmente en horizonweb.cl/crm';
-        return false;
+        return;
       }
 
-      // Actualizar campos
-      const fechaLocal = toDatetimeLocal(fechaRaw);
-      if(fechaLocal) lead.reunionFecha = fechaLocal;
-      if(linkRaw)    lead.calLink      = linkRaw;
-      if(!lead.historial) lead.historial = [];
-      lead.historial.push({
+      const lead = rows[0];
+      const historial = Array.isArray(lead.historial) ? lead.historial : [];
+      historial.push({
         fecha: new Date().toLocaleString('es-CL'),
         texto: 'Booking confirmado en Cal.com' +
-               (fechaLocal ? ' — Sesión: ' + formatFecha(fechaRaw) : '') +
-               (linkRaw ? ' — Link: ' + linkRaw : '')
+               (fechaRaw ? ' — Sesión: ' + formatFecha(fechaRaw) : '') +
+               (linkRaw  ? ' — UID: ' + linkRaw : '')
       });
-      lead.updatedAt = new Date().toISOString();
 
-      // Guardar
-      const idx = leads.findIndex(l=>l.id===lead.id);
-      if(idx>-1) leads[idx] = lead;
-      localStorage.setItem('horizon_leads', JSON.stringify(leads));
+      const patch = { historial, status: 'contacted' };
+      if(fechaRaw) patch.reunion_fecha = fechaRaw;
+      if(linkRaw)  patch.cal_link = linkRaw;
+
+      await sbFetch('PATCH', `/rest/v1/leads?id=eq.${lead.id}`, patch);
 
       document.getElementById('crmStatus').textContent = '✅ CRM actualizado automáticamente';
-      document.getElementById('crmStatus').style.cssText += 'background:rgba(16,185,129,.15);';
+      document.getElementById('crmStatus').style.background = 'rgba(16,185,129,.15)';
       document.getElementById('crmNote').textContent = 'Lead: ' + (lead.nombre||lead.email||'') + ' — horizonweb.cl/crm';
-      return true;
     }catch(e){
       document.getElementById('crmStatus').textContent = '⚠️ Error al actualizar CRM';
       document.getElementById('crmNote').textContent = String(e);
-      return false;
     }
   }
 
-  // Pequeño delay para que el localStorage del form haya terminado de escribir
-  setTimeout(actualizarLead, 800);
+  actualizarLead();
 })();
 </script>
 </body>
