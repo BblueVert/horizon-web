@@ -98,7 +98,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .services-section{padding:100px 0;}
 
 /* SERVICE CARDS */
-.service-cards{display:flex;flex-direction:column;gap:20px;}
+.service-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.service-card.card-05{grid-column:1 / -1;}
 
 .service-card{display:grid;grid-template-columns:72px 1fr auto;align-items:stretch;background:var(--card);border-radius:var(--rl);overflow:hidden;text-decoration:none;transition:background .25s,transform .2s;border:1px solid var(--border);}
 .service-card:hover{background:var(--surface);transform:translateY(-2px);}
@@ -185,6 +186,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 @media(max-width:900px){
   .wrap{padding:0 24px;}
   .hero{padding:clamp(40px,5vh,64px) 24px;}
+  .service-cards{grid-template-columns:1fr;}
   .service-card{grid-template-columns:56px 1fr;}
   .sc-arrow{display:none;}
   .proceso-grid{grid-template-columns:1fr 1fr;}
