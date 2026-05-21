@@ -1039,6 +1039,135 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   z-index: 10000; transition: top 0.2s;
 }
 .skip-link:focus { top: 8px; }
+
+/* ── LOGOS STRIP ── */
+.logos-strip { padding: 28px 0; overflow: hidden; background: var(--deep); position: relative; }
+.logos-strip::before,.logos-strip::after { content:''; position:absolute; top:0; bottom:0; width:140px; z-index:2; pointer-events:none; }
+.logos-strip::before { left:0; background:linear-gradient(90deg,var(--void),transparent); }
+.logos-strip::after  { right:0; background:linear-gradient(-90deg,var(--void),transparent); }
+.logos-strip-label { font-family:var(--font-m); font-size:9px; letter-spacing:.22em; color:var(--text3); text-transform:uppercase; text-align:center; margin-bottom:18px; }
+.logos-track-wrap { overflow:hidden; }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.logos-track { display:flex; align-items:center; gap:52px; width:max-content; animation:marquee 30s linear infinite; }
+.logos-track:hover { animation-play-state:paused; }
+.logo-item { font-family:var(--font-m); font-size:12px; letter-spacing:.08em; color:var(--text3); white-space:nowrap; user-select:none; transition:color .25s; }
+.logo-item:hover { color:var(--text2); }
+.logo-sep { width:3px; height:3px; border-radius:50%; background:var(--border2); flex-shrink:0; }
+
+/* ── PAIN CARDS ── */
+.pain-intro { text-align:center; max-width:660px; margin:0 auto 52px; }
+.pain-intro .section-title { font-size:clamp(32px,5vw,64px); text-align:center; }
+.pain-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.pain-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:32px 24px; transition:border-color .3s,transform .3s; }
+.pain-card:hover { border-color:var(--border2); transform:translateY(-4px); }
+.pain-icon { width:44px; height:44px; border-radius:10px; background:var(--surface); display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:var(--text2); }
+.pain-icon svg { width:20px; height:20px; }
+.pain-title { font-size:15px; font-weight:700; color:var(--white); margin-bottom:10px; line-height:1.3; }
+.pain-desc { font-size:13px; color:var(--text2); line-height:1.65; }
+
+/* ── DIAGNÓSTICO ── */
+.diag-wrap { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.diag-title { font-family:var(--font-d); font-size:clamp(36px,4.5vw,60px); letter-spacing:.03em; line-height:1; color:var(--white); margin-bottom:20px; }
+.diag-statement { font-family:var(--font-s); font-style:italic; font-size:clamp(15px,1.8vw,19px); color:var(--text2); line-height:1.6; border-left:2px solid var(--h1); padding-left:20px; margin-bottom:28px; }
+.diag-body { font-size:14px; color:var(--text2); line-height:1.75; margin-bottom:32px; }
+.diag-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.diag-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:20px; transition:border-color .25s,background .25s; }
+.diag-card:hover { border-color:rgba(255,107,53,.25); background:var(--surface); }
+.diag-card-num { font-family:var(--font-m); font-size:9px; letter-spacing:.2em; color:var(--h1); text-transform:uppercase; margin-bottom:8px; }
+.diag-card-icon { color:var(--text3); margin-bottom:8px; }
+.diag-card-icon svg { width:15px; height:15px; }
+.diag-card-title { font-weight:700; font-size:13px; color:var(--white); margin-bottom:5px; line-height:1.3; }
+.diag-card-desc { font-size:12px; color:var(--text2); line-height:1.6; }
+
+/* ── SOLUCIÓN ── */
+.solucion-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.solucion-title { font-family:var(--font-d); font-size:clamp(40px,5vw,68px); letter-spacing:.02em; line-height:1; color:var(--white); margin-bottom:32px; }
+.sol-features { display:flex; flex-direction:column; gap:24px; margin-bottom:36px; }
+.sol-item { display:flex; gap:16px; align-items:flex-start; }
+.sol-icon { width:40px; height:40px; border-radius:10px; background:rgba(255,107,53,.07); border:1px solid rgba(255,107,53,.14); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--h1); }
+.sol-icon svg { width:18px; height:18px; }
+.sol-title { font-weight:700; font-size:14px; color:var(--white); margin-bottom:4px; }
+.sol-desc { font-size:13px; color:var(--text2); line-height:1.6; }
+.sys-panel { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:24px; position:relative; overflow:hidden; }
+.sys-panel::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 60% 20%,rgba(255,107,53,.05),transparent); pointer-events:none; }
+.sys-status-row { display:flex; align-items:center; justify-content:space-between; background:var(--surface); border-radius:10px; padding:14px 16px; margin-bottom:16px; }
+.sys-status-left { display:flex; align-items:center; gap:12px; }
+.sys-status-icon { width:36px; height:36px; border-radius:8px; background:rgba(74,222,128,.1); display:flex; align-items:center; justify-content:center; color:#4ade80; }
+.sys-status-icon svg { width:18px; height:18px; }
+.sys-status-label { font-family:var(--font-m); font-size:9px; letter-spacing:.15em; color:var(--text3); text-transform:uppercase; }
+.sys-status-val { font-weight:700; font-size:14px; color:var(--white); }
+.sys-dot { width:10px; height:10px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px rgba(74,222,128,.6); animation:hiPulse 2s ease-in-out infinite; }
+.sys-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.sys-stat-card { background:var(--surface); border-radius:10px; padding:16px; }
+.sys-stat-label { font-family:var(--font-m); font-size:9px; letter-spacing:.15em; color:var(--text3); text-transform:uppercase; margin-bottom:8px; }
+.sys-stat-num { font-family:var(--font-d); font-size:40px; letter-spacing:.02em; color:var(--white); line-height:1; }
+.sys-stat-sub { font-size:11px; color:var(--h1); margin-top:4px; }
+.sys-stat-sub2 { font-size:11px; color:var(--text3); margin-top:4px; }
+
+/* ── PROCESO (horizontal cards) ── */
+.proceso-flow { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.paso-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:28px 24px; transition:border-color .3s,transform .3s,box-shadow .3s; }
+.paso-card:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(0,0,0,.35); }
+.paso-card:nth-child(1):hover { border-color:rgba(255,107,53,.4); }
+.paso-card:nth-child(2):hover { border-color:rgba(255,140,66,.4); }
+.paso-card:nth-child(3):hover { border-color:rgba(255,179,71,.4); }
+.paso-card:nth-child(4):hover { border-color:rgba(232,99,122,.4); }
+.paso-card-num { font-family:var(--font-d); font-size:48px; line-height:1; margin-bottom:16px; letter-spacing:.05em; }
+.paso-card:nth-child(1) .paso-card-num { color:var(--h1); }
+.paso-card:nth-child(2) .paso-card-num { color:var(--h2); }
+.paso-card:nth-child(3) .paso-card-num { color:var(--h3); }
+.paso-card:nth-child(4) .paso-card-num { color:var(--h4); }
+.paso-card-title { font-weight:700; font-size:14px; color:var(--white); margin-bottom:8px; line-height:1.3; }
+.paso-card-desc { font-size:12px; color:var(--text2); line-height:1.65; margin-bottom:16px; }
+.paso-card-dur { font-family:var(--font-m); font-size:9px; letter-spacing:.18em; color:var(--text3); text-transform:uppercase; }
+
+/* ── ENFOQUE ── */
+.enfoque-statement { font-family:var(--font-d); font-size:clamp(36px,5vw,72px); letter-spacing:.03em; line-height:.95; color:var(--white); text-align:center; margin-bottom:16px; }
+.enfoque-body-center { font-size:15px; color:var(--text2); line-height:1.7; max-width:600px; margin:0 auto 56px; text-align:center; }
+.enfoque-compare { display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:900px; margin:0 auto; }
+.compare-card { border-radius:var(--r-lg); padding:36px; }
+.compare-card.trad { background:var(--card); border:1px solid var(--border); }
+.compare-card.horizon { background:linear-gradient(135deg,rgba(255,107,53,.06),rgba(74,53,128,.08)); border:1px solid rgba(255,107,53,.22); }
+.compare-label { font-family:var(--font-m); font-size:9px; letter-spacing:.25em; text-transform:uppercase; margin-bottom:28px; }
+.compare-card.trad .compare-label { color:var(--text3); }
+.compare-card.horizon .compare-label { color:var(--h1); }
+.compare-pieces { display:flex; flex-wrap:wrap; gap:10px; min-height:130px; align-items:center; justify-content:center; }
+.compare-piece { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-family:var(--font-m); font-size:11px; letter-spacing:.05em; color:var(--text3); transform:rotate(var(--rot,0deg)); opacity:.65; transition:transform .4s,opacity .3s; }
+.compare-card.trad:hover .compare-piece { transform:rotate(calc(var(--rot,0deg) * 1.6)); opacity:.35; }
+.compare-subtitle { font-size:11px; color:var(--text3); text-align:center; margin-top:16px; font-family:var(--font-m); letter-spacing:.08em; }
+.compare-subtitle.good { color:var(--h1); }
+.hor-flow { display:flex; flex-direction:column; gap:8px; min-height:130px; justify-content:center; }
+.hor-step { display:flex; align-items:center; gap:12px; background:rgba(255,107,53,.05); border:1px solid rgba(255,107,53,.12); border-radius:8px; padding:10px 16px; transition:background .2s; }
+.hor-step:hover { background:rgba(255,107,53,.1); }
+.hor-step-num { font-family:var(--font-m); font-size:9px; letter-spacing:.1em; color:var(--h1); width:18px; flex-shrink:0; }
+.hor-step-label { font-size:13px; font-weight:600; color:var(--white); flex:1; }
+.hor-step-check { color:#4ade80; flex-shrink:0; }
+.hor-step-check svg { width:14px; height:14px; }
+
+/* ── REVEAL ENHANCED ── */
+.reveal-left { opacity:0; transform:translateX(-36px); transition:opacity .7s ease,transform .7s ease; }
+.reveal-right { opacity:0; transform:translateX(36px); transition:opacity .7s ease,transform .7s ease; }
+.reveal-scale { opacity:0; transform:scale(.94); transition:opacity .65s ease,transform .65s ease; }
+.reveal-left.visible,.reveal-right.visible,.reveal-scale.visible { opacity:1; transform:none; }
+.d1 { transition-delay:.1s; }
+.d2 { transition-delay:.2s; }
+.d3 { transition-delay:.3s; }
+
+/* ── PARALLAX ── */
+.hero-bg { will-change:transform; }
+
+@media (max-width:900px) {
+  .pain-grid { grid-template-columns:1fr 1fr; }
+  .diag-wrap { grid-template-columns:1fr; gap:48px; }
+  .solucion-grid { grid-template-columns:1fr; }
+  .proceso-flow { grid-template-columns:1fr 1fr; }
+  .enfoque-compare { grid-template-columns:1fr; max-width:520px; }
+}
+@media (max-width:600px) {
+  .pain-grid { grid-template-columns:1fr; }
+  .proceso-flow { grid-template-columns:1fr; }
+  .diag-cards { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
@@ -1054,10 +1183,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     <a href="/" class="header-logo-link"><img src="../Identidad/Logo-Vertical-png.png" alt="HORIZON"></a>
   </div>
   <nav>
-    <a href="#sistema">El sistema</a>
+    <a href="#solucion">La solución</a>
     <a href="#planes">Planes</a>
-    <a href="#portfolio">Portfolio</a>
     <a href="#proceso">Proceso</a>
+    <a href="#portfolio">Portfolio</a>
     <a href="https://cal.com/horizonweb/diagnostico-horizon" class="nav-cta" data-origin="nav">Agendar diagnóstico</a>
   </nav>
 </header>
@@ -1069,10 +1198,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   </div>
   <div class="ham-section-label">Inicio</div>
   <ul class="ham-nav">
-    <li><a href="#sistema">El sistema</a></li>
+    <li><a href="#solucion">La solución</a></li>
     <li><a href="#planes">Planes</a></li>
-    <li><a href="#portfolio">Portfolio</a></li>
     <li><a href="#proceso">Proceso</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
   </ul>
   <div class="ham-section-sep"></div>
   <div class="ham-section-label">Servicios</div>
@@ -1096,8 +1225,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       TE ESCRIBEN.
     </h1>
     <p class="hero-statement">
-      Y ninguno va a recibir respuesta hasta mañana — cuando ya contrataron a la competencia.<br>
-      <strong>HORIZON construye el sistema que capta, responde y agenda mientras vos dormís.</strong>
+      La mayoría de los negocios no pierde clientes por su producto.<br>
+      Los pierde porque no tiene un <strong>sistema que responda a tiempo.</strong>
     </p>
     <div class="hero-ctas">
       <a href="https://cal.com/horizonweb/diagnostico-horizon" class="btn-primary" data-origin="hero">
@@ -1147,33 +1276,77 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 <div class="divider"></div>
 
+<!-- LOGOS STRIP -->
+<div class="logos-strip">
+  <p class="logos-strip-label">Integración con plataformas líderes</p>
+  <div class="logos-track-wrap">
+    <div class="logos-track" aria-hidden="true">
+      <span class="logo-item">OpenAI</span><span class="logo-sep"></span>
+      <span class="logo-item">Anthropic</span><span class="logo-sep"></span>
+      <span class="logo-item">n8n</span><span class="logo-sep"></span>
+      <span class="logo-item">Supabase</span><span class="logo-sep"></span>
+      <span class="logo-item">Vercel</span><span class="logo-sep"></span>
+      <span class="logo-item">Cal.com</span><span class="logo-sep"></span>
+      <span class="logo-item">WhatsApp Business</span><span class="logo-sep"></span>
+      <span class="logo-item">Meta</span><span class="logo-sep"></span>
+      <span class="logo-item">Google</span><span class="logo-sep"></span>
+      <span class="logo-item">Make</span><span class="logo-sep"></span>
+      <span class="logo-item">Zapier</span><span class="logo-sep"></span>
+      <span class="logo-item">GoHighLevel</span><span class="logo-sep"></span>
+      <span class="logo-item">OpenAI</span><span class="logo-sep"></span>
+      <span class="logo-item">Anthropic</span><span class="logo-sep"></span>
+      <span class="logo-item">n8n</span><span class="logo-sep"></span>
+      <span class="logo-item">Supabase</span><span class="logo-sep"></span>
+      <span class="logo-item">Vercel</span><span class="logo-sep"></span>
+      <span class="logo-item">Cal.com</span><span class="logo-sep"></span>
+      <span class="logo-item">WhatsApp Business</span><span class="logo-sep"></span>
+      <span class="logo-item">Meta</span><span class="logo-sep"></span>
+      <span class="logo-item">Google</span><span class="logo-sep"></span>
+      <span class="logo-item">Make</span><span class="logo-sep"></span>
+      <span class="logo-item">Zapier</span><span class="logo-sep"></span>
+      <span class="logo-item">GoHighLevel</span><span class="logo-sep"></span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
 <!-- PROBLEMA -->
 <section id="problema" class="reveal">
   <div class="wrap">
-    <div class="section-label">El diagnóstico</div>
-    <h2 class="section-title">POR QUÉ<br>NO FUNCIONA</h2>
-    <p class="section-desc">Cada negocio local que no crece tiene el mismo patrón. No es falta de clientes — es falta de sistema.</p>
-
-    <div class="problema-grid">
-      <div class="problema-item">
-        <div class="problema-num">01</div>
-        <div class="problema-head">Dependen del boca a boca</div>
-        <div class="problema-body">El negocio existe en la cabeza del dueño y en los contactos de sus clientes actuales. Sin presencia digital estructurada, cada nuevo cliente es un accidente.</div>
+    <div class="pain-intro">
+      <div class="section-label">Diagnóstico actual</div>
+      <h2 class="section-title">¿Estás perdiendo clientes<br>sin darte cuenta?</h2>
+      <p class="section-desc" style="margin-bottom:0;text-align:center;">La mayoría de los negocios no falla por su producto. Falla porque no tiene un sistema que lo soporte.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card reveal-scale">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="pain-title">Clientes sin respuesta</div>
+        <div class="pain-desc">El cliente de hoy no espera. 5 minutos sin respuesta y el interés desaparece. No es falta de producto — es falta de sistema.</div>
       </div>
-      <div class="problema-item highlight">
-        <div class="problema-num">02</div>
-        <div class="problema-head">El dueño es el cuello de botella</div>
-        <div class="problema-body">Responde cada mensaje, coordina cada cita, maneja cada consulta. Si él no está disponible, el negocio tampoco lo está. No es escala — es desgaste.</div>
+      <div class="pain-card reveal-scale d1">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="pain-title">Leads que se enfrían</div>
+        <div class="pain-desc">Sin seguimiento automático, el interés se evapora. La intención de compra tiene fecha de vencimiento y no avisa cuando vence.</div>
       </div>
-      <div class="problema-item">
-        <div class="problema-num">03</div>
-        <div class="problema-body">Han intentado soluciones sueltas — un Instagram sin estrategia, una web genérica, alguien que "sabe de redes". Sin sistema, cada pieza suelta es presupuesto tirado.</div>
-        <div class="problema-head" style="margin-top: 12px;">Soluciones sueltas sin resultado</div>
+      <div class="pain-card reveal-scale d2">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </div>
+        <div class="pain-title">Invisible en lo digital</div>
+        <div class="pain-desc">¿Cuántos clientes buscaron hoy lo que vos ofrecés? Si Google y las IAs no te muestran, esos clientes no existen para vos.</div>
       </div>
-      <div class="problema-item">
-        <div class="problema-num">04</div>
-        <div class="problema-head">Miedo a invertir de nuevo</div>
-        <div class="problema-body">Ya pagaron por algo que no funcionó. Ahora dudan antes de cada decisión digital. El problema no fue la inversión — fue que compraron partes sin arquitectura.</div>
+      <div class="pain-card reveal-scale d3">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        </div>
+        <div class="pain-title">El dueño es el sistema</div>
+        <div class="pain-desc">Respondés mensajes, coordinás citas, atendés consultas. Si vos no estás, el negocio tampoco. Eso no es escala — es desgaste acumulado.</div>
       </div>
     </div>
   </div>
@@ -1181,45 +1354,104 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 <div class="divider"></div>
 
-<!-- SISTEMA -->
-<section id="sistema" class="reveal">
+<!-- DIAGNÓSTICO -->
+<section id="diagnostico" class="reveal">
   <div class="wrap">
-    <div class="sistema-grid">
-      <div>
-        <div class="section-label">La arquitectura</div>
-        <h2 class="section-title">HORIZON<br>ES UN<br>SISTEMA</h2>
-        <p class="sistema-statement">No vendemos páginas web.<br>Diseñamos el <em>sistema operativo digital</em> de tu negocio.</p>
-        <p class="sistema-body">Cada componente — diseño, identidad, web, SEO, GEO, chatbot, IA, automatización — está pensado para funcionar junto. No como piezas sueltas. Como arquitectura.</p>
-        <p class="sistema-body">El resultado: un negocio que capta clientes mientras el dueño duerme, responde consultas a las 3am, agenda citas solo, y registra todo en un panel que cualquiera entiende.</p>
-        <a href="#planes" class="btn-primary" style="margin-top: 8px;">Ver los planes →</a>
+    <div class="diag-wrap">
+      <div class="reveal-left">
+        <div class="section-label">Antes de proponer</div>
+        <h2 class="diag-title">ENTENDEMOS<br>CÓMO VENDE<br>TU NEGOCIO.</h2>
+        <p class="diag-statement">Sin comprensión, cualquier solución es intuición.<br>Trazamos el mapa <em>antes</em> de construir.</p>
+        <p class="diag-body">El diagnóstico no es un formulario — es una sesión de 30 minutos donde entendemos tu flujo real: cómo llegan tus clientes, dónde se pierden y qué los hace decidir.</p>
+        <a href="https://cal.com/horizonweb/diagnostico-horizon" class="btn-primary" data-origin="diagnostico">→ Agendar diagnóstico gratuito</a>
       </div>
-      <div class="diferenciadores">
-        <div class="dif-item">
-          <div class="dif-icon">UX</div>
-          <div class="dif-content">
-            <div class="dif-title">Diseño de nivel profesional</div>
-            <div class="dif-desc">Estándares internacionales aplicados al mercado local. No templates — arquitectura visual pensada para el negocio específico.</div>
+      <div class="diag-cards reveal-right">
+        <div class="diag-card">
+          <div class="diag-card-num">01</div>
+          <div class="diag-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M3 21v-5h5"/></svg></div>
+          <div class="diag-card-title">Cómo llegan tus clientes</div>
+          <div class="diag-card-desc">Canales, calidad del flujo y puntos de contacto actuales.</div>
+        </div>
+        <div class="diag-card">
+          <div class="diag-card-num">02</div>
+          <div class="diag-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <div class="diag-card-title">Dónde se pierden</div>
+          <div class="diag-card-desc">Fricciones, tiempo de respuesta y puntos de abandono.</div>
+        </div>
+        <div class="diag-card">
+          <div class="diag-card-num">03</div>
+          <div class="diag-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div class="diag-card-title">Qué los hace decidir</div>
+          <div class="diag-card-desc">Proceso de compra, objeciones y puntos de conversión reales.</div>
+        </div>
+        <div class="diag-card">
+          <div class="diag-card-num">04</div>
+          <div class="diag-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="diag-card-title">Cómo mantenerlos</div>
+          <div class="diag-card-desc">Retención, recompra y experiencia posventa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SOLUCIÓN -->
+<section id="solucion" class="reveal">
+  <div class="wrap">
+    <div class="solucion-grid">
+      <div class="reveal-left">
+        <div class="section-label">Nuestra solución</div>
+        <h2 class="solucion-title">Infraestructura<br>que escala sola.</h2>
+        <div class="sol-features">
+          <div class="sol-item">
+            <div class="sol-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="11"/></svg></div>
+            <div>
+              <div class="sol-title">Agentes de Inteligencia Artificial</div>
+              <div class="sol-desc">Un agente que atiende, califica y agenda por WhatsApp, Instagram y web las 24 horas. Vos solo ves los resultados.</div>
+            </div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></svg></div>
+            <div>
+              <div class="sol-title">Automatización de procesos</div>
+              <div class="sol-desc">Captura, seguimiento y cierre coordinados sin intervención manual. Menos errores, menos tiempo perdido.</div>
+            </div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+            <div>
+              <div class="sol-title">Panel de rendimiento en tiempo real</div>
+              <div class="sol-desc">Sabés exactamente cuántos leads tenés, en qué etapa están y dónde se caen. Decisiones en datos, no intuición.</div>
+            </div>
           </div>
         </div>
-        <div class="dif-item">
-          <div class="dif-icon">IA</div>
-          <div class="dif-content">
-            <div class="dif-title">Inteligencia artificial integrada</div>
-            <div class="dif-desc">No como add-on. Desde el diseño del sistema. Agentes entrenados con la información real del negocio — servicios, precios, objeciones, forma de hablar.</div>
+        <a href="#planes" class="btn-primary">Ver los planes →</a>
+      </div>
+      <div class="reveal-right">
+        <div class="sys-panel">
+          <div class="sys-status-row">
+            <div class="sys-status-left">
+              <div class="sys-status-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+              <div>
+                <div class="sys-status-label">Estado sistema</div>
+                <div class="sys-status-val">Óptimo · 99.9% Up</div>
+              </div>
+            </div>
+            <div class="sys-dot"></div>
           </div>
-        </div>
-        <div class="dif-item">
-          <div class="dif-icon">SEO</div>
-          <div class="dif-content">
-            <div class="dif-title">SEO + GEO en cada entrega</div>
-            <div class="dif-desc">Google y ChatGPT son dos buscadores distintos. Cada proyecto que entregamos está optimizado para los dos. El negocio aparece cuando lo buscan — y cuando le preguntan a una IA.</div>
-          </div>
-        </div>
-        <div class="dif-item">
-          <div class="dif-icon">CLP</div>
-          <div class="dif-content">
-            <div class="dif-title">Precio accesible para el mercado local</div>
-            <div class="dif-desc">El mismo nivel de trabajo que se cobra en USD en Santiago — disponible para negocios de Rancagua y la región. Sin intermediarios, sin costos inflados.</div>
+          <div class="sys-stats-grid">
+            <div class="sys-stat-card">
+              <div class="sys-stat-label">Leads esta semana</div>
+              <div class="sys-stat-num">+142</div>
+              <div class="sys-stat-sub">↑ 24% vs anterior</div>
+            </div>
+            <div class="sys-stat-card">
+              <div class="sys-stat-label">Tiempo ahorrado</div>
+              <div class="sys-stat-num">32h</div>
+              <div class="sys-stat-sub2">Semana actual</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1421,6 +1653,93 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 <div class="divider"></div>
 
+<!-- PROCESO -->
+<section id="proceso" class="reveal">
+  <div class="wrap">
+    <div class="section-label">Cómo trabajamos</div>
+    <h2 class="section-title">EL PROCESO</h2>
+    <p class="section-desc">Sin onboardings interminables. El diagnóstico es el punto de partida — de ahí construimos con propósito y sin sorpresas.</p>
+    <div class="proceso-flow">
+      <div class="paso-card reveal-scale">
+        <div class="paso-card-num">01</div>
+        <div class="paso-card-title">Diagnóstico gratuito</div>
+        <div class="paso-card-desc">30 minutos donde entendemos el negocio real — qué está trabado, qué necesita y dónde está la oportunidad. Sin presentaciones. Sin ventas.</div>
+        <div class="paso-card-dur">30 min · Gratuito · Sin compromiso</div>
+      </div>
+      <div class="paso-card reveal-scale d1">
+        <div class="paso-card-num">02</div>
+        <div class="paso-card-title">Blueprint del sistema</div>
+        <div class="paso-card-desc">Con el diagnóstico claro, diseñamos la arquitectura completa — qué construimos, en qué orden, con qué herramientas y por qué.</div>
+        <div class="paso-card-dur">3–5 días hábiles</div>
+      </div>
+      <div class="paso-card reveal-scale d2">
+        <div class="paso-card-num">03</div>
+        <div class="paso-card-title">Construcción</div>
+        <div class="paso-card-desc">Diseño, desarrollo, integraciones y pruebas. El cliente ve el progreso. El sistema se entrega funcionando — no como promesa.</div>
+        <div class="paso-card-dur">3–6 semanas según plan</div>
+      </div>
+      <div class="paso-card reveal-scale d3">
+        <div class="paso-card-num">04</div>
+        <div class="paso-card-title">Activación y retainer</div>
+        <div class="paso-card-desc">El sistema sale en vivo. El primer mes de retainer está incluido — soporte, ajustes y monitoreo hasta que el sistema se estabiliza.</div>
+        <div class="paso-card-dur">1 mes incluido</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ENFOQUE -->
+<section id="enfoque" class="reveal">
+  <div class="wrap">
+    <div class="section-label" style="text-align:center;">Nuestro enfoque</div>
+    <h2 class="enfoque-statement">NO SOMOS UNA AGENCIA.<br>DISEÑAMOS SISTEMAS.</h2>
+    <p class="enfoque-body-center">La mayoría vende piezas sueltas. Nosotros estructuramos cómo tu negocio capta, atiende y convierte. Estudiamos el proceso completo y construimos la infraestructura para que escale.</p>
+    <div class="enfoque-compare">
+      <div class="compare-card trad">
+        <div class="compare-label">Servicio digital tradicional</div>
+        <div class="compare-pieces">
+          <span class="compare-piece" style="--rot:-8deg;">Web</span>
+          <span class="compare-piece" style="--rot:5deg;">SEO</span>
+          <span class="compare-piece" style="--rot:-3deg;">Redes</span>
+          <span class="compare-piece" style="--rot:10deg;">Ads</span>
+          <span class="compare-piece" style="--rot:-6deg;">Diseño</span>
+        </div>
+        <div class="compare-subtitle">Caos · Piezas sueltas</div>
+      </div>
+      <div class="compare-card horizon">
+        <div class="compare-label">Sistema HORIZON</div>
+        <div class="hor-flow">
+          <div class="hor-step">
+            <span class="hor-step-num">01</span>
+            <span class="hor-step-label">Captura de leads</span>
+            <span class="hor-step-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+          <div class="hor-step">
+            <span class="hor-step-num">02</span>
+            <span class="hor-step-label">Respuesta y calificación IA</span>
+            <span class="hor-step-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+          <div class="hor-step">
+            <span class="hor-step-num">03</span>
+            <span class="hor-step-label">Agendamiento automático</span>
+            <span class="hor-step-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+          <div class="hor-step">
+            <span class="hor-step-num">04</span>
+            <span class="hor-step-label">CRM y seguimiento</span>
+            <span class="hor-step-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+        </div>
+        <div class="compare-subtitle good">Sistema integrado · Todo conectado</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- PORTFOLIO -->
 <section id="portfolio" class="reveal">
   <div class="wrap">
@@ -1463,52 +1782,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
           <span class="tag">E-commerce custom</span>
           <span class="tag">UX/UI Figma</span>
           <span class="tag">HORIZON × GO</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- PROCESO -->
-<section id="proceso" class="reveal">
-  <div class="wrap">
-    <div class="section-label">Cómo trabajamos</div>
-    <h2 class="section-title">EL PROCESO</h2>
-    <p class="section-desc">Sin onboardings interminables ni reuniones sin propósito. El diagnóstico es el punto de partida — de ahí construimos.</p>
-
-    <div class="proceso-steps">
-      <div class="paso">
-        <div class="paso-num">01</div>
-        <div class="paso-content">
-          <div class="paso-title">Diagnóstico gratuito</div>
-          <div class="paso-desc">Una llamada de 30 minutos donde entendemos el negocio — dónde está parado hoy, qué está trabado y qué necesita para crecer. Sin presentaciones. Sin ventas. Solo diagnóstico.</div>
-          <div class="paso-duration">30 min · Gratuito · Sin compromiso</div>
-        </div>
-      </div>
-      <div class="paso">
-        <div class="paso-num">02</div>
-        <div class="paso-content">
-          <div class="paso-title">Blueprint del ecosistema</div>
-          <div class="paso-desc">Con el diagnóstico claro, diseñamos la arquitectura del sistema — qué construimos, en qué orden, con qué herramientas y por qué. El blueprint es el mapa antes del código.</div>
-          <div class="paso-duration">3-5 días hábiles</div>
-        </div>
-      </div>
-      <div class="paso">
-        <div class="paso-num">03</div>
-        <div class="paso-content">
-          <div class="paso-title">Construcción del sistema</div>
-          <div class="paso-desc">Diseño, desarrollo, integraciones y pruebas. El cliente ve el progreso. Sin sorpresas al final. El sistema se entrega funcionando — no como promesa.</div>
-          <div class="paso-duration">3-6 semanas según el plan</div>
-        </div>
-      </div>
-      <div class="paso">
-        <div class="paso-num">04</div>
-        <div class="paso-content">
-          <div class="paso-title">Activación y transferencia</div>
-          <div class="paso-desc">El sistema sale en vivo y el dueño aprende a usarlo. El primer mes de retainer está incluido en todos los planes — soporte, ajustes y monitoreo mientras el sistema se estabiliza.</div>
-          <div class="paso-duration">1 mes incluido · Retainer opcional desde el mes 2</div>
         </div>
       </div>
     </div>
@@ -1934,10 +2207,10 @@ Cal("on", {
   update();
 })();
 
-// Scroll reveal for sections
+// Scroll reveal — handles .reveal, .reveal-left, .reveal-right, .reveal-scale
 (function(){
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var els = document.querySelectorAll('.reveal');
+  var els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
   if (!els.length) return;
   if (reduced) {
     els.forEach(function(el){ el.classList.add('visible'); });
@@ -1950,8 +2223,25 @@ Cal("on", {
         obs.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.07, rootMargin: '0px 0px -48px 0px' });
   els.forEach(function(el){ obs.observe(el); });
+})();
+
+// Parallax — hero bg + subtle section depth
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  var heroBg = document.querySelector('.hero-bg');
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var y = window.scrollY;
+      if (heroBg) heroBg.style.transform = 'translateY(' + (y * 0.12) + 'px)';
+      ticking = false;
+    });
+  }, { passive: true });
 })();
 </script>
 </body>
