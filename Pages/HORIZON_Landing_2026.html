@@ -48,6 +48,7 @@
 
   --r: 12px;
   --r-lg: 20px;
+  --header-h: 62px;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -172,13 +173,14 @@ nav a:hover { color: var(--text); }
 
 /* ── HERO ── */
 .hero-wrap {
-  min-height: 100dvh;
+  min-height: calc(100dvh - var(--header-h));
+  margin-top: var(--header-h);
   display: grid;
   grid-template-columns: 1fr 460px;
   gap: clamp(32px, 4vw, 72px);
   align-items: center;
-  padding: clamp(100px, 13vh, 160px) clamp(24px, 5vw, 72px) clamp(56px, 8vh, 100px);
-  max-width: 1380px; margin: 0 auto;
+  padding: clamp(48px, 7vh, 96px) clamp(24px, 5vw, 72px) clamp(48px, 7vh, 96px);
+  max-width: 1380px; margin-left: auto; margin-right: auto;
   position: relative;
   box-sizing: border-box;
 }
@@ -1053,7 +1055,7 @@ footer {
   .header-left { gap: 12px; }
   nav { display: none; }
   .ham-btn { display: flex; }
-  .hero-wrap { padding: clamp(90px,12vh,130px) 24px clamp(48px,7vh,80px); }
+  .hero-wrap { padding: clamp(40px,6vh,72px) 24px clamp(40px,6vh,72px); }
   .problema-grid { grid-template-columns: 1fr; }
   .sistema-grid { grid-template-columns: 1fr; gap: 48px; }
   .planes-grid { grid-template-columns: 1fr; }
