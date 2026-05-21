@@ -490,26 +490,38 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   document.querySelectorAll('.ham-nav a').forEach(function(a){if(a.getAttribute('href')===location.pathname)a.classList.add('active');});
 })();
 </script>
-<!-- Pre-lead Modal WhatsApp -->
+<!-- Pre-lead Modal -->
 <div id="wa-modal-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(7,6,14,.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-  <div id="wa-modal" style="background:#1A1828;border:1px solid #302D45;border-radius:16px;padding:32px 28px;width:90%;max-width:420px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+  <div id="wa-modal" style="background:#1A1828;border:1px solid #302D45;border-radius:16px;padding:32px 28px;width:90%;max-width:440px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.6);">
     <button id="wa-modal-close" aria-label="Cerrar" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#9B98B8;font-size:20px;cursor:pointer;line-height:1;">✕</button>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:#FF6B35;margin-bottom:8px;">ANTES DE CONTINUAR</div>
-    <h3 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:700;color:#F5F2FF;margin:0 0 6px;">Cuéntanos un poco</h3>
-    <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:#9B98B8;margin:0 0 24px;line-height:1.5;">Para darte una respuesta útil al tiro, necesitamos contexto básico.</p>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--h1);margin-bottom:8px;">UN PASO ANTES DE AGENDAR</div>
+    <h3 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:700;color:#F5F2FF;margin:0 0 6px;">Cuéntanos sobre tu negocio</h3>
+    <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:#9B98B8;margin:0 0 22px;line-height:1.5;">Así llegás al diagnóstico con contexto real y aprovechás los 30 minutos al máximo.</p>
     <form id="wa-prelead-form" autocomplete="off">
-      <div style="margin-bottom:14px;">
-        <label for="waf-nombre" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">TU NOMBRE</label>
-        <input id="waf-nombre" type="text" placeholder="Juan Pérez" required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 14px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label for="waf-nombre" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">TU NOMBRE</label>
+          <input id="waf-nombre" type="text" placeholder="Juan Pérez" required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 12px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+        </div>
+        <div>
+          <label for="waf-email" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">EMAIL</label>
+          <input id="waf-email" type="email" placeholder="tu@correo.com" required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 12px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+        </div>
       </div>
-      <div style="margin-bottom:14px;">
-        <label for="waf-rubro" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">RUBRO O TIPO DE NEGOCIO</label>
-        <input id="waf-rubro" type="text" placeholder="Clínica dental, restaurant, e-commerce..." required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 14px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label for="waf-rubro" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">RUBRO O NEGOCIO</label>
+          <input id="waf-rubro" type="text" placeholder="Clínica dental, restaurant..." required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 12px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+        </div>
+        <div>
+          <label for="waf-telefono" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">TELÉFONO / WHATSAPP</label>
+          <input id="waf-telefono" type="tel" placeholder="+569..." style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 12px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;">
+        </div>
       </div>
-      <div style="margin-bottom:24px;">
+      <div style="margin-bottom:22px;">
         <label for="waf-necesidad" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#9B98B8;display:block;margin-bottom:6px;">¿QUÉ NECESITAS?</label>
         <select id="waf-necesidad" required style="width:100%;box-sizing:border-box;background:#13111F;border:1px solid #302D45;border-radius:8px;padding:10px 14px;color:#F5F2FF;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;cursor:pointer;">
-          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="" disabled>Selecciona una opción</option>
           <option value="Presencia digital (sitio web, SEO, Google Business)">Presencia digital básica</option>
           <option value="Captar y automatizar leads">Captar y automatizar leads</option>
           <option value="CRM + automatización completa">CRM + automatización completa</option>
@@ -517,9 +529,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
           <option value="No sé bien, quiero orientación">No sé bien, quiero orientación</option>
         </select>
       </div>
-      <button id="waf-submit-btn" type="submit" style="width:100%;background:linear-gradient(135deg,#ff6b35,#ff8c42);color:#fff;border:none;border-radius:8px;padding:13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s;">
+      <button id="waf-submit-btn" type="submit" style="width:100%;background:linear-gradient(135deg,var(--h1),var(--h2));color:#fff;border:none;border-radius:8px;padding:13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s;">
         → Agendar diagnóstico gratis
       </button>
+      <p style="font-family:'DM Mono',monospace;font-size:10px;color:#9B98B8;text-align:center;margin:10px 0 0;letter-spacing:.05em;">30 min · sin costo · sin compromiso</p>
     </form>
   </div>
 </div>
@@ -553,13 +566,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    var nombre = document.getElementById('waf-nombre').value.trim();
-    var rubro  = document.getElementById('waf-rubro').value.trim();
-    var need   = document.getElementById('waf-necesidad').value;
+    var nombre   = document.getElementById('waf-nombre').value.trim();
+    var email    = document.getElementById('waf-email').value.trim();
+    var rubro    = document.getElementById('waf-rubro').value.trim();
+    var telefono = document.getElementById('waf-telefono').value.trim();
+    var need     = document.getElementById('waf-necesidad').value;
     fetch('/api/leads', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({nombre: nombre, empresa: rubro, mensaje: need, fuente: 'plan01', plan: 'plan01'})
+      body: JSON.stringify({nombre: nombre, email: email, empresa: rubro, telefono: telefono, mensaje: need, fuente: 'plan01', plan: 'plan01'})
     }).catch(function(){});
     closeModal();
     window.open('https://cal.com/horizonweb/diagnostico-horizon?name='+encodeURIComponent(nombre), '_blank');

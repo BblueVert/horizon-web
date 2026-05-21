@@ -1796,10 +1796,17 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     var telefono = document.getElementById('waf-telefono').value.trim();
     var need     = document.getElementById('waf-necesidad').value;
     // Registrar lead en backend (non-blocking)
+    var needToPlan = {
+      'Presencia digital (sitio web, SEO, Google Business)': 'plan-01',
+      'Captar y automatizar leads': 'plan-02',
+      'CRM + automatización completa': 'plan-03',
+      'IA integrada al negocio': 'plan-04',
+    };
+    var plan = needToPlan[need] || '';
     fetch('/api/leads', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({nombre: nombre, email: email, telefono: telefono, empresa: rubro, mensaje: need, fuente: currentOrigin})
+      body: JSON.stringify({nombre: nombre, email: email, telefono: telefono, empresa: rubro, mensaje: need, fuente: currentOrigin, plan: plan})
     }).catch(function(){});
     // Guardar en localStorage para que aparezca en el CRM inmediatamente
     try {
