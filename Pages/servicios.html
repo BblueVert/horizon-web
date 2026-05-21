@@ -26,6 +26,7 @@
   --text:#F5F2FF;--text2:#9B98B8;--text3:#504D6E;--white:#FAFAFF;
   --fd:'Bebas Neue',sans-serif;--fs:'Helvetica Neue',sans-serif;--fm:'DM Mono',monospace;--fb:'Plus Jakarta Sans',sans-serif;
   --r:12px;--rl:20px;
+  --header-h: 58px;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -69,7 +70,17 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
   var(--void);}
 
 /* HERO */
-.hero{padding:140px 48px 72px;max-width:1100px;margin:0 auto;}
+.hero{
+  padding:clamp(48px,7vh,80px) 48px clamp(48px,7vh,80px);
+  max-width:1100px;
+  margin-top:var(--header-h);
+  margin-left:auto;
+  margin-right:auto;
+  min-height:calc(100dvh - var(--header-h));
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
 .breadcrumb{font-family:var(--fm);font-size:9px;letter-spacing:.22em;color:var(--text3);text-transform:uppercase;margin-bottom:24px;}
 .breadcrumb a{color:var(--text3);text-decoration:none;transition:color .2s;}
 .breadcrumb a:hover{color:var(--h1);}
@@ -84,10 +95,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);}
 
 /* SERVICES SECTION */
-.services-section{padding:80px 0;}
+.services-section{padding:100px 0;}
 
 /* SERVICE CARDS */
-.service-cards{display:flex;flex-direction:column;gap:2px;}
+.service-cards{display:flex;flex-direction:column;gap:20px;}
 
 .service-card{display:grid;grid-template-columns:72px 1fr auto;align-items:stretch;background:var(--card);border-radius:var(--rl);overflow:hidden;text-decoration:none;transition:background .25s,transform .2s;border:1px solid var(--border);}
 .service-card:hover{background:var(--surface);transform:translateY(-2px);}
@@ -124,7 +135,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .card-04{border-color:rgba(123,63,160,.15);}
 
 /* COMPARE TABLE */
-.compare-section{padding:80px 0;}
+.compare-section{padding:100px 0;}
 .section-label{font-family:var(--fm);font-size:9px;letter-spacing:.3em;color:var(--h1);text-transform:uppercase;margin-bottom:14px;}
 .section-title{font-family:var(--fd);font-size:clamp(36px,5vw,56px);line-height:.95;letter-spacing:.04em;color:var(--white);margin-bottom:16px;}
 .section-desc{font-size:14px;color:var(--text2);max-width:580px;line-height:1.7;margin-bottom:48px;}
@@ -143,8 +154,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .dash{color:var(--border2);}
 
 /* PROCESO */
-.proceso-section{padding:80px 0;}
-.proceso-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;}
+.proceso-section{padding:100px 0;}
+.proceso-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
 .proceso-step{padding:32px 28px;background:var(--card);border-radius:var(--r);}
 .paso-num{font-family:var(--fd);font-size:48px;letter-spacing:.04em;background:linear-gradient(135deg,var(--h1),var(--h6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px;}
 .paso-name{font-family:var(--fb);font-weight:700;font-size:14px;color:var(--white);margin-bottom:8px;}
@@ -168,7 +179,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 
 @media(max-width:900px){
   .wrap{padding:0 24px;}
-  .hero{padding:110px 24px 60px;}
+  .hero{padding:clamp(40px,5vh,64px) 24px;}
   .service-card{grid-template-columns:56px 1fr;}
   .sc-arrow{display:none;}
   .proceso-grid{grid-template-columns:1fr 1fr;}
@@ -179,7 +190,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 }
 @media(max-width:640px){
   .nav-cta{display:none;}
-  .hero{padding:90px 20px 50px;}
+  .hero{padding:clamp(32px,4vh,48px) 20px;}
   .wrap{padding:0 20px;}
   .sc-body{padding:24px 20px;}
   .sc-number{width:44px;font-size:20px;}
@@ -198,7 +209,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 
 <style>
 /* Precio Fundador — servicios */
-.founder-section{padding:64px 0 48px;background:linear-gradient(180deg,rgba(123,63,160,.04) 0%,transparent 100%);}
+.founder-section{padding:100px 0 80px;background:linear-gradient(180deg,rgba(123,63,160,.04) 0%,transparent 100%);}
 .fs-header{text-align:center;max-width:640px;margin:0 auto 40px;}
 .fs-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--h1);background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);padding:5px 10px;border-radius:20px;margin-bottom:16px;}
 .fs-title{font-family:var(--fb);font-size:clamp(22px,4vw,32px);font-weight:700;line-height:1.25;margin-bottom:14px;color:var(--text);}
@@ -392,10 +403,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       </div>
       <div class="fs-plan">
         <div class="fs-plan-name">Plan 04 · Agente IA Personalizado</div>
-        <div class="fs-plan-price"><span class="fs-price-f">Desde $745.000</span><span class="fs-price-n">$1.490.000</span></div>
+        <div class="fs-plan-price"><span class="fs-price-f" style="font-size:15px;letter-spacing:.03em;">A consultar</span></div>
         <div class="fs-cupos-row" data-plan="plan04">
-          <div class="fs-bar-wrap"><div class="fs-bar-fill" data-plan-bar="plan04" data-width="0"></div></div>
-          <div class="fs-cupos-text"><strong data-avail>10</strong>/10 disponibles</div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--text3);line-height:1.5;">Precio según alcance<br>Primeros 10 clientes fundadores</div>
         </div>
       </div>
     </div>
