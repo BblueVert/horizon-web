@@ -625,7 +625,7 @@ section { padding: 100px 0; }
 }
 .plan-card.plan-01:hover { border-color: rgba(255,107,53,0.4); box-shadow: 0 24px 60px rgba(255,107,53,0.08); }
 .plan-card.plan-02:hover { border-color: rgba(255,140,66,0.4); box-shadow: 0 24px 60px rgba(255,140,66,0.08); }
-.plan-card.plan-03:hover { border-color: rgba(232,99,122,0.4); box-shadow: 0 24px 60px rgba(232,99,122,0.08); }
+.plan-card.plan-03:hover { border-color: rgba(255,179,71,0.4); box-shadow: 0 24px 60px rgba(255,179,71,0.08); }
 .plan-card.plan-04 {
   grid-column: 1 / -1;
   flex-direction: row;
@@ -647,7 +647,7 @@ section { padding: 100px 0; }
 }
 .plan-01 .plan-num-tag { color: var(--h1); }
 .plan-02 .plan-num-tag { color: var(--h2); }
-.plan-03 .plan-num-tag { color: var(--h4); }
+.plan-03 .plan-num-tag { color: var(--h3); }
 .plan-04 .plan-num-tag { color: var(--h6); }
 
 .plan-name {
@@ -682,7 +682,7 @@ section { padding: 100px 0; }
 }
 .plan-01 .plan-price { color: var(--h1); }
 .plan-02 .plan-price { color: var(--h2); }
-.plan-03 .plan-price { color: var(--h4); }
+.plan-03 .plan-price { color: var(--h3); }
 .plan-04 .plan-price {
   background: linear-gradient(135deg, var(--h6), var(--h4));
   -webkit-background-clip: text;
@@ -806,7 +806,7 @@ section { padding: 100px 0; }
 .plan-cta:hover { opacity: 0.85; }
 .plan-01 .plan-cta { background: linear-gradient(135deg, var(--h1), var(--h2)); }
 .plan-02 .plan-cta { background: linear-gradient(135deg, var(--h2), var(--h3)); }
-.plan-03 .plan-cta { background: linear-gradient(135deg, var(--h4), var(--h5)); }
+.plan-03 .plan-cta { background: linear-gradient(135deg, var(--h3), var(--h4)); }
 .plan-04-left { flex: 1; }
 .plan-04-right { flex: 1; }
 .plan-04 .plan-cta {
@@ -1272,8 +1272,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     <li><a href="/servicios">Ver todos los servicios</a></li>
     <li><a href="/plan-01">Presencia Digital</a></li>
     <li><a href="/plan-02">Ecosistema Digital</a></li>
-    <li><a href="/plan-03">Sistema con IA</a></li>
-    <li><a href="/plan-04">Agente IA Personalizado</a></li>
+    <li><a href="/plan-03">Negocio Activo</a></li>
+    <li><a href="/plan-04">Sistema con IA</a></li>
+    <li><a href="/plan-05">Agente IA Personalizado</a></li>
   </ul>
   <a href="https://cal.com/horizonweb/diagnostico-horizon" class="ham-cta-btn" data-origin="nav-mobile">Agendar diagnóstico →</a>
 </nav>
@@ -1613,8 +1614,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <!-- PLAN 03 -->
       <a class="plan-card plan-03" href="/plan-03">
         <div class="plan-num-tag">Plan 03</div>
-        <div class="plan-name">SISTEMA CON IA</div>
-        <p class="plan-para">Para negocios donde el dueño sigue siendo el cuello de botella. Quiere que el negocio funcione solo — que capte, responda, venda y registre sin que él tenga que intervenir.</p>
+        <div class="plan-name">NEGOCIO ACTIVO</div>
+        <p class="plan-para">Para negocios con sistema digital que necesitan pauta real, presencia en IA y los primeros flujos automatizados que trabajan sin intervención del dueño.</p>
         <div class="plan-founder">
           <div class="pf-header">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -1625,6 +1626,44 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
             <span class="pf-slots-taken" data-taken>0 tomados</span>
           </div>
           <div class="pf-bar"><div class="pf-bar-fill" data-width="0" data-plan-bar="plan03"></div></div>
+          <div class="pf-price-row">
+            <span class="pf-price">$699.900</span>
+            <span class="pf-original">$1.399.900</span>
+            <span class="pf-save">50% OFF</span>
+          </div>
+          <div class="pf-currency">CLP · Proyecto · Solo primeros 10 clientes</div>
+          <div class="pf-benefits">
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Retainer desde el mes 2 al precio normal</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Co-construcción — tu feedback da forma al sistema</div>
+            <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Caso de estudio con visibilidad de marca</div>
+          </div>
+        </div>
+        <div class="plan-retainer-tag">Retainer mes 2+ desde $270.000 CLP/mes · Fee Meta Ads incluido</div>
+        <div class="plan-items">
+          <div class="plan-item">Todo el Plan 02</div>
+          <div class="plan-item">SEO técnico avanzado</div>
+          <div class="plan-item">Auditoría completa del negocio</div>
+          <div class="plan-item">Campañas Meta Ads gestionadas</div>
+          <div class="plan-item">Automatizaciones n8n básicas</div>
+        </div>
+        <span class="plan-cta">Ver plan completo →</span>
+      </a>
+
+      <!-- PLAN 04 -->
+      <a class="plan-card plan-04" href="/plan-04">
+        <div class="plan-num-tag">Plan 04</div>
+        <div class="plan-name">SISTEMA CON IA</div>
+        <p class="plan-para">Para negocios donde el dueño sigue siendo el cuello de botella. GEO completo con monitoreo, agente IA integrado y automatizaciones n8n avanzadas.</p>
+        <div class="plan-founder">
+          <div class="pf-header">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            PRECIO FUNDADOR
+          </div>
+          <div class="pf-slots-row" data-plan="plan04">
+            <span class="pf-slots-avail"><strong data-avail>10</strong> cupos disponibles de 10</span>
+            <span class="pf-slots-taken" data-taken>0 tomados</span>
+          </div>
+          <div class="pf-bar"><div class="pf-bar-fill" data-width="0" data-plan-bar="plan04"></div></div>
           <div class="pf-price-row">
             <span class="pf-price">$999.900</span>
             <span class="pf-original">$1.999.900</span>
@@ -1637,23 +1676,20 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
             <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Caso de estudio con visibilidad de marca</div>
           </div>
         </div>
-        <div class="plan-retainer-tag">Retainer mes 2+ desde $350.000 CLP/mes · Fee Meta Ads incluido</div>
+        <div class="plan-retainer-tag">Retainer mes 2+ desde $350.000 CLP/mes · sin Meta Ads</div>
         <div class="plan-items">
-          <div class="plan-item">Todo el Plan 02</div>
-          <div class="plan-item">SEO técnico avanzado + auditoría</div>
+          <div class="plan-item">Todo el Plan 03</div>
           <div class="plan-item">GEO completo con monitoreo</div>
           <div class="plan-item">Agente IA integrado al ecosistema</div>
-          <div class="plan-item">Automatizaciones n8n completas</div>
-          <div class="plan-item">Auditoría del negocio</div>
-          <div class="plan-item">Campañas Meta Ads gestionadas</div>
+          <div class="plan-item">Automatizaciones n8n avanzadas</div>
         </div>
         <span class="plan-cta">Ver plan completo →</span>
       </a>
 
-      <!-- PLAN 04 -->
-      <a class="plan-card plan-04" href="/plan-04">
+      <!-- PLAN 05 -->
+      <a class="plan-card plan-04" href="/plan-05">
         <div class="plan-04-left">
-          <div class="plan-num-tag">Plan 04</div>
+          <div class="plan-num-tag">Plan 05</div>
           <div class="plan-name">AGENTE IA PERSONALIZADO</div>
           <p class="plan-para" style="max-width: 440px;">Un empleado virtual disponible 24/7 que conoce todo sobre tu negocio. Responde, agenda, vende y hace seguimiento. Aprende de cada conversación y mejora solo.</p>
           <div class="plan-founder">
@@ -1676,7 +1712,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
               <div class="pf-benefit"><svg class="pf-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Caso de estudio con visibilidad de marca</div>
             </div>
           </div>
-          <div class="plan-retainer-tag">Retainer mes 2+ $290.000 CLP/mes · Disponible como plan independiente o add-on</div>
+          <div class="plan-retainer-tag">Retainer mes 2+ $290.000 CLP/mes · Disponible como plan independiente o add-on. Incluido en Plan 04</div>
           <span class="plan-cta" style="margin-top: 12px;">Ver plan completo →</span>
         </div>
         <div class="plan-04-right">
@@ -1695,7 +1731,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
     <div style="text-align: center; margin-top: 20px; padding: 20px;">
       <p style="font-family: var(--font-m); font-size: 10px; letter-spacing: 0.18em; color: var(--text3); text-transform: uppercase;">
-        * Pauta Meta Ads: presupuesto aparte, pagado directo por el cliente a Meta. Solo el Plan 03 incluye fee de gestión.
+        * Pauta Meta Ads: presupuesto aparte, pagado directo por el cliente a Meta. Solo el Plan 03 (Negocio Activo) incluye fee de gestión.
       </p>
     </div>
   </div>
@@ -1907,7 +1943,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 // Cupos en tiempo real — sync con CRM via localStorage
 (function(){
-  var DEFAULT={plan01:{tomados:0,total:10},plan02:{tomados:0,total:10},plan03:{tomados:0,total:10},plan04:{tomados:0,total:10}};
+  var DEFAULT={plan01:{tomados:0,total:10},plan02:{tomados:0,total:10},plan03:{tomados:0,total:10},plan04:{tomados:0,total:10},plan05:{tomados:0,total:10}};
   function getCupos(){
     try{var s=localStorage.getItem('horizon_cupos');return s?JSON.parse(s):DEFAULT;}catch(e){return DEFAULT;}
   }
@@ -1936,7 +1972,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   }
   function renderCupos(){
     var c=getCupos();
-    ['plan01','plan02','plan03','plan04'].forEach(function(p){if(c[p])applyPlan(p,c[p]);});
+    ['plan01','plan02','plan03','plan04','plan05'].forEach(function(p){if(c[p])applyPlan(p,c[p]);});
   }
   renderCupos();
   window.addEventListener('storage',function(e){if(e.key==='horizon_cupos')renderCupos();});
@@ -1955,7 +1991,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
      badge:'Reserva confirmada · CRM actualizado'},
     {src:'ig',srcLabel:'INSTAGRAM · carlos_r',
      msg:'"¿cuánto cuesta el plan con agente IA?"',
-     reply:'El Plan 03 con IA parte desde $999.900 CLP. Te mando el detalle ahora mismo.',
+     reply:'El Plan 03 Negocio Activo parte desde $699.900 CLP, y el Plan 04 Sistema con IA desde $999.900 CLP. Te mando el detalle ahora mismo.',
      badge:'Lead calificado · CRM actualizado'},
     {src:'web',srcLabel:'CHAT WEB · Visitante',
      msg:'"necesito más clientes para mi negocio"',
@@ -2139,7 +2175,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     var needToPlan = {
       'Presencia digital (sitio web, SEO, Google Business)': 'plan-01',
       'Captar y automatizar leads': 'plan-02',
-      'CRM + automatización completa': 'plan-03',
+      'CRM + automatización completa': 'plan-04',
       'IA integrada al negocio': 'plan-04',
     };
     var plan = needToPlan[need] || '';
