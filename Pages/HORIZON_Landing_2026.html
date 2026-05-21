@@ -1083,18 +1083,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .skip-link:focus { top: 8px; }
 
 /* ── LOGOS STRIP ── */
-.logos-strip { padding: 28px 0; overflow: hidden; background: var(--deep); position: relative; }
-.logos-strip::before,.logos-strip::after { content:''; position:absolute; top:0; bottom:0; width:140px; z-index:2; pointer-events:none; }
-.logos-strip::before { left:0; background:linear-gradient(90deg,var(--void),transparent); }
-.logos-strip::after  { right:0; background:linear-gradient(-90deg,var(--void),transparent); }
-.logos-strip-label { font-family:var(--font-m); font-size:9px; letter-spacing:.22em; color:var(--text3); text-transform:uppercase; text-align:center; margin-bottom:18px; }
+.logos-strip { padding: 32px 0 28px; overflow: hidden; background: var(--deep); position: relative; }
+.logos-strip::before,.logos-strip::after { content:''; position:absolute; top:0; bottom:0; width:160px; z-index:2; pointer-events:none; }
+.logos-strip::before { left:0; background:linear-gradient(90deg,var(--void) 10%,transparent); }
+.logos-strip::after  { right:0; background:linear-gradient(-90deg,var(--void) 10%,transparent); }
+.logos-strip-label { font-family:var(--font-m); font-size:9px; letter-spacing:.26em; color:var(--text3); text-transform:uppercase; text-align:center; margin-bottom:22px; }
 .logos-track-wrap { overflow:hidden; }
 @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-.logos-track { display:flex; align-items:center; gap:52px; width:max-content; animation:marquee 30s linear infinite; }
+.logos-track { display:flex; align-items:center; gap:64px; width:max-content; animation:marquee 32s linear infinite; will-change:transform; }
 .logos-track:hover { animation-play-state:paused; }
-.logo-item { font-family:var(--font-m); font-size:12px; letter-spacing:.08em; color:var(--text3); white-space:nowrap; user-select:none; transition:color .25s; }
-.logo-item:hover { color:var(--text2); }
-.logo-sep { width:3px; height:3px; border-radius:50%; background:var(--border2); flex-shrink:0; }
+.logo-item { display:flex; align-items:center; flex-shrink:0; user-select:none; }
+.logo-item img { height:26px; width:auto; max-width:120px; object-fit:contain; display:block; filter:brightness(0) invert(1); opacity:.45; transition:opacity .3s; pointer-events:none; draggable:false; }
+.logos-track:hover .logo-item:hover img { opacity:.85; }
 
 /* ── PAIN CARDS ── */
 .pain-intro { text-align:center; max-width:660px; margin:0 auto 52px; }
@@ -1314,33 +1314,33 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 <!-- LOGOS STRIP -->
 <div class="logos-strip">
-  <p class="logos-strip-label">Integración con plataformas líderes</p>
+  <p class="logos-strip-label">Infraestructura con las mejores plataformas del mercado</p>
   <div class="logos-track-wrap">
     <div class="logos-track" aria-hidden="true">
-      <span class="logo-item">OpenAI</span><span class="logo-sep"></span>
-      <span class="logo-item">Anthropic</span><span class="logo-sep"></span>
-      <span class="logo-item">n8n</span><span class="logo-sep"></span>
-      <span class="logo-item">Supabase</span><span class="logo-sep"></span>
-      <span class="logo-item">Vercel</span><span class="logo-sep"></span>
-      <span class="logo-item">Cal.com</span><span class="logo-sep"></span>
-      <span class="logo-item">WhatsApp Business</span><span class="logo-sep"></span>
-      <span class="logo-item">Meta</span><span class="logo-sep"></span>
-      <span class="logo-item">Google</span><span class="logo-sep"></span>
-      <span class="logo-item">Make</span><span class="logo-sep"></span>
-      <span class="logo-item">Zapier</span><span class="logo-sep"></span>
-      <span class="logo-item">GoHighLevel</span><span class="logo-sep"></span>
-      <span class="logo-item">OpenAI</span><span class="logo-sep"></span>
-      <span class="logo-item">Anthropic</span><span class="logo-sep"></span>
-      <span class="logo-item">n8n</span><span class="logo-sep"></span>
-      <span class="logo-item">Supabase</span><span class="logo-sep"></span>
-      <span class="logo-item">Vercel</span><span class="logo-sep"></span>
-      <span class="logo-item">Cal.com</span><span class="logo-sep"></span>
-      <span class="logo-item">WhatsApp Business</span><span class="logo-sep"></span>
-      <span class="logo-item">Meta</span><span class="logo-sep"></span>
-      <span class="logo-item">Google</span><span class="logo-sep"></span>
-      <span class="logo-item">Make</span><span class="logo-sep"></span>
-      <span class="logo-item">Zapier</span><span class="logo-sep"></span>
-      <span class="logo-item">GoHighLevel</span><span class="logo-sep"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Open%20AI/OpenAI_Logo.svg" alt="OpenAI" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Anthropic/Anthropic_Logo_0.svg" alt="Anthropic" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/N8N/n8n.svg" alt="n8n" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Supabase/supabase-logo-wordmark--dark.svg" alt="Supabase" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Vercel/vercel-logotype-light.svg" alt="Vercel" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Cal/logo-white.svg" alt="Cal.com" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/WTS/whatsapp-business-icon.svg" alt="WhatsApp Business" draggable="false" style="height:30px;"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/META/meta.svg" alt="Meta" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Google/Google_Logo_0.svg" alt="Google" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Make/Make_idOfuxM-xp_0.svg" alt="Make" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Zapier/Zapier_idfZNtxiND_0.svg" alt="Zapier" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/GoHighLevel/HighLevel%20Logo_White_Artwork.svg" alt="GoHighLevel" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Open%20AI/OpenAI_Logo.svg" alt="OpenAI" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Anthropic/Anthropic_Logo_0.svg" alt="Anthropic" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/N8N/n8n.svg" alt="n8n" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Supabase/supabase-logo-wordmark--dark.svg" alt="Supabase" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Vercel/vercel-logotype-light.svg" alt="Vercel" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Cal/logo-white.svg" alt="Cal.com" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/WTS/whatsapp-business-icon.svg" alt="WhatsApp Business" draggable="false" style="height:30px;"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/META/meta.svg" alt="Meta" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Google/Google_Logo_0.svg" alt="Google" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Make/Make_idOfuxM-xp_0.svg" alt="Make" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/Zapier/Zapier_idfZNtxiND_0.svg" alt="Zapier" draggable="false"></span>
+      <span class="logo-item"><img src="../Identidad/strip-logos/GoHighLevel/HighLevel%20Logo_White_Artwork.svg" alt="GoHighLevel" draggable="false"></span>
     </div>
   </div>
 </div>
