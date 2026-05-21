@@ -1251,7 +1251,6 @@ async function saveExtraField(field, inputId){
   if(!lead.historial) lead.historial=[];
   lead.historial.push({ fecha: new Date().toLocaleString('es-CL'), texto: field+' actualizado: '+val });
   renderAcciones(lead);
-  showToast('Guardado');
   const fieldMap = {
     calLink:'cal_link', reunionFecha:'reunion_fecha',
     notionUrl:'notion_url', githubUrl:'github_url',
@@ -1260,7 +1259,11 @@ async function saveExtraField(field, inputId){
   const dbField = fieldMap[field] || field;
   try {
     await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentId, { [dbField]: val, historial: lead.historial });
-  } catch(e) { console.error('saveExtraField error:', e); }
+    showToast('Guardado ✓');
+  } catch(e) {
+    console.error('saveExtraField error:', e);
+    showToast('Error al guardar: ' + e.message, 'error');
+  }
 }
 
 async function marcarAnticipoRecibido(){
