@@ -1153,7 +1153,7 @@ function getStageActions(lead){
       return `
       <div class="action-label">Reunión agendada — primer contacto y hook de contexto</div>
       ${waBtn('💬 Mensaje inicial + hook',
-        `Hola ${NAME}! ${new Date().getHours() >= 17 ? '¿Qué tal tu día?' : '¿Cómo va tu día?'}\nEl diagnóstico que agendaste con nosotros quedó pactado para el día ${fechaStr || '[fecha por confirmar]'} ✅\nAntes de vernos, necesito pedirte un favor: cuéntame cómo está tu negocio hoy y qué es lo que más te tiene frenado o incómodo — lo primero que se te venga, sin filtro.\nCon eso llego preparado y aprovechamos mejor el tiempo.`
+        `Hola ${NAME}! ${new Date().getHours() >= 17 ? '¿Qué tal tu día?' : '¿Cómo va tu día?'}\nEl diagnóstico que agendaste con nosotros quedó pactado para el día ${fechaStr || '[fecha por confirmar]'} ✅\nAntes de vernos, necesito pedirte un favor: cuéntame cómo está tu negocio hoy y qué es lo que más te tiene frenado o incómodo — lo primero que se te venga, sin filtro.\nCon eso llego preparado y aprovechamos mejor el tiempo.\n\nTe dejé un formulario corto para completar antes de la sesión:\n${portalUrl || 'horizonweb.cl/c/[token]'}`
       )}
       ${lead.origen ? `<div class="action-meta">Origen: <strong>${ORIGEN_LABELS[lead.origen]||lead.origen}</strong></div>` : ''}
       ${fReunion ? `<div class="action-meta">Reunión: <strong>${fechaStr} (${labelR})</strong></div>` : ''}
