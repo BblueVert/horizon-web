@@ -27,6 +27,7 @@
   --text:#F5F2FF;--text2:#9B98B8;--text3:#504D6E;--white:#FAFAFF;
   --fd:'Bebas Neue',sans-serif;--fs:'Helvetica Neue',sans-serif;--fm:'DM Mono',monospace;--fb:'Plus Jakarta Sans',sans-serif;
   --r:12px;--rl:20px;
+  --header-h: 58px;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -62,7 +63,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .ham-cta-btn{display:block;text-align:center;background:linear-gradient(135deg,var(--h4),var(--h5));color:var(--void);font-family:var(--fb);font-size:13px;font-weight:700;padding:14px 24px;border-radius:8px;text-decoration:none;margin-top:16px;}
 
 .hero-bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 60% at 85% 15%,rgba(232,99,122,.08) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(196,70,122,.06) 0%,transparent 60%),var(--void);}
-.hero{padding:140px 48px 80px;max-width:1100px;margin:0 auto;}
+.hero{padding:clamp(48px,7vh,80px) 48px;max-width:1100px;margin-top:var(--header-h);margin-left:auto;margin-right:auto;min-height:calc(100dvh - var(--header-h));display:flex;flex-direction:column;justify-content:center;}
 .plan-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:9px;letter-spacing:.28em;color:var(--h4);text-transform:uppercase;margin-bottom:28px;padding:8px 16px;border:1px solid rgba(232,99,122,.25);border-radius:4px;background:rgba(232,99,122,.05);animation:fadeUp .6s ease both;}
 .hero-title{font-family:var(--fd);font-size:clamp(56px,8vw,104px);line-height:.9;letter-spacing:.02em;color:var(--white);margin-bottom:20px;animation:fadeUp .6s .1s ease both;}
 .hero-title .accent{background:linear-gradient(135deg,var(--h4),var(--h5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -150,7 +151,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 
 @media(max-width:900px){
   .wrap{padding:0 24px;}
-  .hero{padding:110px 24px 60px;}
+  .hero{padding:clamp(40px,5vh,64px) 24px;}
   .hero-price-block{flex-direction:column;gap:20px;align-items:flex-start;}
   .price-divider{width:100%;height:1px;}
   .retainer-grid{grid-template-columns:1fr;}
@@ -159,7 +160,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 }
 @media(max-width:640px){
   .nav-cta{display:none;}
-  .hero{padding:90px 20px 50px;}
+  .hero{padding:clamp(32px,4vh,48px) 20px;}
   .wrap{padding:0 20px;}
   .hero-title{font-size:clamp(44px,14vw,80px);}
   footer{padding:32px 20px;}
