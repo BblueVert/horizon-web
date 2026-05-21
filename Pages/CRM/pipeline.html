@@ -337,6 +337,11 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
       </select>
       <select class="fsel" id="fCanal" onchange="renderAll()">
         <option value="">Todos los canales</option>
+        <option value="hero">Landing Hero</option>
+        <option value="plan01">Plan 01</option>
+        <option value="plan02">Plan 02</option>
+        <option value="plan03">Plan 03</option>
+        <option value="plan04">Plan 04</option>
         <option value="instagram">Instagram</option>
         <option value="whatsapp">WhatsApp</option>
         <option value="web">Chat Web</option>
@@ -432,6 +437,11 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
         </div>
         <div class="fg"><div class="fl">Canal de origen</div>
           <select class="fi" id="f-canal">
+            <option value="hero">Landing Hero</option>
+            <option value="plan01">Plan 01</option>
+            <option value="plan02">Plan 02</option>
+            <option value="plan03">Plan 03</option>
+            <option value="plan04">Plan 04</option>
             <option value="instagram">Instagram</option>
             <option value="whatsapp">WhatsApp</option>
             <option value="web">Chat Web / Landing</option>
@@ -541,7 +551,9 @@ const PLANS = {
 
 const CANAL_LABELS = {
   instagram:'Instagram', whatsapp:'WhatsApp', web:'Chat Web',
-  referido:'Referido', directo:'Directo', otro:'Otro'
+  referido:'Referido', directo:'Directo', otro:'Otro',
+  hero:'Landing Hero', plan01:'Plan 01', plan02:'Plan 02',
+  plan03:'Plan 03', plan04:'Plan 04'
 };
 
 const STATUS_COLORS = {
@@ -889,7 +901,7 @@ function openModal(id){
   document.getElementById('f-email').value = lead?.email||'';
   document.getElementById('f-telefono').value = lead?.telefono||'';
   document.getElementById('f-sector').value = lead?.sector||'';
-  document.getElementById('f-canal').value = lead?.canal||'instagram';
+  document.getElementById('f-canal').value = lead?.canal||'web';
   document.getElementById('f-plan').value = lead?.plan||'';
   document.getElementById('f-tipoprecio').value = lead?.tipoprecio||'fundador';
   document.getElementById('f-status').value = lead?.status||'new';
