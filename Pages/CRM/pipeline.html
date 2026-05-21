@@ -567,6 +567,8 @@ function fromDb(row) {
     hooksRespuestas: row.hooks_respuestas || {},
     historial:       row.historial || [],
     sessionNotas:    row.session_notas,
+    portalToken:     row.portal_token,
+    brief:           row.brief || {},
     createdAt:       row.created_at,
     updatedAt:       row.updated_at,
   };
@@ -1145,16 +1147,29 @@ function getStageActions(lead){
   const linkRef  = lead.calLink ? `\nLink: ${lead.calLink}` : '';
 
   switch(lead.status){
-    case 'new': return `
+    case 'new': {
+      const portalUrl = lead.portalToken ? 'https://horizonweb.cl/c/'+lead.portalToken : null;
+      const briefFilled = lead.brief && Object.values(lead.brief).some(v=>String(v||'').trim());
+      return `
       <div class="action-label">Reunión agendada — primer contacto y hook de contexto</div>
       ${waBtn('💬 Mensaje inicial + hook',
         `Hola ${NAME}! ${new Date().getHours() >= 17 ? '¿Qué tal tu día?' : '¿Cómo va tu día?'}\nEl diagnóstico que agendaste con nosotros quedó pactado para el día ${fechaStr || '[fecha por confirmar]'} ✅\nAntes de vernos, necesito pedirte un favor: cuéntame cómo está tu negocio hoy y qué es lo que más te tiene frenado o incómodo — lo primero que se te venga, sin filtro.\nCon eso llego preparado y aprovechamos mejor el tiempo.`
       )}
       ${lead.origen ? `<div class="action-meta">Origen: <strong>${ORIGEN_LABELS[lead.origen]||lead.origen}</strong></div>` : ''}
       ${fReunion ? `<div class="action-meta">Reunión: <strong>${fechaStr} (${labelR})</strong></div>` : ''}
+      ${portalUrl ? `
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+          ${actionBtn('🔗 Abrir portal del cliente', portalUrl, '#a855f7')}
+          <button class="action-btn" style="background:var(--card2);color:var(--text2);border:1px solid var(--border);"
+            onclick="navigator.clipboard.writeText('${portalUrl}').then(()=>showToast('Link copiado ✓'))">
+            📋 Copiar link del portal
+          </button>
+        </div>
+        ${briefFilled ? '<div class="action-meta" style="color:#10b981;">✅ Brief completado por el cliente</div>' : '<div class="action-meta">⏳ Brief pendiente — el cliente aún no completó el formulario</div>'}
+      ` : ''}
       ${extraField(lead.id,'calLink','Link de la reserva Cal.com (desde notificación)','https://cal.com/...',lead.calLink)}
       ${extraFieldDate('reunionFecha','Fecha y hora de la reunión',fReunion)}
-    `;
+    `;}
 
     case 'contacted': {
       const msgHoy     = `Hola ${NAME}! Solo te confirmo que hoy tenemos nuestra sesión de diagnóstico HORIZON.${linkRef}\nCualquier duda antes de arrancar, avisame 👋`;

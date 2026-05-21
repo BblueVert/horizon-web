@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON · Portal de diagnóstico</title>
+<link rel="icon" type="image/png" href="../../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#07060e;--card:#0f0e1a;--card2:#1a1828;--card3:#221f34;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
+  --h1:#ff6b35;--h2:#ff8c42;--green:#10b981;--blue:#3b82f6;--purple:#a855f7;
+  --text:#e8e6f0;--text2:#9a98a8;--text3:#4a4760;
+  --fm:"DM Mono",monospace;--fb:"Plus Jakarta Sans",sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:100vh;line-height:1.6;}
+
+/* HEADER */
+.hdr{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;
+  gap:10px;background:var(--card);position:sticky;top:0;z-index:10;}
+.hdr-logo{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;}
+.hdr-sep{color:var(--text3);font-size:14px;}
+.hdr-tag{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
+
+/* LAYOUT */
+.wrap{max-width:660px;margin:0 auto;padding:32px 20px 80px;}
+
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:60vh;gap:14px;}
+.spinner{width:30px;height:30px;border:2px solid var(--border2);border-top-color:var(--h1);
+  border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-txt{font-family:var(--fm);font-size:10px;letter-spacing:1.5px;color:var(--text3);}
+
+/* ERROR */
+.err-card{background:var(--card);border:1px solid rgba(239,68,68,.2);border-radius:16px;
+  padding:44px 28px;text-align:center;margin-top:40px;}
+.err-icon{font-size:36px;margin-bottom:14px;}
+.err-title{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:2px;
+  color:#ef4444;margin-bottom:8px;}
+.err-desc{font-size:13px;color:var(--text2);line-height:1.7;}
+
+/* WELCOME */
+.welcome{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:28px;margin-bottom:20px;}
+.w-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--h1);
+  text-transform:uppercase;margin-bottom:10px;}
+.w-name{font-family:"Bebas Neue",sans-serif;font-size:38px;letter-spacing:2px;
+  line-height:1;margin-bottom:14px;}
+.w-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(16,185,129,.08);
+  border:1px solid rgba(16,185,129,.2);border-radius:6px;padding:6px 14px;
+  font-family:var(--fm);font-size:11px;color:var(--green);letter-spacing:.5px;}
+.w-desc{margin-top:14px;font-size:13px;color:var(--text2);line-height:1.7;}
+
+/* SECTION */
+.sec{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:24px;margin-bottom:20px;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.sec-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;}
+.save-st{font-family:var(--fm);font-size:9px;letter-spacing:1px;color:var(--text3);transition:color .3s;}
+.save-st.saving{color:var(--h2);}
+.save-st.saved{color:var(--green);}
+
+/* PROGRESS */
+.progress{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.pbar{flex:1;height:3px;background:var(--card3);border-radius:2px;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));
+  border-radius:2px;transition:width .4s ease;width:0%;}
+.plabel{font-family:var(--fm);font-size:9px;color:var(--text3);white-space:nowrap;}
+
+/* BRIEF FIELDS */
+.bfield{margin-bottom:20px;}
+.bfield:last-of-type{margin-bottom:0;}
+.blabel{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;}
+.bnum{font-family:var(--fm);font-size:9px;color:var(--h1);
+  background:rgba(255,107,53,.1);padding:2px 6px;border-radius:3px;}
+.bta{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:var(--fb);font-size:13px;line-height:1.6;
+  padding:12px 14px;resize:vertical;min-height:80px;transition:border-color .2s;outline:none;}
+.bta:focus{border-color:rgba(255,107,53,.4);}
+.bta::placeholder{color:var(--text3);}
+
+/* TIMELINE */
+.tl-empty{font-family:var(--fm);font-size:11px;color:var(--text3);
+  text-align:center;padding:16px 0;}
+.ev{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.ev:last-child{border-bottom:none;padding-bottom:0;}
+.ev-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0;margin-top:1px;}
+.ev-body{flex:1;}
+.ev-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.ev-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:3px;}
+.ev-time{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:.5px;}
+.ic-booking{background:rgba(59,130,246,.12);}
+.ic-brief{background:rgba(168,85,247,.12);}
+.ic-mensaje{background:rgba(255,107,53,.12);}
+.ic-reunion{background:rgba(16,185,129,.12);}
+.ic-propuesta{background:rgba(255,140,66,.12);}
+.ic-nota{background:rgba(74,71,96,.2);}
+
+@media(max-width:600px){
+  .wrap{padding:20px 14px 60px;}
+  .welcome,.sec{padding:18px;}
+  .w-name{font-size:30px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">HORIZON</div>
+  <span class="hdr-sep">·</span>
+  <span class="hdr-tag">Portal de diagnóstico</span>
+</div>
+
+<div class="wrap">
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span class="loading-txt">CARGANDO PORTAL...</span>
+  </div>
+
+  <div class="err-card" id="error" style="display:none;">
+    <div class="err-icon">🔒</div>
+    <div class="err-title">Link no válido</div>
+    <p class="err-desc">Este portal no existe o el link expiró.<br>Si creés que es un error, escribile directamente a Benja.</p>
+  </div>
+
+  <div id="main" style="display:none;">
+
+    <div class="welcome">
+      <div class="w-label">Portal privado · HORIZON</div>
+      <div class="w-name" id="w-name">Hola!</div>
+      <div class="w-badge" id="w-badge">📅 Sesión confirmada</div>
+      <p class="w-desc">Este es tu espacio privado para preparar el diagnóstico. Completá el brief abajo — con eso llego preparado y aprovechamos mejor cada minuto de la sesión.</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">Brief pre-diagnóstico</span>
+        <span class="save-st" id="save-st"></span>
+      </div>
+      <div class="progress">
+        <div class="pbar"><div class="pfill" id="pfill"></div></div>
+        <span class="plabel" id="plabel">0 / 4</span>
+      </div>
+      <div class="bfield">
+        <div class="blabel"><span class="bnum">01</span>¿A qué se dedica tu negocio?</div>
+        <textarea class="bta" id="b-negocio" rows="3"
+          placeholder="Describí en pocas líneas qué hacés, a quién le vendés y cómo operás hoy..."></textarea>
+      </div>
+      <div class="bfield">
+        <div class="blabel"><span class="bnum">02</span>¿Cuál es el mayor freno o problema que tenés ahora?</div>
+        <textarea class="bta" id="b-problema" rows="3"
+          placeholder="Lo primero que se te venga, sin filtro..."></textarea>
+      </div>
+      <div class="bfield">
+        <div class="blabel"><span class="bnum">03</span>¿Qué resultado concreto esperás de esta sesión?</div>
+        <textarea class="bta" id="b-objetivo" rows="3"
+          placeholder="Ej: entender qué necesito para escalar, tener un plan claro, saber si esto es para mí..."></textarea>
+      </div>
+      <div class="bfield">
+        <div class="blabel"><span class="bnum">04</span>¿Ya intentaste resolver esto antes? ¿Cómo fue?</div>
+        <textarea class="bta" id="b-intentos" rows="3"
+          placeholder="Ej: contraté a alguien y no funcionó, intenté con herramientas pero lo abandoné..."></textarea>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">Línea de tiempo</span>
+      </div>
+      <div id="tl"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const API = 'https://dkitbnrpwmwrfnmztdfc.supabase.co/functions/v1/portal-api';
+  const token = (window.location.pathname.match(/\/c\/([^/?#]+)/)||[])[1];
+
+  const $ = id => document.getElementById(id);
+  const show = id => $(id).style.display = '';
+  const hide = id => $(id).style.display = 'none';
+
+  function fmt(iso, opts){
+    if(!iso) return '';
+    try{ return new Date(iso).toLocaleString('es-CL', opts); }catch{ return iso; }
+  }
+  const fmtFecha = iso => fmt(iso,{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+  const fmtCorto = iso => fmt(iso,{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  const EV = {
+    booking:  {ic:'📅',bg:'ic-booking',  label:'Diagnóstico agendado'},
+    brief:    {ic:'✏️',bg:'ic-brief',    label:'Brief completado'},
+    mensaje:  {ic:'💬',bg:'ic-mensaje',  label:'Mensaje de HORIZON'},
+    reunion:  {ic:'🎯',bg:'ic-reunion',  label:'Sesión realizada'},
+    propuesta:{ic:'📄',bg:'ic-propuesta',label:'Propuesta enviada'},
+    nota:     {ic:'📌',bg:'ic-nota',     label:'Nota'},
+  };
+
+  function renderTL(lead, events){
+    const all = [{ tipo:'booking', contenido:null, created_at: lead.created_at }, ...(events||[])];
+    all.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
+    $('tl').innerHTML = all.map(ev=>{
+      const m = EV[ev.tipo]||EV.nota;
+      return `<div class="ev">
+        <div class="ev-icon ${m.bg}">${m.ic}</div>
+        <div class="ev-body">
+          <div class="ev-title">${m.label}</div>
+          ${ev.contenido?`<div class="ev-desc">${ev.contenido}</div>`:''}
+          <div class="ev-time">${fmtCorto(ev.created_at)}</div>
+        </div>
+      </div>`;
+    }).join('') || '<div class="tl-empty">Sin eventos aún.</div>';
+  }
+
+  function updateProgress(){
+    const ids = ['b-negocio','b-problema','b-objetivo','b-intentos'];
+    const n = ids.filter(id=>$(id).value.trim()).length;
+    $('pfill').style.width = (n/4*100)+'%';
+    $('plabel').textContent = n+' / 4';
+  }
+
+  function setStatus(txt,cls=''){
+    const el=$('save-st'); el.textContent=txt;
+    el.className='save-st'+(cls?' '+cls:'');
+  }
+
+  let saveTimer=null;
+  async function save(){
+    setStatus('Guardando...','saving');
+    const brief={
+      negocio: $('b-negocio').value,
+      problema:$('b-problema').value,
+      objetivo:$('b-objetivo').value,
+      intentos:$('b-intentos').value,
+    };
+    try{
+      await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token,brief})});
+      setStatus('Guardado ✓','saved');
+      setTimeout(()=>setStatus(''),2500);
+    }catch{ setStatus('Error al guardar'); }
+  }
+
+  function onInput(){
+    updateProgress();
+    setStatus('...','');
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(save,1500);
+  }
+
+  async function init(){
+    if(!token){ hide('loading'); show('error'); return; }
+    try{
+      const res = await fetch(API+'?token='+token);
+      if(!res.ok) throw new Error();
+      const {lead,events} = await res.json();
+
+      const firstName = (lead.nombre||'').split(' ')[0]||'Bienvenido/a';
+      $('w-name').textContent = 'Hola, '+firstName+'!';
+      document.title = 'HORIZON · Portal de '+firstName;
+
+      const fecha = fmtFecha(lead.reunion_fecha);
+      $('w-badge').textContent = fecha ? '📅 '+fecha : '📅 Sesión confirmada';
+
+      // Cargar brief guardado
+      const b = lead.brief||{};
+      if(b.negocio)  $('b-negocio').value  = b.negocio;
+      if(b.problema) $('b-problema').value = b.problema;
+      if(b.objetivo) $('b-objetivo').value = b.objetivo;
+      if(b.intentos) $('b-intentos').value = b.intentos;
+      updateProgress();
+
+      renderTL(lead, events);
+
+      ['b-negocio','b-problema','b-objetivo','b-intentos'].forEach(id=>
+        $(id).addEventListener('input', onInput));
+
+      hide('loading');
+      show('main');
+    }catch{
+      hide('loading');
+      show('error');
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

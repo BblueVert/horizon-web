@@ -8,7 +8,8 @@
     { "source": "/servicios", "destination": "/Pages/servicios.html" },
     { "source": "/crm", "destination": "/Pages/CRM/pipeline.html" },
     { "source": "/reunion", "destination": "/Pages/reunion/index.html" },
-    { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" }
+    { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" },
+    { "source": "/c/:token", "destination": "/Pages/portal/index.html" }
   ],
   "headers": [
     {
