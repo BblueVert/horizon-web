@@ -1368,8 +1368,8 @@ function getStageActions(lead){
 
     case 'contacted': {
       const msgHoy     = `Hola ${NAME}! Solo te confirmo que hoy tenemos nuestra sesión de diagnóstico HORIZON.${linkRef}\nCualquier duda antes de arrancar, avisame 👋`;
-      const msgMañana  = `Hola ${NAME}! Te recuerdo que mañana tenemos nuestra sesión.${linkRef}\n¿Confirmás que podés?`;
-      const msgGeneral = `Hola ${NAME}! Te recuerdo nuestra sesión de diagnóstico HORIZON${fechaStr ? ' el '+fechaStr : ''}.${linkRef}\n¿Confirmás asistencia?`;
+      const msgMañana  = `Hola ${NAME}! Te recuerdo que mañana tenemos nuestra sesión 📅${linkRef}\n¿Confirmás que podés?`;
+      const msgGeneral = `Hola ${NAME}! Te recuerdo nuestra sesión de diagnóstico HORIZON${fechaStr ? ' el '+fechaStr : ''} 📅${linkRef}\n¿Confirmás asistencia?`;
       const msgActivo  = diasR===0 ? msgHoy : (diasR===1 ? msgMañana : msgGeneral);
 
       return `
@@ -1395,9 +1395,9 @@ function getStageActions(lead){
         ${lead.calLink ? actionBtn('🔗 Entrar a la reunión', lead.calLink, '#3b82f6') : ''}
         ${actionBtn('📋 Abrir brief completo', '/reunion?id='+lead.id, '#a855f7')}
         ${esHoy
-          ? `${waBtn('💬 Confirmación H-1h', `Hola ${NAME}! En una hora tenemos nuestra sesión.${linkRef}\nNos vemos!`)}
+          ? `${waBtn('💬 Confirmación H-1h', `Hola ${NAME}! ⏰ En una hora tenemos nuestra sesión.${linkRef}\nNos vemos!`)}
              ${waBtn('💬 Confirmación H-10min', `Hola ${NAME}, en 10 minutos arrancamos. Avisame cuando estés listo/a 👋`)}`
-          : waBtn('💬 Recordatorio', `Hola ${NAME}! Te recuerdo la sesión${fechaStr?' el '+fechaStr:''}.${linkRef}\nCualquier cosa avisame!`)
+          : waBtn('💬 Recordatorio', `Hola ${NAME}! Te recuerdo la sesión${fechaStr?' el '+fechaStr:''}.${linkRef}\nCualquier cosa avisame 👋`)
         }
         <div class="action-label" style="margin-top:10px;">Después de la reunión</div>
         <button class="action-btn" style="background:#10b98120;color:#10b981;border:1px solid #10b98140;" onclick="changeStage('proposal')">→ Fue bien → Propuesta</button>
@@ -1409,7 +1409,7 @@ function getStageActions(lead){
       <div class="action-label">Propuesta enviada</div>
       ${lead.propuestaUrl ? actionBtn('📄 Ver propuesta', lead.propuestaUrl, '#ff8c42') : ''}
       ${waBtn('💬 Follow-up propuesta', `Hola ${NAME}, ¿tuviste oportunidad de revisar la propuesta? Quedé a disposición para cualquier consulta 👋`)}
-      ${waBtn('💬 Follow-up 48h (si no responde)', `Hola ${NAME}, quería acercarme antes de que se cierre la posibilidad. ¿Qué dudas tenés sobre la propuesta?`)}
+      ${waBtn('💬 Follow-up 48h (si no responde)', `Hola ${NAME}, quería acercarme antes de que se cierre la posibilidad. ¿Qué dudas tenés sobre la propuesta? 🤝`)}
       ${extraField(lead.id,'propuestaUrl','Link de la propuesta','https://...',lead.propuestaUrl)}
     `;
 
@@ -1431,7 +1431,7 @@ function getStageActions(lead){
       <div class="action-label">Proyecto activo</div>
       ${lead.notionUrl ? actionBtn('📝 Abrir en Notion', lead.notionUrl, '#a855f7') : ''}
       ${lead.githubUrl ? actionBtn('🔗 Repositorio GitHub', lead.githubUrl, '#64a2ff') : ''}
-      ${waBtn('💬 Actualización al cliente', `Hola ${NAME}, te doy una actualización del proyecto: `)}
+      ${waBtn('💬 Actualización al cliente', `Hola ${NAME}, te doy una actualización del proyecto 🚀\n`)}
       ${extraField(lead.id,'notionUrl','Notion URL','https://notion.so/...',lead.notionUrl)}
       ${extraField(lead.id,'githubUrl','GitHub URL','https://github.com/...',lead.githubUrl)}
     `;
@@ -1444,7 +1444,7 @@ function getStageActions(lead){
 
     case 'lost': return `
       <div class="action-label">Lead perdido</div>
-      ${waBtn('💬 Reactivar en 30 días', `Hola ${NAME}, pasé a saludarte. ¿Cómo va el negocio? Si en algún momento querés retomar la conversación, seguimos acá.`)}
+      ${waBtn('💬 Reactivar en 30 días', `Hola ${NAME}, pasé a saludarte. ¿Cómo va el negocio? 👋\nSi en algún momento querés retomar la conversación, seguimos acá.`)}
     `;
 
     default: return '';
