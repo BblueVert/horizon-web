@@ -1404,35 +1404,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
         <span class="btn-text-full">→ Ver cuántos clientes estás perdiendo hoy</span>
         <span class="btn-text-short">→ Agendar diagnóstico gratuito</span>
       </a>
-      <div id="hero-cupos-badge" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 14px;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.25);border-radius:100px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;color:#FF6B35;">
-        <span style="width:7px;height:7px;border-radius:50%;background:#FF6B35;animation:pulse 2s infinite;flex-shrink:0;"></span>
-        <span id="hero-cupos-text">Precio Fundador · 50% OFF · cargando cupos...</span>
-      </div>
     </div>
   </div>
-<script>
-(function(){
-  var SB='https://dkitbnrpwmwrfnmztdfc.supabase.co';
-  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
-  var TOTAL_CUPOS = 40;
-  var el = document.getElementById('hero-cupos-text');
-  if (!el) return;
-  fetch(SB+'/rest/v1/leads?select=id&tipoprecio=eq.fundador&status=neq.lost',{
-    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'count=exact','Range':'0-0'}
-  }).then(function(r){
-    var cr=r.headers.get('Content-Range');
-    var tomados=cr?parseInt(cr.split('/')[1])||0:0;
-    var libres=Math.max(0,TOTAL_CUPOS-tomados);
-    if(libres===0){
-      el.textContent='Precio Fundador agotado · precio regular activo';
-      document.getElementById('hero-cupos-badge').style.borderColor='rgba(155,152,184,.25)';
-      document.getElementById('hero-cupos-badge').style.color='#9B98B8';
-    } else {
-      el.textContent='Precio Fundador · 50% OFF · Quedan '+libres+' de '+TOTAL_CUPOS+' cupos';
-    }
-  }).catch(function(){ el.textContent='Precio Fundador · 50% OFF · cupos limitados'; });
-})();
-</script>
 
   <!-- Ilustración animada -->
   <div class="hero-right" aria-hidden="true">
