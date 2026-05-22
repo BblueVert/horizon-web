@@ -1345,7 +1345,7 @@ function getStageActions(lead){
       <div class="action-label">Reunión agendada — primer contacto y hook de contexto</div>
       ${PHONE
         ? waBtn('💬 Mensaje inicial + hook',
-            `Hola ${NAME}! ${new Date().getHours() >= 17 ? '¿Qué tal tu día?' : '¿Cómo va tu día?'}\nEl diagnóstico que agendaste con nosotros quedó pactado para el día ${fechaStr || '[fecha por confirmar]'} ✅\nAntes de vernos, necesito pedirte un favor: cuéntame cómo está tu negocio hoy y qué es lo que más te tiene frenado o incómodo — lo primero que se te venga, sin filtro.\nCon eso llego preparado y aprovechamos mejor el tiempo.\n\nTe dejé un formulario corto para completar antes de la sesión:\n${portalUrl || 'horizonweb.cl/c/[token]'}`
+            `Hola ${NAME}! ${new Date().getHours() >= 17 ? '¿Qué tal tu día?' : '¿Cómo va tu día?'}\nEl diagnóstico que agendaste con nosotros quedó pactado para el día ${fechaStr || '[fecha por confirmar]'} ✔\nAntes de vernos, necesito pedirte un favor: cuéntame cómo está tu negocio hoy y qué es lo que más te tiene frenado o incómodo — lo primero que se te venga, sin filtro.\nCon eso llego preparado y aprovechamos mejor el tiempo.\n\nTe dejé un formulario corto para completar antes de la sesión:\n${portalUrl || 'horizonweb.cl/c/[token]'}`
           )
         : `<div class="action-note" style="color:var(--h2);">⚠️ Falta el teléfono para enviar el mensaje</div>
            ${extraField(lead.id,'telefono','Teléfono WhatsApp','56911223344',lead.telefono)}`
