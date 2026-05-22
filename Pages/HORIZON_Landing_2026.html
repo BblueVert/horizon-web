@@ -235,6 +235,8 @@ nav a:hover { color: var(--text); }
   display: flex; gap: 16px; align-items: center;
   animation: fadeUp 0.7s 0.3s ease both;
 }
+.btn-text-short { display: none; }
+.btn-text-full  { display: inline; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   background: linear-gradient(135deg, var(--h1), var(--h2));
@@ -1069,7 +1071,11 @@ footer {
   .hi-widget { max-width: 340px; }
 }
 @media (max-width: 860px) {
-  .hero-wrap { grid-template-columns: 1fr; min-height: 100dvh; }
+  .hero-wrap {
+    grid-template-columns: 1fr;
+    min-height: calc(100dvh - var(--header-h));
+    align-items: flex-start;
+  }
   .hero-right { display: none; }
 }
 @media (max-width: 900px) {
@@ -1078,7 +1084,10 @@ footer {
   .header-left { gap: 12px; }
   nav { display: none; }
   .ham-btn { display: flex; }
-  .hero-wrap { padding: clamp(40px,6vh,72px) 24px clamp(40px,6vh,72px); }
+  .hero-wrap { padding: clamp(32px,5vh,56px) 24px clamp(32px,5vh,56px); }
+  .btn-text-full { display: none; }
+  .btn-text-short { display: inline; }
+  .planes-intro { flex-direction: column; gap: 24px; align-items: flex-start; }
   .problema-grid { grid-template-columns: 1fr; }
   .sistema-grid { grid-template-columns: 1fr; gap: 48px; }
   .planes-grid { grid-template-columns: 1fr; }
@@ -1340,7 +1349,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     </p>
     <div class="hero-ctas">
       <a href="https://cal.com/horizonweb/diagnostico-horizon" class="btn-primary" data-origin="hero">
-        → Ver cuántos clientes estás perdiendo hoy
+        <span class="btn-text-full">→ Ver cuántos clientes estás perdiendo hoy</span>
+        <span class="btn-text-short">→ Agendar diagnóstico gratuito</span>
       </a>
     </div>
   </div>
@@ -1813,8 +1823,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <div class="paso-card reveal-scale d3">
         <div class="paso-card-num">04</div>
         <div class="paso-card-title">Activación y retainer</div>
-        <div class="paso-card-desc">El sistema sale en vivo. El primer mes de retainer está incluido — soporte, ajustes y monitoreo hasta que el sistema se estabiliza.</div>
-        <div class="paso-card-dur">1 mes incluido</div>
+        <div class="paso-card-desc">El sistema sale en vivo. El mes 1 es la implementación. Desde el mes 2 entra el retainer — soporte, ajustes y monitoreo continuo.</div>
+        <div class="paso-card-dur">Retainer desde mes 2</div>
       </div>
     </div>
   </div>
@@ -2471,10 +2481,11 @@ Cal("on", {
   els.forEach(function(el){ obs.observe(el); });
 })();
 
-// Parallax — hero bg + subtle section depth
+// Parallax — hero bg, desktop only (disabled on mobile to avoid layout issues)
 (function(){
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduced) return;
+  if (window.innerWidth < 860) return;
   var heroBg = document.querySelector('.hero-bg');
   var ticking = false;
   window.addEventListener('scroll', function(){
@@ -2482,7 +2493,7 @@ Cal("on", {
     ticking = true;
     requestAnimationFrame(function(){
       var y = window.scrollY;
-      if (heroBg) heroBg.style.transform = 'translateY(' + (y * 0.12) + 'px)';
+      if (heroBg) heroBg.style.transform = 'translateY(' + (y * 0.08) + 'px)';
       ticking = false;
     });
   }, { passive: true });
