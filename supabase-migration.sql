@@ -68,8 +68,25 @@ create policy "anon_update_brief" on public.leads
   using (portal_token is not null)
   with check (portal_token is not null);
 
--- NOTA: UPDATE/DELETE privilegiados (CRM, webhooks) deben usar SUPABASE_SERVICE_ROLE_KEY
--- El service_role_key bypasea RLS automáticamente — no requiere policy adicional.
+-- Usuarios autenticados (CRM) tienen acceso completo a leads
+drop policy if exists "authenticated_full" on public.leads;
+create policy "authenticated_full" on public.leads
+  for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Columnas opcionales: agregar si la tabla ya existe sin ellas
+alter table public.leads add column if not exists cal_link       text;
+alter table public.leads add column if not exists reunion_fecha  text;
+alter table public.leads add column if not exists portal_token   text;
+alter table public.leads add column if not exists historial      jsonb default '[]'::jsonb;
+alter table public.leads add column if not exists hooks_respuestas jsonb default '{}'::jsonb;
+alter table public.leads add column if not exists session_notas  text;
+alter table public.leads add column if not exists notion_url     text;
+alter table public.leads add column if not exists github_url     text;
+alter table public.leads add column if not exists propuesta_url  text;
+alter table public.leads add column if not exists contrato_url   text;
 
 -- Trigger updated_at automático
 create or replace function public.set_updated_at()

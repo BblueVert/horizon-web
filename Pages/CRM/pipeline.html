@@ -577,9 +577,10 @@ const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
 
 async function sbFetch(method, path, body) {
+  const jwt = sessionStorage.getItem('crm_token') || SB_KEY;
   const headers = {
     'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + SB_KEY,
+    'Authorization': 'Bearer ' + jwt,
     'Content-Type': 'application/json',
   };
   if (method !== 'GET' && method !== 'DELETE') headers['Prefer'] = 'return=minimal';
@@ -1460,17 +1461,33 @@ document.getElementById('leadModal').addEventListener('click', e=>{ if(e.target=
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
 // ── AUTH ───────────────────────────────────────────────
-const CRM_USER = 'soportebinks@gmail.com';
-const CRM_PASS = 'Binks751201.';
-
-function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const pass  = document.getElementById('loginPass').value;
-  if (email === CRM_USER && pass === CRM_PASS) {
+async function doLogin() {
+  const email  = document.getElementById('loginEmail').value.trim();
+  const pass   = document.getElementById('loginPass').value;
+  const errEl  = document.getElementById('loginErr');
+  const btn    = document.querySelector('.login-btn');
+  errEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Ingresando...';
+  try {
+    const r = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const data = await r.json();
+    if (!r.ok) {
+      errEl.textContent = data.error_description || data.msg || 'Credenciales incorrectas.';
+      return;
+    }
     sessionStorage.setItem('crm_auth', '1');
+    sessionStorage.setItem('crm_token', data.access_token);
     document.getElementById('loginOverlay').classList.add('hidden');
-  } else {
-    document.getElementById('loginErr').textContent = 'Credenciales incorrectas.';
+  } catch(e) {
+    errEl.textContent = 'Error de conexión.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ingresar';
   }
 }
 
