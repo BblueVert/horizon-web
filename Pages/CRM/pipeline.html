@@ -341,8 +341,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
         <option value="">Todos los planes</option>
         <option value="plan01">Plan 01 — Presencia Digital</option>
         <option value="plan02">Plan 02 — Ecosistema Digital</option>
-        <option value="plan03">Plan 03 — Sistema con IA</option>
-        <option value="plan04">Plan 04 — Agente IA</option>
+        <option value="plan03">Plan 03 — Negocio Activo</option>
+        <option value="plan04">Plan 04 — Sistema con IA</option>
+        <option value="plan05">Plan 05 — Agente IA Personalizado</option>
       </select>
       <select class="fsel" id="fCanal" onchange="renderAll()">
         <option value="">Todos los canales</option>
@@ -351,6 +352,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
         <option value="plan02">Plan 02</option>
         <option value="plan03">Plan 03</option>
         <option value="plan04">Plan 04</option>
+        <option value="plan05">Plan 05</option>
         <option value="instagram">Instagram</option>
         <option value="whatsapp">WhatsApp</option>
         <option value="web">Chat Web</option>
@@ -451,6 +453,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
             <option value="plan02">Plan 02</option>
             <option value="plan03">Plan 03</option>
             <option value="plan04">Plan 04</option>
+            <option value="plan05">Plan 05</option>
             <option value="instagram">Instagram</option>
             <option value="whatsapp">WhatsApp</option>
             <option value="web">Chat Web / Landing</option>
@@ -462,10 +465,11 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
         <div class="fg"><div class="fl">Plan de interés</div>
           <select class="fi" id="f-plan">
             <option value="">Sin definir</option>
-            <option value="plan01">Plan 01 — Presencia Digital ($295K fundador)</option>
-            <option value="plan02">Plan 02 — Ecosistema Digital ($495K fundador)</option>
-            <option value="plan03">Plan 03 — Sistema con IA ($995K fundador)</option>
-            <option value="plan04">Plan 04 — Agente IA ($745K fundador)</option>
+            <option value="plan01">Plan 01 — Presencia Digital ($299.900 fundador)</option>
+            <option value="plan02">Plan 02 — Ecosistema Digital ($499.900 fundador)</option>
+            <option value="plan03">Plan 03 — Negocio Activo ($699.900 fundador)</option>
+            <option value="plan04">Plan 04 — Sistema con IA ($999.900 fundador)</option>
+            <option value="plan05">Plan 05 — Agente IA Personalizado (a consultar)</option>
           </select>
         </div>
         <div class="fg"><div class="fl">Tipo de precio</div>
@@ -552,17 +556,18 @@ const COLS = [
 ];
 
 const PLANS = {
-  plan01: { label:'Plan 01 — Presencia Digital',      preciof:299900, precio:590000 },
-  plan02: { label:'Plan 02 — Ecosistema Digital',     preciof:499900, precio:990000 },
-  plan03: { label:'Plan 03 — Sistema con IA',         preciof:999900, precio:1990000 },
-  plan04: { label:'Plan 04 — Agente IA Personalizado',preciof:749900, precio:1490000 },
+  plan01: { label:'Plan 01 — Presencia Digital',        preciof:299900,  precio:599900  },
+  plan02: { label:'Plan 02 — Ecosistema Digital',       preciof:499900,  precio:999900  },
+  plan03: { label:'Plan 03 — Negocio Activo',           preciof:699900,  precio:1399900 },
+  plan04: { label:'Plan 04 — Sistema con IA',           preciof:999900,  precio:1999900 },
+  plan05: { label:'Plan 05 — Agente IA Personalizado',  preciof:null,    precio:null    },
 };
 
 const CANAL_LABELS = {
   instagram:'Instagram', whatsapp:'WhatsApp', web:'Chat Web',
   referido:'Referido', directo:'Directo', otro:'Otro',
   hero:'Landing Hero', plan01:'Plan 01', plan02:'Plan 02',
-  plan03:'Plan 03', plan04:'Plan 04'
+  plan03:'Plan 03', plan04:'Plan 04', plan05:'Plan 05'
 };
 
 const STATUS_COLORS = {
@@ -790,7 +795,8 @@ function updateStats(){
 
 function getPrecio(lead){
   if(!lead.plan||!PLANS[lead.plan]) return 0;
-  return lead.tipoprecio==='fundador' ? PLANS[lead.plan].preciof : PLANS[lead.plan].precio;
+  const p = lead.tipoprecio==='fundador' ? PLANS[lead.plan].preciof : PLANS[lead.plan].precio;
+  return p || 0; // plan05 es "a consultar", no suma al pipeline
 }
 
 // ── RENDER ─────────────────────────────────────────────
