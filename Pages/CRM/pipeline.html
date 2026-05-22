@@ -624,7 +624,7 @@ function fromDb(row) {
 }
 
 function toDb(lead) {
-  return {
+  const obj = {
     id:               lead.id,
     nombre:           lead.nombre,
     empresa:          lead.empresa,
@@ -638,16 +638,18 @@ function toDb(lead) {
     status:           lead.status,
     prioridad:        lead.prioridad,
     nota:             lead.nota,
-    cal_link:         lead.calLink,
-    reunion_fecha:    lead.reunionFecha,
-    notion_url:       lead.notionUrl,
-    github_url:       lead.githubUrl,
-    propuesta_url:    lead.propuestaUrl,
-    contrato_url:     lead.contratoUrl,
     hooks_respuestas: lead.hooksRespuestas || {},
     historial:        lead.historial || [],
     session_notas:    lead.sessionNotas,
   };
+  // Link/date fields: only include when non-empty so PATCH never overwrites a DB value with null
+  if (lead.calLink)      obj.cal_link      = lead.calLink;
+  if (lead.reunionFecha) obj.reunion_fecha = lead.reunionFecha;
+  if (lead.notionUrl)    obj.notion_url    = lead.notionUrl;
+  if (lead.githubUrl)    obj.github_url    = lead.githubUrl;
+  if (lead.propuestaUrl) obj.propuesta_url = lead.propuestaUrl;
+  if (lead.contratoUrl)  obj.contrato_url  = lead.contratoUrl;
+  return obj;
 }
 
 // ── DATA ───────────────────────────────────────────────
