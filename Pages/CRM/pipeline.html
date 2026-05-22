@@ -577,7 +577,7 @@ const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
 
 async function sbFetch(method, path, body) {
-  const jwt = sessionStorage.getItem('crm_token') || SB_KEY;
+  const jwt = localStorage.getItem('crm_token') || SB_KEY;
   const headers = {
     'apikey': SB_KEY,
     'Authorization': 'Bearer ' + jwt,
@@ -1463,6 +1463,12 @@ document.getElementById('leadModal').addEventListener('click', e=>{ if(e.target=
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
 // ── AUTH ───────────────────────────────────────────────
+// Pre-fill saved email
+(function(){
+  const saved = localStorage.getItem('crm_email');
+  if (saved) document.getElementById('loginEmail').value = saved;
+})();
+
 async function doLogin() {
   const email  = document.getElementById('loginEmail').value.trim();
   const pass   = document.getElementById('loginPass').value;
@@ -1482,8 +1488,9 @@ async function doLogin() {
       errEl.textContent = data.error_description || data.msg || 'Credenciales incorrectas.';
       return;
     }
-    sessionStorage.setItem('crm_auth', '1');
-    sessionStorage.setItem('crm_token', data.access_token);
+    localStorage.setItem('crm_auth', '1');
+    localStorage.setItem('crm_token', data.access_token);
+    localStorage.setItem('crm_email', email);
     document.getElementById('loginOverlay').classList.add('hidden');
   } catch(e) {
     errEl.textContent = 'Error de conexión.';
@@ -1497,7 +1504,7 @@ document.getElementById('loginPass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
 
-if (sessionStorage.getItem('crm_auth') === '1') {
+if (localStorage.getItem('crm_auth') === '1') {
   document.getElementById('loginOverlay').classList.add('hidden');
 }
 
