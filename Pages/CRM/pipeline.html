@@ -291,6 +291,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
     </div>
     <button class="btn btn-ghost btn-sm" onclick="exportCSV()">↓ CSV</button>
     <button class="btn btn-primary" onclick="openModal()">+ Nuevo lead</button>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()" title="Cerrar sesión" style="opacity:.6;padding:7px 10px;">⏻</button>
   </div>
 </header>
 
@@ -576,7 +577,42 @@ const CUPOS_TOTAL = { plan01:10, plan02:10, plan03:10, plan04:10 };
 const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
 
+function tokenExpired() {
+  const t = localStorage.getItem('crm_token');
+  if (!t) return true;
+  try {
+    const exp = JSON.parse(atob(t.split('.')[1])).exp;
+    return exp * 1000 < Date.now() + 60_000; // renueva 1 min antes
+  } catch { return true; }
+}
+
+async function refreshSession() {
+  const rt = localStorage.getItem('crm_refresh');
+  if (!rt) return false;
+  try {
+    const r = await fetch(SB_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: rt })
+    });
+    if (!r.ok) return false;
+    const d = await r.json();
+    localStorage.setItem('crm_token',   d.access_token);
+    localStorage.setItem('crm_refresh', d.refresh_token);
+    return true;
+  } catch { return false; }
+}
+
+function doLogout() {
+  ['crm_auth','crm_token','crm_refresh'].forEach(k => localStorage.removeItem(k));
+  document.getElementById('loginOverlay').classList.remove('hidden');
+}
+
 async function sbFetch(method, path, body) {
+  if (tokenExpired()) {
+    const ok = await refreshSession();
+    if (!ok) { doLogout(); throw new Error('Sesión expirada'); }
+  }
   const jwt = localStorage.getItem('crm_token') || SB_KEY;
   const headers = {
     'apikey': SB_KEY,
@@ -587,6 +623,11 @@ async function sbFetch(method, path, body) {
   const opts = { method, headers };
   if (body !== undefined) opts.body = JSON.stringify(body);
   const r = await fetch(SB_URL + path, opts);
+  if (r.status === 401) {
+    const ok = await refreshSession();
+    if (!ok) { doLogout(); throw new Error('Sesión expirada'); }
+    return sbFetch(method, path, body); // un reintento
+  }
   if (!r.ok) { const t = await r.text(); throw new Error(r.status + ' ' + t); }
   if (method === 'GET') return r.json();
   return null;
@@ -1488,9 +1529,10 @@ async function doLogin() {
       errEl.textContent = data.error_description || data.msg || 'Credenciales incorrectas.';
       return;
     }
-    localStorage.setItem('crm_auth', '1');
-    localStorage.setItem('crm_token', data.access_token);
-    localStorage.setItem('crm_email', email);
+    localStorage.setItem('crm_auth',    '1');
+    localStorage.setItem('crm_token',   data.access_token);
+    localStorage.setItem('crm_refresh', data.refresh_token);
+    localStorage.setItem('crm_email',   email);
     document.getElementById('loginOverlay').classList.add('hidden');
   } catch(e) {
     errEl.textContent = 'Error de conexión.';
