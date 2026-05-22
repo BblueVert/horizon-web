@@ -746,8 +746,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   var closeBtn=document.getElementById('wa-modal-close');
   var form=document.getElementById('wa-prelead-form');
 
+  var WAF_FIELDS=['waf-nombre','waf-email','waf-rubro','waf-telefono','waf-necesidad'];
+  function wafSave(){try{var d={};WAF_FIELDS.forEach(function(id){var el=document.getElementById(id);d[id]=el?el.value:'';});localStorage.setItem('waf_draft',JSON.stringify(d));}catch(err){}}
+  function wafRestore(){try{var d=JSON.parse(localStorage.getItem('waf_draft')||'{}');WAF_FIELDS.forEach(function(id){var el=document.getElementById(id);if(el&&d[id])el.value=d[id];});}catch(err){}}
+  WAF_FIELDS.forEach(function(id){var el=document.getElementById(id);if(el){el.addEventListener('input',wafSave);el.addEventListener('change',wafSave);}});
+
   function openModal(e){
     e.preventDefault();
+    wafRestore();
     overlay.style.display='flex';
     document.getElementById('waf-nombre').focus();
   }

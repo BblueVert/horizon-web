@@ -632,8 +632,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
   var PLAN_VAL = 'IA integrada al negocio';
 
+  var WAF_FIELDS=['waf-nombre','waf-email','waf-rubro','waf-telefono'];
+  function wafSave(){try{var d=JSON.parse(localStorage.getItem('waf_draft')||'{}');WAF_FIELDS.forEach(function(id){var el=document.getElementById(id);d[id]=el?el.value:'';});localStorage.setItem('waf_draft',JSON.stringify(d));}catch(err){}}
+  function wafRestore(){try{var d=JSON.parse(localStorage.getItem('waf_draft')||'{}');WAF_FIELDS.forEach(function(id){var el=document.getElementById(id);if(el&&d[id])el.value=d[id];});}catch(err){}}
+  WAF_FIELDS.forEach(function(id){var el=document.getElementById(id);if(el){el.addEventListener('input',wafSave);el.addEventListener('change',wafSave);}});
+
   function openModal(e){
     e.preventDefault();
+    wafRestore();
     var sel = document.getElementById('waf-necesidad');
     if(sel) sel.value = PLAN_VAL;
     overlay.style.display='flex';
