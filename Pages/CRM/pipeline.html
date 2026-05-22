@@ -981,12 +981,12 @@ async function saveLead(){
     createdAt:       prevLead?.createdAt || new Date().toISOString(),
     updatedAt:       new Date().toISOString(),
     origen:          prevLead?.origen          || 'crm-manual',
-    calLink:         prevLead?.calLink         || '',
-    reunionFecha:    prevLead?.reunionFecha     || '',
-    notionUrl:       prevLead?.notionUrl        || '',
-    githubUrl:       prevLead?.githubUrl        || '',
-    propuestaUrl:    prevLead?.propuestaUrl     || '',
-    contratoUrl:     prevLead?.contratoUrl      || '',
+    calLink:         document.getElementById('xf-calLink')?.value?.trim() || prevLead?.calLink || null,
+    reunionFecha:    document.getElementById('xf-reunionFecha')?.value || prevLead?.reunionFecha || null,
+    notionUrl:       document.getElementById('xf-notionUrl')?.value?.trim() || prevLead?.notionUrl || null,
+    githubUrl:       document.getElementById('xf-githubUrl')?.value?.trim() || prevLead?.githubUrl || null,
+    propuestaUrl:    document.getElementById('xf-propuestaUrl')?.value?.trim() || prevLead?.propuestaUrl || null,
+    contratoUrl:     document.getElementById('xf-contratoUrl')?.value?.trim() || prevLead?.contratoUrl || null,
     hooksRespuestas: prevLead?.hooksRespuestas  || {},
   };
 
