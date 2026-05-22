@@ -1287,6 +1287,58 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   .diag-cards { grid-template-columns:1fr; }
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "HORIZON Consultoría de Arquitectura Digital",
+  "description": "Diseñamos el sistema digital que capta, atiende y vende por tu negocio. Consultoría de arquitectura digital para PyMEs en Rancagua y Chile.",
+  "url": "https://horizonweb.cl",
+  "telephone": "",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Rancagua",
+    "addressRegion": "O'Higgins",
+    "addressCountry": "CL"
+  },
+  "areaServed": ["Rancagua", "Chile"],
+  "priceRange": "$$",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Planes de Arquitectura Digital",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "name": "Plan 01 — Presencia Digital",
+        "description": "Sitio web, SEO, GEO, Google Business y automatización de leads.",
+        "price": "590000",
+        "priceCurrency": "CLP"
+      },
+      {
+        "@type": "Offer",
+        "name": "Plan 02 — Ecosistema Digital",
+        "description": "Todo Plan 01 más CRM, email marketing y automatizaciones avanzadas.",
+        "price": "990000",
+        "priceCurrency": "CLP"
+      },
+      {
+        "@type": "Offer",
+        "name": "Plan 03 — Sistema con IA",
+        "description": "Ecosistema completo con inteligencia artificial, Meta Ads y SEO técnico avanzado.",
+        "price": "1990000",
+        "priceCurrency": "CLP"
+      },
+      {
+        "@type": "Offer",
+        "name": "Plan 04 — Agente IA Personalizado",
+        "description": "Agente de inteligencia artificial entrenado con el conocimiento de tu negocio.",
+        "price": "1490000",
+        "priceCurrency": "CLP"
+      }
+    ]
+  }
+}
+</script>
 </head>
 <body>
 
@@ -1352,8 +1404,35 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
         <span class="btn-text-full">→ Ver cuántos clientes estás perdiendo hoy</span>
         <span class="btn-text-short">→ Agendar diagnóstico gratuito</span>
       </a>
+      <div id="hero-cupos-badge" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 14px;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.25);border-radius:100px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;color:#FF6B35;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#FF6B35;animation:pulse 2s infinite;flex-shrink:0;"></span>
+        <span id="hero-cupos-text">Precio Fundador · 50% OFF · cargando cupos...</span>
+      </div>
     </div>
   </div>
+<script>
+(function(){
+  var SB='https://dkitbnrpwmwrfnmztdfc.supabase.co';
+  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
+  var TOTAL_CUPOS = 40;
+  var el = document.getElementById('hero-cupos-text');
+  if (!el) return;
+  fetch(SB+'/rest/v1/leads?select=id&tipoprecio=eq.fundador&status=neq.lost',{
+    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'count=exact','Range':'0-0'}
+  }).then(function(r){
+    var cr=r.headers.get('Content-Range');
+    var tomados=cr?parseInt(cr.split('/')[1])||0:0;
+    var libres=Math.max(0,TOTAL_CUPOS-tomados);
+    if(libres===0){
+      el.textContent='Precio Fundador agotado · precio regular activo';
+      document.getElementById('hero-cupos-badge').style.borderColor='rgba(155,152,184,.25)';
+      document.getElementById('hero-cupos-badge').style.color='#9B98B8';
+    } else {
+      el.textContent='Precio Fundador · 50% OFF · Quedan '+libres+' de '+TOTAL_CUPOS+' cupos';
+    }
+  }).catch(function(){ el.textContent='Precio Fundador · 50% OFF · cupos limitados'; });
+})();
+</script>
 
   <!-- Ilustración animada -->
   <div class="hero-right" aria-hidden="true">
@@ -2024,6 +2103,53 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     </div>
   </div>
 </section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section id="faq" style="padding:80px 0;max-width:720px;margin:0 auto;padding-left:24px;padding-right:24px;">
+  <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--h1);margin-bottom:12px;text-align:center;">PREGUNTAS FRECUENTES</div>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,48px);color:#F5F2FF;text-align:center;margin:0 0 48px;letter-spacing:.02em;">Todo lo que necesitas saber</h2>
+  <div id="faq-list" style="display:flex;flex-direction:column;gap:4px;">
+  </div>
+</section>
+<script>
+(function(){
+  var faqs=[
+    {q:'¿Cuánto tiempo toma implementar el sistema?',a:'Plan 01 y 02 se entregan en 3 a 4 semanas. Plan 03 y 04, que incluyen IA y automatizaciones avanzadas, toman entre 5 y 8 semanas. Cada plan tiene un cronograma de hitos claro desde el día 1.'},
+    {q:'¿Puedo empezar con Plan 01 y subir a un plan mayor después?',a:'Sí. Cada plan está diseñado para ser base del siguiente. Si partes con Presencia Digital y en 6 meses quieres agregar automatizaciones o IA, se hace una migración limpia sin rehacer lo que ya está.'},
+    {q:'¿Puedo cancelar el retainer mensual cuando quiera?',a:'Sí, el retainer es mes a mes sin contrato de permanencia. Lo único que no se puede cancelar retroactivamente es la inversión inicial, que cubre la construcción del sistema.'},
+    {q:'¿Trabajan con negocios fuera de Rancagua?',a:'Sí. El 100% del trabajo es remoto y hemos trabajado con clientes en toda la Región de O\'Higgins y Santiago. Rancagua es nuestra base, pero el servicio no tiene límite geográfico dentro de Chile.'},
+    {q:'¿Qué pasa si no estoy conforme con los resultados?',a:'Cada plan incluye máximo 2 rondas de revisión por etapa. Si al final de la entrega algo no cumple lo acordado en el brief inicial, se corrige sin costo adicional. La propuesta deja por escrito exactamente qué se entrega.'},
+    {q:'¿El diagnóstico tiene algún costo?',a:'No. El diagnóstico de 30 minutos es completamente gratuito y sin compromiso. Es una conversación para entender tu negocio y ver si HORIZON es la solución correcta para ti.'},
+    {q:'¿Qué es el Precio Fundador y cuándo vence?',a:'Los primeros 10 clientes de cada plan acceden a un descuento del 50% en la inversión inicial. Una vez que los cupos se agotan, el precio vuelve al valor regular. No hay fecha fija de vencimiento, solo límite de cupos.'}
+  ];
+  var list=document.getElementById('faq-list');
+  faqs.forEach(function(item,i){
+    var wrap=document.createElement('div');
+    wrap.style.cssText='border:1px solid #252235;border-radius:12px;overflow:hidden;';
+    var btn=document.createElement('button');
+    btn.setAttribute('aria-expanded','false');
+    btn.setAttribute('aria-controls','faq-body-'+i);
+    btn.style.cssText='width:100%;text-align:left;background:#13111F;border:none;padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;';
+    btn.innerHTML='<span style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:15px;font-weight:600;color:#F5F2FF;line-height:1.4;">'+item.q+'</span><span class="faq-icon" style="font-size:18px;color:#9B98B8;flex-shrink:0;transition:transform .2s;">+</span>';
+    var body=document.createElement('div');
+    body.id='faq-body-'+i;
+    body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease;background:#0D0B18;';
+    body.innerHTML='<p style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:14px;color:#9B98B8;line-height:1.7;padding:16px 20px 20px;margin:0;">'+item.a+'</p>';
+    btn.addEventListener('click',function(){
+      var open=btn.getAttribute('aria-expanded')==='true';
+      btn.setAttribute('aria-expanded',open?'false':'true');
+      btn.querySelector('.faq-icon').style.transform=open?'rotate(0deg)':'rotate(45deg)';
+      body.style.maxHeight=open?'0':body.scrollHeight+'px';
+      wrap.style.borderColor=open?'#252235':'#302D45';
+    });
+    wrap.appendChild(btn);
+    wrap.appendChild(body);
+    list.appendChild(wrap);
+  });
+})();
+</script>
 
 <div class="divider"></div>
 

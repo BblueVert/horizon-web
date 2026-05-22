@@ -1,0 +1,20 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.claude
+.vercel
+.playwright-mcp
+*.log
+References/
+agency-agents/
+files/
+Skills*/
+HORIZON X GO/
+Screenshots*/
+*.png
+*.jpg
+*.jpeg

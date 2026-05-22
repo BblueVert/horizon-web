@@ -2,11 +2,10 @@
 
 const express = require('express');
 const path = require('path');
-const https = require('https');
+const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || '';
 
 // ── Security headers ──────────────────────────────────────────────────────────
 app.use((req, res, next) => {
@@ -20,11 +19,12 @@ app.use((req, res, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      "script-src 'self' 'unsafe-inline' https://app.cal.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://cal.com",
+      "connect-src 'self' https://cal.com https://app.cal.com https://dkitbnrpwmwrfnmztdfc.supabase.co",
+      "frame-src https://cal.com https://app.cal.com",
       "frame-ancestors 'none'",
     ].join('; ')
   );
@@ -32,81 +32,61 @@ app.use((req, res, next) => {
 });
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
-app.use(express.json({ limit: '16kb' }));
+app.use(express.json({ limit: '256kb' }));
 
-// ── Rate limiting (manual, no extra dep) ─────────────────────────────────────
-const rateLimitStore = new Map();
-function rateLimit(windowMs, max) {
+// ── Rate limiting middleware ──────────────────────────────────────────────────
+function rateLimitMiddleware(windowMs, max) {
   return (req, res, next) => {
-    const key = req.ip || req.headers['x-forwarded-for'] || 'unknown';
-    const now = Date.now();
-    const entry = rateLimitStore.get(key) || { count: 0, start: now };
-    if (now - entry.start > windowMs) { entry.count = 0; entry.start = now; }
-    entry.count++;
-    rateLimitStore.set(key, entry);
-    if (entry.count > max) {
+    if (rateLimit(getIp(req), windowMs, max)) {
       return res.status(429).json({ error: 'Demasiadas solicitudes. Intenta más tarde.' });
     }
     next();
   };
 }
 
-// ── Input sanitization helper ─────────────────────────────────────────────────
-function sanitizeString(val, maxLen = 255) {
-  if (val === undefined || val === null) return '';
-  return String(val)
-    .replace(/<[^>]*>/g, '')       // strip HTML tags
-    .replace(/['"`;\\]/g, '')      // strip SQL-dangerous chars
-    .trim()
-    .substring(0, maxLen);
-}
-
 // ── Health endpoint ───────────────────────────────────────────────────────────
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-// ── API: proxy lead to n8n (hides internal webhook URL) ──────────────────────
-app.post('/api/leads', rateLimit(60_000, 10), (req, res) => {
+// ── API: leads ────────────────────────────────────────────────────────────────
+app.post('/api/leads', rateLimitMiddleware(60_000, 10), async (req, res) => {
+  const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
   if (!N8N_WEBHOOK_URL) {
     console.error('[leads] N8N_WEBHOOK_URL not configured');
     return res.status(503).json({ error: 'Servicio no disponible' });
   }
 
-  const body = req.body || {};
-  const payload = JSON.stringify({
-    nombre:   sanitizeString(body.nombre),
-    email:    sanitizeString(body.email),
-    empresa:  sanitizeString(body.empresa),
-    telefono: sanitizeString(body.telefono, 30),
-    mensaje:  sanitizeString(body.mensaje, 1000),
-    fuente:   sanitizeString(body.fuente, 100) || 'web',
-  });
+  // Validate URL safety (no localhost / non-HTTPS)
+  try {
+    const u = new URL(N8N_WEBHOOK_URL);
+    if (u.protocol !== 'https:') throw new Error('Non-HTTPS webhook URL');
+    if (['localhost', '127.0.0.1', '0.0.0.0', '::1'].includes(u.hostname)) throw new Error('Invalid webhook host');
+  } catch (err) {
+    console.error('[leads] Invalid N8N_WEBHOOK_URL:', err.message);
+    return res.status(503).json({ error: 'Servicio no disponible' });
+  }
 
-  const url = new URL(N8N_WEBHOOK_URL);
-  const options = {
-    hostname: url.hostname,
-    path: url.pathname,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) },
+  const body = req.body || {};
+  const lead = {
+    nombre:   sanitize(body.nombre),
+    email:    sanitize(body.email),
+    empresa:  sanitize(body.empresa),
+    telefono: sanitize(body.telefono, 30),
+    mensaje:  sanitize(body.mensaje, 1000),
+    fuente:   sanitize(body.fuente, 100) || 'web',
+    plan:     sanitize(body.plan, 100),
+    origen:   sanitize(body.origen, 100),
   };
 
-  const upstream = https.request(options, (upstream_res) => {
-    // Forward 200/201 as success; anything else as error
-    if (upstream_res.statusCode >= 200 && upstream_res.statusCode < 300) {
-      return res.json({ ok: true });
-    }
-    console.error('[leads] upstream returned', upstream_res.statusCode);
-    res.status(502).json({ error: 'Error al registrar el lead' });
-  });
-
-  upstream.on('error', (err) => {
+  try {
+    const r = await httpsPost(N8N_WEBHOOK_URL, { 'Content-Type': 'application/json' }, lead);
+    if (r.status >= 200 && r.status < 300) return res.json({ ok: true });
+    console.error('[leads] upstream returned', r.status);
+    return res.status(502).json({ error: 'Error al registrar el lead' });
+  } catch (err) {
     console.error('[leads] upstream error:', err.message);
-    res.status(502).json({ error: 'Error al registrar el lead' });
-  });
-
-  upstream.write(payload);
-  upstream.end();
+    const status = err.message === 'Request timeout' ? 504 : 502;
+    return res.status(status).json({ error: 'Error al registrar el lead' });
+  }
 });
 
 // ── Static files ──────────────────────────────────────────────────────────────
@@ -114,13 +94,14 @@ app.use(express.static(path.join(__dirname)));
 
 // ── URL rewrites (mirrors vercel.json) ───────────────────────────────────────
 const rewrites = {
-  '/': '/Pages/HORIZON_Landing_2026.html',
-  '/plan-01': '/Pages/plan-01.html',
-  '/plan-02': '/Pages/plan-02.html',
-  '/plan-03': '/Pages/plan-03.html',
-  '/plan-04': '/Pages/plan-04.html',
-  '/servicios': '/Pages/servicios.html',
-  '/crm':    '/Pages/CRM/pipeline.html',
+  '/':                '/Pages/HORIZON_Landing_2026.html',
+  '/plan-01':         '/Pages/plan-01.html',
+  '/plan-02':         '/Pages/plan-02.html',
+  '/plan-03':         '/Pages/plan-03.html',
+  '/plan-04':         '/Pages/plan-04.html',
+  '/plan-05':         '/Pages/plan-05.html',
+  '/servicios':       '/Pages/servicios.html',
+  '/crm':             '/Pages/CRM/pipeline.html',
   '/reunion':         '/Pages/reunion/index.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
 };
@@ -129,11 +110,15 @@ Object.entries(rewrites).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
 });
 
+// Portal con token dinámico
+app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
+
 // ── 404 fallback ──────────────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).sendFile(path.join(__dirname, 'Pages/HORIZON_Landing_2026.html')));
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`[horizon-web] servidor corriendo en puerto ${PORT}`);
-  if (!N8N_WEBHOOK_URL) console.warn('[horizon-web] ADVERTENCIA: N8N_WEBHOOK_URL no configurada');
+  if (!process.env.N8N_WEBHOOK_URL) console.warn('[horizon-web] ADVERTENCIA: N8N_WEBHOOK_URL no configurada');
+  if (!process.env.SUPABASE_URL) console.warn('[horizon-web] ADVERTENCIA: SUPABASE_URL no configurada');
 });
