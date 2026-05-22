@@ -1212,45 +1212,44 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .ef-title { font-family:var(--font-d); font-size:clamp(48px,7vw,88px); line-height:.92; letter-spacing:.02em; color:var(--white); margin-bottom:24px; }
 .ef-title em { font-style:normal; background:linear-gradient(135deg,var(--h1),var(--h4),var(--h6)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .ef-sub { font-family:var(--font-s); font-style:italic; font-size:clamp(15px,1.8vw,18px); color:var(--text2); max-width:580px; line-height:1.65; margin-bottom:56px; }
-/* monitor window */
-.ef-monitor { background:var(--card); border:1px solid var(--border2); border-radius:20px; overflow:hidden; position:relative; }
-.ef-monitor::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--h1),var(--h3),var(--h5),var(--h6)); pointer-events:none; z-index:1; }
-.ef-monitor-bar { display:flex; align-items:center; gap:12px; padding:14px 24px; background:var(--surface); border-bottom:1px solid var(--border); }
-.ef-win-dots { display:flex; gap:7px; }
-.ef-win-dots span { width:11px; height:11px; border-radius:50%; }
-.ef-win-dots span:nth-child(1) { background:rgba(255,96,96,.7); }
-.ef-win-dots span:nth-child(2) { background:rgba(255,189,46,.6); }
-.ef-win-dots span:nth-child(3) { background:rgba(40,205,65,.55); }
-.ef-monitor-title { font-family:var(--font-m); font-size:10px; letter-spacing:.18em; color:var(--text3); text-transform:uppercase; flex:1; text-align:center; }
-.ef-monitor-status { display:flex; align-items:center; gap:6px; font-family:var(--font-m); font-size:9px; letter-spacing:.2em; color:#4ade80; text-transform:uppercase; }
-@keyframes live-blink{0%,100%{opacity:1}50%{opacity:.25}}
-.ef-live-dot { width:6px; height:6px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px rgba(74,222,128,.8); animation:live-blink 1.2s ease-in-out infinite; flex-shrink:0; }
-/* log */
-.ef-log { padding:20px 24px 24px; border-bottom:1px solid var(--border); font-family:var(--font-m); min-height:230px; position:relative; overflow:hidden; }
-.ef-log::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,.012) 28px,rgba(255,255,255,.012) 29px); pointer-events:none; }
-.ef-log-line { display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.03); opacity:0; transform:translateX(-10px); transition:opacity .22s ease,transform .22s ease; position:relative; z-index:1; }
-.ef-log-line.ef-show { opacity:1; transform:translateX(0); }
-.ef-log-line:last-child { border-bottom:none; }
-.ef-ts { font-size:10px; color:var(--text3); letter-spacing:.05em; min-width:92px; flex-shrink:0; }
-.ef-tag { font-size:8px; letter-spacing:.18em; padding:3px 8px; border-radius:4px; flex-shrink:0; text-transform:uppercase; }
-.ef-tag-in  { color:var(--h1); background:rgba(255,107,53,.1);  border:1px solid rgba(255,107,53,.22); }
-.ef-tag-ia  { color:var(--h6); background:rgba(123,63,160,.1);  border:1px solid rgba(123,63,160,.22); }
-.ef-tag-res { color:var(--h3); background:rgba(255,179,71,.1);  border:1px solid rgba(255,179,71,.22); }
-.ef-tag-crm { color:var(--h4); background:rgba(232,99,122,.1);  border:1px solid rgba(232,99,122,.22); }
-.ef-tag-cal { color:var(--h2); background:rgba(255,140,66,.1);  border:1px solid rgba(255,140,66,.22); }
-.ef-log-text { font-size:12px; color:var(--text2); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.ef-log-ok { font-size:11px; color:#4ade80; margin-left:auto; flex-shrink:0; padding-left:8px; }
-.ef-log-summary { border-bottom:none !important; padding-top:14px !important; }
-.ef-summary-val { font-family:var(--font-d); font-size:clamp(20px,2.8vw,32px); letter-spacing:.08em; background:linear-gradient(135deg,var(--h1),var(--h3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-/* metrics row */
-.ef-metrics { display:flex; }
-.ef-metric { flex:1; padding:22px 28px; display:flex; flex-direction:column; gap:5px; border-right:1px solid var(--border); }
-.ef-metric:last-child { border-right:none; }
-.ef-metric-val { font-family:var(--font-d); font-size:clamp(22px,3vw,36px); letter-spacing:.04em; line-height:1; background:linear-gradient(135deg,var(--h1),var(--h3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.ef-metric-label { font-family:var(--font-m); font-size:9px; letter-spacing:.14em; color:var(--text3); text-transform:uppercase; line-height:1.4; }
+/* arena layout */
+.ef-arena { display:grid; grid-template-columns:1fr 48px 1fr; gap:0; align-items:stretch; }
+.ef-vs { display:flex; align-items:center; justify-content:center; }
+.ef-vs-badge { font-family:var(--font-m); font-size:10px; letter-spacing:.2em; color:var(--text3); background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 9px; writing-mode:vertical-rl; }
+.ef-side-label { font-family:var(--font-m); font-size:9px; letter-spacing:.25em; text-transform:uppercase; margin-bottom:24px; }
+/* ── LADO IZQUIERDO: herramientas desconectadas ── */
+.ef-chaos { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; display:flex; flex-direction:column; }
+.ef-chaos .ef-side-label { color:var(--text3); opacity:.6; }
+.broken-list { display:flex; flex-direction:column; gap:5px; flex:1; }
+.broken-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; background:rgba(255,255,255,.013); border:1px solid rgba(255,255,255,.036); }
+.broken-dot { width:7px; height:7px; border-radius:50%; background:rgba(160,55,55,.5); flex-shrink:0; }
+.broken-body { flex:1; min-width:0; }
+.broken-name { font-family:var(--font-b); font-size:13px; font-weight:600; color:var(--text3); margin-bottom:2px; text-decoration:line-through; text-decoration-color:rgba(255,255,255,.1); }
+.broken-detail { font-size:10px; color:var(--text3); opacity:.45; line-height:1.35; }
+.broken-state { font-family:var(--font-m); font-size:7px; letter-spacing:.14em; color:rgba(165,65,65,.75); background:rgba(140,50,50,.08); border:1px solid rgba(140,50,50,.2); border-radius:4px; padding:3px 8px; flex-shrink:0; text-transform:uppercase; white-space:nowrap; }
+.ef-chaos-foot { font-family:var(--font-m); font-size:9px; letter-spacing:.18em; color:var(--text3); text-align:center; padding-top:14px; margin-top:14px; border-top:1px solid var(--border); text-transform:uppercase; opacity:.4; }
+/* ── LADO DERECHO: sistema horizon ── */
+.ef-horizon-side { background:linear-gradient(145deg,rgba(255,107,53,.05) 0%,rgba(74,53,128,.09) 100%); border:1px solid rgba(255,107,53,.18); border-radius:20px; padding:32px; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+.ef-horizon-side::after { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,107,53,.55),rgba(123,63,160,.35),transparent); }
+.ef-horizon-side .ef-side-label { color:var(--h1); }
+.sys-pipeline { display:flex; flex-direction:column; gap:0; flex:1; }
+.sys-node { display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:12px; background:rgba(255,107,53,.04); border:1px solid rgba(255,107,53,.09); transition:background .25s,border-color .25s; }
+.sys-node:hover { background:rgba(255,107,53,.09); border-color:rgba(255,107,53,.25); }
+.sys-node-num { font-family:var(--font-m); font-size:9px; letter-spacing:.12em; color:var(--h1); width:20px; flex-shrink:0; }
+.sys-node-icon { width:30px; height:30px; border-radius:8px; background:rgba(255,107,53,.1); border:1px solid rgba(255,107,53,.14); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--h1); }
+.sys-node-icon svg { width:15px; height:15px; }
+.sys-node-body { flex:1; min-width:0; }
+.sys-node-name { font-family:var(--font-b); font-weight:700; font-size:13px; color:var(--white); margin-bottom:1px; }
+.sys-node-desc { font-size:10px; color:var(--text2); letter-spacing:.03em; }
+@keyframes status-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 .sys-node-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; box-shadow:0 0 6px rgba(74,222,128,.5); flex-shrink:0; animation:status-pulse 2.5s ease-in-out infinite; }
-.sys-connector { height:24px; display:flex; align-items:center; justify-content:center; padding:0 15px; }
-/* enfoque responsive — handled in media block below */
+.sys-connector { height:22px; display:flex; align-items:center; justify-content:center; padding:0 15px; }
+.sys-conn-line { width:1px; height:100%; background:linear-gradient(180deg,rgba(255,107,53,.35),rgba(123,63,160,.25)); position:relative; overflow:visible; }
+@keyframes pulse-travel{0%{top:0;opacity:1}80%{opacity:.8}100%{top:100%;opacity:0}}
+.sys-pulse { position:absolute; width:5px; height:5px; border-radius:50%; background:var(--h1); left:-2px; top:0; box-shadow:0 0 7px rgba(255,107,53,.7); animation:pulse-travel 1.6s ease-in-out infinite; }
+.ef-horizon-foot { font-family:var(--font-m); font-size:9px; letter-spacing:.18em; color:var(--h1); text-align:center; padding-top:14px; margin-top:14px; border-top:1px solid rgba(255,107,53,.14); display:flex; align-items:center; justify-content:center; gap:8px; text-transform:uppercase; }
+@keyframes dot-glow{0%,100%{box-shadow:0 0 4px var(--h1)}50%{box-shadow:0 0 14px var(--h1)}}
+.ef-foot-dot { width:6px; height:6px; border-radius:50%; background:var(--h1); animation:dot-glow 2s ease-in-out infinite; flex-shrink:0; }
 
 /* ── REVEAL ENHANCED ── */
 .reveal-left { opacity:0; transform:translateX(-36px); transition:opacity .7s ease,transform .7s ease; }
@@ -1269,11 +1268,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   .diag-wrap { grid-template-columns:1fr; gap:48px; }
   .solucion-grid { grid-template-columns:1fr; }
   .proceso-flow { grid-template-columns:1fr 1fr; }
-  .ef-metrics { flex-wrap:wrap; }
-  .ef-metric { flex:0 0 50%; border-right:none; border-top:1px solid var(--border); }
-  .ef-metric:nth-child(odd) { border-right:1px solid var(--border); }
-  .ef-ts { display:none; }
-  .ef-log-text { white-space:normal; }
+  .ef-arena { grid-template-columns:1fr; gap:12px; }
+  .ef-vs { padding:4px 0; }
+  .ef-vs-badge { writing-mode:horizontal-tb; }
 }
 @media (max-width:600px) {
   .pain-grid { grid-template-columns:1fr; }
@@ -1830,74 +1827,141 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   <div class="wrap">
     <div class="ef-label">Nuestro enfoque</div>
     <h2 class="ef-title">NO SOMOS UNA AGENCIA.<br><em>DISEÑAMOS SISTEMAS.</em></h2>
-    <p class="ef-sub">La mayoría vende piezas sueltas. Nosotros construimos infraestructura que capta, atiende y convierte — sin que el dueño tenga que intervenir.</p>
+    <p class="ef-sub">La mayoría vende piezas sueltas. Nosotros construimos infraestructura que capta, atiende y convierte — sin que el dueño tenga que intervenir en cada paso.</p>
 
-    <div class="ef-monitor" aria-label="Simulación de sistema HORIZON en tiempo real">
-      <!-- Barra de ventana -->
-      <div class="ef-monitor-bar">
-        <div class="ef-win-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-        <div class="ef-monitor-title">HORIZON SYSTEM · proceso en tiempo real</div>
-        <div class="ef-monitor-status"><span class="ef-live-dot" aria-hidden="true"></span>LIVE</div>
+    <div class="ef-arena">
+
+      <!-- IZQUIERDA: herramientas desconectadas -->
+      <div class="ef-chaos reveal-left">
+        <div class="ef-side-label">Agencia tradicional</div>
+        <div class="broken-list">
+
+          <div class="broken-item">
+            <div class="broken-dot"></div>
+            <div class="broken-body">
+              <div class="broken-name">Sitio web</div>
+              <div class="broken-detail">Sin actualizar · nadie lo revisa</div>
+            </div>
+            <div class="broken-state">Offline</div>
+          </div>
+
+          <div class="broken-item">
+            <div class="broken-dot"></div>
+            <div class="broken-body">
+              <div class="broken-name">WhatsApp</div>
+              <div class="broken-detail">14 mensajes sin responder</div>
+            </div>
+            <div class="broken-state">Offline</div>
+          </div>
+
+          <div class="broken-item">
+            <div class="broken-dot"></div>
+            <div class="broken-body">
+              <div class="broken-name">Instagram</div>
+              <div class="broken-detail">Último post: hace 3 semanas</div>
+            </div>
+            <div class="broken-state">Offline</div>
+          </div>
+
+          <div class="broken-item">
+            <div class="broken-dot"></div>
+            <div class="broken-body">
+              <div class="broken-name">Cotizaciones</div>
+              <div class="broken-detail">A mano, sin registro ni seguimiento</div>
+            </div>
+            <div class="broken-state">Offline</div>
+          </div>
+
+          <div class="broken-item">
+            <div class="broken-dot"></div>
+            <div class="broken-body">
+              <div class="broken-name">Agenda</div>
+              <div class="broken-detail">En papel o en la cabeza del dueño</div>
+            </div>
+            <div class="broken-state">Offline</div>
+          </div>
+
+          <div class="broken-item">
+            <div class="broken-dot"></div>
+            <div class="broken-body">
+              <div class="broken-name">Datos de clientes</div>
+              <div class="broken-detail">Sin CRM · nada registrado</div>
+            </div>
+            <div class="broken-state">Offline</div>
+          </div>
+
+        </div>
+        <div class="ef-chaos-foot">Caos · Sin sistema · Sin conexión</div>
       </div>
 
-      <!-- Log de eventos -->
-      <div class="ef-log" id="ef-log" aria-live="polite">
-        <div class="ef-log-line" data-i="0">
-          <span class="ef-ts">00:00:00.000</span>
-          <span class="ef-tag ef-tag-in">ENTRADA</span>
-          <span class="ef-log-text">Lead recibido vía WhatsApp · María González · clínica dental</span>
-          <span class="ef-log-ok" aria-hidden="true">✓</span>
+      <!-- VS -->
+      <div class="ef-vs"><div class="ef-vs-badge">VS</div></div>
+
+      <!-- DERECHA: sistema horizon -->
+      <div class="ef-horizon-side reveal-right">
+        <div class="ef-side-label">Sistema HORIZON</div>
+        <div class="sys-pipeline">
+
+          <div class="sys-node">
+            <span class="sys-node-num">01</span>
+            <div class="sys-node-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="sys-node-body">
+              <div class="sys-node-name">Captación de leads</div>
+              <div class="sys-node-desc">Web · SEO · Ads · WhatsApp</div>
+            </div>
+            <div class="sys-node-dot"></div>
+          </div>
+
+          <div class="sys-connector">
+            <div class="sys-conn-line"><div class="sys-pulse"></div></div>
+          </div>
+
+          <div class="sys-node">
+            <span class="sys-node-num">02</span>
+            <div class="sys-node-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+            <div class="sys-node-body">
+              <div class="sys-node-name">Respuesta IA en 4 seg</div>
+              <div class="sys-node-desc">Clasifica · Responde · Califica</div>
+            </div>
+            <div class="sys-node-dot" style="animation-delay:.5s"></div>
+          </div>
+
+          <div class="sys-connector">
+            <div class="sys-conn-line"><div class="sys-pulse" style="animation-delay:.45s"></div></div>
+          </div>
+
+          <div class="sys-node">
+            <span class="sys-node-num">03</span>
+            <div class="sys-node-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            <div class="sys-node-body">
+              <div class="sys-node-name">Agenda automática</div>
+              <div class="sys-node-desc">Confirma · Recuerda · Reagenda</div>
+            </div>
+            <div class="sys-node-dot" style="animation-delay:1s"></div>
+          </div>
+
+          <div class="sys-connector">
+            <div class="sys-conn-line"><div class="sys-pulse" style="animation-delay:.9s"></div></div>
+          </div>
+
+          <div class="sys-node">
+            <span class="sys-node-num">04</span>
+            <div class="sys-node-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div class="sys-node-body">
+              <div class="sys-node-name">CRM y seguimiento</div>
+              <div class="sys-node-desc">Registra · Analiza · Convierte</div>
+            </div>
+            <div class="sys-node-dot" style="animation-delay:1.5s"></div>
+          </div>
+
         </div>
-        <div class="ef-log-line" data-i="1">
-          <span class="ef-ts">00:00:00.312</span>
-          <span class="ef-tag ef-tag-ia">IA</span>
-          <span class="ef-log-text">Clasificado: interés alto · respuesta generada en contexto</span>
-          <span class="ef-log-ok" aria-hidden="true">✓</span>
-        </div>
-        <div class="ef-log-line" data-i="2">
-          <span class="ef-ts">00:00:01.841</span>
-          <span class="ef-tag ef-tag-res">RESPUESTA</span>
-          <span class="ef-log-text">Mensaje personalizado enviado · tiempo de respuesta: 1.8s</span>
-          <span class="ef-log-ok" aria-hidden="true">✓</span>
-        </div>
-        <div class="ef-log-line" data-i="3">
-          <span class="ef-ts">00:00:02.205</span>
-          <span class="ef-tag ef-tag-crm">CRM</span>
-          <span class="ef-log-text">Perfil creado automáticamente · pipeline: primer contacto</span>
-          <span class="ef-log-ok" aria-hidden="true">✓</span>
-        </div>
-        <div class="ef-log-line" data-i="4">
-          <span class="ef-ts">00:00:03.890</span>
-          <span class="ef-tag ef-tag-cal">AGENDA</span>
-          <span class="ef-log-text">Slot sugerido: jueves 15:00 · confirmación en espera</span>
-          <span class="ef-log-ok" aria-hidden="true">✓</span>
-        </div>
-        <div class="ef-log-line ef-log-summary" data-i="5">
-          <span class="ef-summary-val">3.9 segundos. 0 intervenciones del dueño.</span>
+        <div class="ef-horizon-foot">
+          <span class="ef-foot-dot"></span>
+          Sistema activo · Todo conectado
         </div>
       </div>
 
-      <!-- Métricas integradas -->
-      <div class="ef-metrics">
-        <div class="ef-metric">
-          <div class="ef-metric-val">4 seg</div>
-          <div class="ef-metric-label">Respuesta promedio</div>
-        </div>
-        <div class="ef-metric">
-          <div class="ef-metric-val">0</div>
-          <div class="ef-metric-label">Leads sin respuesta</div>
-        </div>
-        <div class="ef-metric">
-          <div class="ef-metric-val">24/7</div>
-          <div class="ef-metric-label">Sistema activo</div>
-        </div>
-        <div class="ef-metric">
-          <div class="ef-metric-val">100%</div>
-          <div class="ef-metric-label">Registros en CRM</div>
-        </div>
-      </div>
     </div>
-
   </div>
 </section>
 
@@ -2405,52 +2469,6 @@ Cal("on", {
     });
   }, { threshold: 0.07, rootMargin: '0px 0px -48px 0px' });
   els.forEach(function(el){ obs.observe(el); });
-})();
-
-// Enfoque log loop animation
-(function(){
-  var log = document.getElementById('ef-log');
-  if(!log) return;
-  var lines = log.querySelectorAll('.ef-log-line');
-  if(!lines.length) return;
-  var delays = [0, 340, 680, 1020, 1360, 1850];
-  var holdMs = 1600;
-  var running = false;
-
-  function showAll(){
-    lines.forEach(function(l, i){
-      setTimeout(function(){ l.classList.add('ef-show'); }, delays[i]||0);
-    });
-  }
-  function hideAll(cb){
-    lines.forEach(function(l){
-      l.style.transition = 'opacity .35s ease';
-      l.classList.remove('ef-show');
-    });
-    setTimeout(function(){
-      lines.forEach(function(l){ l.style.transition = ''; });
-      if(cb) cb();
-    }, 380);
-  }
-  function loop(){
-    showAll();
-    var totalShow = (delays[delays.length-1]||0) + holdMs;
-    setTimeout(function(){
-      hideAll(function(){ setTimeout(loop, 200); });
-    }, totalShow);
-  }
-
-  var section = document.getElementById('enfoque');
-  if(!section) return;
-  var obs = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting && !running){
-        running = true;
-        setTimeout(loop, 400);
-      }
-    });
-  }, { threshold: 0.25 });
-  obs.observe(section);
 })();
 
 // Parallax — hero bg + subtle section depth
