@@ -21,9 +21,8 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 /* HEADER */
 .hdr{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;
   gap:10px;background:var(--card);position:sticky;top:0;z-index:10;}
-.hdr-logo{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:3px;
-  background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;background-clip:text;}
+.hdr-logo{display:flex;align-items:center;}
+.hdr-logo img{height:28px;width:auto;display:block;}
 .hdr-sep{color:var(--text3);font-size:14px;}
 .hdr-tag{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
 
@@ -115,7 +114,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 <body>
 
 <div class="hdr">
-  <div class="hdr-logo">HORIZON</div>
+  <div class="hdr-logo"><img src="../../Identidad/Logo-Vertical-png.png" alt="HORIZON"></div>
   <span class="hdr-sep">·</span>
   <span class="hdr-tag">Portal de diagnóstico</span>
 </div>
