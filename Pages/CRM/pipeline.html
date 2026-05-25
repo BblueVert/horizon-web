@@ -327,6 +327,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
     <div class="filters-panel" style="padding-bottom:14px;">
       <select class="fsel" id="fEstado" onchange="renderAll()">
         <option value="">Todos los estados</option>
+        <option value="arranque">Arranque</option>
         <option value="new">Nuevo</option>
         <option value="contacted">Contactado</option>
         <option value="diagnostic">Diagnóstico</option>
@@ -480,6 +481,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
         </div>
         <div class="fg"><div class="fl">Estado</div>
           <select class="fi" id="f-status">
+            <option value="arranque">Arranque</option>
             <option value="new">Nuevo</option>
             <option value="contacted">Contactado</option>
             <option value="diagnostic">Diagnóstico agendado</option>
@@ -544,7 +546,8 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 <script>
 // ── CONSTANTES ─────────────────────────────────────────
 const COLS = [
-  { id:'new',         label:'Nuevo',              color:'#7b3fa0' },
+  { id:'arranque',    label:'Arranque',            color:'#2dd4bf' },
+  { id:'new',         label:'Nuevo',               color:'#7b3fa0' },
   { id:'contacted',   label:'Contactado',          color:'#f59e0b' },
   { id:'diagnostic',  label:'Diagnóstico',         color:'#e8637a' },
   { id:'proposal',    label:'Propuesta enviada',   color:'#ff8c42' },
@@ -565,12 +568,13 @@ const PLANS = {
 
 const CANAL_LABELS = {
   instagram:'Instagram', whatsapp:'WhatsApp', web:'Chat Web',
-  referido:'Referido', directo:'Directo', otro:'Otro',
+  referido:'Referido', directo:'Directo', otro:'Otro', cal:'Cal.com',
   hero:'Landing Hero', plan01:'Plan 01', plan02:'Plan 02',
   plan03:'Plan 03', plan04:'Plan 04', plan05:'Plan 05'
 };
 
 const STATUS_COLORS = {
+  arranque:'#2dd4bf',
   new:'var(--violet)', contacted:'var(--amber)', diagnostic:'var(--rose)',
   proposal:'var(--h1)', qualified:'#3b82f6', contract:'#a855f7',
   in_progress:'#06b6d4', converted:'var(--green)', lost:'var(--red)'
@@ -1338,6 +1342,21 @@ function getStageActions(lead){
   const linkRef  = lead.calLink ? `\nLink: ${lead.calLink}` : '';
 
   switch(lead.status){
+    case 'arranque': {
+      return `
+        <div class="action-label">Agendó en Cal.com — pendiente de primer contacto</div>
+        ${fReunion ? `<div class="action-meta">Reunión: <strong>${fechaStr} (${labelR})</strong></div>` : '<div class="action-note">⚠️ Fecha de reunión no recibida aún</div>'}
+        ${lead.calLink ? actionBtn('📅 Ver reserva en Cal.com', lead.calLink, '#2dd4bf') : ''}
+        ${PHONE
+          ? `<div class="action-label" style="margin-top:10px;">Mover a Nuevo para enviar WhatsApp automático</div>
+             <button class="action-btn" style="background:#7b3fa020;color:#c084fc;border:1px solid #7b3fa040;" onclick="changeStage('new')">→ Confirmar y mover a Nuevo</button>`
+          : `<div class="action-note" style="color:var(--h2);">⚠️ Falta el teléfono para enviar WhatsApp al mover a Nuevo</div>
+             ${extraField(lead.id,'telefono','Teléfono WhatsApp','56911223344',lead.telefono)}`
+        }
+        ${!lead.calLink ? extraField(lead.id,'calLink','Link Cal.com (desde notificación)','https://cal.com/...',lead.calLink) : ''}
+        ${!fReunion ? extraFieldDate('reunionFecha','Fecha y hora de la reunión','') : ''}
+      `;}
+
     case 'new': {
       const portalUrl = lead.portalToken ? 'https://horizonweb.cl/c/'+lead.portalToken : null;
       const briefFilled = lead.brief && Object.values(lead.brief).some(v=>String(v||'').trim());

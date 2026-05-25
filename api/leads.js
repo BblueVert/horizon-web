@@ -70,14 +70,5 @@ module.exports = async function handler(req, res) {
     );
   }
 
-  // Disparar WhatsApp de bienvenida si el lead tiene teléfono
-  if (lead.telefono) {
-    httpsPost(
-      'https://horizon-n8n.tmae4w.easypanel.host/webhook/crm-whatsapp',
-      { 'Content-Type': 'application/json' },
-      { record: lead }
-    ).catch(err => console.warn('[leads] WhatsApp error:', err.message));
-  }
-
   return res.status(200).json({ ok: true, id: lead.id });
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-const { sanitizeEmail, httpsRequest, verifyHmac } = require('./shared');
+const { sanitize, sanitizeEmail, httpsRequest, verifyHmac, uid } = require('./shared');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -26,10 +26,10 @@ module.exports = async function handler(req, res) {
 
   const payload = body.payload || {};
   const attendees = payload.attendees || [];
-  const attendeeEmail = sanitizeEmail((attendees[0]?.email || ''));
+  const attendee = attendees[0] || {};
+  const attendeeEmail = sanitizeEmail(attendee.email || '');
+  const attendeeName = sanitize(attendee.name || '', 255);
 
-  // payload.uid = "integrations:daily" (Daily.co type ID, no es una URL)
-  // La URL real de la videollamada está en metadata.videoCallUrl
   const calLink = String(
     payload.metadata?.videoCallUrl ||
     payload.videoCallData?.url ||
@@ -50,47 +50,63 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Server config missing' });
   }
 
-  const sbHeaders = {
-    'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + SB_KEY,
-    'Content-Type': 'application/json',
-    'Prefer': 'return=minimal',
-  };
+  const sbAuth = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
+  const sbHeaders = { ...sbAuth, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
 
-  // 1. Patch cal_link + reunion_fecha en Supabase
-  const patch = { cal_link: calLink, reunion_fecha: reunionFecha };
-  const patchUrl = `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(attendeeEmail)}`;
+  // 1. Check if lead exists by email
+  let existingLead = null;
   try {
-    const r = await httpsRequest('PATCH', patchUrl, sbHeaders, patch);
-    console.log('[cal-webhook] Supabase PATCH status:', r.status, 'email:', attendeeEmail);
+    const gr = await httpsRequest('GET',
+      `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(attendeeEmail)}&select=id,status&limit=1`,
+      sbAuth
+    );
+    const rows = JSON.parse(gr.body || '[]');
+    existingLead = Array.isArray(rows) ? rows[0] : null;
   } catch (err) {
-    console.error('[cal-webhook] Supabase PATCH error:', err.message);
-    return res.status(502).json({ error: err.message });
+    console.warn('[cal-webhook] GET lead error:', err.message);
   }
 
-  // 2. GET lead completo para nombre, telefono, portal_token
-  let lead = null;
-  try {
-    const getUrl = `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(attendeeEmail)}&select=*`;
-    const gr = await httpsRequest('GET', getUrl, {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-    });
-    const leads = JSON.parse(gr.body || '[]');
-    lead = Array.isArray(leads) ? leads[0] : null;
-  } catch (err) {
-    console.error('[cal-webhook] Supabase GET lead error:', err.message);
-  }
-
-  // 3. Disparar WhatsApp vía n8n con los datos actualizados
-  if (lead && lead.telefono) {
-    const record = { ...lead, cal_link: calLink, reunion_fecha: reunionFecha, status: 'new' };
+  if (existingLead) {
+    // 2a. Lead exists → move to arranque and save booking data
+    const patch = { status: 'arranque', cal_link: calLink, reunion_fecha: reunionFecha };
+    if (attendeeName) patch.nombre = attendeeName;
     try {
-      const waUrl = 'https://horizon-n8n.tmae4w.easypanel.host/webhook/crm-whatsapp';
-      await httpsRequest('POST', waUrl, { 'Content-Type': 'application/json' }, { record });
-      console.log('[cal-webhook] WhatsApp disparado para:', attendeeEmail);
+      const r = await httpsRequest('PATCH',
+        `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(attendeeEmail)}`,
+        sbHeaders, patch
+      );
+      console.log('[cal-webhook] PATCH→arranque status:', r.status, 'email:', attendeeEmail);
     } catch (err) {
-      console.warn('[cal-webhook] WhatsApp n8n error (no fatal):', err.message);
+      console.error('[cal-webhook] PATCH error:', err.message);
+      return res.status(502).json({ error: err.message });
+    }
+  } else {
+    // 2b. Lead not found → create new lead in arranque stage with Cal.com data
+    const newLead = {
+      id: uid(),
+      nombre: attendeeName || attendeeEmail.split('@')[0],
+      email: attendeeEmail,
+      empresa: '',
+      telefono: '',
+      nota: '',
+      plan: '',
+      canal: 'cal',
+      origen: 'cal-direct',
+      status: 'arranque',
+      prioridad: 'Media',
+      tipoprecio: 'fundador',
+      cal_link: calLink,
+      reunion_fecha: reunionFecha,
+      historial: [],
+      hooks_respuestas: {},
+    };
+    try {
+      const r = await httpsRequest('POST', `${SB_URL}/rest/v1/leads`, sbHeaders, newLead);
+      console.log('[cal-webhook] INSERT new lead status=arranque:', r.status, 'email:', attendeeEmail);
+      if (r.status >= 400) console.error('[cal-webhook] INSERT body:', r.body);
+    } catch (err) {
+      console.error('[cal-webhook] INSERT error:', err.message);
+      return res.status(502).json({ error: err.message });
     }
   }
 

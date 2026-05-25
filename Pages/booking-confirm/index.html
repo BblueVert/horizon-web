@@ -104,45 +104,25 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 
   async function actualizarLead(){
     try{
-      // Buscar lead: primero por email, luego por nombre, luego el más reciente
-      let rows = [];
-      if(emailRaw){
-        const r = await sbFetch('GET', `/rest/v1/leads?email=eq.${encodeURIComponent(emailRaw)}&limit=1`);
-        rows = await r.json();
-      }
-      if(!rows.length && nombreRaw){
-        const r = await sbFetch('GET', `/rest/v1/leads?nombre=ilike.*${encodeURIComponent(nombreRaw.split(' ')[0])}*&limit=1`);
-        rows = await r.json();
-      }
-      if(!rows.length){
-        const r = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=1');
-        rows = await r.json();
-      }
-
-      if(!rows.length){
-        document.getElementById('crmStatus').textContent = '⚠️ Lead no encontrado en CRM';
-        document.getElementById('crmNote').textContent = 'Actualizalo manualmente en horizonweb.cl/crm';
+      if(!emailRaw){
+        document.getElementById('crmStatus').textContent = '⚠️ Email no recibido';
         return;
       }
 
-      const lead = rows[0];
-      const historial = Array.isArray(lead.historial) ? lead.historial : [];
-      historial.push({
-        fecha: new Date().toLocaleString('es-CL'),
-        texto: 'Booking confirmado en Cal.com' +
-               (fechaRaw ? ' — Sesión: ' + formatFecha(fechaRaw) : '') +
-               (linkRaw  ? ' — UID: ' + linkRaw : '')
+      const r = await fetch('/api/booking-confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailRaw, nombre: nombreRaw, cal_link: linkRaw || '', reunion_fecha: fechaRaw || '' })
       });
 
-      const patch = { historial, status: 'contacted' };
-      if(fechaRaw) patch.reunion_fecha = fechaRaw;
-      if(linkRaw)  patch.cal_link = linkRaw;
-
-      await sbFetch('PATCH', `/rest/v1/leads?id=eq.${lead.id}`, patch);
-
-      document.getElementById('crmStatus').textContent = '✅ CRM actualizado automáticamente';
-      document.getElementById('crmStatus').style.background = 'rgba(16,185,129,.15)';
-      document.getElementById('crmNote').textContent = 'Lead: ' + (lead.nombre||lead.email||'') + ' — horizonweb.cl/crm';
+      if(r.ok){
+        document.getElementById('crmStatus').textContent = '✅ Agenda registrada — Benja te escribe en breve';
+        document.getElementById('crmStatus').style.background = 'rgba(16,185,129,.15)';
+        document.getElementById('crmNote').textContent = emailRaw;
+      } else {
+        document.getElementById('crmStatus').textContent = '⚠️ Error al registrar agenda';
+        document.getElementById('crmNote').textContent = 'Status ' + r.status;
+      }
     }catch(e){
       document.getElementById('crmStatus').textContent = '⚠️ Error al actualizar CRM';
       document.getElementById('crmNote').textContent = String(e);
