@@ -57,6 +57,7 @@ module.exports = async function handler(req, res) {
   const fecha   = sanitize(body.fecha    || '', 12);  // YYYY-MM-DD
   const hora    = sanitize(body.hora     || '', 6);   // HH:MM
   const contexto= sanitize(body.contexto || '', 500);
+  const plan    = sanitize(body.plan     || '', 50);
 
   if (!email)         return res.status(400).json({ error: 'Email requerido' });
   if (!nombre)        return res.status(400).json({ error: 'Nombre requerido' });
@@ -146,6 +147,7 @@ module.exports = async function handler(req, res) {
     const patch = { status: 'arranque', cal_link: meetLink, reunion_fecha: reunionISO };
     if (nombre)   patch.nombre   = nombre;
     if (telefono) patch.telefono = telefono;
+    if (plan)     patch.plan     = plan;
     try {
       await httpsRequest('PATCH',
         `${SB_URL}/rest/v1/leads?email=ilike.${encodeURIComponent(email)}`,
@@ -158,7 +160,7 @@ module.exports = async function handler(req, res) {
   } else {
     const newLead = {
       id: uid(), nombre, email, empresa: '', telefono, nota: contexto,
-      plan: '', canal: 'meet', origen: 'agendar-directo',
+      plan, canal: 'meet', origen: 'agendar-directo',
       status: 'arranque', prioridad: 'Media', tipoprecio: 'fundador',
       cal_link: meetLink, reunion_fecha: reunionISO,
       historial: [], hooks_respuestas: {},

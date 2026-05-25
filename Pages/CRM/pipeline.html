@@ -1096,6 +1096,7 @@ async function changeStage(newStatus){
   if(!currentId) return;
   const lead = leads.find(l=>l.id===currentId);
   if(!lead) return;
+  const prevStatus = lead.status;
   lead.status = newStatus;
   lead.updatedAt = new Date().toISOString();
   document.getElementById('stageMover').innerHTML = COLS.map(c=>`
@@ -1108,10 +1109,18 @@ async function changeStage(newStatus){
   document.getElementById('f-status').value = newStatus;
   renderAcciones(lead);
   renderAll();
-  showToast('Movido a '+COLS.find(c=>c.id===newStatus)?.label);
   try {
     await sbFetch('PATCH', '/rest/v1/leads?id=eq.'+currentId, { status: newStatus });
-  } catch(e) { showToast('Error al guardar','error'); console.error(e); }
+    showToast('Movido a '+COLS.find(c=>c.id===newStatus)?.label);
+  } catch(e) {
+    // rollback on failure
+    lead.status = prevStatus;
+    lead.updatedAt = new Date().toISOString();
+    renderAll();
+    document.getElementById('f-status').value = prevStatus;
+    showToast('Error al guardar: '+e.message,'error');
+    console.error('[changeStage]', e);
+  }
 }
 
 // ── BULK ───────────────────────────────────────────────
