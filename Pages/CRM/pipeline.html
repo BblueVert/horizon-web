@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -568,7 +568,7 @@ const PLANS = {
 
 const CANAL_LABELS = {
   instagram:'Instagram', whatsapp:'WhatsApp', web:'Chat Web',
-  referido:'Referido', directo:'Directo', otro:'Otro', cal:'Cal.com',
+  referido:'Referido', directo:'Directo', otro:'Otro', cal:'Agendar (legacy)', meet:'Google Meet',
   hero:'Landing Hero', plan01:'Plan 01', plan02:'Plan 02',
   plan03:'Plan 03', plan04:'Plan 04', plan05:'Plan 05'
 };
@@ -1344,16 +1344,16 @@ function getStageActions(lead){
   switch(lead.status){
     case 'arranque': {
       return `
-        <div class="action-label">Agendó en Cal.com — pendiente de primer contacto</div>
+        <div class="action-label">Reunión agendada — pendiente de primer contacto</div>
         ${fReunion ? `<div class="action-meta">Reunión: <strong>${fechaStr} (${labelR})</strong></div>` : '<div class="action-note">⚠️ Fecha de reunión no recibida aún</div>'}
-        ${lead.calLink ? actionBtn('📅 Ver reserva en Cal.com', lead.calLink, '#2dd4bf') : ''}
+        ${lead.calLink ? actionBtn('📅 Unirse a Google Meet', lead.calLink, '#2dd4bf') : ''}
         ${PHONE
           ? `<div class="action-label" style="margin-top:10px;">Mover a Nuevo para enviar WhatsApp automático</div>
              <button class="action-btn" style="background:#7b3fa020;color:#c084fc;border:1px solid #7b3fa040;" onclick="changeStage('new')">→ Confirmar y mover a Nuevo</button>`
           : `<div class="action-note" style="color:var(--h2);">⚠️ Falta el teléfono para enviar WhatsApp al mover a Nuevo</div>
              ${extraField(lead.id,'telefono','Teléfono WhatsApp','56911223344',lead.telefono)}`
         }
-        ${!lead.calLink ? extraField(lead.id,'calLink','Link Cal.com (desde notificación)','https://cal.com/...',lead.calLink) : ''}
+        ${!lead.calLink ? extraField(lead.id,'calLink','Link Google Meet','https://meet.google.com/...',lead.calLink) : ''}
         ${!fReunion ? extraFieldDate('reunionFecha','Fecha y hora de la reunión','') : ''}
       `;}
 
@@ -1381,7 +1381,7 @@ function getStageActions(lead){
         </div>
         ${briefFilled ? '<div class="action-meta" style="color:#10b981;">✅ Brief completado por el cliente</div>' : '<div class="action-meta">⏳ Brief pendiente — el cliente aún no completó el formulario</div>'}
       ` : ''}
-      ${extraField(lead.id,'calLink','Link de la reserva Cal.com (desde notificación)','https://cal.com/...',lead.calLink)}
+      ${extraField(lead.id,'calLink','Link Google Meet','https://meet.google.com/...',lead.calLink)}
       ${extraFieldDate('reunionFecha','Fecha y hora de la reunión',fReunion)}
     `;}
 
@@ -1393,7 +1393,7 @@ function getStageActions(lead){
 
       return `
         <div class="action-label">Respondió — reunión confirmada${labelR ? ' · '+labelR : ''}</div>
-        ${lead.calLink ? actionBtn('📅 Ver reserva en Cal.com', lead.calLink, 'var(--h1)') : '<div class="action-note">⚠️ Pegá el link Cal.com en etapa Nuevo</div>'}
+        ${lead.calLink ? actionBtn('📅 Unirse a Google Meet', lead.calLink, 'var(--h1)') : '<div class="action-note">⚠️ No hay link de Google Meet — agregalo abajo</div>'}
         ${actionBtn('📋 Preparar brief de reunión', '/reunion?id='+lead.id, '#a855f7')}
         ${fReunion
           ? `<div class="action-meta" style="margin-bottom:6px;">Reunión: <strong>${fechaStr} (${labelR})</strong></div>
@@ -1403,7 +1403,7 @@ function getStageActions(lead){
         ${(diasR!==null && diasR>1) ? waBtn('💬 Recordatorio D-1 (enviar el día anterior)',
           `Hola ${NAME}! Mañana tenemos nuestra sesión.${linkRef}\nNos vemos!`) : ''}
         ${!fReunion ? extraFieldDate('reunionFecha','Fecha y hora de la reunión','') : ''}
-        ${!lead.calLink ? extraField(lead.id,'calLink','Link Cal.com','https://cal.com/...',lead.calLink) : ''}
+        ${!lead.calLink ? extraField(lead.id,'calLink','Link Google Meet','https://meet.google.com/...',lead.calLink) : ''}
       `;
     }
 

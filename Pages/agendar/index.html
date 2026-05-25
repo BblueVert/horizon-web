@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON · Agendar Diagnóstico</title>
+<link rel="icon" type="image/png" href="../../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#07060e;--card:#0f0e1a;--card2:#1a1828;--card3:#22203a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --h1:#ff6b35;--h2:#ff8c42;--green:#10b981;--blue:#3b82f6;
+  --text:#e8e6f0;--text2:#9a98a8;--text3:#4a4760;
+  --fm:"DM Mono",monospace;--fb:"Plus Jakarta Sans",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:100vh;}
+
+/* ── Layout ── */
+.wrapper{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
+@media(max-width:860px){.wrapper{grid-template-columns:1fr;}}
+
+/* ── Left panel ── */
+.left{background:linear-gradient(160deg,#0f0e1a 60%,#1a1020);
+  padding:60px 48px;display:flex;flex-direction:column;justify-content:center;
+  border-right:1px solid var(--border);}
+@media(max-width:860px){.left{padding:40px 24px;border-right:none;border-bottom:1px solid var(--border);}}
+.logo{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:4px;
+  background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:48px;}
+.left-title{font-family:"Bebas Neue",sans-serif;font-size:52px;line-height:1.0;
+  letter-spacing:2px;margin-bottom:16px;}
+.left-title span{background:linear-gradient(135deg,var(--h1),var(--h2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.left-sub{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:40px;max-width:360px;}
+.features{display:flex;flex-direction:column;gap:14px;}
+.feature{display:flex;align-items:flex-start;gap:12px;}
+.feature-icon{font-size:18px;margin-top:1px;flex-shrink:0;}
+.feature-text{font-size:13px;color:var(--text2);line-height:1.5;}
+.feature-text strong{color:var(--text);display:block;font-size:14px;margin-bottom:2px;}
+
+/* ── Right panel (form) ── */
+.right{padding:60px 48px;display:flex;align-items:center;justify-content:center;}
+@media(max-width:860px){.right{padding:32px 20px;}}
+.form-card{width:100%;max-width:420px;}
+.form-title{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:2px;
+  color:var(--text);margin-bottom:6px;}
+.form-sub{font-family:var(--fm);font-size:10px;color:var(--text3);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:32px;}
+
+/* ── Fields ── */
+.field{margin-bottom:18px;}
+.label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;color:var(--text3);
+  text-transform:uppercase;display:block;margin-bottom:6px;}
+input[type=text],input[type=email],input[type=tel],input[type=date],
+select,textarea{
+  width:100%;background:var(--card2);border:1px solid var(--border2);
+  border-radius:8px;color:var(--text);font-family:var(--fb);font-size:14px;
+  padding:11px 14px;outline:none;transition:.15s;
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;
+  color-scheme:dark;
+}
+input[type=text]:focus,input[type=email]:focus,input[type=tel]:focus,
+input[type=date]:focus,select:focus,textarea:focus{
+  border-color:var(--h1);box-shadow:0 0 0 2px rgba(255,107,53,.15);}
+textarea{resize:vertical;min-height:80px;line-height:1.5;}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
+
+/* ── Time slots ── */
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;}
+.slot{background:var(--card2);border:1px solid var(--border2);border-radius:6px;
+  padding:8px 4px;text-align:center;font-family:var(--fm);font-size:11px;
+  color:var(--text2);cursor:pointer;transition:.15s;user-select:none;}
+.slot:hover{border-color:rgba(255,107,53,.4);color:var(--text);}
+.slot.active{background:rgba(255,107,53,.15);border-color:var(--h1);color:var(--h1);}
+.slot.disabled{opacity:.3;pointer-events:none;}
+#horaHidden{display:none;}
+
+/* ── Row ── */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:420px){.row{grid-template-columns:1fr;}}
+
+/* ── Submit ── */
+.btn-submit{width:100%;background:var(--h1);color:#fff;border:none;border-radius:8px;
+  padding:14px;font-family:var(--fm);font-size:12px;letter-spacing:1px;
+  cursor:pointer;transition:.15s;margin-top:8px;display:flex;
+  align-items:center;justify-content:center;gap:8px;}
+.btn-submit:hover:not(:disabled){background:#e55a28;}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ── Status ── */
+.form-status{font-family:var(--fm);font-size:10px;margin-top:12px;
+  padding:10px 14px;border-radius:6px;display:none;letter-spacing:.5px;}
+.form-status.error{display:block;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.form-status.success{display:block;background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+
+.meet-result{display:none;margin-top:20px;padding:16px;background:var(--card2);
+  border:1px solid var(--border2);border-radius:8px;text-align:center;}
+.meet-result .meet-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;
+  color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.meet-result .meet-link{color:var(--blue);font-family:var(--fm);font-size:11px;
+  word-break:break-all;display:block;margin-bottom:10px;}
+.meet-result .meet-note{color:var(--text2);font-size:12px;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ── LEFT ── -->
+  <div class="left">
+    <div class="logo">HORIZON</div>
+    <div class="left-title">Agenda tu<br><span>Diagnóstico</span><br>gratuito</div>
+    <p class="left-sub">Una sesión 1:1 con Benja donde analizamos tu negocio y definimos si HORIZON es la solución correcta para ti.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-text">
+          <strong>Sin compromiso</strong>
+          Conversamos, analizamos, y decidís. Sin presión de venta.
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⏱</div>
+        <div class="feature-text">
+          <strong>60 minutos</strong>
+          Online vía Google Meet. Te llega el link al confirmar.
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <div class="feature-text">
+          <strong>Diagnóstico real</strong>
+          Revisamos tu situación actual y te damos claridad de los pasos concretos.
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-text">
+          <strong>Privado y confidencial</strong>
+          Tu información nunca se comparte con terceros.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT ── -->
+  <div class="right">
+    <div class="form-card">
+      <div class="form-title">Tu sesión</div>
+      <div class="form-sub">Completa el formulario — recibes el link de Meet al instante</div>
+
+      <form id="agendarForm" novalidate>
+        <div class="row">
+          <div class="field">
+            <label class="label" for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required autocomplete="given-name">
+          </div>
+          <div class="field">
+            <label class="label" for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="+56 9 xxxx xxxx" required autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="tu@empresa.com" required autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label class="label" for="fecha">Fecha</label>
+          <input type="date" id="fecha" name="fecha" required>
+        </div>
+
+        <div class="field">
+          <label class="label">Horario</label>
+          <div class="slots" id="slots">
+            <div class="slot" data-h="10:00">10:00</div>
+            <div class="slot" data-h="11:00">11:00</div>
+            <div class="slot" data-h="12:00">12:00</div>
+            <div class="slot" data-h="14:00">14:00</div>
+            <div class="slot" data-h="15:00">15:00</div>
+            <div class="slot" data-h="16:00">16:00</div>
+            <div class="slot" data-h="17:00">17:00</div>
+            <div class="slot" data-h="18:00">18:00</div>
+          </div>
+          <input type="hidden" id="horaHidden" name="hora">
+        </div>
+
+        <div class="field">
+          <label class="label" for="contexto">¿Cuál es tu principal desafío? <span style="color:var(--text3)">(opcional)</span></label>
+          <textarea id="contexto" name="contexto" placeholder="Ej: Necesito sistematizar mi proceso de ventas…" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">
+          <span id="btnText">Confirmar sesión</span>
+        </button>
+
+        <div class="form-status" id="formStatus"></div>
+
+        <div class="meet-result" id="meetResult">
+          <div class="meet-label">Tu link de Google Meet</div>
+          <a class="meet-link" id="meetLinkEl" href="#" target="_blank" rel="noopener"></a>
+          <div class="meet-note">Te llegó la invitación a tu email. Redirigiendo…</div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // ── Date constraints: Mon–Fri, from tomorrow, max 3 weeks ──
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const minDate = new Date(today); minDate.setDate(minDate.getDate()+1);
+  const maxDate = new Date(today); maxDate.setDate(maxDate.getDate()+21);
+
+  function toDateStr(d){ return d.toISOString().slice(0,10); }
+
+  const fechaInput = document.getElementById('fecha');
+  fechaInput.min = toDateStr(minDate);
+  fechaInput.max = toDateStr(maxDate);
+
+  // skip weekends when advancing
+  function nextWeekday(d){
+    const r = new Date(d);
+    while(r.getDay()===0||r.getDay()===6) r.setDate(r.getDate()+1);
+    return r;
+  }
+  fechaInput.value = toDateStr(nextWeekday(minDate));
+
+  fechaInput.addEventListener('change', function(){
+    const d = new Date(this.value+'T12:00:00');
+    if(d.getDay()===0||d.getDay()===6){
+      this.setCustomValidity('Elige un día de semana (lunes a viernes)');
+    } else {
+      this.setCustomValidity('');
+    }
+  });
+
+  // ── Slot selection ──
+  let selectedHora = '';
+  document.querySelectorAll('.slot').forEach(el => {
+    el.addEventListener('click', function(){
+      document.querySelectorAll('.slot').forEach(s=>s.classList.remove('active'));
+      this.classList.add('active');
+      selectedHora = this.dataset.h;
+      document.getElementById('horaHidden').value = selectedHora;
+    });
+  });
+
+  // ── Form submit ──
+  document.getElementById('agendarForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const status = document.getElementById('formStatus');
+    const btn    = document.getElementById('btnSubmit');
+    const btnTxt = document.getElementById('btnText');
+    status.className = 'form-status';
+    status.style.display = 'none';
+
+    const nombre   = document.getElementById('nombre').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const fecha    = fechaInput.value;
+    const contexto = document.getElementById('contexto').value.trim();
+
+    if(!nombre||!email||!telefono||!fecha||!selectedHora){
+      status.textContent = '⚠️ Completa todos los campos requeridos y selecciona un horario.';
+      status.className   = 'form-status error';
+      return;
+    }
+    const d = new Date(fecha+'T12:00:00');
+    if(d.getDay()===0||d.getDay()===6){
+      status.textContent = '⚠️ Elige un día de semana.';
+      status.className   = 'form-status error';
+      return;
+    }
+
+    btn.disabled = true;
+    btnTxt.textContent = '⏳ Creando tu sesión…';
+
+    try {
+      const r = await fetch('/api/schedule-meet', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ nombre, email, telefono, fecha, hora: selectedHora, contexto })
+      });
+      const data = await r.json();
+
+      if(!r.ok||!data.ok){
+        status.textContent = '⚠️ ' + (data.error||'Error al crear la sesión. Intenta de nuevo.');
+        status.className   = 'form-status error';
+        btn.disabled = false; btnTxt.textContent = 'Confirmar sesión';
+        return;
+      }
+
+      // Success
+      const meetLink = data.meetLink || '';
+      document.getElementById('meetLinkEl').href        = meetLink;
+      document.getElementById('meetLinkEl').textContent = meetLink;
+      document.getElementById('meetResult').style.display = 'block';
+      btnTxt.textContent = '✅ Sesión confirmada';
+
+      setTimeout(()=>{
+        const params = new URLSearchParams({
+          attendeeName:  nombre,
+          attendeeEmail: email,
+          startTime:     data.reunionFecha || fecha,
+          meetLink:      meetLink
+        });
+        window.location.href = '/booking-confirm?' + params.toString();
+      }, 2500);
+
+    } catch(err){
+      status.textContent = '⚠️ Error de conexión. Intenta de nuevo.';
+      status.className   = 'form-status error';
+      btn.disabled = false; btnTxt.textContent = 'Confirmar sesión';
+    }
+  });
+})();
+</script>
+</body>
+</html>

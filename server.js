@@ -19,12 +19,12 @@ app.use((req, res, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://app.cal.com",
+      "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://cal.com https://app.cal.com https://dkitbnrpwmwrfnmztdfc.supabase.co",
-      "frame-src https://cal.com https://app.cal.com",
+      "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co",
+      "frame-src 'none'",
       "frame-ancestors 'none'",
     ].join('; ')
   );
@@ -103,6 +103,7 @@ const rewrites = {
   '/servicios':       '/Pages/servicios.html',
   '/crm':             '/Pages/CRM/pipeline.html',
   '/reunion':         '/Pages/reunion/index.html',
+  '/agendar':         '/Pages/agendar/index.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
 };
 
