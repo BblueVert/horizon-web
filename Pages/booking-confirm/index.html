@@ -85,7 +85,14 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 
   function formatFecha(str){
     if(!str) return '';
-    try{ return new Date(str).toLocaleString('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}); }
+    try{
+      // reunion_fecha se guarda como "hora Chile = hora UTC" (sin conversión de zona).
+      // Mostramos en UTC para que coincida con el horario elegido por el usuario.
+      return new Intl.DateTimeFormat('es-CL',{
+        weekday:'long', day:'numeric', month:'long',
+        hour:'2-digit', minute:'2-digit', timeZone:'UTC'
+      }).format(new Date(str));
+    }
     catch(e){ return str; }
   }
 
