@@ -963,8 +963,13 @@ function openModal(id){
   document.getElementById('f-email').value = lead?.email||'';
   document.getElementById('f-telefono').value = lead?.telefono||'';
   document.getElementById('f-sector').value = lead?.sector||'';
-  document.getElementById('f-canal').value = lead?.canal||'web';
-  document.getElementById('f-plan').value = lead?.plan||'';
+  // Normalize legacy canal values that aren't in the select options
+  const _canalLegacy = { meet:'hero', cal:'hero', 'agendar-directo':'hero' };
+  const _canalVal = lead?.canal || '';
+  document.getElementById('f-canal').value = _canalLegacy[_canalVal] || _canalVal || 'web';
+  // Normalize 'plan-01' → 'plan01' for legacy data
+  const _planVal = (lead?.plan||'').replace(/^plan-(\d+)$/, 'plan$1');
+  document.getElementById('f-plan').value = _planVal;
   document.getElementById('f-tipoprecio').value = lead?.tipoprecio||'fundador';
   document.getElementById('f-status').value = lead?.status||'new';
   document.getElementById('f-prioridad').value = lead?.prioridad||'Media';
@@ -1298,7 +1303,8 @@ function diasHasta(str){
 function formatFechaReunion(str){
   const d = parseFecha(str);
   if(!d) return '';
-  return d.toLocaleString('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+  // reunion_fecha se guarda como "hora Chile = hora UTC" — mostrar en UTC para que coincida
+  return new Intl.DateTimeFormat('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'UTC'}).format(d);
 }
 function labelDia(str){
   const dias = diasHasta(str);
