@@ -460,11 +460,11 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       btnTxt.textContent = '✅ Sesión confirmada';
 
       setTimeout(()=>{
-        const p = new URLSearchParams({
-          attendeeName:nombre, attendeeEmail:email,
-          startTime:data.reunionFecha||fecha, meetLink
-        });
-        window.location.href = '/booking-confirm?'+p.toString();
+        sessionStorage.setItem('horizon_booking', JSON.stringify({
+          attendeeName: nombre, attendeeEmail: email,
+          startTime: data.reunionFecha || fecha, meetLink
+        }));
+        window.location.href = '/booking-confirm';
       }, 2500);
 
     }catch(err){

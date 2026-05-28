@@ -221,7 +221,7 @@ select.fsel:focus{border-color:var(--h1);}
       <span class="brief-actions-label">Después de la sesión</span>
       <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('proposal')">→ Pasar a Propuesta</button>
       <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('qualified')">→ Pasar a Calificado</button>
-      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('lost')" style="color:var(--red);">✗ Marcar perdido</button>
+      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('lost')" style="color:#ef4444;">✗ Marcar perdido</button>
       <button class="btn btn-primary btn-sm" onclick="guardarTodo()">Guardar todo</button>
     </div>
 
@@ -239,12 +239,43 @@ select.fsel:focus{border-color:var(--h1);}
 const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
 
+function tokenExpired() {
+  const t = localStorage.getItem('crm_token');
+  if (!t) return true;
+  try { return JSON.parse(atob(t.split('.')[1])).exp * 1000 < Date.now() + 60_000; }
+  catch { return true; }
+}
+
+async function refreshSession() {
+  const rt = localStorage.getItem('crm_refresh');
+  if (!rt) return false;
+  try {
+    const r = await fetch(SB_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: rt })
+    });
+    if (!r.ok) return false;
+    const d = await r.json();
+    localStorage.setItem('crm_token',   d.access_token);
+    localStorage.setItem('crm_refresh', d.refresh_token);
+    return true;
+  } catch { return false; }
+}
+
 async function sbFetch(method, path, body) {
-  const headers = { 'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY, 'Content-Type': 'application/json' };
+  if (tokenExpired()) {
+    const ok = await refreshSession();
+    if (!ok) { window.location.href = '/crm'; throw new Error('Sesión expirada'); }
+  }
+  const jwt = localStorage.getItem('crm_token');
+  if (!jwt) { window.location.href = '/crm'; throw new Error('Sin token'); }
+  const headers = { 'apikey': SB_KEY, 'Authorization': 'Bearer '+jwt, 'Content-Type': 'application/json' };
   if (method !== 'GET' && method !== 'DELETE') headers['Prefer'] = 'return=minimal';
   const opts = { method, headers };
   if (body !== undefined) opts.body = JSON.stringify(body);
   const r = await fetch(SB_URL + path, opts);
+  if (r.status === 401) { window.location.href = '/crm'; throw new Error('No autorizado'); }
   if (!r.ok) { const t = await r.text(); throw new Error(r.status+' '+t); }
   if (method === 'GET') return r.json();
   return null;
@@ -314,7 +345,7 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 async function loadLeads(){
   try {
-    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500');
+    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500&status=in.(new,contacted,diagnostic,proposal,qualified,contract,in_progress)');
     allLeads = rows.map(fromDb);
   } catch(e) {
     console.error('loadLeads error:', e);
@@ -507,6 +538,7 @@ async function guardarTodo(){
 async function avanzarEtapa(newStatus){
   if(!currentLead) return;
   await guardarTodo();
+  const prevStatus = currentLead.status;
   currentLead.status = newStatus;
   currentLead.updatedAt = new Date().toISOString();
   if(!currentLead.historial) currentLead.historial=[];
@@ -518,13 +550,19 @@ async function avanzarEtapa(newStatus){
       status:    newStatus,
       historial: currentLead.historial,
     });
-  } catch(e) { console.error('avanzarEtapa error:', e); }
-  renderBrief();
-  poblarSelector();
-  mostrarToast('Movido a '+STATUS_LABELS[newStatus]);
+    renderBrief();
+    poblarSelector();
+    mostrarToast('Movido a '+STATUS_LABELS[newStatus]);
+  } catch(e) {
+    console.error('avanzarEtapa error:', e);
+    currentLead.status = prevStatus;
+    if(idx>-1) allLeads[idx]=currentLead;
+    mostrarToast('Error al cambiar etapa');
+  }
 }
 
 // Toast
+let _toastTimer;
 function mostrarToast(msg){
   let t = document.getElementById('toastR');
   if(!t){
@@ -534,7 +572,8 @@ function mostrarToast(msg){
     document.body.appendChild(t);
   }
   t.textContent=msg; t.style.opacity='1';
-  setTimeout(()=>t.style.opacity='0', 3000);
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>t.style.opacity='0', 3000);
 }
 
 // ── INIT ──────────────────────────────────────────────────

@@ -193,6 +193,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
   const token = (window.location.pathname.match(/\/c\/([^/?#]+)/)||[])[1];
 
   const $ = id => document.getElementById(id);
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const show = id => $(id).style.display = '';
   const hide = id => $(id).style.display = 'none';
 
@@ -221,7 +222,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
         <div class="ev-icon ${m.bg}">${m.ic}</div>
         <div class="ev-body">
           <div class="ev-title">${m.label}</div>
-          ${ev.contenido?`<div class="ev-desc">${ev.contenido}</div>`:''}
+          ${ev.contenido?`<div class="ev-desc">${esc(ev.contenido)}</div>`:''}
           <div class="ev-time">${fmtCorto(ev.created_at)}</div>
         </div>
       </div>`;
@@ -250,8 +251,8 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
       intentos:$('b-intentos').value,
     };
     try{
-      await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({token,brief})});
+      await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-portal-token':token},
+        body:JSON.stringify({brief})});
       setStatus('Guardado ✓','saved');
       setTimeout(()=>setStatus(''),2500);
     }catch{ setStatus('Error al guardar'); }
@@ -267,7 +268,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
   async function init(){
     if(!token){ hide('loading'); show('error'); return; }
     try{
-      const res = await fetch(API+'?token='+token);
+      const res = await fetch(API, { headers: { 'x-portal-token': token } });
       if(!res.ok) throw new Error();
       const {lead,events} = await res.json();
 

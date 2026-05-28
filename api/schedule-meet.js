@@ -57,7 +57,9 @@ module.exports = async function handler(req, res) {
   const fecha   = sanitize(body.fecha    || '', 12);  // YYYY-MM-DD
   const hora    = sanitize(body.hora     || '', 6);   // HH:MM
   const contexto= sanitize(body.contexto || '', 500);
-  const plan    = sanitize(body.plan     || '', 50);
+  const planRaw = sanitize(body.plan     || '', 50);
+  // Normalize 'plan-01' → 'plan01' to match CRM keys
+  const plan = planRaw.replace(/^plan-(\d+)$/, 'plan$1');
 
   if (!email)         return res.status(400).json({ error: 'Email requerido' });
   if (!nombre)        return res.status(400).json({ error: 'Nombre requerido' });
@@ -85,16 +87,19 @@ module.exports = async function handler(req, res) {
   }
 
   // ── 2. Create Calendar event with Google Meet ─────────────────────────────
+  const tz = 'America/Santiago';
   const [hh, mm] = hora.split(':').map(Number);
-  const endHH    = String(hh + 1).padStart(2, '0');
-  const endMM    = String(mm).padStart(2, '0');
-  const tz       = 'America/Santiago';
+  const endHour = (hh + 1) % 24;
+  const endFecha = hh === 23
+    ? (() => { const d = new Date(fecha + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); return d.toISOString().slice(0, 10); })()
+    : fecha;
+  const endTime = `${String(endHour).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
 
   const event = {
     summary:     `Diagnóstico HORIZON — ${nombre}`,
     description: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}${contexto ? '\n\n' + contexto : ''}`,
     start: { dateTime: `${fecha}T${hora}:00`, timeZone: tz },
-    end:   { dateTime: `${fecha}T${endHH}:${endMM}:00`, timeZone: tz },
+    end:   { dateTime: `${endFecha}T${endTime}:00`, timeZone: tz },
     attendees: [{ email }],
     conferenceData: {
       createRequest: {
@@ -123,18 +128,18 @@ module.exports = async function handler(req, res) {
     console.log('[schedule-meet] evento creado:', eventId, meetLink);
   } catch (err) {
     console.error('[schedule-meet] Calendar throw:', err.message);
-    return res.status(503).json({ error: 'Error Google Calendar: ' + err.message });
+    return res.status(503).json({ error: 'Error al crear evento en Google Calendar' });
   }
 
   // ── 3. Upsert lead in Supabase ────────────────────────────────────────────
   const sbAuth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
   const sbHeaders = { ...sbAuth, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
-  const reunionISO= new Date(`${fecha}T${hora}:00`).toISOString();
+  const reunionISO = `${fecha}T${hora}:00`;
 
   let existingLead = null;
   try {
     const gr   = await httpsRequest('GET',
-      `${SB_URL}/rest/v1/leads?email=ilike.${encodeURIComponent(email)}&select=id,status&limit=1`,
+      `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}&select=id,status&limit=1`,
       sbAuth
     );
     const rows = JSON.parse(gr.body || '[]');
@@ -144,24 +149,25 @@ module.exports = async function handler(req, res) {
   }
 
   if (existingLead) {
-    const patch = { status: 'arranque', cal_link: meetLink, reunion_fecha: reunionISO };
+    const patch = { status: 'diagnostic', canal: 'hero', cal_link: meetLink, reunion_fecha: reunionISO };
     if (nombre)   patch.nombre   = nombre;
     if (telefono) patch.telefono = telefono;
     if (plan)     patch.plan     = plan;
     try {
       await httpsRequest('PATCH',
-        `${SB_URL}/rest/v1/leads?email=ilike.${encodeURIComponent(email)}`,
+        `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}`,
         sbHeaders, patch
       );
       console.log('[schedule-meet] PATCH→arranque OK:', email);
     } catch (err) {
       console.error('[schedule-meet] PATCH:', err.message);
+      return res.status(503).json({ error: 'Error al actualizar lead' });
     }
   } else {
     const newLead = {
       id: uid(), nombre, email, empresa: '', telefono, nota: contexto,
-      plan, canal: 'meet', origen: 'agendar-directo',
-      status: 'arranque', prioridad: 'Media', tipoprecio: 'fundador',
+      plan, canal: 'hero', origen: 'agendar-directo',
+      status: 'diagnostic', prioridad: 'Media', tipoprecio: 'fundador',
       cal_link: meetLink, reunion_fecha: reunionISO,
       historial: [], hooks_respuestas: {},
     };
@@ -176,6 +182,15 @@ module.exports = async function handler(req, res) {
       console.error('[schedule-meet] INSERT throw:', err.message);
       return res.status(503).json({ error: 'Error interno' });
     }
+  }
+
+  // ── 4. Notify n8n (booking webhook — fire & forget) ──────────────────────
+  const N8N_BOOKING = process.env.N8N_BOOKING_WEBHOOK;
+  if (N8N_BOOKING) {
+    httpsRequest('POST', N8N_BOOKING,
+      { 'Content-Type': 'application/json' },
+      { nombre, email, telefono, plan, meetLink, reunionFecha: reunionISO, contexto }
+    ).catch(err => console.error('[schedule-meet] n8n notify:', err.message));
   }
 
   return res.status(200).json({ ok: true, meetLink, reunionFecha: reunionISO });

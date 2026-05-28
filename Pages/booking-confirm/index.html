@@ -73,15 +73,15 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 
 <script>
 (function(){
-  const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
-  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2MzM3NjgsImV4cCI6MjA2MzIwOTc2OH0.o82PRpHqX9r7yRuNXjbOuGT3_HF2N1bWRl7iRTJl-NA';
+  const stored = JSON.parse(sessionStorage.getItem('horizon_booking') || '{}');
+  sessionStorage.removeItem('horizon_booking');
 
+  // Fallback a query params para compatibilidad con Cal.com redirects
   const params    = new URLSearchParams(window.location.search);
-  const fechaRaw  = params.get('startTime') || params.get('fecha') || '';
-  const emailRaw  = (params.get('attendeeEmail') || params.get('email') || '').toLowerCase().trim();
-  const nombreRaw = params.get('attendeeName') || params.get('nombre') || params.get('name') || '';
-  const uidRaw    = params.get('uid') || '';
-  const linkRaw   = params.get('meetLink') || params.get('location') || params.get('link') || uidRaw;
+  const fechaRaw  = stored.startTime   || params.get('startTime')     || params.get('fecha') || '';
+  const emailRaw  = (stored.attendeeEmail || params.get('attendeeEmail') || params.get('email') || '').toLowerCase().trim();
+  const nombreRaw = stored.attendeeName  || params.get('attendeeName')  || params.get('nombre') || params.get('name') || '';
+  const linkRaw   = stored.meetLink      || params.get('meetLink')       || params.get('location') || params.get('link') || '';
 
   function formatFecha(str){
     if(!str) return '';
@@ -99,15 +99,6 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
   if(nombreRaw){ document.getElementById('rowNombre').style.display='flex'; document.getElementById('valNombre').textContent=nombreRaw; document.getElementById('infoBlock').style.display='block'; }
   if(fechaRaw){  document.getElementById('rowFecha').style.display='flex';  document.getElementById('valFecha').textContent=formatFecha(fechaRaw); document.getElementById('infoBlock').style.display='block'; }
   if(emailRaw){  document.getElementById('rowEmail').style.display='flex';  document.getElementById('valEmail').textContent=emailRaw; document.getElementById('infoBlock').style.display='block'; }
-
-  async function sbFetch(method, path, body){
-    const r = await fetch(SB_URL + path, {
-      method,
-      headers:{ apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal' },
-      body: body ? JSON.stringify(body) : undefined
-    });
-    return r;
-  }
 
   async function actualizarLead(){
     try{

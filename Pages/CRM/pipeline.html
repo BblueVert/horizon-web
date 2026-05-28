@@ -580,7 +580,7 @@ const STATUS_COLORS = {
   in_progress:'#06b6d4', converted:'var(--green)', lost:'var(--red)'
 };
 
-const CUPOS_TOTAL = { plan01:10, plan02:10, plan03:10, plan04:10 };
+const CUPOS_TOTAL = { plan01:10, plan02:10, plan03:10, plan04:10, plan05:10 };
 
 // ── SUPABASE ───────────────────────────────────────────
 const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
@@ -622,7 +622,8 @@ async function sbFetch(method, path, body) {
     const ok = await refreshSession();
     if (!ok) { doLogout(); throw new Error('Sesión expirada'); }
   }
-  const jwt = localStorage.getItem('crm_token') || SB_KEY;
+  const jwt = localStorage.getItem('crm_token');
+  if (!jwt) { doLogout(); throw new Error('Sin token de sesión'); }
   const headers = {
     'apikey': SB_KEY,
     'Authorization': 'Bearer ' + jwt,
@@ -865,7 +866,7 @@ const ORIGEN_SHORT = {'hero':'HERO','nav':'NAV','nav-mobile':'MOB','cta-seccion'
 function cardHtml(l){
   const pLabel = l.plan && PLANS[l.plan] ? PLANS[l.plan].label.split('—')[0].trim() : '';
   const prio = l.prioridad||'Media';
-  const origenTag = l.origen ? `<span class="origen-tag">${ORIGEN_SHORT[l.origen]||l.origen.toUpperCase()}</span>` : '';
+  const origenTag = l.origen ? `<span class="origen-tag">${esc(ORIGEN_SHORT[l.origen]||l.origen.toUpperCase())}</span>` : '';
   const sel = selectedIds.has(l.id);
   return `<div class="kcard${sel?' selected':''}" data-id="${l.id}" draggable="${!bulkMode}">
     ${bulkMode ? `<div class="kcard-cb">${sel?'✓':''}</div>` : ''}
@@ -983,7 +984,7 @@ function openModal(id){
     histSection.style.display='block';
     const hist = lead.historial||[];
     histList.innerHTML = hist.length
-      ? hist.map(h=>`<div class="hist-block"><div class="hist-date">${h.fecha}</div><div class="hist-text">${esc(h.texto)}</div></div>`).join('')
+      ? hist.map(h=>`<div class="hist-block"><div class="hist-date">${esc(h.fecha)}</div><div class="hist-text">${esc(h.texto)}</div></div>`).join('')
       : '<div class="empty" style="padding:12px 0;">Sin notas aún</div>';
     document.getElementById('nuevaNota').value='';
 
@@ -1546,7 +1547,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 // ── AUTH ───────────────────────────────────────────────
 // Pre-fill saved email
 (function(){
-  const saved = localStorage.getItem('crm_email');
+  const saved = sessionStorage.getItem('crm_email');
   if (saved) document.getElementById('loginEmail').value = saved;
 })();
 
@@ -1572,7 +1573,7 @@ async function doLogin() {
     localStorage.setItem('crm_auth',    '1');
     localStorage.setItem('crm_token',   data.access_token);
     localStorage.setItem('crm_refresh', data.refresh_token);
-    localStorage.setItem('crm_email',   email);
+    sessionStorage.setItem('crm_email', email);
     document.getElementById('loginOverlay').classList.add('hidden');
   } catch(e) {
     errEl.textContent = 'Error de conexión.';

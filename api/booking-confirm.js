@@ -35,7 +35,7 @@ module.exports = async function handler(req, res) {
   let existingLead = null;
   try {
     const gr = await httpsRequest('GET',
-      `${SB_URL}/rest/v1/leads?email=ilike.${encodeURIComponent(email)}&select=id,status,telefono&limit=1`,
+      `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}&select=id,status,telefono&limit=1`,
       sbAuth
     );
     const rows = JSON.parse(gr.body || '[]');
@@ -46,11 +46,11 @@ module.exports = async function handler(req, res) {
 
   if (existingLead) {
     // 2a. Update existing lead → arranque + booking data
-    const patch = { status: 'arranque', cal_link, reunion_fecha };
+    const patch = { status: 'diagnostic', cal_link, reunion_fecha };
     if (nombre_raw) patch.nombre = nombre_raw;
     try {
       const r = await httpsRequest('PATCH',
-        `${SB_URL}/rest/v1/leads?email=ilike.${encodeURIComponent(email)}`,
+        `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}`,
         sbHeaders, patch
       );
       if (r.status >= 400) {
@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
       plan: '',
       canal: 'cal',
       origen: 'cal-direct',
-      status: 'arranque',
+      status: 'diagnostic',
       prioridad: 'Media',
       tipoprecio: 'fundador',
       cal_link,

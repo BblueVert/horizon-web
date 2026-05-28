@@ -85,9 +85,11 @@ function httpsRequest(method, urlStr, headers, body, timeoutMs = 10_000) {
 
 function verifyHmac(secret, rawBody, signatureHeader) {
   if (!signatureHeader || !secret) return false;
+  const sig = signatureHeader.replace(/^sha256=/i, '').trim();
   const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+  if (sig.length !== expected.length) return false;
   try {
-    return crypto.timingSafeEqual(Buffer.from(signatureHeader), Buffer.from(expected));
+    return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
   } catch {
     return false;
   }
