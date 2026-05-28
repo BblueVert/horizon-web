@@ -68,7 +68,7 @@ module.exports = async function handler(req, res) {
 
   if (existingLead) {
     // 2a. Lead exists → move to arranque and save booking data
-    const patch = { status: 'diagnostic', cal_link: calLink, reunion_fecha: reunionFecha };
+    const patch = { status: 'arranque', cal_link: calLink, reunion_fecha: reunionFecha };
     if (attendeeName) patch.nombre = attendeeName;
     try {
       const r = await httpsRequest('PATCH',
@@ -92,7 +92,7 @@ module.exports = async function handler(req, res) {
       plan: '',
       canal: 'cal',
       origen: 'cal-direct',
-      status: 'diagnostic',
+      status: 'arranque',
       prioridad: 'Media',
       tipoprecio: 'fundador',
       cal_link: calLink,

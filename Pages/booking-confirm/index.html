@@ -90,7 +90,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
       // Mostramos en UTC para que coincida con el horario elegido por el usuario.
       return new Intl.DateTimeFormat('es-CL',{
         weekday:'long', day:'numeric', month:'long',
-        hour:'2-digit', minute:'2-digit', timeZone:'UTC'
+        hour:'2-digit', minute:'2-digit', timeZone:'America/Santiago'
       }).format(new Date(str));
     }
     catch(e){ return str; }

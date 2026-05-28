@@ -323,12 +323,12 @@ const CHECKLIST_ITEMS = [
 ];
 
 const STATUS_LABELS = {
-  new:'Nuevo', contacted:'Contactado', diagnostic:'Diagnóstico',
+  arranque:'Arranque', new:'Nuevo', contacted:'Contactado', diagnostic:'Diagnóstico',
   proposal:'Propuesta', qualified:'Calificado', contract:'Contrato',
   in_progress:'En proceso', converted:'Cerrado ✓', lost:'Perdido'
 };
 const STATUS_COLORS = {
-  new:'#7b3fa0', contacted:'#f59e0b', diagnostic:'#e8637a',
+  arranque:'#ff6b35', new:'#7b3fa0', contacted:'#f59e0b', diagnostic:'#e8637a',
   proposal:'#ff8c42', qualified:'#3b82f6', contract:'#a855f7',
   in_progress:'#06b6d4', converted:'#10b981', lost:'#ef4444'
 };
@@ -345,7 +345,7 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 async function loadLeads(){
   try {
-    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500&status=in.(new,contacted,diagnostic,proposal,qualified,contract,in_progress)');
+    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500&status=in.(arranque,new,contacted,diagnostic,proposal,qualified,contract,in_progress)');
     allLeads = rows.map(fromDb);
   } catch(e) {
     console.error('loadLeads error:', e);

@@ -149,7 +149,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (existingLead) {
-    const patch = { status: 'diagnostic', canal: 'hero', cal_link: meetLink, reunion_fecha: reunionISO };
+    const patch = { status: 'arranque', canal: 'hero', cal_link: meetLink, reunion_fecha: reunionISO };
     if (nombre)   patch.nombre   = nombre;
     if (telefono) patch.telefono = telefono;
     if (plan)     patch.plan     = plan;
@@ -167,7 +167,7 @@ module.exports = async function handler(req, res) {
     const newLead = {
       id: uid(), nombre, email, empresa: '', telefono, nota: contexto,
       plan, canal: 'hero', origen: 'agendar-directo',
-      status: 'diagnostic', prioridad: 'Media', tipoprecio: 'fundador',
+      status: 'arranque', prioridad: 'Media', tipoprecio: 'fundador',
       cal_link: meetLink, reunion_fecha: reunionISO,
       historial: [], hooks_respuestas: {},
     };

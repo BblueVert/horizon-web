@@ -46,7 +46,7 @@ module.exports = async function handler(req, res) {
 
   if (existingLead) {
     // 2a. Update existing lead → arranque + booking data
-    const patch = { status: 'diagnostic', cal_link, reunion_fecha };
+    const patch = { status: 'arranque', cal_link, reunion_fecha };
     if (nombre_raw) patch.nombre = nombre_raw;
     try {
       const r = await httpsRequest('PATCH',
@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
       plan: '',
       canal: 'cal',
       origen: 'cal-direct',
-      status: 'diagnostic',
+      status: 'arranque',
       prioridad: 'Media',
       tipoprecio: 'fundador',
       cal_link,
