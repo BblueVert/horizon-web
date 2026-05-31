@@ -1,53 +1,100 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
 <title>HORIZON OPS · Pipeline</title>
 <link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="/OPS/shared/ops.css">
 <style>
-/* Pipeline Kanban */
-.pipeline-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+/* ── Kanban ── */
+.pipeline-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
 .kanban{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:start;}
 @media(max-width:1400px){.kanban{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:800px){.kanban{grid-template-columns:repeat(2,1fr);}}
-.col-header{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;padding:0 0 10px;display:flex;align-items:center;justify-content:space-between;}
+.col-header{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;padding:0 0 8px;display:flex;align-items:center;justify-content:space-between;}
 .col-count{background:var(--card2);border-radius:10px;padding:1px 7px;font-size:9px;color:var(--text2);}
-.lead-card{
-  background:var(--card);border:1px solid var(--border);border-radius:10px;
-  padding:14px;margin-bottom:8px;cursor:pointer;transition:.15s;
-}
+.lead-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:7px;cursor:pointer;transition:.15s;}
 .lead-card:hover{border-color:var(--border2);background:var(--card2);}
-.lead-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
-.lead-empresa{font-size:11px;color:var(--text3);margin-bottom:8px;}
-.lead-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.lead-plan{font-family:var(--fm);font-size:8px;background:rgba(255,107,53,.08);color:var(--h2);border:1px solid rgba(255,107,53,.15);border-radius:4px;padding:2px 6px;}
-.lead-price{font-family:var(--fm);font-size:9px;color:var(--text3);}
-.lead-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
-/* Status colors */
-.col-new        .lead-card{border-left:2px solid var(--text3);}
-.col-contactado .lead-card{border-left:2px solid var(--indigo2);}
-.col-propuesta  .lead-card{border-left:2px solid var(--yellow);}
-.col-arranque   .lead-card{border-left:2px solid var(--h1);}
-.col-activo     .lead-card{border-left:2px solid var(--green);}
-.col-cerrado    .lead-card{border-left:2px solid var(--text3);opacity:.7;}
+.lead-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.lead-empresa{font-size:11px;color:var(--text3);margin-bottom:7px;}
+.lead-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.lead-plan-tag{font-family:var(--fm);font-size:7px;background:rgba(255,107,53,.08);color:var(--h2);border:1px solid rgba(255,107,53,.15);border-radius:3px;padding:2px 5px;}
+.lead-price-tag{font-family:var(--fm);font-size:9px;color:var(--text3);}
+.lead-stage-tag{font-family:var(--fm);font-size:7px;border-radius:3px;padding:2px 5px;border:1px solid;}
+.lead-card-activ{display:flex;gap:5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+/* Left border by column */
+.col-new .lead-card{border-left:2px solid #7b3fa0;}
+.col-contactado .lead-card{border-left:2px solid #f59e0b;}
+.col-propuesta .lead-card{border-left:2px solid #ff8c42;}
+.col-arranque .lead-card{border-left:2px solid #2dd4bf;}
+.col-activo .lead-card{border-left:2px solid var(--green);}
+.col-cerrado .lead-card{border-left:2px solid var(--text3);opacity:.65;}
 
-/* Modal */
-.ops-modal-bg{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
-  align-items:center;justify-content:center;
+/* ── Modal completo ── */
+.lm-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.lm-bg.open{display:flex;}
+.lm-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:560px;flex-shrink:0;}
+.lm-hdr{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;}
+.lm-title{font-family:var(--fd);font-size:20px;letter-spacing:1px;color:var(--text);}
+.lm-created{font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:2px;}
+.lm-close{background:none;border:none;cursor:pointer;color:var(--text2);font-size:18px;padding:2px 6px;border-radius:4px;transition:.15s;}
+.lm-close:hover{background:var(--card2);}
+.lm-body{padding:18px 22px;overflow-y:auto;}
+.lm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.lm-full{grid-column:1/-1;}
+.lm-lbl{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;display:block;margin-bottom:5px;}
+.lm-input{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:var(--fb);font-size:13px;padding:9px 11px;outline:none;transition:.15s;-webkit-appearance:none;color-scheme:dark;}
+.lm-input:focus{border-color:var(--h1);box-shadow:0 0 0 2px rgba(255,107,53,.1);}
+select.lm-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a4760' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
+textarea.lm-input{resize:vertical;min-height:70px;line-height:1.5;}
+
+/* Historial */
+.hist-section{margin-top:18px;border-top:1px solid var(--border);padding-top:14px;}
+.hist-lbl{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.hist-list{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;margin-bottom:10px;scrollbar-width:thin;scrollbar-color:var(--card3) transparent;}
+.hist-item{background:var(--card2);border-radius:6px;padding:8px 10px;}
+.hist-date{font-family:var(--fm);font-size:8px;color:var(--text3);margin-bottom:2px;}
+.hist-text{font-size:12px;color:var(--text2);line-height:1.4;}
+.hist-add{display:flex;gap:6px;}
+.hist-add input{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--fb);font-size:12px;padding:7px 10px;outline:none;}
+.hist-add input:focus{border-color:var(--h1);}
+
+/* Stage mover */
+.stage-section{margin-top:16px;border-top:1px solid var(--border);padding-top:14px;}
+.stage-lbl{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.stage-pills{display:flex;flex-wrap:wrap;gap:5px;}
+.stage-pill{
+  padding:5px 11px;border-radius:20px;font-family:var(--fm);font-size:9px;
+  letter-spacing:.3px;cursor:pointer;border:1px solid;transition:.15s;
+  background:transparent;
 }
-.ops-modal-bg.open{display:flex;}
-.ops-modal{
-  background:var(--card);border:1px solid var(--border2);border-radius:16px;
-  padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;
+.stage-pill:hover{opacity:.85;}
+.stage-pill.cur{color:#fff!important;}
+
+/* Acciones contextuales */
+.acciones-section{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;}
+.acciones-title{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.action-lbl{font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500;}
+.action-note{font-size:11px;color:var(--yellow);margin-bottom:6px;}
+.action-meta{font-family:var(--fm);font-size:10px;color:var(--text3);margin-bottom:6px;}
+.action-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:7px;
+  font-family:var(--fm);font-size:10px;letter-spacing:.3px;cursor:pointer;
+  border:1px solid;text-decoration:none;margin-bottom:6px;margin-right:4px;transition:.15s;
 }
-.ops-modal-title{font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;}
-.ops-modal-close{float:right;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;margin-top:-4px;}
+.action-btn:hover{filter:brightness(1.1);}
+.extra-field{margin-top:10px;}
+.extra-field-lbl{font-family:var(--fm);font-size:8px;color:var(--text3);margin-bottom:4px;}
+.extra-field-row{display:flex;gap:6px;}
+.extra-field-row input{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--fm);font-size:11px;padding:6px 9px;outline:none;}
+.extra-field-row input:focus{border-color:var(--h1);}
+
+/* Footer */
+.lm-ftr{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.lm-ftr-l{flex:1;}
 </style>
 </head>
 <body>
@@ -59,206 +106,455 @@
         <div class="ops-page-sub" id="pipelineSub">Cargando…</div>
       </div>
       <div class="ops-header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openModal(null)">+ Nuevo lead</button>
         <a href="/agendar" target="_blank" class="btn btn-primary btn-sm">+ Nueva sesión</a>
       </div>
     </div>
     <div class="ops-content">
-      <!-- Stats -->
       <div class="pipeline-stats">
         <div class="stat-card"><div class="stat-label">Total leads</div><div class="stat-value" id="statTotal">—</div></div>
         <div class="stat-card"><div class="stat-label">Pipeline CLP</div><div class="stat-value orange" id="statClp">—</div></div>
         <div class="stat-card"><div class="stat-label">En Arranque</div><div class="stat-value" id="statArranque">—</div></div>
         <div class="stat-card"><div class="stat-label">Activos</div><div class="stat-value green" id="statActivos">—</div></div>
       </div>
-
       <div id="pipelineLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando leads…</div>
-      <!-- Kanban -->
       <div class="kanban" id="kanban" style="display:none;">
-        <div>
-          <div class="col-header">Nuevo <span class="col-count" id="cnt-new">0</span></div>
-          <div id="col-new" class="col-new"></div>
-        </div>
-        <div>
-          <div class="col-header">Contactado <span class="col-count" id="cnt-contactado">0</span></div>
-          <div id="col-contactado" class="col-contactado"></div>
-        </div>
-        <div>
-          <div class="col-header">Propuesta <span class="col-count" id="cnt-propuesta">0</span></div>
-          <div id="col-propuesta" class="col-propuesta"></div>
-        </div>
-        <div>
-          <div class="col-header">Arranque <span class="col-count" id="cnt-arranque">0</span></div>
-          <div id="col-arranque" class="col-arranque"></div>
-        </div>
-        <div>
-          <div class="col-header">Activo <span class="col-count" id="cnt-activo">0</span></div>
-          <div id="col-activo" class="col-activo"></div>
-        </div>
-        <div>
-          <div class="col-header">Cerrado <span class="col-count" id="cnt-cerrado">0</span></div>
-          <div id="col-cerrado" class="col-cerrado"></div>
-        </div>
+        <div><div class="col-header">Nuevo <span class="col-count" id="cnt-new">0</span></div><div id="col-new" class="col-new"></div></div>
+        <div><div class="col-header">Contactado <span class="col-count" id="cnt-contactado">0</span></div><div id="col-contactado" class="col-contactado"></div></div>
+        <div><div class="col-header">Propuesta <span class="col-count" id="cnt-propuesta">0</span></div><div id="col-propuesta" class="col-propuesta"></div></div>
+        <div><div class="col-header">Arranque <span class="col-count" id="cnt-arranque">0</span></div><div id="col-arranque" class="col-arranque"></div></div>
+        <div><div class="col-header">Activo <span class="col-count" id="cnt-activo">0</span></div><div id="col-activo" class="col-activo"></div></div>
+        <div><div class="col-header">Cerrado <span class="col-count" id="cnt-cerrado">0</span></div><div id="col-cerrado" class="col-cerrado"></div></div>
       </div>
     </div>
   </main>
 </div>
 
-<!-- Modal editar status -->
-<div class="ops-modal-bg" id="leadModal">
-  <div class="ops-modal">
-    <button class="ops-modal-close" onclick="closeModal()">×</button>
-    <div class="ops-modal-title" id="modalNombre">Lead</div>
-    <div id="modalBody"></div>
+<!-- ── Modal Editar / Crear Lead ── -->
+<div class="lm-bg" id="leadModal">
+  <div class="lm-box">
+    <div class="lm-hdr">
+      <div>
+        <div class="lm-title" id="lmTitle">Nuevo Lead</div>
+        <div class="lm-created" id="lmCreated"></div>
+      </div>
+      <button class="lm-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="lm-body">
+      <!-- Campos -->
+      <div class="lm-grid">
+        <div><label class="lm-lbl">Nombre</label><input class="lm-input" id="lf-nombre" placeholder="Nombre completo"></div>
+        <div><label class="lm-lbl">Empresa / Negocio</label><input class="lm-input" id="lf-empresa" placeholder="Negocio o empresa"></div>
+        <div><label class="lm-lbl">Email</label><input class="lm-input" type="email" id="lf-email" placeholder="correo@ejemplo.com"></div>
+        <div><label class="lm-lbl">Teléfono / WhatsApp</label><input class="lm-input" id="lf-telefono" placeholder="+569..."></div>
+        <div>
+          <label class="lm-lbl">Sector / Rubro</label>
+          <select class="lm-input" id="lf-sector">
+            <option value="">Seleccionar…</option>
+            <option>Restaurante / Gastronomía</option><option>Salud / Bienestar</option><option>Belleza / Estética</option>
+            <option>Fitness / Deporte</option><option>Educación / Cursos</option><option>Comercio / Retail</option>
+            <option>Servicios Profesionales</option><option>Inmobiliaria</option><option>Tecnología / Software</option>
+            <option>Arte / Diseño</option><option>Turismo</option><option>Moda</option><option>Otro</option>
+          </select>
+        </div>
+        <div>
+          <label class="lm-lbl">Canal de origen</label>
+          <select class="lm-input" id="lf-canal">
+            <option value="hero">Landing Hero</option><option value="plan01">Plan 01</option><option value="plan02">Plan 02</option>
+            <option value="plan03">Plan 03</option><option value="plan04">Plan 04</option><option value="plan05">Plan 05</option>
+            <option value="instagram">Instagram</option><option value="whatsapp">WhatsApp</option>
+            <option value="web">Chat Web</option><option value="referido">Referido</option>
+            <option value="directo">Directo</option><option value="otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label class="lm-lbl">Plan de interés</label>
+          <select class="lm-input" id="lf-plan">
+            <option value="">Sin definir</option>
+            <option value="plan01">Plan 01 — Presencia Digital ($290.000)</option>
+            <option value="plan02">Plan 02 — Ecosistema Digital ($490.000)</option>
+            <option value="plan03">Plan 03 — Negocio Activo ($690.000)</option>
+            <option value="plan04">Plan 04 — Sistema con IA ($890.000)</option>
+            <option value="plan05">Plan 05 — Agente IA (a consultar)</option>
+          </select>
+        </div>
+        <div>
+          <label class="lm-lbl">Tipo de precio</label>
+          <select class="lm-input" id="lf-tipoprecio">
+            <option value="fundador">Precio Fundador (50% OFF)</option>
+            <option value="normal">Precio Normal</option>
+          </select>
+        </div>
+        <div>
+          <label class="lm-lbl">Estado</label>
+          <select class="lm-input" id="lf-status">
+            <option value="new">Nuevo</option>
+            <option value="contactado">Contactado</option>
+            <option value="propuesta">Propuesta enviada</option>
+            <option value="arranque">Arranque</option>
+            <option value="activo">Activo</option>
+            <option value="cerrado">Cerrado</option>
+          </select>
+        </div>
+        <div>
+          <label class="lm-lbl">Prioridad</label>
+          <select class="lm-input" id="lf-prioridad">
+            <option>Media</option><option>Alta</option><option>Baja</option>
+          </select>
+        </div>
+        <div class="lm-full"><label class="lm-lbl">Notas / Contexto</label><textarea class="lm-input" id="lf-nota" placeholder="Descripción del negocio, necesidades, observaciones…"></textarea></div>
+      </div>
+
+      <!-- Historial -->
+      <div class="hist-section" id="lmHistSection" style="display:none;">
+        <div class="hist-lbl">Historial de actividad</div>
+        <div class="hist-list" id="lmHistList"></div>
+        <div class="hist-add">
+          <input id="lmNota" placeholder="Agregar nota rápida…" onkeydown="if(event.key==='Enter')addNota()">
+          <button class="btn btn-ghost btn-sm" onclick="addNota()">+ Nota</button>
+        </div>
+      </div>
+
+      <!-- Stage mover -->
+      <div class="stage-section" id="lmStageSection" style="display:none;">
+        <div class="stage-lbl">Mover etapa</div>
+        <div class="stage-pills" id="lmStagePills"></div>
+      </div>
+
+      <!-- Acciones contextuales -->
+      <div class="acciones-section" id="lmAcciones" style="display:none;">
+        <div class="acciones-title">Acciones de esta etapa</div>
+        <div id="lmAccionesGrid"></div>
+      </div>
+    </div>
+    <div class="lm-ftr">
+      <div class="lm-ftr-l">
+        <button class="btn btn-danger btn-sm" id="lmBtnDelete" onclick="deleteLead()" style="display:none;">Eliminar lead</button>
+      </div>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveLead()">Guardar</button>
+    </div>
   </div>
 </div>
 
 <script src="/OPS/shared/ops-auth.js"></script>
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
-const PLANS = {
-  plan01:{label:'Presencia Digital',    preciof:290000},
-  plan02:{label:'Ecosistema Digital',   preciof:490000},
-  plan03:{label:'Negocio Activo',       preciof:690000},
-  plan04:{label:'Sistema con IA',       preciof:890000},
-  plan05:{label:'Agente IA',            preciof:null},
-};
-const STATUSES = ['new','contactado','propuesta','arranque','activo','cerrado'];
-const STATUS_LABEL = {new:'Nuevo',contactado:'Contactado',propuesta:'Propuesta',arranque:'Arranque',activo:'Activo',cerrado:'Cerrado'};
+const PLANS={plan01:{label:'Presencia Digital',preciof:290000},plan02:{label:'Ecosistema Digital',preciof:490000},plan03:{label:'Negocio Activo',preciof:690000},plan04:{label:'Sistema con IA',preciof:890000},plan05:{label:'Agente IA',preciof:null}};
 
-let allLeads = [];
-let currentLead = null;
+// Etapas completas para el stage mover
+const ALL_STAGES=[
+  {id:'new',        label:'Nuevo',             color:'#7b3fa0'},
+  {id:'contactado', label:'Contactado',         color:'#f59e0b'},
+  {id:'propuesta',  label:'Propuesta enviada',  color:'#ff8c42'},
+  {id:'arranque',   label:'Arranque',           color:'#2dd4bf'},
+  {id:'activo',     label:'Activo (retainer)',  color:'#10b981'},
+  {id:'cerrado',    label:'Cerrado ✓',          color:'#6b7280'},
+];
 
-function fmt$(n){ return n ? '$'+n.toLocaleString('es-CL') : '—'; }
+// Columnas kanban
+const KANBAN_COLS=['new','contactado','propuesta','arranque','activo','cerrado'];
+const COL_LABEL={new:'Nuevo',contactado:'Contactado',propuesta:'Propuesta',arranque:'Arranque',activo:'Activo',cerrado:'Cerrado'};
 
-function renderCard(lead) {
-  const plan = PLANS[lead.plan] || {};
-  const price = fmt$(lead.tipoprecio==='fundador' ? plan.preciof : null);
-  const isArranque = lead.status === 'arranque';
+let allLeads=[], currentLead=null;
+function fmt$(n){return n?'$'+n.toLocaleString('es-CL'):'—';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function waUrl(tel,msg){const t=(tel||'').replace(/\D/g,'');return t?'https://wa.me/'+t+'?text='+encodeURIComponent(msg):'';}
+
+function renderCard(lead){
+  const plan=PLANS[lead.plan]||{};
+  const price=fmt$(lead.tipoprecio==='fundador'?plan.preciof:null);
+  const stage=ALL_STAGES.find(s=>s.id===lead.status)||{};
+  const isArranque=lead.status==='arranque';
   return `<div class="lead-card" onclick="openModal('${lead.id}')">
-    <div class="lead-name">${lead.nombre||'Sin nombre'}</div>
-    <div class="lead-empresa">${lead.empresa||lead.email||'—'}</div>
+    <div class="lead-name">${esc(lead.nombre||'Sin nombre')}</div>
+    <div class="lead-empresa">${esc(lead.empresa||lead.email||'—')}</div>
     <div class="lead-meta">
-      ${lead.plan ? `<span class="lead-plan">${plan.label||lead.plan}</span>` : ''}
-      <span class="lead-price">${price}</span>
+      ${lead.plan?`<span class="lead-plan-tag">${plan.label||lead.plan}</span>`:''}
+      <span class="lead-price-tag">${price}</span>
+      ${lead.prioridad==='Alta'?`<span class="badge badge-red" style="font-size:7px;">Alta</span>`:''}
     </div>
-    ${isArranque ? `<div class="lead-actions">
-      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();activarProyecto('${lead.id}')">
-        ▶ Activar Proyecto
-      </button>
-    </div>` : ''}
+    ${isArranque?`<div class="lead-card-activ"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();activarProyecto('${lead.id}')">▶ Activar Proyecto</button></div>`:''}
   </div>`;
 }
 
-function renderKanban(leads) {
-  STATUSES.forEach(s => {
-    const col = document.getElementById('col-'+s);
-    if(!col) return;
-    const filtered = leads.filter(l => l.status === s);
-    document.getElementById('cnt-'+s).textContent = filtered.length;
-    col.innerHTML = filtered.length
-      ? filtered.map(renderCard).join('')
-      : `<div style="font-family:var(--fm);font-size:9px;color:var(--text3);text-align:center;padding:16px 0;">vacío</div>`;
+function renderKanban(){
+  const leads=allLeads;
+  KANBAN_COLS.forEach(col=>{
+    const filtered=leads.filter(l=>l.status===col);
+    document.getElementById('cnt-'+col).textContent=filtered.length;
+    const el=document.getElementById('col-'+col);
+    el.innerHTML=filtered.length?filtered.map(renderCard).join(''):`<div style="font-family:var(--fm);font-size:9px;color:var(--text3);text-align:center;padding:14px 0;">vacío</div>`;
   });
-
-  // Stats
-  const total = leads.length;
-  const pipeline = leads.filter(l=>['new','contactado','propuesta','arranque'].includes(l.status))
-    .reduce((s,l)=> s + (l.tipoprecio==='fundador' ? (PLANS[l.plan]?.preciof||0) : 0), 0);
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statClp').textContent = fmt$(pipeline);
-  document.getElementById('statArranque').textContent = leads.filter(l=>l.status==='arranque').length;
-  document.getElementById('statActivos').textContent = leads.filter(l=>l.status==='activo').length;
-  document.getElementById('pipelineSub').textContent = `${total} leads · ${fmt$(pipeline)} en pipeline · ${leads.filter(l=>l.status==='cerrado').length} cerrados`;
-  document.getElementById('pipelineSub').textContent = `${total} leads · ${fmt$(pipeline)} en pipeline`;
+  const total=leads.length;
+  const pipeline=leads.filter(l=>['new','contactado','propuesta','arranque'].includes(l.status))
+    .reduce((s,l)=>s+(l.tipoprecio==='fundador'?(PLANS[l.plan]?.preciof||0):0),0);
+  document.getElementById('statTotal').textContent=total;
+  document.getElementById('statClp').textContent=fmt$(pipeline);
+  document.getElementById('statArranque').textContent=leads.filter(l=>l.status==='arranque').length;
+  document.getElementById('statActivos').textContent=leads.filter(l=>l.status==='activo').length;
+  document.getElementById('pipelineSub').textContent=`${total} leads · ${fmt$(pipeline)} en pipeline · ${leads.filter(l=>l.status==='cerrado').length} cerrados`;
 }
 
-function openModal(id) {
-  currentLead = allLeads.find(l => l.id === id);
-  if (!currentLead) return;
-  document.getElementById('modalNombre').textContent = currentLead.nombre || 'Lead';
-  document.getElementById('modalBody').innerHTML = `
-    <div class="ops-field">
-      <label class="ops-label">Email</label>
-      <div style="font-family:var(--fm);font-size:11px;color:var(--text2);padding:4px 0;">${currentLead.email||'—'}</div>
-    </div>
-    <div class="ops-field">
-      <label class="ops-label">Teléfono</label>
-      <div style="font-family:var(--fm);font-size:11px;color:var(--text2);padding:4px 0;">${currentLead.telefono||'—'}</div>
-    </div>
-    <div class="ops-field">
-      <label class="ops-label">Status</label>
-      <select class="ops-input" id="modalStatus">
-        ${STATUSES.map(s=>`<option value="${s}"${s===currentLead.status?' selected':''}>${STATUS_LABEL[s]}</option>`).join('')}
-      </select>
-    </div>
-    <div class="ops-field">
-      <label class="ops-label">MRR Retainer (CLP)</label>
-      <input class="ops-input" type="number" id="modalMrr" value="${currentLead.mrr||0}" min="0" step="10000">
-    </div>
-    <div class="ops-field">
-      <label class="ops-label">Nota interna</label>
-      <textarea class="ops-input" id="modalNota" rows="3">${currentLead.nota||''}</textarea>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:4px;">
-      <button class="btn btn-primary" onclick="saveModal()" style="flex:1;justify-content:center;">Guardar</button>
-      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    </div>`;
-  document.getElementById('leadModal').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('leadModal').classList.remove('open');
-  currentLead = null;
-}
-
-async function saveModal() {
-  if (!currentLead) return;
-  const status = document.getElementById('modalStatus').value;
-  const mrr    = Number(document.getElementById('modalMrr').value) || 0;
-  const nota   = document.getElementById('modalNota').value;
-  const headers = await opsAuthHeaders();
-  await fetch(`/api/ops/leads?id=${currentLead.id}`, {
-    method: 'PATCH', headers,
-    body: JSON.stringify({ status, mrr, nota }),
-  });
-  closeModal();
-  await loadLeads();
-  opsToast('Lead actualizado');
-}
-
-async function activarProyecto(leadId) {
-  if (!confirm('¿Activar proyecto para este lead? Se creará el workspace con milestones base.')) return;
-  const headers = await opsAuthHeaders();
-  const r = await fetch('/api/ops/promote-lead', {
-    method: 'POST', headers,
-    body: JSON.stringify({ lead_id: leadId }),
-  });
-  const data = await r.json();
-  if (!r.ok) { opsToast(data.error || 'Error', 'error'); return; }
-  opsToast('Proyecto creado ✓');
-  setTimeout(() => window.location.href = '/ops/proyectos', 1200);
-}
-
-async function loadLeads() {
-  try {
-    const headers = await opsAuthHeaders();
-    const r = await fetch('/api/ops/leads', { headers });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const ct = r.headers.get('content-type') || '';
-    if (!ct.includes('application/json')) throw new Error('Respuesta no es JSON — reiniciá el servidor');
-    allLeads = await r.json();
-    renderKanban(allLeads);
-    document.getElementById('pipelineLoading').style.display = 'none';
-    document.getElementById('kanban').style.display = 'grid';
-  } catch (e) {
-    document.getElementById('pipelineLoading').innerHTML =
-      `<span style="color:var(--red);font-family:var(--fm);font-size:10px;">Error: ${e.message}</span>`;
+async function loadLeads(){
+  try{
+    const headers=await opsAuthHeaders();
+    const r=await fetch('/api/ops/leads',{headers});
+    if(!r.ok||!(r.headers.get('content-type')||'').includes('json')) throw new Error('HTTP '+r.status);
+    allLeads=await r.json();
+    renderKanban();
+    document.getElementById('pipelineLoading').style.display='none';
+    document.getElementById('kanban').style.display='grid';
+  }catch(e){
+    document.getElementById('pipelineLoading').innerHTML=`<span style="color:var(--red);font-family:var(--fm);font-size:10px;">Error: ${e.message}</span>`;
   }
 }
 
+/* ── Modal ── */
+function openModal(id){
+  currentLead=id?allLeads.find(l=>l.id===id):null;
+  const l=currentLead;
+
+  document.getElementById('lmTitle').textContent=l?l.nombre||'Lead':'Nuevo Lead';
+  document.getElementById('lmCreated').textContent=l?'Creado: '+new Date(l.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'}):'';
+  document.getElementById('lf-nombre').value=l?.nombre||'';
+  document.getElementById('lf-empresa').value=l?.empresa||'';
+  document.getElementById('lf-email').value=l?.email||'';
+  document.getElementById('lf-telefono').value=l?.telefono||'';
+  document.getElementById('lf-sector').value=l?.sector||'';
+  document.getElementById('lf-canal').value=l?.canal||'hero';
+  document.getElementById('lf-plan').value=l?.plan||'';
+  document.getElementById('lf-tipoprecio').value=l?.tipoprecio||'fundador';
+  document.getElementById('lf-status').value=l?.status||'new';
+  document.getElementById('lf-prioridad').value=l?.prioridad||'Media';
+  document.getElementById('lf-nota').value=l?.nota||'';
+  document.getElementById('lmBtnDelete').style.display=l?'inline-flex':'none';
+
+  // Historial
+  const histSection=document.getElementById('lmHistSection');
+  if(l){
+    histSection.style.display='block';
+    renderHist(l.historial||[]);
+    document.getElementById('lmNota').value='';
+  } else histSection.style.display='none';
+
+  // Stage mover
+  const stageSection=document.getElementById('lmStageSection');
+  if(l){
+    stageSection.style.display='block';
+    document.getElementById('lmStagePills').innerHTML=ALL_STAGES.map(s=>`
+      <button class="stage-pill${l.status===s.id?' cur':''}"
+        style="color:${l.status===s.id?'#fff':s.color};border-color:${s.color}40;${l.status===s.id?'background:'+s.color+';':''}"
+        onclick="changeStage('${s.id}')">
+        ${s.label}
+      </button>`).join('');
+  } else stageSection.style.display='none';
+
+  // Acciones contextuales
+  renderAcciones(l);
+
+  document.getElementById('leadModal').classList.add('open');
+  document.getElementById('lf-nombre').focus();
+}
+
+function closeModal(){document.getElementById('leadModal').classList.remove('open');currentLead=null;}
+
+function renderHist(hist){
+  const el=document.getElementById('lmHistList');
+  el.innerHTML=hist.length
+    ?[...hist].reverse().map(h=>`<div class="hist-item"><div class="hist-date">${esc(h.fecha||h.ts||'')}</div><div class="hist-text">${esc(h.texto||h.content||'')}</div></div>`).join('')
+    :'<div style="font-family:var(--fm);font-size:9px;color:var(--text3);padding:8px 0;">Sin notas aún</div>';
+}
+
+async function addNota(){
+  if(!currentLead)return;
+  const texto=document.getElementById('lmNota').value.trim();if(!texto)return;
+  if(!currentLead.historial)currentLead.historial=[];
+  const entry={fecha:new Date().toLocaleString('es-CL'),texto};
+  currentLead.historial.push(entry);
+  renderHist(currentLead.historial);
+  document.getElementById('lmNota').value='';
+  const headers=await opsAuthHeaders();
+  await fetch(`/api/ops/leads?id=${currentLead.id}`,{method:'PATCH',headers,body:JSON.stringify({historial:currentLead.historial})});
+  opsToast('Nota agregada');
+}
+
+async function changeStage(status){
+  if(!currentLead)return;
+  currentLead.status=status;
+  document.getElementById('lf-status').value=status;
+  // Update pills
+  document.querySelectorAll('#lmStagePills .stage-pill').forEach(b=>{
+    const s=ALL_STAGES.find(x=>x.id===b.getAttribute('onclick')?.match(/'(\w+)'/)?.[1]);
+    if(!s)return;
+    const isActive=status===s.id;
+    b.className='stage-pill'+(isActive?' cur':'');
+    b.style.color=isActive?'#fff':s.color;
+    b.style.borderColor=s.color+'40';
+    b.style.background=isActive?s.color:'';
+  });
+  renderAcciones(currentLead);
+  opsToast('Etapa: '+COL_LABEL[status]||status);
+}
+
+async function saveLead(){
+  const nombre=document.getElementById('lf-nombre').value.trim();
+  if(!nombre){opsToast('El nombre es obligatorio','error');return;}
+  const data={
+    nombre,empresa:document.getElementById('lf-empresa').value.trim(),
+    email:document.getElementById('lf-email').value.trim(),
+    telefono:document.getElementById('lf-telefono').value.trim(),
+    sector:document.getElementById('lf-sector').value,
+    canal:document.getElementById('lf-canal').value,
+    plan:document.getElementById('lf-plan').value,
+    tipoprecio:document.getElementById('lf-tipoprecio').value,
+    status:document.getElementById('lf-status').value,
+    prioridad:document.getElementById('lf-prioridad').value,
+    nota:document.getElementById('lf-nota').value.trim(),
+  };
+  const headers=await opsAuthHeaders();
+  if(currentLead){
+    data.historial=currentLead.historial||[];
+    await fetch(`/api/ops/leads?id=${currentLead.id}`,{method:'PATCH',headers,body:JSON.stringify(data)});
+    const idx=allLeads.findIndex(l=>l.id===currentLead.id);
+    if(idx>=0)allLeads[idx]={...allLeads[idx],...data};
+    opsToast('Lead actualizado');
+  } else {
+    // Crear nuevo lead via API/api/leads
+    data.origen='crm-manual'; data.historial=[];
+    const r=await fetch('/api/ops/leads',{method:'POST',headers,body:JSON.stringify(data)});
+    // Si POST no está soportado en ops/leads, usamos el endpoint original
+    if(!r.ok){
+      // Fallback: crear via Supabase SDK
+      const sb=getSB();
+      const {data:nl}=await sb.from('leads').insert({...data,id:crypto.randomUUID?crypto.randomUUID():Date.now().toString()}).select().single();
+      if(nl)allLeads.unshift(nl);
+    } else {
+      const nl=await r.json().catch(()=>null);
+      if(nl)allLeads.unshift(nl);
+      else await loadLeads();
+    }
+    opsToast('Lead creado');
+  }
+  closeModal();renderKanban();
+}
+
+async function deleteLead(){
+  if(!currentLead||!confirm('¿Eliminar este lead?'))return;
+  const headers=await opsAuthHeaders();
+  const sb=getSB();
+  await sb.from('leads').delete().eq('id',currentLead.id);
+  allLeads=allLeads.filter(l=>l.id!==currentLead.id);
+  closeModal();renderKanban();opsToast('Lead eliminado','error');
+}
+
+async function activarProyecto(leadId){
+  if(!confirm('¿Activar proyecto para este lead?'))return;
+  const headers=await opsAuthHeaders();
+  const r=await fetch('/api/ops/promote-lead',{method:'POST',headers,body:JSON.stringify({lead_id:leadId})});
+  const d=await r.json();
+  if(!r.ok){opsToast(d.error||'Error','error');return;}
+  opsToast('Proyecto activado ✓');
+  setTimeout(()=>window.location.href='/ops/proyectos',1200);
+}
+
+/* ── Acciones contextuales por etapa ── */
+function actionBtn(label,url,color){return `<a href="${esc(url)}" target="_blank" class="action-btn" style="background:${color}20;color:${color};border-color:${color}40;">${label}</a>`;}
+function waBtn(label,msg,tel){const url=waUrl(tel,msg);return url?actionBtn(label,url,'#25d366'):'';}
+function extraField(field,label,placeholder,val){
+  return `<div class="extra-field"><div class="extra-field-lbl">${label}</div>
+    <div class="extra-field-row">
+      <input id="xf-${field}" value="${esc(val||'')}" placeholder="${esc(placeholder)}">
+      <button class="btn btn-ghost btn-sm" onclick="saveExtraField('${field}')">Guardar</button>
+    </div></div>`;}
+
+function renderAcciones(l){
+  const el=document.getElementById('lmAcciones');
+  const grid=document.getElementById('lmAccionesGrid');
+  if(!l){el.style.display='none';return;}
+  const html=getAcciones(l);
+  if(!html.trim()){el.style.display='none';return;}
+  grid.innerHTML=html;el.style.display='block';
+}
+
+function getAcciones(l){
+  const tel=l.telefono||'';const name=l.nombre||'cliente';
+  const calLink=l.cal_link||'';const fReunion=l.reunion_fecha||'';
+  const portalUrl=l.portal_token?'https://horizonweb.cl/c/'+l.portal_token:'';
+
+  const fmtFecha=iso=>{if(!iso)return '';try{return new Intl.DateTimeFormat('es-CL',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'UTC'}).format(new Date(iso));}catch{return iso;}};
+  const fechaStr=fmtFecha(fReunion);
+
+  switch(l.status){
+    case 'new': return `
+      <div class="action-lbl">Reunión agendada — enviar hook de contexto</div>
+      ${calLink?actionBtn('📅 Abrir Google Meet',calLink,'#2dd4bf'):''}
+      ${portalUrl?actionBtn('🔗 Portal del cliente',portalUrl,'#a855f7'):''}
+      ${fReunion?`<div class="action-meta">Reunión: <strong>${fechaStr}</strong></div>`:''}
+      ${waBtn('💬 Mensaje inicial + link brief',`Hola ${name}! El diagnóstico que agendaste quedó confirmado para el ${fechaStr||'fecha por confirmar'} ✔\nAntes de vernos, contame cómo está tu negocio y qué te tiene más frenado — lo primero que se te venga.\n${portalUrl?'Acá te dejé un formulario corto para completar:\n'+portalUrl:''}`,tel)}
+      ${!calLink?extraField('cal_link','Link Google Meet','https://meet.google.com/...',calLink):''}`;
+
+    case 'contactado': return `
+      <div class="action-lbl">Respondió — preparar la sesión</div>
+      ${calLink?actionBtn('📅 Unirse a Google Meet',calLink,'var(--h1)'):'<div class="action-note">⚠️ Sin link de Google Meet aún</div>'}
+      <a href="/reunion?id=${l.id}" target="_blank" class="action-btn" style="background:rgba(168,85,247,.1);color:#a855f7;border-color:rgba(168,85,247,.2);">📋 Brief de reunión</a>
+      ${fReunion?`<div class="action-meta">Reunión: <strong>${fechaStr}</strong></div>`:''}
+      ${waBtn('💬 Recordatorio de sesión',`Hola ${name}! Te recuerdo nuestra sesión${fechaStr?' el '+fechaStr:''}. ${calLink?'Link: '+calLink:''}\n¿Confirmás?`,tel)}
+      ${!calLink?extraField('cal_link','Link Google Meet','https://meet.google.com/...',calLink):''}`;
+
+    case 'propuesta': return `
+      <div class="action-lbl">Propuesta enviada — hacer seguimiento</div>
+      ${l.propuesta_url?actionBtn('📄 Ver propuesta',l.propuesta_url,'#ff8c42'):''}
+      ${waBtn('💬 Follow-up propuesta',`Hola ${name}, ¿tuviste oportunidad de revisar la propuesta? Quedé a disposición para cualquier consulta 👋`,tel)}
+      ${waBtn('💬 Follow-up 48h',`Hola ${name}, antes de que se cierre la posibilidad quería acercarme. ¿Qué dudas tenés? 🤝`,tel)}
+      ${extraField('propuesta_url','Link de la propuesta','https://...',l.propuesta_url||'')}`;
+
+    case 'arranque': return `
+      <div class="action-lbl">Reunión agendada — pendiente de primer contacto</div>
+      ${fReunion?`<div class="action-meta">Reunión: <strong>${fechaStr}</strong></div>`:'<div class="action-note">⚠️ Sin fecha de reunión</div>'}
+      ${calLink?actionBtn('📅 Unirse a Google Meet',calLink,'#2dd4bf'):''}
+      ${waBtn('💬 Confirmación reunión',`Hola ${name}! Solo confirmo que tenemos la sesión el ${fechaStr}. ${calLink?'Link: '+calLink:''}\nCualquier duda avisame 👋`,tel)}
+      ${!calLink?extraField('cal_link','Link Google Meet','https://meet.google.com/...',calLink):''}`;
+
+    case 'activo': return `
+      <div class="action-lbl">Cliente activo — retainer vigente</div>
+      ${l.notion_url?actionBtn('📝 Notion',l.notion_url,'#a855f7'):''}
+      ${l.github_url?actionBtn('🔗 GitHub',l.github_url,'#64a2ff'):''}
+      ${portalUrl?actionBtn('🔗 Portal del cliente',portalUrl,'#a855f7'):''}
+      ${waBtn('💬 Actualización al cliente',`Hola ${name}, te dejo una actualización del proyecto 🚀\n`,tel)}
+      ${extraField('notion_url','Notion URL','https://notion.so/...',l.notion_url||'')}
+      ${extraField('github_url','GitHub URL','https://github.com/...',l.github_url||'')}`;
+
+    case 'cerrado': return `
+      <div class="action-lbl">Cerrado — pedí testimonio y ofrece retainer</div>
+      ${waBtn('💬 Pedir testimonio',`Hola ${name}, fue un placer trabajar juntos! ¿Podés contarme brevemente:\n• ¿Qué problema querías resolver?\n• ¿Qué resultado obtuviste?\n• ¿Qué destacarías del proceso?\nUnas pocas líneas me ayudan muchísimo 🙏`,tel)}
+      ${waBtn('💬 Oferta retainer (D+30)',`Hola ${name}, ¿cómo van los resultados? Te quería comentar sobre nuestros planes de continuidad para que el sistema siga creciendo 🚀`,tel)}`;
+
+    default: return '';
+  }
+}
+
+async function saveExtraField(field){
+  if(!currentLead)return;
+  const val=document.getElementById('xf-'+field)?.value?.trim()||'';
+  const fieldMap={cal_link:'cal_link',propuesta_url:'propuesta_url',notion_url:'notion_url',github_url:'github_url'};
+  const dbField=fieldMap[field]||field;
+  if(!currentLead.historial)currentLead.historial=[];
+  currentLead.historial.push({fecha:new Date().toLocaleString('es-CL'),texto:field+' actualizado: '+val});
+  currentLead[field]=val;
+  renderHist(currentLead.historial);
+  const headers=await opsAuthHeaders();
+  await fetch(`/api/ops/leads?id=${currentLead.id}`,{method:'PATCH',headers,body:JSON.stringify({[dbField]:val,historial:currentLead.historial})});
+  renderAcciones(currentLead);
+  opsToast('Guardado ✓');
+}
+
+// Cerrar con Escape o click afuera
+document.getElementById('leadModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
 (async function(){
-  const session = await opsRequireAuth();
-  if (!session) return;
+  const session=await opsRequireAuth();if(!session)return;
   await opsInitNav();
   await loadLeads();
 })();

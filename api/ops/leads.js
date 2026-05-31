@@ -28,11 +28,14 @@ module.exports = async function handler(req, res) {
     if (!id) return res.status(400).json({ error: 'id requerido' });
     const b = req.body || {};
     const allowed = ['status','prioridad','nota','mrr','plan','canal','reunion_fecha','session_notas',
-                     'propuesta_url','contrato_url','github_url','notion_url'];
+                     'propuesta_url','contrato_url','github_url','notion_url','cal_link','sector','empresa',
+                     'nombre','email','telefono','tipoprecio'];
     const patch = {};
     for (const k of allowed) {
       if (b[k] !== undefined) patch[k] = k==='mrr' ? (Number(b[k])||0) : sanitize(String(b[k]),1000);
     }
+    // historial es JSONB — no sanitizar como string
+    if (b.historial !== undefined && Array.isArray(b.historial)) patch.historial = b.historial;
     if (!Object.keys(patch).length) return res.status(400).json({ error: 'Nada que actualizar' });
     const r = await httpsRequest('PATCH', `${SB_URL}/rest/v1/leads?id=eq.${encodeURIComponent(id)}`, headers, patch);
     return res.status(r.status >= 400 ? r.status : 200).json({ ok: true });
