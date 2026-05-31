@@ -149,8 +149,11 @@ html,body{height:100%;overflow:hidden;}
   <!-- Sidebar chats -->
   <div class="chats-sidebar">
     <div class="chats-top">
+      <a href="/ops" style="display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:14px;opacity:.85;transition:.15s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.85'">
+        <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON" style="height:22px;width:auto;">
+        <span style="font-family:var(--fm);font-size:8px;letter-spacing:2px;background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">OPS</span>
+      </a>
       <div class="chats-top-row">
-        <a href="/ops" style="font-family:var(--fm);font-size:8px;color:var(--text3);text-decoration:none;display:flex;align-items:center;gap:4px;transition:.15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">← OPS</a>
         <span class="chats-title">CHATS</span>
         <button class="chats-new" onclick="openNewChat()" title="Nuevo chat">+</button>
       </div>

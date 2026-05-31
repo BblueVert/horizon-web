@@ -50,10 +50,10 @@
     return `
 <aside class="ops-sidebar">
   <div class="ops-sidebar-top">
-    <div class="ops-logo">
+    <a href="/ops" class="ops-logo" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
       <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON">
       <span class="ops-logo-badge">OPS</span>
-    </div>
+    </a>
   </div>
   <nav class="ops-nav">${navHTML}</nav>
   <div class="ops-sidebar-footer">
