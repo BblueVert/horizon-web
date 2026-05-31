@@ -9,6 +9,7 @@ const opsData     = require('./api/ops-data');
 const opsLeads    = require('./api/ops-leads');
 const promoteLead = require('./api/promote-lead');
 const tasks       = require('./api/tasks');
+const agente      = require('./api/agente');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -141,6 +142,7 @@ app.get('/api/ops/tasks',         tasks);
 app.post('/api/ops/tasks',        tasks);
 app.patch('/api/ops/tasks/:id',   tasks);
 app.delete('/api/ops/tasks/:id',  tasks);
+app.post('/api/ops/agente',       agente);
 
 // ── 404 fallback ──────────────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).sendFile(path.join(__dirname, 'Pages/HORIZON_Landing_2026.html')));
