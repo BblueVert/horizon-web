@@ -42,12 +42,8 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);}
   content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
   background:linear-gradient(180deg,var(--h1) 0%,var(--h2) 45%,transparent 100%);
 }
-.brand-logo{
-  font-family:var(--fd);font-size:18px;letter-spacing:5px;
-  background:linear-gradient(135deg,var(--h1),var(--h2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:24px;
-}
+.brand-logo{margin-bottom:24px;}
+.brand-logo img{height:32px;width:auto;display:block;}
 .info-title{
   font-family:var(--fd);font-size:36px;line-height:1;letter-spacing:2px;
   margin-bottom:10px;
@@ -160,15 +156,10 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);}
   margin-bottom:10px;min-height:24px;flex-shrink:0;
 }
 
-/* Slots scrolleables — muestran 6, el resto con scroll (como Cal.com) */
 .slots-list{
   display:flex;flex-direction:column;gap:4px;
-  max-height:210px;overflow-y:auto;
   flex-shrink:0;margin-bottom:14px;
-  scrollbar-width:thin;scrollbar-color:var(--card3) transparent;
 }
-.slots-list::-webkit-scrollbar{width:3px;}
-.slots-list::-webkit-scrollbar-thumb{background:var(--card3);border-radius:2px;}
 
 .slot{
   display:flex;align-items:center;justify-content:space-between;
@@ -269,7 +260,7 @@ textarea{resize:none;line-height:1.5;}
 
   <!-- ── COL 1: INFO ── -->
   <div class="col-info">
-    <div class="brand-logo">HORIZON</div>
+    <div class="brand-logo"><img src="../../Identidad/Logo-Vertical-png.png" alt="HORIZON"></div>
     <div class="info-title">Agenda tu<br><span>Diagnóstico</span><br>gratuito</div>
     <p class="info-sub">Una sesión 1:1 con Benja donde analizamos tu negocio y definimos el camino concreto.</p>
 
