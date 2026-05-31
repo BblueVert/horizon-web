@@ -233,12 +233,20 @@ async function activarProyecto(leadId) {
 }
 
 async function loadLeads() {
-  const headers = await opsAuthHeaders();
-  const r = await fetch('/api/ops/leads', { headers });
-  allLeads = await r.json();
-  renderKanban(allLeads);
-  document.getElementById('pipelineLoading').style.display = 'none';
-  document.getElementById('kanban').style.display = 'grid';
+  try {
+    const headers = await opsAuthHeaders();
+    const r = await fetch('/api/ops/leads', { headers });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const ct = r.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) throw new Error('Respuesta no es JSON — reiniciá el servidor');
+    allLeads = await r.json();
+    renderKanban(allLeads);
+    document.getElementById('pipelineLoading').style.display = 'none';
+    document.getElementById('kanban').style.display = 'grid';
+  } catch (e) {
+    document.getElementById('pipelineLoading').innerHTML =
+      `<span style="color:var(--red);font-family:var(--fm);font-size:10px;">Error: ${e.message}</span>`;
+  }
 }
 
 (async function(){
