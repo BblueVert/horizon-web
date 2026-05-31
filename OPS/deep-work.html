@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>HORIZON OPS · Deep Work</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.dw-timer{text-align:center;padding:32px 0;}
+.dw-time{font-family:var(--fd);font-size:72px;letter-spacing:4px;color:var(--text);line-height:1;}
+.dw-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);margin-top:8px;}
+.dw-controls{display:flex;gap:10px;justify-content:center;margin-top:20px;}
+.dw-mode{display:flex;gap:6px;justify-content:center;margin-top:16px;}
+.dw-mode-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--card2);
+  font-family:var(--fm);font-size:9px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
+.dw-mode-btn.active{background:rgba(255,107,53,.1);border-color:var(--h1);color:var(--h1);}
+.dw-focus-input{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:8px;
+  color:var(--text);font-family:var(--fb);font-size:14px;padding:12px 14px;outline:none;margin-bottom:16px;}
+.dw-focus-input:focus{border-color:var(--h1);}
+.session-item{padding:12px;background:var(--card2);border-radius:8px;margin-bottom:8px;}
+.session-task{font-size:13px;color:var(--text);margin-bottom:4px;}
+.session-meta{font-family:var(--fm);font-size:9px;color:var(--text3);}
+.progress-ring{position:relative;display:inline-block;}
+.dw-ring{transform:rotate(-90deg);}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Deep Work</div>
+        <div class="ops-page-sub">Sesiones de trabajo enfocado · sin distracciones</div>
+      </div>
+    </div>
+    <div class="ops-content">
+      <div class="ops-grid2">
+
+        <!-- Timer -->
+        <div class="ops-card">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:16px;">Temporizador</div>
+          <div class="dw-mode">
+            <button class="dw-mode-btn active" onclick="setMode('pomodoro',25)" id="btn-pomodoro">Pomodoro 25'</button>
+            <button class="dw-mode-btn" onclick="setMode('deep',50)" id="btn-deep">Deep Work 50'</button>
+            <button class="dw-mode-btn" onclick="setMode('short',5)" id="btn-short">Descanso 5'</button>
+          </div>
+          <div class="dw-timer">
+            <div class="dw-time" id="timerDisplay">25:00</div>
+            <div class="dw-label" id="timerLabel">Listo para empezar</div>
+          </div>
+          <div class="dw-controls">
+            <button class="btn btn-ghost" onclick="resetTimer()">↺ Reset</button>
+            <button class="btn btn-primary" id="btnTimer" onclick="toggleTimer()" style="min-width:120px;">▶ Iniciar</button>
+          </div>
+        </div>
+
+        <!-- Sesión activa -->
+        <div class="ops-card">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;">¿En qué estoy trabajando?</div>
+          <input id="focusTask" class="dw-focus-input" type="text" placeholder="Describí la tarea principal de esta sesión…" maxlength="200">
+          <button class="btn btn-primary" onclick="saveSession()" style="width:100%;justify-content:center;">Guardar sesión completada</button>
+          <hr class="ops-divider">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Sesiones recientes</div>
+          <div id="sessionsList"><div class="ops-loading"><div class="ops-spinner"></div></div></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+let timerInterval=null, totalSeconds=25*60, remaining=25*60, running=false, currentMode='pomodoro';
+
+function setMode(mode, mins){
+  currentMode=mode; totalSeconds=mins*60; remaining=mins*60; running=false;
+  clearInterval(timerInterval);
+  document.getElementById('timerDisplay').textContent=fmt(remaining);
+  document.getElementById('timerLabel').textContent='Listo para empezar';
+  document.getElementById('btnTimer').textContent='▶ Iniciar';
+  document.querySelectorAll('.dw-mode-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+mode)?.classList.add('active');
+}
+
+function fmt(s){ return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+
+function toggleTimer(){
+  if(running){ clearInterval(timerInterval); running=false; document.getElementById('btnTimer').textContent='▶ Continuar'; document.getElementById('timerLabel').textContent='Pausado'; }
+  else{
+    running=true; document.getElementById('btnTimer').textContent='⏸ Pausar';
+    document.getElementById('timerLabel').textContent='En progreso…';
+    timerInterval=setInterval(()=>{
+      if(--remaining<=0){ clearInterval(timerInterval); running=false; remaining=0;
+        document.getElementById('timerDisplay').textContent='00:00';
+        document.getElementById('timerLabel').textContent='¡Sesión completada!';
+        document.getElementById('btnTimer').textContent='▶ Iniciar';
+        new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA').play().catch(()=>{});
+      }
+      document.getElementById('timerDisplay').textContent=fmt(remaining);
+    },1000);
+  }
+}
+
+function resetTimer(){ clearInterval(timerInterval); running=false; remaining=totalSeconds;
+  document.getElementById('timerDisplay').textContent=fmt(remaining);
+  document.getElementById('timerLabel').textContent='Listo para empezar';
+  document.getElementById('btnTimer').textContent='▶ Iniciar';
+}
+
+async function saveSession(){
+  const tarea=document.getElementById('focusTask').value.trim();
+  if(!tarea){alert('Escribí en qué trabajaste.');return;}
+  const sb=getSB();
+  const mins=Math.round((totalSeconds-remaining)/60);
+  await sb.from('notas').insert({titulo:'Deep Work: '+tarea, contenido:`Duración: ${mins} min · Modo: ${currentMode}`, color:'deepwork'});
+  document.getElementById('focusTask').value='';
+  loadSessions();
+  opsToast('Sesión guardada ✓');
+}
+
+async function loadSessions(){
+  const sb=getSB();
+  const {data}=await sb.from('notas').select('*').like('titulo','Deep Work:%').order('created_at',{ascending:false}).limit(5);
+  const el=document.getElementById('sessionsList');
+  if(!data?.length){el.innerHTML=`<div class="ops-empty"><div class="ops-empty-text">Sin sesiones aún</div></div>`;return;}
+  el.innerHTML=data.map(s=>`<div class="session-item">
+    <div class="session-task">${s.titulo.replace('Deep Work: ','')}</div>
+    <div class="session-meta">${s.contenido||''} · ${new Date(s.created_at).toLocaleDateString('es-CL')}</div>
+  </div>`).join('');
+}
+
+(async function(){
+  const session=await opsRequireAuth(); if(!session)return;
+  await opsInitNav();
+  loadSessions();
+})();
+</script>
+</body>
+</html>

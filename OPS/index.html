@@ -71,6 +71,19 @@
 .qa-icon{font-size:18px;}
 .qa-label{font-family:var(--fm);font-size:8px;letter-spacing:.8px;text-transform:uppercase;text-align:center;}
 
+/* ── Prioridades ── */
+.pri-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.pri-item:last-child{border-bottom:none;padding-bottom:0;}
+.pri-check{
+  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
+  flex-shrink:0;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;
+}
+.pri-check.done{background:var(--green);border-color:var(--green);}
+.pri-check.done::after{content:'✓';color:#fff;font-size:9px;}
+.pri-titulo{flex:1;font-size:13px;color:var(--text);cursor:pointer;}
+.pri-titulo.done-txt{text-decoration:line-through;color:var(--text3);}
+.pri-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;border-radius:3px;transition:.15s;line-height:1;}
+.pri-del:hover{color:var(--red);}
 /* ── Mini calendario ── */
 .mini-cal{}
 .mcal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
@@ -142,6 +155,22 @@
         <div class="dash-body">
           <!-- Columna izquierda -->
           <div>
+            <!-- Prioridades -->
+            <div class="ops-card" style="margin-bottom:14px;" id="priCard">
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+                Prioridades
+                <a href="/ops/tareas" style="color:var(--h1);text-decoration:none;font-size:8px;">ver todas →</a>
+              </div>
+              <div style="display:flex;gap:8px;margin-bottom:10px;">
+                <input id="priInput" class="ops-input" type="text" placeholder="Nueva tarea o nota rápida…" maxlength="200"
+                  onkeydown="if(event.key==='Enter')addPrioridad()" style="flex:1;padding:7px 10px;font-size:12px;">
+                <button class="btn btn-primary btn-sm" onclick="addPrioridad()">+</button>
+              </div>
+              <div id="priLista">
+                <div class="ops-loading" style="padding:12px 0;"><div class="ops-spinner"></div></div>
+              </div>
+            </div>
+
             <!-- Próximas sesiones -->
             <div class="ops-card" style="margin-bottom:14px;">
               <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
@@ -347,6 +376,51 @@ async function loadDashboard(){
   document.getElementById('dashContent').style.display='block';
 }
 
+/* ─── Prioridades ─── */
+let _sb_pri = null;
+function sbPri(){ if(!_sb_pri) _sb_pri=getSB(); return _sb_pri; }
+
+function renderPrioridades(items){
+  const el = document.getElementById('priLista');
+  if(!items.length){
+    el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">✅</div><div class="ops-empty-text">¡Todo listo!</div></div>`;
+    return;
+  }
+  el.innerHTML = items.map(p=>`<div class="pri-item" id="pri-${p.id}">
+    <div class="pri-check ${p.completado?'done':''}" onclick="togglePri('${p.id}',${!p.completado})"></div>
+    <span class="pri-titulo ${p.completado?'done-txt':''}">${p.titulo}</span>
+    <button class="pri-del" onclick="deletePri('${p.id}')" title="Eliminar">×</button>
+  </div>`).join('');
+}
+
+async function loadPrioridades(){
+  const sb=sbPri();
+  const {data}=await sb.from('prioridades').select('*').order('created_at',{ascending:true});
+  renderPrioridades(data||[]);
+}
+
+async function addPrioridad(){
+  const input=document.getElementById('priInput');
+  const titulo=input.value.trim();
+  if(!titulo) return;
+  input.value='';
+  const sb=sbPri();
+  await sb.from('prioridades').insert({titulo});
+  await loadPrioridades();
+}
+
+async function togglePri(id, completado){
+  const sb=sbPri();
+  await sb.from('prioridades').update({completado}).eq('id',id);
+  await loadPrioridades();
+}
+
+async function deletePri(id){
+  const sb=sbPri();
+  await sb.from('prioridades').delete().eq('id',id);
+  document.getElementById('pri-'+id)?.remove();
+}
+
 (async function(){
   const session = await opsRequireAuth();
   if(!session) return;
@@ -357,7 +431,7 @@ async function loadDashboard(){
     now.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
   renderMiniCal();
-  await loadDashboard();
+  await Promise.all([loadDashboard(), loadPrioridades()]);
 })();
 </script>
 </body>

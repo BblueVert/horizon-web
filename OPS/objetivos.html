@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>HORIZON OPS · Objetivos</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.obj-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;}
+.obj-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.obj-titulo{font-size:14px;font-weight:600;color:var(--text);}
+.obj-desc{font-size:12px;color:var(--text2);margin-top:3px;}
+.obj-cat{font-family:var(--fm);font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:3px;}
+.cat-negocio{background:rgba(255,107,53,.1);color:var(--h1);}
+.cat-personal{background:rgba(99,102,241,.1);color:var(--indigo2);}
+.cat-proyecto{background:rgba(16,185,129,.1);color:var(--green);}
+.obj-progress{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.obj-pbar{flex:1;height:6px;background:var(--card3);border-radius:3px;overflow:hidden;}
+.obj-pfill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));border-radius:3px;transition:width .4s;}
+.obj-pct{font-family:var(--fd);font-size:16px;color:var(--h1);min-width:36px;text-align:right;}
+.obj-actions{display:flex;gap:6px;margin-top:12px;}
+.obj-counter{display:flex;align-items:center;gap:6px;}
+.obj-counter input{width:64px;background:var(--card2);border:1px solid var(--border2);border-radius:5px;
+  color:var(--text);font-family:var(--fd);font-size:16px;padding:4px 8px;outline:none;text-align:center;}
+/* Modal */
+.ops-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center;}
+.ops-modal-bg.open{display:flex;}
+.ops-modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:460px;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div><div class="ops-page-title">Objetivos</div><div class="ops-page-sub">Metas y seguimiento de progreso</div></div>
+      <div class="ops-header-actions">
+        <button class="btn btn-primary btn-sm" onclick="openNew()">+ Nuevo objetivo</button>
+      </div>
+    </div>
+    <div class="ops-content">
+      <div id="objLoading" class="ops-loading"><div class="ops-spinner"></div></div>
+      <div id="objGrid" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+
+<div class="ops-modal-bg" id="objModal">
+  <div class="ops-modal">
+    <div style="font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;" id="objModalTitle">Nuevo Objetivo</div>
+    <div class="ops-field"><label class="ops-label">Título</label><input class="ops-input" id="objTitulo" maxlength="200" placeholder="¿Qué querés lograr?"></div>
+    <div class="ops-field"><label class="ops-label">Descripción <span style="color:var(--text3)">(opcional)</span></label><textarea class="ops-input" id="objDesc" rows="2" placeholder="Más detalle…"></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="ops-field">
+        <label class="ops-label">Categoría</label>
+        <select class="ops-input" id="objCat">
+          <option value="negocio">Negocio</option>
+          <option value="personal">Personal</option>
+          <option value="proyecto">Proyecto</option>
+        </select>
+      </div>
+      <div class="ops-field"><label class="ops-label">Meta (número)</label><input class="ops-input" type="number" id="objMeta" value="100" min="1"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary" onclick="saveObj()" style="flex:1;justify-content:center;">Guardar</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+let editingId=null;
+
+async function load(){
+  const sb=getSB();
+  const {data}=await sb.from('objetivos').select('*').eq('estado','activo').order('created_at',{ascending:false});
+  document.getElementById('objLoading').style.display='none';
+  document.getElementById('objGrid').style.display='block';
+  if(!data?.length){
+    document.getElementById('objGrid').innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">⭐</div><div class="ops-empty-text">Sin objetivos aún</div><button class="btn btn-primary" onclick="openNew()" style="margin-top:12px;">+ Crear objetivo</button></div>`;
+    return;
+  }
+  document.getElementById('objGrid').innerHTML=data.map(o=>{
+    const pct=Math.min(100,Math.round(o.progreso/o.meta*100));
+    const catCls={'negocio':'cat-negocio','personal':'cat-personal','proyecto':'cat-proyecto'}[o.categoria]||'';
+    return `<div class="obj-card">
+      <div class="obj-header">
+        <div>
+          <div class="obj-titulo">${o.titulo}</div>
+          ${o.descripcion?`<div class="obj-desc">${o.descripcion}</div>`:''}
+        </div>
+        <span class="obj-cat ${catCls}">${o.categoria}</span>
+      </div>
+      <div class="obj-progress">
+        <div class="obj-pbar"><div class="obj-pfill" style="width:${pct}%"></div></div>
+        <span class="obj-pct">${pct}%</span>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:6px;">${o.progreso} / ${o.meta}</div>
+      <div class="obj-actions">
+        <div class="obj-counter">
+          <button class="btn btn-ghost btn-sm" onclick="updateProgress('${o.id}',${o.progreso},${o.meta},-1)">−</button>
+          <input type="number" value="${o.progreso}" min="0" max="${o.meta}"
+            onchange="setProgress('${o.id}',this.value,${o.meta})" style="width:64px;background:var(--card2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:var(--fd);font-size:16px;padding:4px 8px;outline:none;text-align:center;">
+          <button class="btn btn-ghost btn-sm" onclick="updateProgress('${o.id}',${o.progreso},${o.meta},1)">+</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="editObj('${o.id}','${o.titulo.replace(/'/g,"\\'")}','${(o.descripcion||'').replace(/'/g,"\\'")}','${o.categoria}',${o.meta})">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="completeObj('${o.id}')">✓ Completar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function updateProgress(id,current,meta,delta){
+  const np=Math.max(0,Math.min(meta,current+delta));
+  const sb=getSB();
+  await sb.from('objetivos').update({progreso:np}).eq('id',id);
+  load();
+}
+async function setProgress(id,val,meta){
+  const np=Math.max(0,Math.min(meta,Number(val)||0));
+  const sb=getSB();
+  await sb.from('objetivos').update({progreso:np}).eq('id',id);
+  load();
+}
+async function completeObj(id){
+  const sb=getSB();
+  await sb.from('objetivos').update({estado:'completado'}).eq('id',id);
+  load(); opsToast('Objetivo completado 🎯');
+}
+
+function openNew(){ editingId=null; document.getElementById('objTitulo').value=''; document.getElementById('objDesc').value=''; document.getElementById('objMeta').value=100; document.getElementById('objModal').classList.add('open'); }
+function editObj(id,titulo,desc,cat,meta){ editingId=id; document.getElementById('objTitulo').value=titulo; document.getElementById('objDesc').value=desc; document.getElementById('objCat').value=cat; document.getElementById('objMeta').value=meta; document.getElementById('objModal').classList.add('open'); }
+function closeModal(){ document.getElementById('objModal').classList.remove('open'); }
+
+async function saveObj(){
+  const titulo=document.getElementById('objTitulo').value.trim();
+  if(!titulo){alert('Agregá un título.');return;}
+  const sb=getSB();
+  const data={titulo,descripcion:document.getElementById('objDesc').value.trim(),categoria:document.getElementById('objCat').value,meta:Number(document.getElementById('objMeta').value)||100};
+  if(editingId) await sb.from('objetivos').update(data).eq('id',editingId);
+  else await sb.from('objetivos').insert(data);
+  closeModal(); load(); opsToast(editingId?'Objetivo actualizado':'Objetivo creado');
+}
+
+(async function(){
+  const session=await opsRequireAuth(); if(!session)return;
+  await opsInitNav(); await load();
+})();
+</script>
+</body>
+</html>

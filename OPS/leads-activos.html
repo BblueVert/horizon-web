@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>HORIZON OPS · Leads Activos</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.lead-row{
+  display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:12px;
+  padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;
+  transition:.15s;
+}
+.lead-row:hover{border-color:var(--border2);}
+.lead-name{font-size:14px;font-weight:600;color:var(--text);}
+.lead-empresa{font-size:11px;color:var(--text3);margin-top:2px;}
+.lead-plan{font-family:var(--fm);font-size:8px;background:rgba(255,107,53,.08);color:var(--h2);
+  border:1px solid rgba(255,107,53,.15);border-radius:4px;padding:3px 8px;}
+.mrr-input{width:100px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text);font-family:var(--fm);font-size:11px;padding:5px 8px;outline:none;text-align:right;}
+.mrr-input:focus{border-color:var(--h1);}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Leads Activos</div>
+        <div class="ops-page-sub" id="leadsSub">Cargando…</div>
+      </div>
+      <div class="ops-header-actions">
+        <a href="/ops/pipeline" class="btn btn-ghost btn-sm">Ver pipeline completo →</a>
+      </div>
+    </div>
+    <div class="ops-content">
+      <div id="leadsLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando leads…</div>
+      <div id="leadsContent" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const PLANS={plan01:'Presencia Digital',plan02:'Ecosistema Digital',plan03:'Negocio Activo',plan04:'Sistema con IA',plan05:'Agente IA'};
+const STATUSES=['arranque','activo'];
+
+async function load(){
+  const sb=getSB();
+  const {data:leads}=await sb.from('leads').select('*').in('status',STATUSES).order('created_at',{ascending:false});
+  document.getElementById('leadsLoading').style.display='none';
+  document.getElementById('leadsContent').style.display='block';
+  document.getElementById('leadsSub').textContent=`${(leads||[]).length} leads en arranque o activos`;
+
+  if(!leads?.length){
+    document.getElementById('leadsContent').innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">👥</div><div class="ops-empty-text">Sin leads activos aún</div><a href="/ops/pipeline" class="btn btn-primary" style="margin-top:12px;">Ir al Pipeline</a></div>`;
+    return;
+  }
+
+  document.getElementById('leadsContent').innerHTML = leads.map(l=>`
+    <div class="lead-row">
+      <div>
+        <div class="lead-name">${l.nombre||'Sin nombre'}</div>
+        <div class="lead-empresa">${l.empresa||l.email||'—'} · ${l.telefono||''}</div>
+      </div>
+      <span class="lead-plan">${PLANS[l.plan]||l.plan||'—'}</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-family:var(--fm);font-size:9px;color:var(--text3);">MRR $</span>
+        <input class="mrr-input" type="number" value="${l.mrr||0}" min="0" step="10000"
+          onchange="updateMrr('${l.id}',this.value)" title="Retainer mensual CLP">
+      </div>
+      <div style="display:flex;gap:6px;">
+        ${l.portal_token?`<a href="/c/${l.portal_token}" target="_blank" class="btn btn-ghost btn-sm">Portal ↗</a>`:''}
+        <a href="/ops/pipeline" class="btn btn-ghost btn-sm">CRM →</a>
+      </div>
+    </div>`).join('');
+}
+
+async function updateMrr(id, value){
+  const headers=await opsAuthHeaders();
+  await fetch(`/api/ops/leads?id=${id}`,{method:'PATCH',headers,body:JSON.stringify({mrr:Number(value)||0})});
+  opsToast('MRR actualizado');
+}
+
+(async function(){
+  const session=await opsRequireAuth(); if(!session)return;
+  await opsInitNav();
+  await load();
+})();
+</script>
+</body>
+</html>

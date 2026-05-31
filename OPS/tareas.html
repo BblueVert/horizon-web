@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>HORIZON OPS · Tareas</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.tarea-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;transition:.15s;}
+.tarea-item:hover{border-color:var(--border2);}
+.tarea-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;}
+.tarea-check.done{background:var(--green);border-color:var(--green);}
+.tarea-check.done::after{content:'✓';color:#fff;font-size:10px;}
+.tarea-titulo{flex:1;font-size:13px;color:var(--text);}
+.tarea-titulo.done-txt{text-decoration:line-through;color:var(--text3);}
+.tarea-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 4px;border-radius:3px;transition:.15s;}
+.tarea-del:hover{color:var(--red);}
+.filter-tabs{display:flex;gap:6px;margin-bottom:16px;}
+.filter-tab{padding:5px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--card2);
+  font-family:var(--fm);font-size:9px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
+.filter-tab.active{background:rgba(255,107,53,.1);border-color:var(--h1);color:var(--h1);}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div><div class="ops-page-title">Tareas</div><div class="ops-page-sub" id="tareasSub">Lista personal de tareas</div></div>
+    </div>
+    <div class="ops-content" style="max-width:680px;">
+      <!-- Input -->
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <input id="tareasInput" class="ops-input" type="text" placeholder="Nueva tarea…" maxlength="200"
+          onkeydown="if(event.key==='Enter')addTarea()" style="flex:1;">
+        <button class="btn btn-primary" onclick="addTarea()">Agregar</button>
+      </div>
+      <!-- Filtros -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter('pendiente',this)">Pendientes</button>
+        <button class="filter-tab" onclick="setFilter('completada',this)">Completadas</button>
+        <button class="filter-tab" onclick="setFilter('all',this)">Todas</button>
+      </div>
+      <!-- Lista -->
+      <div id="tareasLista"><div class="ops-loading"><div class="ops-spinner"></div></div></div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+let currentFilter='pendiente';
+
+async function load(){
+  const sb=getSB();
+  let query=sb.from('prioridades').select('*').order('created_at',{ascending:false});
+  if(currentFilter==='pendiente') query=query.eq('completado',false);
+  else if(currentFilter==='completada') query=query.eq('completado',true);
+  const {data}=await query;
+  const el=document.getElementById('tareasLista');
+  document.getElementById('tareasSub').textContent=`${(data||[]).length} tarea${(data||[]).length!==1?'s':''}`;
+  if(!data?.length){el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">✅</div><div class="ops-empty-text">${currentFilter==='pendiente'?'¡Todo al día!':'Sin tareas'}</div></div>`;return;}
+  el.innerHTML=data.map(t=>`<div class="tarea-item" id="t-${t.id}">
+    <div class="tarea-check ${t.completado?'done':''}" onclick="toggle('${t.id}',${!t.completado})"></div>
+    <span class="tarea-titulo ${t.completado?'done-txt':''}">${t.titulo}</span>
+    <button class="tarea-del" onclick="del('${t.id}')">×</button>
+  </div>`).join('');
+}
+
+async function addTarea(){
+  const input=document.getElementById('tareasInput');
+  const titulo=input.value.trim(); if(!titulo)return;
+  input.value='';
+  const sb=getSB();
+  await sb.from('prioridades').insert({titulo});
+  load();
+}
+
+async function toggle(id,completado){
+  const sb=getSB();
+  await sb.from('prioridades').update({completado}).eq('id',id);
+  load();
+}
+
+async function del(id){
+  const sb=getSB();
+  await sb.from('prioridades').delete().eq('id',id);
+  load();
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  load();
+}
+
+(async function(){
+  const session=await opsRequireAuth(); if(!session)return;
+  await opsInitNav(); await load();
+})();
+</script>
+</body>
+</html>

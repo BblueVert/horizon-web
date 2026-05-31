@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>HORIZON OPS · Agenda</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.agenda-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;}
+@media(max-width:900px){.agenda-layout{grid-template-columns:1fr;}}
+/* Calendario grande */
+.big-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.big-cal-btn{background:var(--card2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.15s;}
+.big-cal-btn:hover{background:var(--card3);color:var(--text);}
+.big-cal-month{font-family:var(--fd);font-size:24px;letter-spacing:2px;color:var(--text);}
+.big-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.big-cal-dow{height:28px;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;}
+.big-cal-day{min-height:44px;border-radius:8px;padding:4px;cursor:pointer;transition:.15s;position:relative;border:1px solid transparent;}
+.big-cal-day:hover{background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.15);}
+.big-cal-day.today{background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.3);}
+.big-cal-day.selected{background:rgba(255,107,53,.15);border-color:var(--h1);}
+.big-cal-day.other-month{opacity:.2;}
+.big-cal-num{font-family:var(--fm);font-size:11px;color:var(--text2);}
+.big-cal-day.today .big-cal-num{color:var(--h1);font-weight:600;}
+.cal-event-dot{width:5px;height:5px;border-radius:50%;background:var(--green);margin-top:3px;}
+/* Lista eventos */
+.evt-item{display:flex;gap:12px;padding:14px;background:var(--card2);border-radius:10px;margin-bottom:8px;border-left:3px solid var(--h1);}
+.evt-time{font-family:var(--fd);font-size:20px;color:var(--h1);min-width:52px;}
+.evt-info{flex:1;}
+.evt-nombre{font-size:14px;font-weight:600;color:var(--text);}
+.evt-meta{font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:3px;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div><div class="ops-page-title">Agenda</div><div class="ops-page-sub" id="agendaSub">Vista de sesiones</div></div>
+      <div class="ops-header-actions">
+        <a href="/agendar" target="_blank" class="btn btn-primary btn-sm">+ Nueva sesión</a>
+      </div>
+    </div>
+    <div class="ops-content">
+      <div class="agenda-layout">
+        <!-- Calendario -->
+        <div class="ops-card">
+          <div class="big-cal-nav">
+            <button class="big-cal-btn" onclick="calPrev()">‹</button>
+            <span id="calLabel" class="big-cal-month"></span>
+            <button class="big-cal-btn" onclick="calNext()">›</button>
+          </div>
+          <div class="big-cal-grid" id="calGrid"></div>
+        </div>
+        <!-- Eventos del día seleccionado -->
+        <div>
+          <div class="ops-card-sm" style="margin-bottom:14px;">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Sesiones seleccionadas</div>
+            <div style="font-family:var(--fd);font-size:20px;letter-spacing:1px;color:var(--text);" id="selectedDate">—</div>
+          </div>
+          <div id="dayEvents"><div class="ops-empty"><div class="ops-empty-icon">📅</div><div class="ops-empty-text">Seleccioná un día con sesión</div></div></div>
+          <hr class="ops-divider">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Próximas 10 sesiones</div>
+          <div id="upcomingList"><div class="ops-loading"><div class="ops-spinner"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DOWS=['L','M','M','J','V','S','D'];
+const PLANS={plan01:'Presencia Digital',plan02:'Ecosistema Digital',plan03:'Negocio Activo',plan04:'Sistema con IA',plan05:'Agente IA'};
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+let selectedDay='', allLeadsWithDate=[];
+
+async function load(){
+  const sb=getSB();
+  const {data}=await sb.from('leads').select('id,nombre,plan,reunion_fecha,portal_token').not('reunion_fecha','is',null).order('reunion_fecha',{ascending:true});
+  allLeadsWithDate=data||[];
+  document.getElementById('agendaSub').textContent=`${allLeadsWithDate.length} sesiones totales`;
+  renderCal();
+  renderUpcoming();
+}
+
+function renderCal(){
+  document.getElementById('calLabel').textContent=MONTHS[calMonth].toUpperCase()+' '+calYear;
+  const first=new Date(calYear,calMonth,1), nDays=new Date(calYear,calMonth+1,0).getDate();
+  const startDow=(first.getDay()+6)%7;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const eventDays=new Set(allLeadsWithDate.map(l=>l.reunion_fecha?.slice(0,10)).filter(Boolean));
+
+  let html=DOWS.map(d=>`<div class="big-cal-dow">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++) html+=`<div class="big-cal-day other-month"></div>`;
+  for(let day=1;day<=nDays;day++){
+    const d=new Date(calYear,calMonth,day), ds=d.toISOString().slice(0,10);
+    const isToday=d.getTime()===today.getTime(), isSel=ds===selectedDay, hasEvt=eventDays.has(ds);
+    html+=`<div class="big-cal-day${isToday?' today':''}${isSel?' selected':''}" onclick="selectDay('${ds}')">
+      <div class="big-cal-num">${day}</div>
+      ${hasEvt?`<div class="cal-event-dot"></div>`:''}
+    </div>`;
+  }
+  document.getElementById('calGrid').innerHTML=html;
+}
+
+function selectDay(ds){
+  selectedDay=ds; renderCal();
+  const d=new Date(ds+'T12:00:00');
+  document.getElementById('selectedDate').textContent=d.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
+  const events=allLeadsWithDate.filter(l=>l.reunion_fecha?.slice(0,10)===ds);
+  document.getElementById('dayEvents').innerHTML=events.length
+    ? events.map(l=>{const d2=new Date(l.reunion_fecha);return `<div class="evt-item">
+        <div class="evt-time">${String(d2.getHours()).padStart(2,'0')}:${String(d2.getMinutes()).padStart(2,'0')}</div>
+        <div class="evt-info"><div class="evt-nombre">${l.nombre||'Sin nombre'}</div>
+          <div class="evt-meta">${PLANS[l.plan]||l.plan||'—'}</div></div>
+        ${l.portal_token?`<a href="/c/${l.portal_token}" target="_blank" class="btn btn-ghost btn-sm">Portal ↗</a>`:''}
+      </div>`;}).join('')
+    : `<div class="ops-empty"><div class="ops-empty-text">Sin sesiones este día</div></div>`;
+}
+
+function renderUpcoming(){
+  const now=new Date().toISOString();
+  const up=allLeadsWithDate.filter(l=>l.reunion_fecha>=now).slice(0,10);
+  document.getElementById('upcomingList').innerHTML=up.length
+    ? up.map(l=>{const d=new Date(l.reunion_fecha);return `<div class="evt-item" style="margin-bottom:8px;">
+        <div class="evt-time">${d.getDate()}/${d.getMonth()+1}</div>
+        <div class="evt-info"><div class="evt-nombre">${l.nombre||'Sin nombre'}</div>
+          <div class="evt-meta">${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} · ${PLANS[l.plan]||l.plan||'—'}</div></div>
+      </div>`;}).join('')
+    : `<div class="ops-empty"><div class="ops-empty-text">Sin sesiones próximas</div></div>`;
+}
+
+window.calPrev=()=>{ if(--calMonth<0){calMonth=11;calYear--;} renderCal(); };
+window.calNext=()=>{ if(++calMonth>11){calMonth=0;calYear++;} renderCal(); };
+
+(async function(){
+  const session=await opsRequireAuth(); if(!session)return;
+  await opsInitNav(); await load();
+})();
+</script>
+</body>
+</html>

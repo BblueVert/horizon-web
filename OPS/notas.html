@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>HORIZON OPS · Notas</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.notas-layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 64px);overflow:hidden;}
+@media(max-width:900px){.notas-layout{grid-template-columns:1fr;height:auto;}}
+/* Lista notas */
+.nota-sidebar{border-right:1px solid var(--border);overflow-y:auto;padding:14px;}
+.nota-sidebar::-webkit-scrollbar{width:3px;}
+.nota-sidebar::-webkit-scrollbar-thumb{background:var(--card3);}
+.nota-item{padding:11px 12px;border-radius:8px;cursor:pointer;transition:.15s;margin-bottom:4px;border:1px solid transparent;}
+.nota-item:hover{background:var(--card2);border-color:var(--border);}
+.nota-item.active{background:rgba(255,107,53,.08);border-color:var(--h1);}
+.nota-item-titulo{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nota-item-preview{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.nota-item-date{font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:4px;}
+/* Editor */
+.nota-editor{display:flex;flex-direction:column;overflow:hidden;}
+.nota-editor-header{padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px;}
+.nota-titulo-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:var(--fd);font-size:22px;letter-spacing:1px;}
+.nota-titulo-input::placeholder{color:var(--text3);}
+.nota-body{flex:1;padding:16px 20px;overflow-y:auto;}
+.nota-content-input{width:100%;background:none;border:none;outline:none;color:var(--text2);font-family:var(--fb);font-size:14px;line-height:1.8;resize:none;height:100%;min-height:300px;}
+.nota-content-input::placeholder{color:var(--text3);}
+.nota-save-bar{padding:10px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.save-status{font-family:var(--fm);font-size:9px;color:var(--text3);}
+.save-status.saving{color:var(--h2);}
+.save-status.saved{color:var(--green);}
+.nota-empty-editor{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main" style="overflow:hidden;">
+    <div class="ops-header" style="flex-shrink:0;">
+      <div><div class="ops-page-title">Notas</div></div>
+      <div class="ops-header-actions">
+        <button class="btn btn-primary btn-sm" onclick="newNota()">+ Nueva nota</button>
+      </div>
+    </div>
+    <div class="notas-layout">
+      <!-- Sidebar lista -->
+      <div class="nota-sidebar">
+        <div id="notasList"><div class="ops-loading"><div class="ops-spinner"></div></div></div>
+      </div>
+      <!-- Editor -->
+      <div class="nota-editor" id="notaEditor" style="display:none;">
+        <div class="nota-editor-header">
+          <input class="nota-titulo-input" id="notaTitulo" placeholder="Título de la nota…" maxlength="200" oninput="schedSave()">
+          <button class="btn btn-danger btn-sm" onclick="deleteNota()">Eliminar</button>
+        </div>
+        <div class="nota-body">
+          <textarea class="nota-content-input" id="notaContent" placeholder="Escribí lo que quieras…" oninput="schedSave()"></textarea>
+        </div>
+        <div class="nota-save-bar">
+          <span class="save-status" id="saveStatus"></span>
+          <span style="font-family:var(--fm);font-size:8px;color:var(--text3);">Guardado automático</span>
+        </div>
+      </div>
+      <div class="nota-empty-editor" id="notaEmpty">
+        <div style="font-size:36px;opacity:.2;">📝</div>
+        <div style="font-family:var(--fm);font-size:10px;color:var(--text3);letter-spacing:1px;">Seleccioná una nota o creá una nueva</div>
+        <button class="btn btn-primary" onclick="newNota()">+ Nueva nota</button>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+let notas=[], activeId=null, saveTimer=null;
+
+async function load(){
+  const sb=getSB();
+  const {data}=await sb.from('notas').select('*').order('updated_at',{ascending:false});
+  notas=data||[];
+  renderList();
+}
+
+function renderList(){
+  const el=document.getElementById('notasList');
+  if(!notas.length){el.innerHTML=`<div class="ops-empty"><div class="ops-empty-text">Sin notas aún</div></div>`;return;}
+  el.innerHTML=notas.map(n=>`<div class="nota-item${n.id===activeId?' active':''}" onclick="openNota('${n.id}')">
+    <div class="nota-item-titulo">${n.titulo||'Sin título'}</div>
+    <div class="nota-item-preview">${(n.contenido||'').substring(0,60)||'Nota vacía'}</div>
+    <div class="nota-item-date">${new Date(n.updated_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'})}</div>
+  </div>`).join('');
+}
+
+function openNota(id){
+  activeId=id;
+  const n=notas.find(x=>x.id===id);
+  if(!n)return;
+  document.getElementById('notaTitulo').value=n.titulo||'';
+  document.getElementById('notaContent').value=n.contenido||'';
+  document.getElementById('notaEditor').style.display='flex';
+  document.getElementById('notaEmpty').style.display='none';
+  document.getElementById('saveStatus').textContent='';
+  renderList();
+}
+
+async function newNota(){
+  const sb=getSB();
+  const {data}=await sb.from('notas').insert({titulo:'Nueva nota',contenido:''}).select().single();
+  notas.unshift(data);
+  renderList();
+  openNota(data.id);
+}
+
+function schedSave(){
+  document.getElementById('saveStatus').textContent='...';
+  document.getElementById('saveStatus').className='save-status saving';
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(save,1200);
+}
+
+async function save(){
+  if(!activeId)return;
+  const titulo=document.getElementById('notaTitulo').value;
+  const contenido=document.getElementById('notaContent').value;
+  const sb=getSB();
+  await sb.from('notas').update({titulo,contenido}).eq('id',activeId);
+  const n=notas.find(x=>x.id===activeId);
+  if(n){n.titulo=titulo;n.contenido=contenido;n.updated_at=new Date().toISOString();}
+  document.getElementById('saveStatus').textContent='Guardado ✓';
+  document.getElementById('saveStatus').className='save-status saved';
+  setTimeout(()=>{document.getElementById('saveStatus').textContent='';document.getElementById('saveStatus').className='save-status';},2000);
+  renderList();
+}
+
+async function deleteNota(){
+  if(!activeId||!confirm('¿Eliminar esta nota?'))return;
+  const sb=getSB();
+  await sb.from('notas').delete().eq('id',activeId);
+  notas=notas.filter(n=>n.id!==activeId);
+  activeId=null;
+  document.getElementById('notaEditor').style.display='none';
+  document.getElementById('notaEmpty').style.display='flex';
+  renderList();
+  opsToast('Nota eliminada');
+}
+
+(async function(){
+  const session=await opsRequireAuth(); if(!session)return;
+  await opsInitNav(); await load();
+})();
+</script>
+</body>
+</html>

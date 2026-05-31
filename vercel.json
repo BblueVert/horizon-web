@@ -17,7 +17,13 @@
     { "source": "/ops/pipeline", "destination": "/OPS/pipeline.html" },
     { "source": "/ops/proyectos", "destination": "/OPS/proyectos.html" },
     { "source": "/ops/proyecto", "destination": "/OPS/proyecto-detalle.html" },
-    { "source": "/ops/agente", "destination": "/OPS/agente.html" }
+    { "source": "/ops/agente",        "destination": "/OPS/agente.html" },
+    { "source": "/ops/deep-work",     "destination": "/OPS/deep-work.html" },
+    { "source": "/ops/leads-activos", "destination": "/OPS/leads-activos.html" },
+    { "source": "/ops/objetivos",     "destination": "/OPS/objetivos.html" },
+    { "source": "/ops/agenda",        "destination": "/OPS/agenda.html" },
+    { "source": "/ops/tareas",        "destination": "/OPS/tareas.html" },
+    { "source": "/ops/notas",         "destination": "/OPS/notas.html" }
   ],
   "headers": [
     {

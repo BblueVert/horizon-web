@@ -128,7 +128,13 @@ const opsPages = {
   '/ops/pipeline':   'OPS/pipeline.html',
   '/ops/proyectos':  'OPS/proyectos.html',
   '/ops/proyecto':   'OPS/proyecto-detalle.html',
-  '/ops/agente':     'OPS/agente.html',
+  '/ops/agente':          'OPS/agente.html',
+  '/ops/deep-work':       'OPS/deep-work.html',
+  '/ops/leads-activos':   'OPS/leads-activos.html',
+  '/ops/objetivos':       'OPS/objetivos.html',
+  '/ops/agenda':          'OPS/agenda.html',
+  '/ops/tareas':          'OPS/tareas.html',
+  '/ops/notas':           'OPS/notas.html',
 };
 Object.entries(opsPages).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
