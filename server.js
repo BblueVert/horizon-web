@@ -4,6 +4,12 @@ const express = require('express');
 const path = require('path');
 const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 
+// OPS modules — required at startup so errors surface immediately
+const opsData     = require('./api/ops-data');
+const opsLeads    = require('./api/ops-leads');
+const promoteLead = require('./api/promote-lead');
+const tasks       = require('./api/tasks');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,11 +25,10 @@ app.use((req, res, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
       "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co",
       "frame-src 'none'",
       "frame-ancestors 'none'",
@@ -129,13 +134,13 @@ Object.entries(opsPages).forEach(([from, to]) => {
 });
 
 // OPS API endpoints
-app.get('/api/ops/dashboard',      async (req, res) => (await require('./api/ops-data'))(req, res));
-app.get('/api/ops/leads',          async (req, res) => (await require('./api/ops-leads'))(req, res));
-app.post('/api/ops/promote-lead',  async (req, res) => (await require('./api/promote-lead'))(req, res));
-app.get('/api/ops/tasks',          async (req, res) => (await require('./api/tasks'))(req, res));
-app.post('/api/ops/tasks',         async (req, res) => (await require('./api/tasks'))(req, res));
-app.patch('/api/ops/tasks/:id',    async (req, res) => (await require('./api/tasks'))(req, res));
-app.delete('/api/ops/tasks/:id',   async (req, res) => (await require('./api/tasks'))(req, res));
+app.get('/api/ops/dashboard',     opsData);
+app.get('/api/ops/leads',         opsLeads);
+app.post('/api/ops/promote-lead', promoteLead);
+app.get('/api/ops/tasks',         tasks);
+app.post('/api/ops/tasks',        tasks);
+app.patch('/api/ops/tasks/:id',   tasks);
+app.delete('/api/ops/tasks/:id',  tasks);
 
 // ── 404 fallback ──────────────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).sendFile(path.join(__dirname, 'Pages/HORIZON_Landing_2026.html')));
