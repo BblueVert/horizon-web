@@ -108,7 +108,7 @@ const rewrites = {
   '/plan-04':         '/Pages/plan-04.html',
   '/plan-05':         '/Pages/plan-05.html',
   '/servicios':       '/Pages/servicios.html',
-  '/crm':             '/Pages/CRM/pipeline.html',
+  // /crm redirige al pipeline unificado en OPS
   '/reunion':         '/Pages/reunion/index.html',
   '/agendar':         '/Pages/agendar/index.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
@@ -117,6 +117,9 @@ const rewrites = {
 Object.entries(rewrites).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
 });
+
+// /crm → redirect al pipeline OPS unificado
+app.get('/crm', (_req, res) => res.redirect(301, '/ops/pipeline'));
 
 // Portal con token dinámico
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
