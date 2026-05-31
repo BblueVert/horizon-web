@@ -9,295 +9,385 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --void:#07060e;--card:#0f0e1a;--card2:#1a1828;--card3:#22203a;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
-  --h1:#ff6b35;--h2:#ff8c42;--green:#10b981;--blue:#3b82f6;
+  --void:#07060e;--panel:#0d0c18;--card:#141224;--card2:#1c1a2e;--card3:#231f3a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --h1:#ff6b35;--h2:#ff8c42;
+  --indigo:#6366f1;--indigo2:#818cf8;
+  --green:#10b981;--red:#ef4444;
   --text:#e8e6f0;--text2:#9a98a8;--text3:#4a4760;
-  --fm:"DM Mono",monospace;--fb:"Plus Jakarta Sans",sans-serif;
+  --fm:"DM Mono",monospace;--fb:"Plus Jakarta Sans",sans-serif;--fd:"Bebas Neue",sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:100vh;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--fb);background:var(--void);color:var(--text);}
 
-/* ── Layout ── */
-.wrapper{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
-@media(max-width:860px){.wrapper{grid-template-columns:1fr;}}
-
-/* ── Left panel ── */
-.left{background:linear-gradient(160deg,#0f0e1a 60%,#1a1020);
-  padding:60px 48px;display:flex;flex-direction:column;justify-content:center;
-  border-right:1px solid var(--border);}
-@media(max-width:860px){.left{padding:40px 24px;border-right:none;border-bottom:1px solid var(--border);}}
-.logo{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:4px;
-  background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:48px;}
-.left-title{font-family:"Bebas Neue",sans-serif;font-size:52px;line-height:1.0;
-  letter-spacing:2px;margin-bottom:16px;}
-.left-title span{background:linear-gradient(135deg,var(--h1),var(--h2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.left-sub{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:40px;max-width:360px;}
-.features{display:flex;flex-direction:column;gap:14px;}
-.feature{display:flex;align-items:flex-start;gap:12px;}
-.feature-icon{font-size:18px;margin-top:1px;flex-shrink:0;}
-.feature-text{font-size:13px;color:var(--text2);line-height:1.5;}
-.feature-text strong{color:var(--text);display:block;font-size:14px;margin-bottom:2px;}
-
-/* ── Right panel (form) ── */
-.right{padding:60px 48px;display:flex;align-items:center;justify-content:center;}
-@media(max-width:860px){.right{padding:32px 20px;}}
-.form-card{width:100%;max-width:420px;}
-.form-title{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:2px;
-  color:var(--text);margin-bottom:6px;}
-.form-sub{font-family:var(--fm);font-size:10px;color:var(--text3);letter-spacing:1px;
-  text-transform:uppercase;margin-bottom:32px;}
-
-/* ── Fields ── */
-.field{margin-bottom:18px;}
-.label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;color:var(--text3);
-  text-transform:uppercase;display:block;margin-bottom:6px;}
-input[type=text],input[type=email],input[type=tel],input[type=date],
-select,textarea{
-  width:100%;background:var(--card2);border:1px solid var(--border2);
-  border-radius:8px;color:var(--text);font-family:var(--fb);font-size:14px;
-  padding:11px 14px;outline:none;transition:.15s;
-  -webkit-appearance:none;-moz-appearance:none;appearance:none;
-  color-scheme:dark;
+/* ── 3-col grid ── */
+.app{
+  display:grid;
+  grid-template-columns:270px 1fr 300px;
+  height:100vh;
+  overflow:hidden;
 }
-input[type=text]:focus,input[type=email]:focus,input[type=tel]:focus,
-input[type=date]:focus,select:focus,textarea:focus{
-  border-color:var(--h1);box-shadow:0 0 0 2px rgba(255,107,53,.15);}
-textarea{resize:vertical;min-height:80px;line-height:1.5;}
-input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
-/* ── Time slots ── */
-.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;}
-.slot{background:var(--card2);border:1px solid var(--border2);border-radius:6px;
-  padding:8px 4px;text-align:center;font-family:var(--fm);font-size:11px;
-  color:var(--text2);cursor:pointer;transition:.15s;user-select:none;}
-.slot:hover{border-color:rgba(255,107,53,.4);color:var(--text);}
-.slot.active{background:rgba(255,107,53,.15);border-color:var(--h1);color:var(--h1);}
-.slot.disabled{opacity:.3;pointer-events:none;}
-#horaHidden{display:none;}
+/* ── LEFT — brand info ── */
+.col-info{
+  position:relative;
+  background:linear-gradient(170deg,#0d0c18 0%,#130f1f 60%,#0f0e1a 100%);
+  border-right:1px solid var(--border);
+  padding:36px 28px;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.col-info::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--h1) 0%,var(--h2) 40%,transparent 100%);
+}
+.brand-logo{
+  font-family:var(--fd);font-size:20px;letter-spacing:5px;
+  background:linear-gradient(135deg,var(--h1),var(--h2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:36px;
+}
+.info-title{
+  font-family:var(--fd);font-size:42px;line-height:1;letter-spacing:2px;
+  margin-bottom:12px;
+}
+.info-title span{
+  background:linear-gradient(135deg,var(--h1),var(--h2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.info-sub{color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:28px;max-width:220px;}
 
-/* ── Row ── */
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-@media(max-width:420px){.row{grid-template-columns:1fr;}}
+.meta-pills{display:flex;flex-direction:column;gap:8px;margin-bottom:32px;}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:6px;padding:7px 11px;width:fit-content;
+}
+.pill-icon{font-size:13px;}
+.pill-text{font-family:var(--fm);font-size:10px;color:var(--text2);letter-spacing:.5px;}
+.pill-text strong{color:var(--text);font-weight:500;}
 
-/* ── Submit ── */
-.btn-submit{width:100%;background:var(--h1);color:#fff;border:none;border-radius:8px;
-  padding:14px;font-family:var(--fm);font-size:12px;letter-spacing:1px;
-  cursor:pointer;transition:.15s;margin-top:8px;display:flex;
-  align-items:center;justify-content:center;gap:8px;}
-.btn-submit:hover:not(:disabled){background:#e55a28;}
-.btn-submit:disabled{opacity:.5;cursor:not-allowed;}
+.divider-line{border:none;border-top:1px solid var(--border);margin:0 0 24px;}
 
-/* ── Plan selector ── */
-.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
-@media(max-width:480px){.plan-grid{grid-template-columns:1fr;}}
-.plan-card{position:relative;background:var(--card2);border:1px solid var(--border2);
-  border-radius:8px;padding:11px 13px;cursor:pointer;transition:.15s;user-select:none;}
-.plan-card:hover{border-color:rgba(255,107,53,.4);}
-.plan-card.selected{background:rgba(255,107,53,.08);border-color:var(--h1);}
-.plan-card input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
-.plan-num{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
-.plan-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;}
-.plan-desc{font-size:10px;color:var(--text2);line-height:1.4;}
-.plan-card-full{grid-column:1/-1;}
+.features{display:flex;flex-direction:column;gap:14px;margin-top:auto;}
+.feat{display:flex;align-items:flex-start;gap:10px;}
+.feat-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:linear-gradient(135deg,var(--h1),var(--h2));
+  flex-shrink:0;margin-top:6px;
+}
+.feat-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.feat-text strong{color:var(--text);display:block;font-size:13px;margin-bottom:1px;}
 
-/* ── Status ── */
-.form-status{font-family:var(--fm);font-size:10px;margin-top:12px;
-  padding:10px 14px;border-radius:6px;display:none;letter-spacing:.5px;}
-.form-status.error{display:block;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
-.form-status.success{display:block;background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+/* ── CENTER — calendar ── */
+.col-cal{
+  border-right:1px solid var(--border);
+  padding:36px 32px;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.cal-heading{
+  font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);
+  text-transform:uppercase;margin-bottom:20px;
+}
+.cal-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.cal-nav-btn{
+  background:var(--card2);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text2);width:30px;height:30px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-size:16px;transition:.15s;
+  line-height:1;
+}
+.cal-nav-btn:hover{background:var(--card3);color:var(--text);border-color:rgba(255,255,255,.18);}
+.cal-month{font-family:var(--fd);font-size:24px;letter-spacing:2px;color:var(--text);}
 
-.meet-result{display:none;margin-top:20px;padding:16px;background:var(--card2);
-  border:1px solid var(--border2);border-radius:8px;text-align:center;}
-.meet-result .meet-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;
-  color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
-.meet-result .meet-link{color:var(--blue);font-family:var(--fm);font-size:11px;
-  word-break:break-all;display:block;margin-bottom:10px;}
-.meet-result .meet-note{color:var(--text2);font-size:12px;line-height:1.5;}
-
-/* ── Calendar picker ── */
-.cal-picker{display:flex;gap:14px;margin-top:6px;background:var(--card2);
-  border:1px solid var(--border2);border-radius:10px;padding:14px;}
-@media(max-width:500px){.cal-picker{flex-direction:column;gap:16px;}}
-.cal-left{flex:0 0 auto;}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:4px;}
-.cal-nav-btn{background:none;border:none;cursor:pointer;color:var(--text2);
-  font-size:18px;line-height:1;padding:2px 8px;border-radius:5px;transition:.15s;}
-.cal-nav-btn:hover{background:var(--card3);color:var(--text);}
-.cal-month{font-family:var(--fm);font-size:10px;color:var(--text);
-  letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,28px);gap:2px;}
-.cal-dow{width:28px;height:22px;display:flex;align-items:center;justify-content:center;
-  font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;}
-.cal-day{width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  font-family:var(--fm);font-size:11px;color:var(--text2);border-radius:5px;
-  cursor:pointer;transition:.15s;user-select:none;}
-.cal-day:hover:not(.off):not(.past){background:rgba(255,107,53,.15);color:var(--h1);}
-.cal-day.today{color:var(--text);font-weight:bold;}
-.cal-day.sel{background:var(--h1)!important;color:#fff!important;font-weight:bold;}
-.cal-day.off,.cal-day.past{opacity:.22;cursor:not-allowed;}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:3px;
+}
+.cal-dow{
+  height:28px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.8px;
+  text-transform:uppercase;
+}
+.cal-day{
+  height:38px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:12px;color:var(--text2);
+  border-radius:8px;cursor:pointer;transition:.15s;user-select:none;
+  position:relative;
+}
+.cal-day:hover:not(.off):not(.past):not(.sel){
+  background:rgba(255,107,53,.12);color:var(--h1);
+}
+.cal-day.today::after{
+  content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--indigo2);
+}
+.cal-day.sel{
+  background:linear-gradient(135deg,var(--h1),var(--h2))!important;
+  color:#fff!important;font-weight:600;
+  box-shadow:0 4px 14px rgba(255,107,53,.35);
+}
+.cal-day.off,.cal-day.past{opacity:.18;cursor:not-allowed;pointer-events:none;}
 .cal-day.empty{cursor:default;}
-/* Right column: date label + slots */
-.cal-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
-.cal-sel-label{font-family:var(--fm);font-size:9px;color:var(--text3);
-  letter-spacing:1px;text-transform:uppercase;min-height:14px;}
-.slots-col{display:flex;flex-direction:column;gap:4px;}
-.slot{background:var(--card3);border:1px solid var(--border2);border-radius:6px;
-  padding:7px 10px;font-family:var(--fm);font-size:11px;color:var(--text2);
-  cursor:pointer;transition:.15s;user-select:none;
-  display:flex;align-items:center;justify-content:space-between;}
-.slot:hover:not(.disabled){border-color:rgba(255,107,53,.4);color:var(--text);}
-.slot.active{background:rgba(255,107,53,.15);border-color:var(--h1);color:var(--h1);}
-.slot.disabled{opacity:.28;pointer-events:none;}
-.slot-tag{font-size:8px;opacity:.6;}
-.slots-loading{font-family:var(--fm);font-size:10px;color:var(--text3);
-  text-align:center;padding:18px 0;letter-spacing:.5px;}
+
+.cal-legend{
+  display:flex;align-items:center;gap:16px;margin-top:16px;
+}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:var(--fm);font-size:9px;color:var(--text3);}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+
+/* ── RIGHT — slots + form ── */
+.col-form{
+  padding:36px 28px;
+  display:flex;flex-direction:column;gap:0;
+  overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--card3) transparent;
+}
+.col-form::-webkit-scrollbar{width:4px;}
+.col-form::-webkit-scrollbar-track{background:transparent;}
+.col-form::-webkit-scrollbar-thumb{background:var(--card3);border-radius:2px;}
+
+.slots-heading{
+  font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);
+  text-transform:uppercase;margin-bottom:6px;
+}
+.sel-date-label{
+  font-family:var(--fd);font-size:22px;letter-spacing:1.5px;color:var(--text);
+  margin-bottom:14px;min-height:28px;
+}
+.slots-list{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.slot{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card);border:1px solid var(--border2);border-radius:8px;
+  padding:11px 14px;cursor:pointer;transition:.15s;user-select:none;
+}
+.slot:hover:not(.disabled){
+  border-color:rgba(255,107,53,.35);background:rgba(255,107,53,.04);
+}
+.slot.active{
+  background:rgba(255,107,53,.1);border-color:var(--h1);
+}
+.slot-time{font-family:var(--fm);font-size:12px;color:var(--text);letter-spacing:.5px;}
+.slot.active .slot-time{color:var(--h1);}
+.slot-badge{
+  font-family:var(--fm);font-size:8px;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 7px;border-radius:4px;
+}
+.slot:not(.disabled):not(.active) .slot-badge{color:var(--green);background:rgba(16,185,129,.1);}
+.slot.active .slot-badge{color:var(--h1);background:rgba(255,107,53,.15);}
+.slot.disabled{opacity:.22;pointer-events:none;}
+.slot.disabled .slot-badge{color:var(--text3);background:var(--card2);}
+.slots-loading{
+  font-family:var(--fm);font-size:10px;color:var(--text3);
+  padding:18px 0;letter-spacing:.5px;text-align:center;
+}
+
+.form-sep{
+  border:none;border-top:1px solid var(--border);margin:4px 0 18px;
+}
+
+/* ── Form fields ── */
+.field{margin-bottom:14px;}
+.label{
+  font-family:var(--fm);font-size:9px;letter-spacing:1.5px;color:var(--text3);
+  text-transform:uppercase;display:block;margin-bottom:6px;
+}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+input[type=text],input[type=email],input[type=tel],select,textarea{
+  width:100%;background:var(--card);border:1px solid var(--border2);
+  border-radius:8px;color:var(--text);font-family:var(--fb);font-size:13px;
+  padding:10px 12px;outline:none;transition:.15s;
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;color-scheme:dark;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--h1);box-shadow:0 0 0 2px rgba(255,107,53,.12);
+}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a4760' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;}
+textarea{resize:none;line-height:1.5;}
+
+.btn-submit{
+  width:100%;background:linear-gradient(135deg,var(--h1),var(--h2));
+  color:#fff;border:none;border-radius:8px;padding:13px;
+  font-family:var(--fm);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:.15s;margin-top:4px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 16px rgba(255,107,53,.25);
+}
+.btn-submit:hover:not(:disabled){filter:brightness(1.08);box-shadow:0 6px 20px rgba(255,107,53,.35);}
+.btn-submit:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+
+.form-status{
+  font-family:var(--fm);font-size:10px;margin-top:10px;
+  padding:9px 12px;border-radius:6px;display:none;letter-spacing:.5px;
+}
+.form-status.error{display:block;background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.18);}
+.form-status.success{display:block;background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.18);}
+
+.meet-result{
+  display:none;margin-top:14px;padding:14px;background:var(--card);
+  border:1px solid rgba(16,185,129,.2);border-radius:8px;text-align:center;
+}
+.meet-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:7px;}
+.meet-link{color:var(--indigo2);font-family:var(--fm);font-size:10px;word-break:break-all;display:block;margin-bottom:8px;}
+.meet-note{color:var(--text2);font-size:11px;line-height:1.5;}
+
+/* ── Mobile ── */
+@media(max-width:860px){
+  html,body{overflow:auto;}
+  .app{grid-template-columns:1fr;height:auto;overflow:visible;}
+  .col-info{padding:28px 20px;border-right:none;border-bottom:1px solid var(--border);}
+  .col-cal{padding:24px 20px;border-right:none;border-bottom:1px solid var(--border);}
+  .col-form{padding:24px 20px;overflow-y:visible;}
+  .info-title{font-size:36px;}
+}
 </style>
 </head>
 <body>
-<div class="wrapper">
+<div class="app">
 
-  <!-- ── LEFT ── -->
-  <div class="left">
-    <div class="logo">HORIZON</div>
-    <div class="left-title">Agenda tu<br><span>Diagnóstico</span><br>gratuito</div>
-    <p class="left-sub">Una sesión 1:1 con Benja donde analizamos tu negocio y definimos si HORIZON es la solución correcta para ti.</p>
+  <!-- ── COL 1: INFO ── -->
+  <div class="col-info">
+    <div class="brand-logo">HORIZON</div>
+
+    <div class="info-title">Agenda tu<br><span>Diagnóstico</span><br>gratuito</div>
+    <p class="info-sub">Una sesión 1:1 con Benja donde analizamos tu negocio y definimos el camino concreto.</p>
+
+    <div class="meta-pills">
+      <div class="pill">
+        <span class="pill-icon">⏱</span>
+        <span class="pill-text"><strong>60 minutos</strong> · Online</span>
+      </div>
+      <div class="pill">
+        <span class="pill-icon">🎥</span>
+        <span class="pill-text"><strong>Google Meet</strong> · Link al instante</span>
+      </div>
+      <div class="pill">
+        <span class="pill-icon">🎯</span>
+        <span class="pill-text"><strong>Sin compromiso</strong> · Sin presión</span>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
     <div class="features">
-      <div class="feature">
-        <div class="feature-icon">🎯</div>
-        <div class="feature-text">
-          <strong>Sin compromiso</strong>
-          Conversamos, analizamos, y decidís. Sin presión de venta.
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⏱</div>
-        <div class="feature-text">
-          <strong>60 minutos</strong>
-          Online vía Google Meet. Te llega el link al confirmar.
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📊</div>
-        <div class="feature-text">
+      <div class="feat">
+        <div class="feat-dot"></div>
+        <div class="feat-text">
           <strong>Diagnóstico real</strong>
-          Revisamos tu situación actual y te damos claridad de los pasos concretos.
+          Revisamos tu situación y definimos pasos concretos.
         </div>
       </div>
-      <div class="feature">
-        <div class="feature-icon">🔒</div>
-        <div class="feature-text">
+      <div class="feat">
+        <div class="feat-dot"></div>
+        <div class="feat-text">
           <strong>Privado y confidencial</strong>
-          Tu información nunca se comparte con terceros.
+          Tu info nunca se comparte con terceros.
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-dot"></div>
+        <div class="feat-text">
+          <strong>Solo 10 cupos disponibles</strong>
+          Atención personalizada, sin masificación.
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── RIGHT ── -->
-  <div class="right">
-    <div class="form-card">
-      <div class="form-title">Tu sesión</div>
-      <div class="form-sub">Completa el formulario — recibes el link de Meet al instante</div>
+  <!-- ── COL 2: CALENDAR ── -->
+  <div class="col-cal">
+    <div class="cal-heading">Selecciona una fecha</div>
 
-      <form id="agendarForm" novalidate>
-        <div class="row">
-          <div class="field">
-            <label class="label" for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required autocomplete="given-name" maxlength="100" minlength="2">
-          </div>
-          <div class="field">
-            <label class="label" for="telefono">Teléfono</label>
-            <input type="tel" id="telefono" name="telefono" placeholder="+56 9 xxxx xxxx" required autocomplete="tel" maxlength="20" pattern="[\+\d\s\-\(\)]{6,20}">
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label" for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="tu@empresa.com" required autocomplete="email" maxlength="254">
-        </div>
-
-        <div class="field">
-          <label class="label">Día y horario</label>
-          <div class="cal-picker">
-            <div class="cal-left">
-              <div class="cal-nav">
-                <button type="button" class="cal-nav-btn" onclick="calPrev()">‹</button>
-                <span id="calMonthLabel" class="cal-month"></span>
-                <button type="button" class="cal-nav-btn" onclick="calNext()">›</button>
-              </div>
-              <div class="cal-grid" id="calGrid"></div>
-            </div>
-            <div class="cal-right">
-              <div class="cal-sel-label" id="calSelLabel">Elige un día →</div>
-              <div class="slots-col" id="slotsCol"></div>
-            </div>
-          </div>
-          <input type="hidden" id="fechaHidden" name="fecha">
-          <input type="hidden" id="horaHidden" name="hora">
-        </div>
-
-        <div class="field">
-          <label class="label" for="contexto">¿Cuál es tu principal desafío? <span style="color:var(--text3)">(opcional)</span></label>
-          <textarea id="contexto" name="contexto" placeholder="Ej: Necesito sistematizar mi proceso de ventas…" rows="3" maxlength="1000"></textarea>
-        </div>
-
-        <div class="field">
-          <label class="label">¿Qué plan te llama la atención? <span style="color:var(--text3)">(opcional)</span></label>
-          <div class="plan-grid" id="planGrid">
-            <label class="plan-card plan-card-full" data-v="">
-              <input type="radio" name="plan" value="" checked>
-              <div class="plan-name">Aún no sé — quiero el diagnóstico primero</div>
-              <div class="plan-desc">Benja te va a ayudar a identificar qué necesitás.</div>
-            </label>
-            <label class="plan-card" data-v="plan01">
-              <input type="radio" name="plan" value="plan01">
-              <div class="plan-num">Plan 01</div>
-              <div class="plan-name">Presencia Digital</div>
-              <div class="plan-desc">Sitio web profesional + posicionamiento en Google.</div>
-            </label>
-            <label class="plan-card" data-v="plan02">
-              <input type="radio" name="plan" value="plan02">
-              <div class="plan-num">Plan 02</div>
-              <div class="plan-name">Ecosistema Digital</div>
-              <div class="plan-desc">Web + redes + automatizaciones básicas integradas.</div>
-            </label>
-            <label class="plan-card" data-v="plan03">
-              <input type="radio" name="plan" value="plan03">
-              <div class="plan-num">Plan 03</div>
-              <div class="plan-name">Negocio Activo</div>
-              <div class="plan-desc">CRM + pipeline de ventas + seguimiento de clientes.</div>
-            </label>
-            <label class="plan-card" data-v="plan04">
-              <input type="radio" name="plan" value="plan04">
-              <div class="plan-num">Plan 04</div>
-              <div class="plan-name">Sistema con IA</div>
-              <div class="plan-desc">Automatización avanzada + asistentes de IA integrados.</div>
-            </label>
-            <label class="plan-card" data-v="plan05">
-              <input type="radio" name="plan" value="plan05">
-              <div class="plan-num">Plan 05</div>
-              <div class="plan-name">Agente IA Personalizado</div>
-              <div class="plan-desc">Agente inteligente a medida para tu negocio específico.</div>
-            </label>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-submit" id="btnSubmit">
-          <span id="btnText">Confirmar sesión</span>
-        </button>
-
-        <div class="form-status" id="formStatus"></div>
-
-        <div class="meet-result" id="meetResult">
-          <div class="meet-label">Tu link de Google Meet</div>
-          <a class="meet-link" id="meetLinkEl" href="#" target="_blank" rel="noopener"></a>
-          <div class="meet-note">Te llegó la invitación a tu email. Redirigiendo…</div>
-        </div>
-      </form>
+    <div class="cal-nav">
+      <button type="button" class="cal-nav-btn" onclick="calPrev()">‹</button>
+      <span id="calMonthLabel" class="cal-month"></span>
+      <button type="button" class="cal-nav-btn" onclick="calNext()">›</button>
     </div>
+
+    <div class="cal-grid" id="calGrid"></div>
+
+    <div class="cal-legend" style="margin-top:auto;padding-top:16px;">
+      <div class="leg-item">
+        <div class="leg-dot" style="background:linear-gradient(135deg,var(--h1),var(--h2));"></div>
+        Seleccionado
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background:var(--indigo2);"></div>
+        Hoy
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background:var(--border2);"></div>
+        No disponible
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COL 3: SLOTS + FORM ── -->
+  <div class="col-form">
+    <div class="slots-heading">Horario disponible</div>
+    <div class="sel-date-label" id="calSelLabel">— Elige un día</div>
+
+    <div class="slots-list" id="slotsCol">
+      <div class="slots-loading">Selecciona una fecha →</div>
+    </div>
+
+    <hr class="form-sep">
+
+    <form id="agendarForm" novalidate>
+      <div class="row2">
+        <div class="field">
+          <label class="label" for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required
+            autocomplete="given-name" maxlength="100" minlength="2">
+        </div>
+        <div class="field">
+          <label class="label" for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" placeholder="+56 9 xxxx xxxx" required
+            autocomplete="tel" maxlength="20" pattern="[\+\d\s\-\(\)]{6,20}">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="tu@empresa.com" required
+          autocomplete="email" maxlength="254">
+      </div>
+
+      <div class="field">
+        <label class="label" for="planSel">¿Qué plan te llama la atención? <span style="color:var(--text3)">(opcional)</span></label>
+        <select id="planSel" name="plan">
+          <option value="">Aún no sé — quiero el diagnóstico primero</option>
+          <option value="plan01">Plan 01 · Presencia Digital</option>
+          <option value="plan02">Plan 02 · Ecosistema Digital</option>
+          <option value="plan03">Plan 03 · Negocio Activo</option>
+          <option value="plan04">Plan 04 · Sistema con IA</option>
+          <option value="plan05">Plan 05 · Agente IA Personalizado</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label" for="contexto">¿Cuál es tu principal desafío? <span style="color:var(--text3)">(opcional)</span></label>
+        <textarea id="contexto" name="contexto" rows="2"
+          placeholder="Ej: Necesito sistematizar mi proceso de ventas…" maxlength="1000"></textarea>
+      </div>
+
+      <input type="hidden" id="fechaHidden" name="fecha">
+      <input type="hidden" id="horaHidden" name="hora">
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        <span id="btnText">Confirmar sesión</span>
+      </button>
+
+      <div class="form-status" id="formStatus"></div>
+
+      <div class="meet-result" id="meetResult">
+        <div class="meet-label">Tu link de Google Meet</div>
+        <a class="meet-link" id="meetLinkEl" href="#" target="_blank" rel="noopener"></a>
+        <div class="meet-note">Invitación enviada a tu email. Redirigiendo…</div>
+      </div>
+    </form>
   </div>
 
 </div>
@@ -316,19 +406,18 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
   let calYear  = today.getFullYear();
   let calMonth = today.getMonth();
-  let selDate  = '';   // 'YYYY-MM-DD'
+  let selDate  = '';
   let selHora  = '';
 
   function toStr(d){ return d.toISOString().slice(0,10); }
 
-  // ── Calendar render ──
   function renderCal(){
     document.getElementById('calMonthLabel').textContent =
-      MONTHS[calMonth] + ' ' + calYear;
+      MONTHS[calMonth].toUpperCase() + ' ' + calYear;
 
-    const first   = new Date(calYear, calMonth, 1);
-    const nDays   = new Date(calYear, calMonth+1, 0).getDate();
-    const startDow= (first.getDay()+6)%7; // 0=Mon
+    const first    = new Date(calYear, calMonth, 1);
+    const nDays    = new Date(calYear, calMonth+1, 0).getDate();
+    const startDow = (first.getDay()+6)%7;
 
     let html = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
     for(let i=0;i<startDow;i++) html+=`<div class="cal-day empty"></div>`;
@@ -342,7 +431,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       const isToday = d.getTime()===today.getTime();
 
       let cls = 'cal-day';
-      if(isSel)   cls+=' sel';
+      if(isSel)        cls+=' sel';
       else if(isToday) cls+=' today';
       if(d<minDate||d>maxDate) cls+=' past';
       else if(dow===0||dow===6) cls+=' off';
@@ -384,9 +473,9 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     col.innerHTML = HOURS.map(h=>{
       const taken = booked.includes(h);
-      return `<div class="slot${taken?' disabled':''}"${!taken?` onclick="slotClick('${h}',this)"`:''}>
-        <span>${h}</span>
-        <span class="slot-tag">${taken?'ocupado':'libre'}</span>
+      return `<div class="slot${taken?' disabled':''}"${!taken?` onclick="slotClick('${h}',this)"`:''  }>
+        <span class="slot-time">${h}</span>
+        <span class="slot-badge">${taken?'ocupado':'disponible'}</span>
       </div>`;
     }).join('');
   }
@@ -398,21 +487,12 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     document.getElementById('horaHidden').value = h;
   };
 
-  // ── Plan cards ──
-  document.querySelectorAll('#planGrid .plan-card').forEach(card=>{
-    card.addEventListener('click',function(){
-      document.querySelectorAll('#planGrid .plan-card').forEach(c=>c.classList.remove('selected'));
-      this.classList.add('selected');
-    });
-  });
-  document.querySelector('#planGrid .plan-card[data-v=""]').classList.add('selected');
-
-  // ── Auto-select first available weekday ──
+  // Auto-select first available weekday
   const init = new Date(minDate);
   while(init.getDay()===0||init.getDay()===6) init.setDate(init.getDate()+1);
   calClick(toStr(init));
 
-  // ── Form submit ──
+  // Form submit
   document.getElementById('agendarForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const status = document.getElementById('formStatus');
@@ -426,38 +506,31 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     const telefono = document.getElementById('telefono').value.trim();
     const fecha    = document.getElementById('fechaHidden').value;
     const contexto = document.getElementById('contexto').value.trim();
-    const planEl   = document.querySelector('#planGrid input[type=radio]:checked');
-    const plan     = planEl ? planEl.value : '';
+    const plan     = document.getElementById('planSel').value;
 
     if(!nombre||!email||!telefono||!fecha||!selHora){
       status.textContent = '⚠️ Completa todos los campos y selecciona un día y horario.';
-      status.className   = 'form-status error';
-      return;
+      status.className = 'form-status error'; return;
     }
     if(nombre.length < 2 || nombre.length > 100){
       status.textContent = '⚠️ El nombre debe tener entre 2 y 100 caracteres.';
-      status.className   = 'form-status error';
-      return;
+      status.className = 'form-status error'; return;
     }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254){
       status.textContent = '⚠️ Email inválido.';
-      status.className   = 'form-status error';
-      return;
+      status.className = 'form-status error'; return;
     }
     if(!/^[\+\d\s\-\(\)]{6,20}$/.test(telefono)){
       status.textContent = '⚠️ Teléfono inválido. Usa formato +56 9 xxxx xxxx.';
-      status.className   = 'form-status error';
-      return;
+      status.className = 'form-status error'; return;
     }
     if(!/^\d{4}-\d{2}-\d{2}$/.test(fecha)){
       status.textContent = '⚠️ Fecha inválida.';
-      status.className   = 'form-status error';
-      return;
+      status.className = 'form-status error'; return;
     }
     if(contexto.length > 1000){
       status.textContent = '⚠️ El mensaje no puede superar 1000 caracteres.';
-      status.className   = 'form-status error';
-      return;
+      status.className = 'form-status error'; return;
     }
 
     btn.disabled = true;
@@ -473,9 +546,8 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
       if(!r.ok||!data.ok){
         status.textContent = '⚠️ '+(data.error||'Error al crear la sesión. Intenta de nuevo.');
-        status.className   = 'form-status error';
-        btn.disabled=false; btnTxt.textContent='Confirmar sesión';
-        return;
+        status.className = 'form-status error';
+        btn.disabled=false; btnTxt.textContent='Confirmar sesión'; return;
       }
 
       const meetLink = data.meetLink||'';
@@ -494,7 +566,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     }catch(err){
       status.textContent = '⚠️ Error de conexión. Intenta de nuevo.';
-      status.className   = 'form-status error';
+      status.className = 'form-status error';
       btn.disabled=false; btnTxt.textContent='Confirmar sesión';
     }
   });
