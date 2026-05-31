@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Proyecto</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* Roadmap */
+.milestone-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.milestone-item:last-child{border-bottom:none;}
+.ms-status-btn{
+  width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);
+  cursor:pointer;flex-shrink:0;margin-top:2px;transition:.15s;background:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.ms-status-btn.done{background:var(--green);border-color:var(--green);}
+.ms-status-btn.in_progress{background:var(--h1);border-color:var(--h1);}
+.ms-status-btn.done::after,.ms-status-btn.in_progress::after{content:'✓';color:#fff;font-size:9px;}
+.ms-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.ms-date{font-family:var(--fm);font-size:9px;color:var(--text3);}
+
+/* Backlog */
+.task-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:var(--card);border:1px solid var(--border);
+  border-radius:8px;margin-bottom:6px;
+}
+.task-check{
+  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
+  flex-shrink:0;cursor:pointer;transition:.15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-check.done{background:var(--green);border-color:var(--green);}
+.task-check.done::after{content:'✓';color:#fff;font-size:9px;}
+.task-titulo{flex:1;font-size:13px;color:var(--text);}
+.task-titulo.done-txt{text-decoration:line-through;color:var(--text3);}
+.task-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;transition:.15s;}
+.task-del:hover{color:var(--red);background:rgba(239,68,68,.08);}
+
+/* Timeline */
+.ev-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.ev-item:last-child{border-bottom:none;}
+.ev-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.ev-body{flex:1;}
+.ev-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.ev-desc{font-size:11px;color:var(--text2);line-height:1.5;}
+.ev-time{font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:3px;}
+
+/* Docs */
+.doc-field{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.doc-field:last-of-type{border-bottom:none;}
+.doc-label{font-family:var(--fm);font-size:9px;color:var(--text3);width:120px;flex-shrink:0;}
+.doc-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--fm);font-size:11px;padding:7px 10px;outline:none;transition:.15s;}
+.doc-input:focus{border-color:var(--h1);}
+.doc-link{font-family:var(--fm);font-size:11px;color:var(--indigo2);text-decoration:none;}
+.doc-link:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <a href="/ops/proyectos" style="font-family:var(--fm);font-size:9px;color:var(--text3);text-decoration:none;display:block;margin-bottom:4px;">← Proyectos</a>
+        <div class="ops-page-title" id="pageTitle">Cargando…</div>
+        <div class="ops-page-sub" id="pageSub"></div>
+      </div>
+      <div class="ops-header-actions">
+        <a id="btnPortal" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none;">Portal del cliente ↗</a>
+      </div>
+    </div>
+    <div class="ops-content">
+      <div id="detalleLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando workspace…</div>
+      <div id="detalleContent" style="display:none;">
+
+        <!-- Tabs -->
+        <div class="ops-tabs">
+          <button class="ops-tab active" onclick="switchTab('roadmap')">Roadmap</button>
+          <button class="ops-tab" onclick="switchTab('backlog')">Backlog</button>
+          <button class="ops-tab" onclick="switchTab('timeline')">Timeline</button>
+          <button class="ops-tab" onclick="switchTab('docs')">Docs</button>
+        </div>
+
+        <!-- TAB: Roadmap -->
+        <div class="tab-content active ops-card" id="tab-roadmap">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+            Hitos del proyecto
+            <div id="msProgress" style="font-size:9px;color:var(--text2);"></div>
+          </div>
+          <div id="milestonesList"></div>
+        </div>
+
+        <!-- TAB: Backlog -->
+        <div class="tab-content ops-card" id="tab-backlog">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+            <input class="ops-input" type="text" id="newTaskInput" placeholder="Nueva tarea…" style="flex:1;" onkeydown="if(event.key==='Enter')addTask()">
+            <button class="btn btn-primary btn-sm" onclick="addTask()">Agregar</button>
+          </div>
+          <div id="tasksList"></div>
+        </div>
+
+        <!-- TAB: Timeline -->
+        <div class="tab-content ops-card" id="tab-timeline">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;">Historial de actividad</div>
+          <div id="timelineList"></div>
+        </div>
+
+        <!-- TAB: Docs -->
+        <div class="tab-content ops-card" id="tab-docs">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:16px;">Referencias y documentos</div>
+          <div id="docFields"></div>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary btn-sm" onclick="saveDocs()">Guardar cambios</button>
+          </div>
+          <hr class="ops-divider">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Notas de sesión</div>
+          <textarea class="ops-input" id="sessionNotas" rows="4" placeholder="Notas internas de la reunión, pendientes, contexto…"></textarea>
+          <button class="btn btn-ghost btn-sm" onclick="saveNotas()" style="margin-top:8px;">Guardar notas</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+let projectId = null;
+let leadId    = null;
+let projectData = null;
+
+const EV_ICONS = {
+  booking:{ic:'📅',bg:'rgba(59,130,246,.12)'},
+  brief:{ic:'✏️',bg:'rgba(168,85,247,.12)'},
+  mensaje:{ic:'💬',bg:'rgba(255,107,53,.12)'},
+  reunion:{ic:'🎯',bg:'rgba(16,185,129,.12)'},
+  propuesta:{ic:'📄',bg:'rgba(255,140,66,.12)'},
+  nota:{ic:'📌',bg:'rgba(74,71,96,.2)'},
+};
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ops-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.ops-tab').forEach(t => {
+    if(t.textContent.toLowerCase().startsWith(name.slice(0,4))) t.classList.add('active');
+  });
+}
+
+function fmtTime(iso) {
+  if(!iso) return '';
+  try { return new Date(iso).toLocaleString('es-CL',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  catch { return iso; }
+}
+
+/* ─── Roadmap ─── */
+async function loadMilestones() {
+  const sb = getSB();
+  const { data: ms } = await sb.from('project_milestones')
+    .select('*').eq('project_id', projectId).order('created_at');
+
+  const done  = (ms||[]).filter(m=>m.estado==='done'||m.estado==='hecho').length;
+  const total = (ms||[]).length;
+  document.getElementById('msProgress').textContent = `${done}/${total} completados`;
+
+  document.getElementById('milestonesList').innerHTML = (ms||[]).map(m => {
+    const isDone = m.estado==='done'||m.estado==='hecho';
+    const isIP   = m.estado==='in_progress';
+    return `<div class="milestone-item">
+      <button class="ms-status-btn ${isDone?'done':isIP?'in_progress':''}"
+        onclick="toggleMilestone('${m.id}','${m.estado}')"></button>
+      <div>
+        <div class="ms-name">${m.nombre}</div>
+        ${m.descripcion ? `<div style="font-size:11px;color:var(--text2);margin-top:2px;">${m.descripcion}</div>` : ''}
+        ${m.fecha_target ? `<div class="ms-date">🗓 ${fmtTime(m.fecha_target)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Sin hitos</div></div>';
+}
+
+async function toggleMilestone(id, currentEstado) {
+  const next = (currentEstado==='pending'||currentEstado==='pendiente') ? 'in_progress'
+             : (currentEstado==='in_progress') ? 'done'
+             : 'pending';
+  const sb = getSB();
+  await sb.from('project_milestones').update({ estado: next }).eq('id', id);
+  await loadMilestones();
+}
+
+/* ─── Backlog ─── */
+async function loadTasks() {
+  const headers = await opsAuthHeaders();
+  const r = await fetch(`/api/ops/tasks?project_id=${projectId}`, { headers });
+  const tasks = await r.json();
+  renderTasks(tasks);
+}
+
+function renderTasks(tasks) {
+  document.getElementById('tasksList').innerHTML = (tasks||[]).map(t => {
+    const done = t.estado === 'hecho';
+    return `<div class="task-item" id="task-${t.id}">
+      <div class="task-check ${done?'done':''}" onclick="toggleTask('${t.id}','${t.estado}')"></div>
+      <span class="task-titulo ${done?'done-txt':''}">${t.titulo}</span>
+      <span class="badge badge-${t.prioridad==='alta'?'red':t.prioridad==='baja'?'gray':'yellow'}" style="flex-shrink:0;">${t.prioridad}</span>
+      <button class="task-del" onclick="deleteTask('${t.id}')">×</button>
+    </div>`;
+  }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Backlog vacío</div></div>';
+}
+
+async function addTask() {
+  const input = document.getElementById('newTaskInput');
+  const titulo = input.value.trim();
+  if (!titulo) return;
+  const headers = await opsAuthHeaders();
+  await fetch('/api/ops/tasks', {
+    method:'POST', headers,
+    body: JSON.stringify({ project_id: projectId, titulo }),
+  });
+  input.value = '';
+  await loadTasks();
+}
+
+async function toggleTask(id, estado) {
+  const next = estado==='hecho' ? 'pendiente' : 'hecho';
+  const headers = await opsAuthHeaders();
+  await fetch(`/api/ops/tasks/${id}`, {
+    method:'PATCH', headers,
+    body: JSON.stringify({ estado: next }),
+  });
+  await loadTasks();
+}
+
+async function deleteTask(id) {
+  const headers = await opsAuthHeaders();
+  await fetch(`/api/ops/tasks/${id}`, { method:'DELETE', headers });
+  await loadTasks();
+}
+
+/* ─── Timeline ─── */
+async function loadTimeline() {
+  const sb = getSB();
+  const { data: events } = await sb.from('portal_events')
+    .select('*').eq('lead_id', leadId)
+    .order('created_at', { ascending: false });
+
+  const m = EV_ICONS;
+  document.getElementById('timelineList').innerHTML = (events||[]).map(ev => {
+    const icon = (m[ev.tipo]||m.nota);
+    return `<div class="ev-item">
+      <div class="ev-icon" style="background:${icon.bg}">${icon.ic}</div>
+      <div class="ev-body">
+        <div class="ev-title">${ev.tipo.charAt(0).toUpperCase()+ev.tipo.slice(1)}</div>
+        ${ev.contenido ? `<div class="ev-desc">${ev.contenido}</div>` : ''}
+        <div class="ev-time">${fmtTime(ev.created_at)} · ${ev.autor}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Sin eventos aún</div></div>';
+}
+
+/* ─── Docs ─── */
+const DOC_FIELDS = [
+  { key:'propuesta_url', label:'Propuesta' },
+  { key:'contrato_url',  label:'Contrato' },
+  { key:'github_url',    label:'Repositorio' },
+  { key:'notion_url',    label:'Notion' },
+];
+
+function renderDocs(lead) {
+  document.getElementById('docFields').innerHTML = DOC_FIELDS.map(f => {
+    const val = lead[f.key] || '';
+    return `<div class="doc-field">
+      <span class="doc-label">${f.label}</span>
+      <input class="doc-input" type="url" id="doc-${f.key}" value="${val}" placeholder="https://…">
+      ${val ? `<a href="${val}" target="_blank" class="doc-link" rel="noopener">↗</a>` : ''}
+    </div>`;
+  }).join('');
+  if (lead.session_notas) document.getElementById('sessionNotas').value = lead.session_notas;
+
+  // Brief completado?
+  const brief = lead.brief || {};
+  const briefDone = Object.values(brief).some(v => v?.trim?.()?.length > 0);
+  if (briefDone) {
+    document.getElementById('docFields').insertAdjacentHTML('afterend',
+      `<div style="margin-top:12px;" class="badge badge-green">✓ Brief completado por el cliente</div>`);
+  }
+}
+
+async function saveDocs() {
+  const patch = {};
+  DOC_FIELDS.forEach(f => { patch[f.key] = document.getElementById('doc-'+f.key).value.trim(); });
+  const headers = await opsAuthHeaders();
+  await fetch(`/api/ops/leads?id=${leadId}`, {
+    method:'PATCH', headers, body: JSON.stringify(patch),
+  });
+  opsToast('Docs guardados');
+}
+
+async function saveNotas() {
+  const notas = document.getElementById('sessionNotas').value;
+  const headers = await opsAuthHeaders();
+  await fetch(`/api/ops/leads?id=${leadId}`, {
+    method:'PATCH', headers, body: JSON.stringify({ session_notas: notas }),
+  });
+  opsToast('Notas guardadas');
+}
+
+/* ─── Init ─── */
+(async function(){
+  const session = await opsRequireAuth();
+  if (!session) return;
+  await opsInitNav();
+
+  projectId = new URLSearchParams(window.location.search).get('id');
+  if (!projectId) { window.location.href = '/ops/proyectos'; return; }
+
+  const sb = getSB();
+  const { data: p } = await sb.from('projects')
+    .select(`*, lead:leads(*)`)
+    .eq('id', projectId)
+    .single();
+
+  if (!p) { window.location.href = '/ops/proyectos'; return; }
+
+  projectData = p;
+  leadId = p.lead_id;
+  const lead = p.lead || {};
+
+  document.getElementById('pageTitle').textContent = lead.nombre || p.nombre;
+  document.getElementById('pageSub').textContent = `${lead.empresa||''} · ${p.plan||''} · ${p.estado}`;
+  document.title = `HORIZON OPS · ${lead.nombre||p.nombre}`;
+
+  if (lead.portal_token) {
+    const btn = document.getElementById('btnPortal');
+    btn.href = `/c/${lead.portal_token}`;
+    btn.style.display = 'inline-flex';
+  }
+
+  document.getElementById('detalleLoading').style.display = 'none';
+  document.getElementById('detalleContent').style.display = 'block';
+
+  renderDocs(lead);
+  await Promise.all([loadMilestones(), loadTasks(), loadTimeline()]);
+})();
+</script>
+</body>
+</html>

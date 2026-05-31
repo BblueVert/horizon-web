@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Pipeline</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+/* Pipeline Kanban */
+.pipeline-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:start;}
+@media(max-width:1200px){.kanban{grid-template-columns:repeat(3,1fr);}}
+.col-header{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;padding:0 0 10px;display:flex;align-items:center;justify-content:space-between;}
+.col-count{background:var(--card2);border-radius:10px;padding:1px 7px;font-size:9px;color:var(--text2);}
+.lead-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:14px;margin-bottom:8px;cursor:pointer;transition:.15s;
+}
+.lead-card:hover{border-color:var(--border2);background:var(--card2);}
+.lead-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.lead-empresa{font-size:11px;color:var(--text3);margin-bottom:8px;}
+.lead-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.lead-plan{font-family:var(--fm);font-size:8px;background:rgba(255,107,53,.08);color:var(--h2);border:1px solid rgba(255,107,53,.15);border-radius:4px;padding:2px 6px;}
+.lead-price{font-family:var(--fm);font-size:9px;color:var(--text3);}
+.lead-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+/* Status colors */
+.col-new      .lead-card{border-left:2px solid var(--text3);}
+.col-contactado .lead-card{border-left:2px solid var(--indigo2);}
+.col-propuesta  .lead-card{border-left:2px solid var(--yellow);}
+.col-arranque   .lead-card{border-left:2px solid var(--h1);}
+.col-activo     .lead-card{border-left:2px solid var(--green);}
+
+/* Modal */
+.ops-modal-bg{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
+  align-items:center;justify-content:center;
+}
+.ops-modal-bg.open{display:flex;}
+.ops-modal{
+  background:var(--card);border:1px solid var(--border2);border-radius:16px;
+  padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;
+}
+.ops-modal-title{font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;}
+.ops-modal-close{float:right;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;margin-top:-4px;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Pipeline</div>
+        <div class="ops-page-sub" id="pipelineSub">Cargando…</div>
+      </div>
+      <div class="ops-header-actions">
+        <a href="/crm" target="_blank" class="btn btn-ghost btn-sm">CRM completo ↗</a>
+      </div>
+    </div>
+    <div class="ops-content">
+      <!-- Stats -->
+      <div class="pipeline-stats">
+        <div class="stat-card"><div class="stat-label">Total leads</div><div class="stat-value" id="statTotal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pipeline CLP</div><div class="stat-value orange" id="statClp">—</div></div>
+        <div class="stat-card"><div class="stat-label">En Arranque</div><div class="stat-value" id="statArranque">—</div></div>
+        <div class="stat-card"><div class="stat-label">Activos</div><div class="stat-value green" id="statActivos">—</div></div>
+      </div>
+
+      <div id="pipelineLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando leads…</div>
+      <!-- Kanban -->
+      <div class="kanban" id="kanban" style="display:none;">
+        <div>
+          <div class="col-header">Nuevo <span class="col-count" id="cnt-new">0</span></div>
+          <div id="col-new" class="col-new"></div>
+        </div>
+        <div>
+          <div class="col-header">Contactado <span class="col-count" id="cnt-contactado">0</span></div>
+          <div id="col-contactado" class="col-contactado"></div>
+        </div>
+        <div>
+          <div class="col-header">Propuesta <span class="col-count" id="cnt-propuesta">0</span></div>
+          <div id="col-propuesta" class="col-propuesta"></div>
+        </div>
+        <div>
+          <div class="col-header">Arranque <span class="col-count" id="cnt-arranque">0</span></div>
+          <div id="col-arranque" class="col-arranque"></div>
+        </div>
+        <div>
+          <div class="col-header">Activo <span class="col-count" id="cnt-activo">0</span></div>
+          <div id="col-activo" class="col-activo"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal editar status -->
+<div class="ops-modal-bg" id="leadModal">
+  <div class="ops-modal">
+    <button class="ops-modal-close" onclick="closeModal()">×</button>
+    <div class="ops-modal-title" id="modalNombre">Lead</div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const PLANS = {
+  plan01:{label:'Presencia Digital',    preciof:290000},
+  plan02:{label:'Ecosistema Digital',   preciof:490000},
+  plan03:{label:'Negocio Activo',       preciof:690000},
+  plan04:{label:'Sistema con IA',       preciof:890000},
+  plan05:{label:'Agente IA',            preciof:null},
+};
+const STATUSES = ['new','contactado','propuesta','arranque','activo'];
+const STATUS_LABEL = {new:'Nuevo',contactado:'Contactado',propuesta:'Propuesta',arranque:'Arranque',activo:'Activo'};
+
+let allLeads = [];
+let currentLead = null;
+
+function fmt$(n){ return n ? '$'+n.toLocaleString('es-CL') : '—'; }
+
+function renderCard(lead) {
+  const plan = PLANS[lead.plan] || {};
+  const price = fmt$(lead.tipoprecio==='fundador' ? plan.preciof : null);
+  const isArranque = lead.status === 'arranque';
+  return `<div class="lead-card" onclick="openModal('${lead.id}')">
+    <div class="lead-name">${lead.nombre||'Sin nombre'}</div>
+    <div class="lead-empresa">${lead.empresa||lead.email||'—'}</div>
+    <div class="lead-meta">
+      ${lead.plan ? `<span class="lead-plan">${plan.label||lead.plan}</span>` : ''}
+      <span class="lead-price">${price}</span>
+    </div>
+    ${isArranque ? `<div class="lead-actions">
+      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();activarProyecto('${lead.id}')">
+        ▶ Activar Proyecto
+      </button>
+    </div>` : ''}
+  </div>`;
+}
+
+function renderKanban(leads) {
+  STATUSES.forEach(s => {
+    const col = document.getElementById('col-'+s);
+    if(!col) return;
+    const filtered = leads.filter(l => l.status === s);
+    document.getElementById('cnt-'+s).textContent = filtered.length;
+    col.innerHTML = filtered.length
+      ? filtered.map(renderCard).join('')
+      : `<div style="font-family:var(--fm);font-size:9px;color:var(--text3);text-align:center;padding:16px 0;">vacío</div>`;
+  });
+
+  // Stats
+  const total = leads.length;
+  const pipeline = leads.filter(l=>['new','contactado','propuesta','arranque'].includes(l.status))
+    .reduce((s,l)=> s + (l.tipoprecio==='fundador' ? (PLANS[l.plan]?.preciof||0) : 0), 0);
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statClp').textContent = fmt$(pipeline);
+  document.getElementById('statArranque').textContent = leads.filter(l=>l.status==='arranque').length;
+  document.getElementById('statActivos').textContent = leads.filter(l=>l.status==='activo').length;
+  document.getElementById('pipelineSub').textContent = `${total} leads · ${fmt$(pipeline)} en pipeline`;
+}
+
+function openModal(id) {
+  currentLead = allLeads.find(l => l.id === id);
+  if (!currentLead) return;
+  document.getElementById('modalNombre').textContent = currentLead.nombre || 'Lead';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="ops-field">
+      <label class="ops-label">Email</label>
+      <div style="font-family:var(--fm);font-size:11px;color:var(--text2);padding:4px 0;">${currentLead.email||'—'}</div>
+    </div>
+    <div class="ops-field">
+      <label class="ops-label">Teléfono</label>
+      <div style="font-family:var(--fm);font-size:11px;color:var(--text2);padding:4px 0;">${currentLead.telefono||'—'}</div>
+    </div>
+    <div class="ops-field">
+      <label class="ops-label">Status</label>
+      <select class="ops-input" id="modalStatus">
+        ${STATUSES.map(s=>`<option value="${s}"${s===currentLead.status?' selected':''}>${STATUS_LABEL[s]}</option>`).join('')}
+      </select>
+    </div>
+    <div class="ops-field">
+      <label class="ops-label">MRR Retainer (CLP)</label>
+      <input class="ops-input" type="number" id="modalMrr" value="${currentLead.mrr||0}" min="0" step="10000">
+    </div>
+    <div class="ops-field">
+      <label class="ops-label">Nota interna</label>
+      <textarea class="ops-input" id="modalNota" rows="3">${currentLead.nota||''}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary" onclick="saveModal()" style="flex:1;justify-content:center;">Guardar</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+    </div>`;
+  document.getElementById('leadModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('leadModal').classList.remove('open');
+  currentLead = null;
+}
+
+async function saveModal() {
+  if (!currentLead) return;
+  const status = document.getElementById('modalStatus').value;
+  const mrr    = Number(document.getElementById('modalMrr').value) || 0;
+  const nota   = document.getElementById('modalNota').value;
+  const headers = await opsAuthHeaders();
+  await fetch(`/api/ops/leads?id=${currentLead.id}`, {
+    method: 'PATCH', headers,
+    body: JSON.stringify({ status, mrr, nota }),
+  });
+  closeModal();
+  await loadLeads();
+  opsToast('Lead actualizado');
+}
+
+async function activarProyecto(leadId) {
+  if (!confirm('¿Activar proyecto para este lead? Se creará el workspace con milestones base.')) return;
+  const headers = await opsAuthHeaders();
+  const r = await fetch('/api/ops/promote-lead', {
+    method: 'POST', headers,
+    body: JSON.stringify({ lead_id: leadId }),
+  });
+  const data = await r.json();
+  if (!r.ok) { opsToast(data.error || 'Error', 'error'); return; }
+  opsToast('Proyecto creado ✓');
+  setTimeout(() => window.location.href = '/ops/proyectos', 1200);
+}
+
+async function loadLeads() {
+  const headers = await opsAuthHeaders();
+  const r = await fetch('/api/ops/leads', { headers });
+  allLeads = await r.json();
+  renderKanban(allLeads);
+  document.getElementById('pipelineLoading').style.display = 'none';
+  document.getElementById('kanban').style.display = 'grid';
+}
+
+(async function(){
+  const session = await opsRequireAuth();
+  if (!session) return;
+  await opsInitNav();
+  await loadLeads();
+})();
+</script>
+</body>
+</html>

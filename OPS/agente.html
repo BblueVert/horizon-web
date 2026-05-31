@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Agente IA</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.agente-coming{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex:1;gap:20px;text-align:center;padding:40px;
+}
+.agente-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);
+  border-radius:8px;padding:8px 16px;
+  font-family:var(--fm);font-size:10px;color:var(--indigo2);letter-spacing:.5px;
+}
+.agente-title{font-family:var(--fd);font-size:48px;letter-spacing:3px;color:var(--text);}
+.agente-title span{
+  background:linear-gradient(135deg,var(--indigo),var(--indigo2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.agente-desc{font-size:14px;color:var(--text2);line-height:1.7;max-width:500px;}
+.agente-modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:480px;}
+.agente-mode{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:20px;text-align:left;
+}
+.agente-mode-icon{font-size:24px;margin-bottom:10px;}
+.agente-mode-name{font-family:var(--fd);font-size:18px;letter-spacing:1px;color:var(--text);margin-bottom:6px;}
+.agente-mode-desc{font-size:12px;color:var(--text2);line-height:1.5;}
+.agente-key-note{
+  background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);
+  border-radius:8px;padding:12px 18px;
+  font-family:var(--fm);font-size:10px;color:var(--yellow);
+  max-width:480px;line-height:1.6;
+}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main" style="display:flex;flex-direction:column;">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Agente IA</div>
+        <div class="ops-page-sub">Consultor interno de HORIZON · Próximamente</div>
+      </div>
+    </div>
+    <div class="agente-coming">
+      <div class="agente-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Fase 4 del desarrollo
+      </div>
+
+      <div class="agente-title">Agente<br><span>HORIZON</span></div>
+      <p class="agente-desc">Un consultor interno que conoce tu negocio y cada proyecto que estás construyendo. Dos modos, contexto real, respuestas concretas.</p>
+
+      <div class="agente-modes">
+        <div class="agente-mode">
+          <div class="agente-mode-icon">💼</div>
+          <div class="agente-mode-name">Modo Socio</div>
+          <div class="agente-mode-desc">Analiza métricas, pipeline y prioridades comerciales de HORIZON. Para tomar decisiones de negocio con datos reales.</div>
+        </div>
+        <div class="agente-mode">
+          <div class="agente-mode-icon">⚙️</div>
+          <div class="agente-mode-name">Modo Técnico</div>
+          <div class="agente-mode-desc">Arquitecto de soluciones para los proyectos de clientes. Revisa roadmaps, backlog y stacks en construcción.</div>
+        </div>
+      </div>
+
+      <div class="agente-key-note">
+        ⚠️ Para activar este módulo necesitás una API Key de Anthropic (Claude).<br>
+        Conseguila en <strong>console.anthropic.com</strong> y avisale a Claude Code cuando la tengas.
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+(async function(){
+  const session = await opsRequireAuth();
+  if (!session) return;
+  await opsInitNav();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Dashboard</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.cupos-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.cupo-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 14px 12px;}
+.cupo-plan{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.cupo-nums{display:flex;align-items:baseline;gap:4px;margin-bottom:8px;}
+.cupo-taken{font-family:var(--fd);font-size:22px;color:var(--h1);}
+.cupo-total{font-family:var(--fm);font-size:10px;color:var(--text3);}
+.cupo-bar{height:3px;background:var(--card3);border-radius:2px;overflow:hidden;}
+.cupo-fill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));border-radius:2px;}
+
+.reunion-item{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.reunion-item:last-child{border-bottom:none;}
+.reunion-date{
+  background:linear-gradient(135deg,var(--h1),var(--h2));
+  border-radius:8px;padding:8px 10px;text-align:center;min-width:48px;
+}
+.reunion-day{font-family:var(--fd);font-size:18px;color:#fff;line-height:1;}
+.reunion-mon{font-family:var(--fm);font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.7);}
+.reunion-info{flex:1;}
+.reunion-nombre{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.reunion-meta{font-family:var(--fm);font-size:9px;color:var(--text3);}
+
+.activity-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:8px;height:8px;border-radius:50%;background:var(--h1);flex-shrink:0;margin-top:4px;}
+.activity-dot.green{background:var(--green);}
+.activity-dot.indigo{background:var(--indigo2);}
+.activity-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.activity-text strong{color:var(--text);font-size:13px;}
+.activity-time{font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:2px;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <!-- sidebar inyectado por ops-nav.js -->
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Dashboard</div>
+        <div class="ops-page-sub" id="hdrDate">Cargando…</div>
+      </div>
+      <div class="ops-header-actions">
+        <a href="/agendar" target="_blank" class="btn btn-ghost btn-sm">+ Nueva sesión</a>
+        <a href="/ops/pipeline" class="btn btn-primary btn-sm">Ver pipeline →</a>
+      </div>
+    </div>
+
+    <div class="ops-content">
+      <div id="dashLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando datos…</div>
+      <div id="dashContent" style="display:none;">
+
+        <!-- Stats principales -->
+        <div class="ops-stats">
+          <div class="stat-card">
+            <div class="stat-label">MRR Retainers</div>
+            <div class="stat-value green" id="statMrr">$0</div>
+            <div class="stat-sub" id="statMrrSub">0 clientes activos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pipeline CLP</div>
+            <div class="stat-value orange" id="statPipeline">$0</div>
+            <div class="stat-sub" id="statPipelineSub">0 leads en proceso</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Proyectos Activos</div>
+            <div class="stat-value indigo" id="statProyectos">0</div>
+            <div class="stat-sub">en construcción</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Reuniones esta semana</div>
+            <div class="stat-value" id="statReuniones">0</div>
+            <div class="stat-sub">próximos 7 días</div>
+          </div>
+        </div>
+
+        <!-- Cupos por plan -->
+        <div class="ops-card" style="margin-bottom:14px;">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;">Cupos Fundadores</div>
+          <div class="cupos-grid" id="cuposGrid"></div>
+        </div>
+
+        <div class="ops-grid2">
+          <!-- Próximas reuniones -->
+          <div class="ops-card">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+              Próximas Reuniones
+              <a href="/ops/pipeline" style="color:var(--h1);text-decoration:none;font-size:8px;">ver todo →</a>
+            </div>
+            <div id="reunionesList">
+              <div class="ops-empty"><div class="ops-empty-icon">📅</div><div class="ops-empty-text">Sin reuniones próximas</div></div>
+            </div>
+          </div>
+
+          <!-- Actividad reciente -->
+          <div class="ops-card">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:16px;">Actividad Reciente</div>
+            <div id="actividadList">
+              <div class="ops-empty"><div class="ops-empty-icon">⚡</div><div class="ops-empty-text">Sin actividad reciente</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const PLANS = {
+  plan01:{label:'Presencia Digital',    preciof:290000},
+  plan02:{label:'Ecosistema Digital',   preciof:490000},
+  plan03:{label:'Negocio Activo',       preciof:690000},
+  plan04:{label:'Sistema con IA',       preciof:890000},
+  plan05:{label:'Agente IA',            preciof:null},
+};
+const MONTHS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+function fmt$( n ){
+  if(!n) return '$0';
+  return '$'+n.toLocaleString('es-CL');
+}
+
+function relTime(iso){
+  if(!iso) return '';
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if(diff < 60) return 'hace un momento';
+  if(diff < 3600) return `hace ${Math.floor(diff/60)} min`;
+  if(diff < 86400) return `hace ${Math.floor(diff/3600)} h`;
+  return `hace ${Math.floor(diff/86400)} d`;
+}
+
+async function loadDashboard(){
+  const headers = await opsAuthHeaders();
+  let data;
+  try{
+    const r = await fetch('/api/ops/dashboard', { headers });
+    if(!r.ok) throw new Error();
+    data = await r.json();
+  }catch{
+    document.getElementById('dashLoading').textContent = 'Error al cargar datos.';
+    return;
+  }
+
+  const { mrr, pipeline, proyectos, leads, reuniones } = data;
+
+  // Stats
+  document.getElementById('statMrr').textContent = fmt$(mrr.total);
+  document.getElementById('statMrrSub').textContent = `${mrr.count} cliente${mrr.count!==1?'s':''} activo${mrr.count!==1?'s':''}`;
+  document.getElementById('statPipeline').textContent = fmt$(pipeline.total);
+  document.getElementById('statPipelineSub').textContent = `${pipeline.count} lead${pipeline.count!==1?'s':''} en proceso`;
+  document.getElementById('statProyectos').textContent = proyectos;
+  document.getElementById('statReuniones').textContent = reuniones.length;
+
+  // Cupos
+  const cuposHtml = ['plan01','plan02','plan03','plan04','plan05'].map(p=>{
+    const plan = PLANS[p];
+    const tomados = (leads||[]).filter(l=>l.plan===p&&l.tipoprecio==='fundador').length;
+    const pct = Math.min(100, tomados*10);
+    return `<div class="cupo-item">
+      <div class="cupo-plan">Plan ${p.replace('plan','')}</div>
+      <div class="cupo-nums">
+        <span class="cupo-taken">${10-tomados}</span>
+        <span class="cupo-total">/ 10</span>
+      </div>
+      <div class="cupo-bar"><div class="cupo-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('cuposGrid').innerHTML = cuposHtml;
+
+  // Reuniones
+  if(reuniones.length){
+    document.getElementById('reunionesList').innerHTML = reuniones.slice(0,5).map(r=>{
+      const d = new Date(r.reunion_fecha);
+      const planLabel = PLANS[r.plan]?.label || r.plan || '—';
+      return `<div class="reunion-item">
+        <div class="reunion-date">
+          <div class="reunion-day">${d.getDate()}</div>
+          <div class="reunion-mon">${MONTHS[d.getMonth()]}</div>
+        </div>
+        <div class="reunion-info">
+          <div class="reunion-nombre">${r.nombre||'Sin nombre'}</div>
+          <div class="reunion-meta">${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} hrs · ${planLabel}</div>
+        </div>
+        <span class="badge badge-orange" style="flex-shrink:0">Confirmada</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Actividad reciente
+  const recent = (leads||[]).sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at)).slice(0,6);
+  if(recent.length){
+    const STATUS_COLOR={new:'',contactado:'indigo',propuesta:'indigo',arranque:'green',cerrado:'green'};
+    document.getElementById('actividadList').innerHTML = recent.map(l=>{
+      const color = STATUS_COLOR[l.status]||'';
+      return `<div class="activity-item">
+        <div class="activity-dot ${color}"></div>
+        <div>
+          <div class="activity-text"><strong>${l.nombre||'Lead'}</strong> · ${l.status}</div>
+          <div class="activity-time">${relTime(l.updated_at)} · ${PLANS[l.plan]?.label||l.plan||'Sin plan'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('dashLoading').style.display='none';
+  document.getElementById('dashContent').style.display='block';
+}
+
+(async function(){
+  const session = await opsRequireAuth();
+  if(!session) return;
+  await opsInitNav();
+
+  // Fecha en el header
+  const now = new Date();
+  document.getElementById('hdrDate').textContent =
+    now.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  await loadDashboard();
+})();
+</script>
+</body>
+</html>

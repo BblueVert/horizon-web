@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Proyectos</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.proyectos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.proyecto-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:20px;text-decoration:none;display:block;transition:.15s;
+}
+.proyecto-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.pcard-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.pcard-name{font-family:var(--fd);font-size:20px;letter-spacing:1.5px;color:var(--text);}
+.pcard-plan{font-family:var(--fm);font-size:8px;background:rgba(255,107,53,.08);color:var(--h2);border:1px solid rgba(255,107,53,.15);border-radius:4px;padding:3px 8px;}
+.pcard-progress{margin:12px 0;}
+.pcard-progress-label{display:flex;justify-content:space-between;font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:6px;}
+.pcard-next{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.pcard-next-label{font-family:var(--fm);font-size:8px;color:var(--text3);}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Proyectos Activos</div>
+        <div class="ops-page-sub" id="proyectosSub">Cargando…</div>
+      </div>
+    </div>
+    <div class="ops-content">
+      <div id="proyLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando proyectos…</div>
+      <div class="proyectos-grid" id="proyGrid" style="display:none;"></div>
+      <div id="proyEmpty" style="display:none;">
+        <div class="ops-empty">
+          <div class="ops-empty-icon">🚀</div>
+          <div class="ops-empty-text">Sin proyectos activos aún. Activá un lead desde el Pipeline.</div>
+          <a href="/ops/pipeline" class="btn btn-primary" style="margin-top:12px;">Ir al Pipeline →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const PLANS = {
+  plan01:'Presencia Digital', plan02:'Ecosistema Digital',
+  plan03:'Negocio Activo',    plan04:'Sistema con IA', plan05:'Agente IA',
+};
+const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+async function loadProyectos() {
+  const sb = getSB();
+  const { data: proyectos, error } = await sb
+    .from('projects')
+    .select(`id, nombre, plan, estado, created_at,
+      lead:leads(nombre, empresa, mrr, portal_token),
+      milestones:project_milestones(id, estado)`)
+    .neq('estado', 'entregado')
+    .order('created_at', { ascending: false });
+
+  if (error) { document.getElementById('proyLoading').textContent = 'Error al cargar.'; return; }
+
+  document.getElementById('proyLoading').style.display = 'none';
+
+  if (!proyectos?.length) {
+    document.getElementById('proyEmpty').style.display = 'block'; return;
+  }
+
+  document.getElementById('proyectosSub').textContent = `${proyectos.length} proyecto${proyectos.length!==1?'s':''} en curso`;
+
+  const html = proyectos.map(p => {
+    const ms      = p.milestones || [];
+    const done    = ms.filter(m => m.estado === 'done' || m.estado === 'hecho').length;
+    const total   = ms.length || 1;
+    const pct     = Math.round(done / total * 100);
+    const lead    = p.lead || {};
+    const mrr     = lead.mrr ? '$'+Number(lead.mrr).toLocaleString('es-CL')+'/mes' : '';
+
+    return `<a href="/ops/proyecto?id=${p.id}" class="proyecto-card">
+      <div class="pcard-header">
+        <div>
+          <div class="pcard-name">${lead.nombre || p.nombre}</div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:2px;">${lead.empresa||''} ${mrr ? '· '+mrr : ''}</div>
+        </div>
+        <span class="pcard-plan">${PLANS[p.plan]||p.plan||'—'}</span>
+      </div>
+      <div class="pcard-progress">
+        <div class="pcard-progress-label">
+          <span>Avance</span>
+          <span>${done}/${ms.length} hitos · ${pct}%</span>
+        </div>
+        <div class="ops-progress"><div class="ops-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span class="badge ${p.estado==='activo'?'badge-green':'badge-gray'}">${p.estado}</span>
+        <span style="font-family:var(--fm);font-size:9px;color:var(--h1);">Ver workspace →</span>
+      </div>
+    </a>`;
+  }).join('');
+
+  document.getElementById('proyGrid').innerHTML = html;
+  document.getElementById('proyGrid').style.display = 'grid';
+}
+
+(async function(){
+  const session = await opsRequireAuth();
+  if (!session) return;
+  await opsInitNav();
+  await loadProyectos();
+})();
+</script>
+</body>
+</html>

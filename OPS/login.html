@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Acceso</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+html,body{height:100%;overflow:auto;}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse at 30% 20%,rgba(255,107,53,.06) 0%,transparent 60%),var(--void);}
+.login-wrap{width:100%;max-width:380px;padding:24px;}
+.login-card{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:36px 32px;}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.login-logo img{height:28px;}
+.login-logo-badge{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--h1);}
+.login-title{font-family:var(--fd);font-size:30px;letter-spacing:2px;color:var(--text);margin-bottom:4px;}
+.login-sub{font-family:var(--fm);font-size:9px;letter-spacing:1px;color:var(--text3);margin-bottom:28px;text-transform:uppercase;}
+.login-error{
+  display:none;background:rgba(239,68,68,.08);color:#f87171;
+  border:1px solid rgba(239,68,68,.18);border-radius:7px;
+  padding:10px 12px;font-family:var(--fm);font-size:10px;margin-top:12px;
+}
+.login-error.show{display:block;}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="../Identidad/Logo-Vertical-png.png" alt="HORIZON">
+      <span class="login-logo-badge">OPS</span>
+    </div>
+    <div class="login-title">Acceso</div>
+    <div class="login-sub">Centro de Operaciones · Solo equipo HORIZON</div>
+
+    <form id="loginForm" novalidate>
+      <div class="ops-field">
+        <label class="ops-label" for="email">Email</label>
+        <input class="ops-input" type="email" id="email" placeholder="tu@email.com" required autocomplete="email">
+      </div>
+      <div class="ops-field">
+        <label class="ops-label" for="password">Contraseña</label>
+        <input class="ops-input" type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;margin-top:4px;" id="btnLogin">
+        <span id="btnText">Ingresar</span>
+      </button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script>
+(async function(){
+  // Si ya hay sesión, redirigir al dashboard
+  const sb = getSB();
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) { window.location.href = '/ops'; return; }
+
+  document.getElementById('loginForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn    = document.getElementById('btnLogin');
+    const btnTxt = document.getElementById('btnText');
+    const err    = document.getElementById('loginError');
+    err.classList.remove('show');
+
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+      err.textContent = 'Completá los dos campos.';
+      err.classList.add('show'); return;
+    }
+
+    btn.disabled = true; btnTxt.textContent = 'Ingresando…';
+
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      err.textContent = 'Email o contraseña incorrectos.';
+      err.classList.add('show');
+      btn.disabled = false; btnTxt.textContent = 'Ingresar'; return;
+    }
+    window.location.href = '/ops';
+  });
+})();
+</script>
+</body>
+</html>

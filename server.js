@@ -23,6 +23,7 @@ app.use((req, res, next) => {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
+      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
       "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co",
       "frame-src 'none'",
       "frame-ancestors 'none'",
@@ -113,6 +114,28 @@ Object.entries(rewrites).forEach(([from, to]) => {
 
 // Portal con token dinámico
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
+
+// ── OPS — Centro de Operaciones ──────────────────────────────────────────────
+const opsPages = {
+  '/ops':            'OPS/index.html',
+  '/ops/login':      'OPS/login.html',
+  '/ops/pipeline':   'OPS/pipeline.html',
+  '/ops/proyectos':  'OPS/proyectos.html',
+  '/ops/proyecto':   'OPS/proyecto-detalle.html',
+  '/ops/agente':     'OPS/agente.html',
+};
+Object.entries(opsPages).forEach(([from, to]) => {
+  app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
+});
+
+// OPS API endpoints
+app.get('/api/ops/dashboard',      async (req, res) => (await require('./api/ops-data'))(req, res));
+app.get('/api/ops/leads',          async (req, res) => (await require('./api/ops-leads'))(req, res));
+app.post('/api/ops/promote-lead',  async (req, res) => (await require('./api/promote-lead'))(req, res));
+app.get('/api/ops/tasks',          async (req, res) => (await require('./api/tasks'))(req, res));
+app.post('/api/ops/tasks',         async (req, res) => (await require('./api/tasks'))(req, res));
+app.patch('/api/ops/tasks/:id',    async (req, res) => (await require('./api/tasks'))(req, res));
+app.delete('/api/ops/tasks/:id',   async (req, res) => (await require('./api/tasks'))(req, res));
 
 // ── 404 fallback ──────────────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).sendFile(path.join(__dirname, 'Pages/HORIZON_Landing_2026.html')));
