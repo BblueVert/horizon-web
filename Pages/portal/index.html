@@ -157,22 +157,22 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
       </div>
       <div class="bfield">
         <div class="blabel"><span class="bnum">01</span>¿A qué se dedica tu negocio?</div>
-        <textarea class="bta" id="b-negocio" rows="3"
+        <textarea class="bta" id="b-negocio" rows="3" maxlength="2000"
           placeholder="Describí en pocas líneas qué hacés, a quién le vendés y cómo operás hoy..."></textarea>
       </div>
       <div class="bfield">
         <div class="blabel"><span class="bnum">02</span>¿Cuál es el mayor freno o problema que tenés ahora?</div>
-        <textarea class="bta" id="b-problema" rows="3"
+        <textarea class="bta" id="b-problema" rows="3" maxlength="2000"
           placeholder="Lo primero que se te venga, sin filtro..."></textarea>
       </div>
       <div class="bfield">
         <div class="blabel"><span class="bnum">03</span>¿Qué resultado concreto esperás de esta sesión?</div>
-        <textarea class="bta" id="b-objetivo" rows="3"
+        <textarea class="bta" id="b-objetivo" rows="3" maxlength="2000"
           placeholder="Ej: entender qué necesito para escalar, tener un plan claro, saber si esto es para mí..."></textarea>
       </div>
       <div class="bfield">
         <div class="blabel"><span class="bnum">04</span>¿Ya intentaste resolver esto antes? ¿Cómo fue?</div>
-        <textarea class="bta" id="b-intentos" rows="3"
+        <textarea class="bta" id="b-intentos" rows="3" maxlength="2000"
           placeholder="Ej: contraté a alguien y no funcionó, intenté con herramientas pero lo abandoné..."></textarea>
       </div>
     </div>
@@ -190,7 +190,9 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 <script>
 (function(){
   const API = 'https://dkitbnrpwmwrfnmztdfc.supabase.co/functions/v1/portal-api';
-  const token = (window.location.pathname.match(/\/c\/([^/?#]+)/)||[])[1];
+  const _rawToken = (window.location.pathname.match(/\/c\/([^/?#]+)/)||[])[1];
+  const _uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const token = (_rawToken && _uuidRe.test(_rawToken)) ? _rawToken : null;
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -241,14 +243,16 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
     el.className='save-st'+(cls?' '+cls:'');
   }
 
+  const _trim2k = s => String(s||'').substring(0, 2000);
+
   let saveTimer=null;
   async function save(){
     setStatus('Guardando...','saving');
     const brief={
-      negocio: $('b-negocio').value,
-      problema:$('b-problema').value,
-      objetivo:$('b-objetivo').value,
-      intentos:$('b-intentos').value,
+      negocio: _trim2k($('b-negocio').value),
+      problema:_trim2k($('b-problema').value),
+      objetivo:_trim2k($('b-objetivo').value),
+      intentos:_trim2k($('b-intentos').value),
     };
     try{
       await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-portal-token':token},

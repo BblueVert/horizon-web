@@ -92,6 +92,11 @@ create policy "authenticated_full" on public.leads
   using (true)
   with check (true);
 
+-- Column-level security: anon may only write to the brief column, nothing else.
+-- This prevents a portal client from overwriting email, status, nombre, etc.
+REVOKE UPDATE ON public.leads FROM anon;
+GRANT UPDATE (brief) ON public.leads TO anon;
+
 -- ── Tabla projects ────────────────────────────────────────────────────────────
 create table if not exists public.projects (
   id           uuid        primary key default gen_random_uuid(),

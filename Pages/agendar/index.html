@@ -206,17 +206,17 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         <div class="row">
           <div class="field">
             <label class="label" for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required autocomplete="given-name">
+            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required autocomplete="given-name" maxlength="100" minlength="2">
           </div>
           <div class="field">
             <label class="label" for="telefono">Teléfono</label>
-            <input type="tel" id="telefono" name="telefono" placeholder="+56 9 xxxx xxxx" required autocomplete="tel">
+            <input type="tel" id="telefono" name="telefono" placeholder="+56 9 xxxx xxxx" required autocomplete="tel" maxlength="20" pattern="[\+\d\s\-\(\)]{6,20}">
           </div>
         </div>
 
         <div class="field">
           <label class="label" for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="tu@empresa.com" required autocomplete="email">
+          <input type="email" id="email" name="email" placeholder="tu@empresa.com" required autocomplete="email" maxlength="254">
         </div>
 
         <div class="field">
@@ -241,7 +241,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
         <div class="field">
           <label class="label" for="contexto">¿Cuál es tu principal desafío? <span style="color:var(--text3)">(opcional)</span></label>
-          <textarea id="contexto" name="contexto" placeholder="Ej: Necesito sistematizar mi proceso de ventas…" rows="3"></textarea>
+          <textarea id="contexto" name="contexto" placeholder="Ej: Necesito sistematizar mi proceso de ventas…" rows="3" maxlength="1000"></textarea>
         </div>
 
         <div class="field">
@@ -431,6 +431,31 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     if(!nombre||!email||!telefono||!fecha||!selHora){
       status.textContent = '⚠️ Completa todos los campos y selecciona un día y horario.';
+      status.className   = 'form-status error';
+      return;
+    }
+    if(nombre.length < 2 || nombre.length > 100){
+      status.textContent = '⚠️ El nombre debe tener entre 2 y 100 caracteres.';
+      status.className   = 'form-status error';
+      return;
+    }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254){
+      status.textContent = '⚠️ Email inválido.';
+      status.className   = 'form-status error';
+      return;
+    }
+    if(!/^[\+\d\s\-\(\)]{6,20}$/.test(telefono)){
+      status.textContent = '⚠️ Teléfono inválido. Usa formato +56 9 xxxx xxxx.';
+      status.className   = 'form-status error';
+      return;
+    }
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(fecha)){
+      status.textContent = '⚠️ Fecha inválida.';
+      status.className   = 'form-status error';
+      return;
+    }
+    if(contexto.length > 1000){
+      status.textContent = '⚠️ El mensaje no puede superar 1000 caracteres.';
       status.className   = 'form-status error';
       return;
     }

@@ -1,6 +1,6 @@
 'use strict';
 
-const { httpsRequest } = require('./shared');
+const { httpsRequest, rateLimit, getIp } = require('./shared');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://horizonweb.cl');
@@ -8,6 +8,9 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  const ip = getIp(req);
+  if (rateLimit(ip, 60_000, 30)) return res.status(429).json({ error: 'Demasiadas solicitudes' });
 
   const fecha = (req.query?.fecha || '').trim();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
