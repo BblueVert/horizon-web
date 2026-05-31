@@ -149,7 +149,8 @@ module.exports = async function handler(req, res) {
   }
 
   if (existingLead) {
-    const patch = { status: 'arranque', canal: 'hero', cal_link: meetLink, reunion_fecha: reunionISO };
+    // No sobreescribir el status — solo actualizar Meet link y fecha
+    const patch = { canal: 'hero', cal_link: meetLink, reunion_fecha: reunionISO };
     if (nombre)   patch.nombre   = nombre;
     if (telefono) patch.telefono = telefono;
     if (plan)     patch.plan     = plan;
@@ -158,7 +159,7 @@ module.exports = async function handler(req, res) {
         `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}`,
         sbHeaders, patch
       );
-      console.log('[schedule-meet] PATCH→arranque OK:', email);
+      console.log('[schedule-meet] PATCH lead existente OK:', email);
     } catch (err) {
       console.error('[schedule-meet] PATCH:', err.message);
       return res.status(503).json({ error: 'Error al actualizar lead' });
@@ -167,7 +168,7 @@ module.exports = async function handler(req, res) {
     const newLead = {
       id: uid(), nombre, email, empresa: '', telefono, nota: contexto,
       plan, canal: 'hero', origen: 'agendar-directo',
-      status: 'arranque', prioridad: 'Media', tipoprecio: 'fundador',
+      status: 'new', prioridad: 'Media', tipoprecio: 'fundador',
       cal_link: meetLink, reunion_fecha: reunionISO,
       historial: [], hooks_respuestas: {},
     };
@@ -177,7 +178,7 @@ module.exports = async function handler(req, res) {
         console.error('[schedule-meet] INSERT:', r.status, r.body);
         return res.status(503).json({ error: 'Error al guardar lead' });
       }
-      console.log('[schedule-meet] INSERT arranque OK:', email);
+      console.log('[schedule-meet] INSERT nuevo lead OK:', email);
     } catch (err) {
       console.error('[schedule-meet] INSERT throw:', err.message);
       return res.status(503).json({ error: 'Error interno' });
