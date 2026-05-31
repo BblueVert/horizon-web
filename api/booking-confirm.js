@@ -45,8 +45,8 @@ module.exports = async function handler(req, res) {
   }
 
   if (existingLead) {
-    // 2a. Update existing lead → arranque + booking data
-    const patch = { status: 'arranque', cal_link, reunion_fecha };
+    // 2a. Update existing lead → solo actualizar booking data, no sobreescribir status
+    const patch = { cal_link, reunion_fecha };
     if (nombre_raw) patch.nombre = nombre_raw;
     try {
       const r = await httpsRequest('PATCH',
@@ -57,13 +57,13 @@ module.exports = async function handler(req, res) {
         console.error('[booking-confirm] PATCH error:', r.status, r.body);
         return res.status(503).json({ error: 'Error al actualizar el lead' });
       }
-      console.log('[booking-confirm] PATCH→arranque OK:', email);
+      console.log('[booking-confirm] PATCH lead OK:', email);
     } catch (err) {
       console.error('[booking-confirm] error:', err.message);
       return res.status(503).json({ error: 'Error interno' });
     }
   } else {
-    // 2b. Lead not found → create in arranque stage
+    // 2b. Lead not found → create as new
     const newLead = {
       id: uid(),
       nombre: nombre_raw || email.split('@')[0],
@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
       plan: '',
       canal: 'cal',
       origen: 'cal-direct',
-      status: 'arranque',
+      status: 'new',
       prioridad: 'Media',
       tipoprecio: 'fundador',
       cal_link,
