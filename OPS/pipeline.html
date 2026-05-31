@@ -12,8 +12,9 @@
 <style>
 /* Pipeline Kanban */
 .pipeline-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
-.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:start;}
-@media(max-width:1200px){.kanban{grid-template-columns:repeat(3,1fr);}}
+.kanban{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:start;}
+@media(max-width:1400px){.kanban{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:800px){.kanban{grid-template-columns:repeat(2,1fr);}}
 .col-header{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;padding:0 0 10px;display:flex;align-items:center;justify-content:space-between;}
 .col-count{background:var(--card2);border-radius:10px;padding:1px 7px;font-size:9px;color:var(--text2);}
 .lead-card{
@@ -28,11 +29,12 @@
 .lead-price{font-family:var(--fm);font-size:9px;color:var(--text3);}
 .lead-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
 /* Status colors */
-.col-new      .lead-card{border-left:2px solid var(--text3);}
+.col-new        .lead-card{border-left:2px solid var(--text3);}
 .col-contactado .lead-card{border-left:2px solid var(--indigo2);}
 .col-propuesta  .lead-card{border-left:2px solid var(--yellow);}
 .col-arranque   .lead-card{border-left:2px solid var(--h1);}
 .col-activo     .lead-card{border-left:2px solid var(--green);}
+.col-cerrado    .lead-card{border-left:2px solid var(--text3);opacity:.7;}
 
 /* Modal */
 .ops-modal-bg{
@@ -57,7 +59,7 @@
         <div class="ops-page-sub" id="pipelineSub">Cargando…</div>
       </div>
       <div class="ops-header-actions">
-        <a href="/crm" target="_blank" class="btn btn-ghost btn-sm">CRM completo ↗</a>
+        <a href="/agendar" target="_blank" class="btn btn-primary btn-sm">+ Nueva sesión</a>
       </div>
     </div>
     <div class="ops-content">
@@ -92,6 +94,10 @@
           <div class="col-header">Activo <span class="col-count" id="cnt-activo">0</span></div>
           <div id="col-activo" class="col-activo"></div>
         </div>
+        <div>
+          <div class="col-header">Cerrado <span class="col-count" id="cnt-cerrado">0</span></div>
+          <div id="col-cerrado" class="col-cerrado"></div>
+        </div>
       </div>
     </div>
   </main>
@@ -116,8 +122,8 @@ const PLANS = {
   plan04:{label:'Sistema con IA',       preciof:890000},
   plan05:{label:'Agente IA',            preciof:null},
 };
-const STATUSES = ['new','contactado','propuesta','arranque','activo'];
-const STATUS_LABEL = {new:'Nuevo',contactado:'Contactado',propuesta:'Propuesta',arranque:'Arranque',activo:'Activo'};
+const STATUSES = ['new','contactado','propuesta','arranque','activo','cerrado'];
+const STATUS_LABEL = {new:'Nuevo',contactado:'Contactado',propuesta:'Propuesta',arranque:'Arranque',activo:'Activo',cerrado:'Cerrado'};
 
 let allLeads = [];
 let currentLead = null;
@@ -162,6 +168,7 @@ function renderKanban(leads) {
   document.getElementById('statClp').textContent = fmt$(pipeline);
   document.getElementById('statArranque').textContent = leads.filter(l=>l.status==='arranque').length;
   document.getElementById('statActivos').textContent = leads.filter(l=>l.status==='activo').length;
+  document.getElementById('pipelineSub').textContent = `${total} leads · ${fmt$(pipeline)} en pipeline · ${leads.filter(l=>l.status==='cerrado').length} cerrados`;
   document.getElementById('pipelineSub').textContent = `${total} leads · ${fmt$(pipeline)} en pipeline`;
 }
 
