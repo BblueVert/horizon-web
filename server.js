@@ -5,11 +5,11 @@ const path = require('path');
 const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 
 // OPS modules — required at startup so errors surface immediately
-const opsData     = require('./api/ops-data');
-const opsLeads    = require('./api/ops-leads');
-const promoteLead = require('./api/promote-lead');
-const tasks       = require('./api/tasks');
-const agente      = require('./api/agente');
+const opsData     = require('./api/ops/dashboard');
+const opsLeads    = require('./api/ops/leads');
+const promoteLead = require('./api/ops/promote-lead');
+const tasks       = require('./api/ops/tasks');
+const agente      = require('./api/ops/agente');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
