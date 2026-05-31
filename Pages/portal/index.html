@@ -255,8 +255,8 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
       intentos:_trim2k($('b-intentos').value),
     };
     try{
-      await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-portal-token':token},
-        body:JSON.stringify({brief})});
+      await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token, brief})});
       setStatus('Guardado ✓','saved');
       setTimeout(()=>setStatus(''),2500);
     }catch{ setStatus('Error al guardar'); }
@@ -272,7 +272,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
   async function init(){
     if(!token){ hide('loading'); show('error'); return; }
     try{
-      const res = await fetch(API, { headers: { 'x-portal-token': token } });
+      const res = await fetch(API + '?token=' + encodeURIComponent(token));
       if(!res.ok) throw new Error();
       const {lead,events} = await res.json();
 
