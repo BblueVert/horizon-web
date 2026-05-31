@@ -9,40 +9,78 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="/OPS/shared/ops.css">
 <style>
-.obj-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;}
-.obj-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
-.obj-titulo{font-size:14px;font-weight:600;color:var(--text);}
-.obj-desc{font-size:12px;color:var(--text2);margin-top:3px;}
-.obj-cat{font-family:var(--fm);font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:3px;}
-.cat-negocio{background:rgba(255,107,53,.1);color:var(--h1);}
-.cat-personal{background:rgba(99,102,241,.1);color:var(--indigo2);}
-.cat-proyecto{background:rgba(16,185,129,.1);color:var(--green);}
-.obj-progress{display:flex;align-items:center;gap:10px;margin-top:12px;}
-.obj-pbar{flex:1;height:6px;background:var(--card3);border-radius:3px;overflow:hidden;}
-.obj-pfill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));border-radius:3px;transition:width .4s;}
-.obj-pct{font-family:var(--fd);font-size:16px;color:var(--h1);min-width:36px;text-align:right;}
-.obj-actions{display:flex;gap:6px;margin-top:12px;}
-.obj-counter{display:flex;align-items:center;gap:6px;}
-.obj-counter input{width:64px;background:var(--card2);border:1px solid var(--border2);border-radius:5px;
-  color:var(--text);font-family:var(--fd);font-size:16px;padding:4px 8px;outline:none;text-align:center;}
+/* Filter tabs periodo */
+.periodo-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.periodo-tab{padding:6px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--card2);
+  font-family:var(--fm);font-size:9px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
+.periodo-tab:hover{color:var(--text);}
+.periodo-tab.active{background:rgba(255,107,53,.1);border-color:var(--h1);color:var(--h1);}
+
+/* OKR Card */
+.okr-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;transition:.15s;}
+.okr-card:hover{border-color:var(--border2);}
+.okr-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
+.okr-cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.okr-titulo{font-family:var(--fd);font-size:20px;letter-spacing:1px;color:var(--text);flex:1;}
+.okr-desc{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5;}
+.okr-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;}
+.okr-periodo{font-family:var(--fm);font-size:8px;letter-spacing:.5px;}
+
+/* KRs */
+.krs-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.kr-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.kr-item:last-child{border-bottom:none;padding-bottom:0;}
+.kr-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.kr-check.done{background:var(--green);border-color:var(--green);}
+.kr-check.done::after{content:'✓';color:#fff;font-size:9px;}
+.kr-text{flex:1;font-size:12px;color:var(--text);}
+.kr-text.done-txt{color:var(--text3);text-decoration:line-through;}
+.kr-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;transition:.15s;}
+.kr-del:hover{color:var(--red);}
+
+/* Overall progress bar */
+.okr-progress{margin-top:14px;}
+.okr-pbar-wrap{display:flex;align-items:center;gap:10px;}
+.okr-pbar{flex:1;height:6px;background:var(--card3);border-radius:3px;overflow:hidden;}
+.okr-pfill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));border-radius:3px;transition:width .4s;}
+.okr-pct{font-family:var(--fd);font-size:16px;min-width:36px;text-align:right;}
+
+/* Add KR inline */
+.add-kr-wrap{display:flex;gap:6px;margin-top:10px;}
+.add-kr-input{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--fb);font-size:12px;padding:7px 10px;outline:none;}
+.add-kr-input:focus{border-color:var(--h1);}
+
+/* OKR actions */
+.okr-footer{display:flex;gap:8px;margin-top:14px;}
+
 /* Modal */
 .ops-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center;}
 .ops-modal-bg.open{display:flex;}
-.ops-modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:460px;}
+.ops-modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
 </style>
 </head>
 <body>
 <div class="ops-layout">
   <main class="ops-main">
     <div class="ops-header">
-      <div><div class="ops-page-title">Objetivos</div><div class="ops-page-sub">Metas y seguimiento de progreso</div></div>
+      <div><div class="ops-page-title">Objetivos</div><div class="ops-page-sub" id="objSub">OKRs — Objetivos y Resultados Clave</div></div>
       <div class="ops-header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="setFilter('completado')">Ver completados</button>
         <button class="btn btn-primary btn-sm" onclick="openNew()">+ Nuevo objetivo</button>
       </div>
     </div>
     <div class="ops-content">
+      <div class="periodo-tabs">
+        <button class="periodo-tab active" onclick="setFilter('activo',this)" data-f="activo">🎯 Todos activos</button>
+        <button class="periodo-tab" onclick="setFilter('semana',this)" data-f="semana">📅 Esta semana</button>
+        <button class="periodo-tab" onclick="setFilter('mes',this)" data-f="mes">🗓 Este mes</button>
+        <button class="periodo-tab" onclick="setFilter('trimestre',this)" data-f="trimestre">📊 Q3 2026</button>
+        <button class="periodo-tab" onclick="setFilter('año',this)" data-f="año">🏆 Este año</button>
+        <button class="periodo-tab" onclick="setFilter('personal',this)" data-f="personal">🧑 Personal</button>
+        <button class="periodo-tab" onclick="setFilter('proyecto',this)" data-f="proyecto">🚀 Proyectos</button>
+      </div>
       <div id="objLoading" class="ops-loading"><div class="ops-spinner"></div></div>
-      <div id="objGrid" style="display:none;"></div>
+      <div id="objContent" style="display:none;"></div>
     </div>
   </main>
 </div>
@@ -50,20 +88,36 @@
 <div class="ops-modal-bg" id="objModal">
   <div class="ops-modal">
     <div style="font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;" id="objModalTitle">Nuevo Objetivo</div>
-    <div class="ops-field"><label class="ops-label">Título</label><input class="ops-input" id="objTitulo" maxlength="200" placeholder="¿Qué querés lograr?"></div>
-    <div class="ops-field"><label class="ops-label">Descripción <span style="color:var(--text3)">(opcional)</span></label><textarea class="ops-input" id="objDesc" rows="2" placeholder="Más detalle…"></textarea></div>
+    <div class="ops-field"><label class="ops-label">Objetivo</label><input class="ops-input" id="objTitulo" placeholder="¿Qué querés lograr?" maxlength="200"></div>
+    <div class="ops-field"><label class="ops-label">Descripción</label><textarea class="ops-input" id="objDesc" rows="2" placeholder="Más contexto o motivación…"></textarea></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div class="ops-field">
         <label class="ops-label">Categoría</label>
         <select class="ops-input" id="objCat">
-          <option value="negocio">Negocio</option>
-          <option value="personal">Personal</option>
-          <option value="proyecto">Proyecto</option>
+          <option value="negocio">💼 Negocio</option>
+          <option value="personal">🧑 Personal</option>
+          <option value="proyecto">🚀 Proyecto</option>
         </select>
       </div>
-      <div class="ops-field"><label class="ops-label">Meta (número)</label><input class="ops-input" type="number" id="objMeta" value="100" min="1"></div>
+      <div class="ops-field">
+        <label class="ops-label">Período</label>
+        <select class="ops-input" id="objPeriodo">
+          <option value="semana">Esta semana</option>
+          <option value="mes">Este mes</option>
+          <option value="trimestre">Q3 2026</option>
+          <option value="año">Este año</option>
+          <option value="libre">Sin período</option>
+        </select>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:4px;">
+    <div class="ops-field"><label class="ops-label">Fecha límite <span style="color:var(--text3)">(opcional)</span></label><input class="ops-input" type="date" id="objFecha"></div>
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;margin-top:4px;">Resultados Clave (KRs)</div>
+    <div id="newKrsList"></div>
+    <div style="display:flex;gap:6px;margin-bottom:16px;">
+      <input class="ops-input" id="newKrInput" placeholder="Ej: Cerrar 3 leads nuevos…" maxlength="200" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addNewKr();}">
+      <button class="btn btn-ghost btn-sm" onclick="addNewKr()">+ KR</button>
+    </div>
+    <div style="display:flex;gap:8px;">
       <button class="btn btn-primary" onclick="saveObj()" style="flex:1;justify-content:center;">Guardar</button>
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
     </div>
@@ -73,83 +127,163 @@
 <script src="/OPS/shared/ops-auth.js"></script>
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
-let editingId=null;
+const CAT_COLORS={negocio:'var(--h1)',personal:'var(--indigo2)',proyecto:'var(--green)'};
+const CAT_ICONS={negocio:'💼',personal:'🧑',proyecto:'🚀'};
+const PERIODO_LABELS={semana:'Esta semana',mes:'Este mes',trimestre:'Q3 2026',año:'Este año',libre:'Sin período'};
+let allObjs=[], currentFilter='activo', editId=null, newKrs=[];
 
 async function load(){
   const sb=getSB();
-  const {data}=await sb.from('objetivos').select('*').eq('estado','activo').order('created_at',{ascending:false});
+  const {data}=await sb.from('objetivos').select('*').order('created_at',{ascending:false});
+  allObjs=data||[];
   document.getElementById('objLoading').style.display='none';
-  document.getElementById('objGrid').style.display='block';
-  if(!data?.length){
-    document.getElementById('objGrid').innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">⭐</div><div class="ops-empty-text">Sin objetivos aún</div><button class="btn btn-primary" onclick="openNew()" style="margin-top:12px;">+ Crear objetivo</button></div>`;
-    return;
-  }
-  document.getElementById('objGrid').innerHTML=data.map(o=>{
-    const pct=Math.min(100,Math.round(o.progreso/o.meta*100));
-    const catCls={'negocio':'cat-negocio','personal':'cat-personal','proyecto':'cat-proyecto'}[o.categoria]||'';
-    return `<div class="obj-card">
-      <div class="obj-header">
-        <div>
-          <div class="obj-titulo">${o.titulo}</div>
-          ${o.descripcion?`<div class="obj-desc">${o.descripcion}</div>`:''}
-        </div>
-        <span class="obj-cat ${catCls}">${o.categoria}</span>
-      </div>
-      <div class="obj-progress">
-        <div class="obj-pbar"><div class="obj-pfill" style="width:${pct}%"></div></div>
-        <span class="obj-pct">${pct}%</span>
-      </div>
-      <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:6px;">${o.progreso} / ${o.meta}</div>
-      <div class="obj-actions">
-        <div class="obj-counter">
-          <button class="btn btn-ghost btn-sm" onclick="updateProgress('${o.id}',${o.progreso},${o.meta},-1)">−</button>
-          <input type="number" value="${o.progreso}" min="0" max="${o.meta}"
-            onchange="setProgress('${o.id}',this.value,${o.meta})" style="width:64px;background:var(--card2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:var(--fd);font-size:16px;padding:4px 8px;outline:none;text-align:center;">
-          <button class="btn btn-ghost btn-sm" onclick="updateProgress('${o.id}',${o.progreso},${o.meta},1)">+</button>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="editObj('${o.id}','${o.titulo.replace(/'/g,"\\'")}','${(o.descripcion||'').replace(/'/g,"\\'")}','${o.categoria}',${o.meta})">Editar</button>
-        <button class="btn btn-danger btn-sm" onclick="completeObj('${o.id}')">✓ Completar</button>
-      </div>
-    </div>`;
-  }).join('');
+  document.getElementById('objContent').style.display='block';
+  render();
 }
 
-async function updateProgress(id,current,meta,delta){
-  const np=Math.max(0,Math.min(meta,current+delta));
-  const sb=getSB();
-  await sb.from('objetivos').update({progreso:np}).eq('id',id);
-  load();
+function getFiltered(){
+  if(currentFilter==='activo') return allObjs.filter(o=>o.estado==='activo');
+  if(currentFilter==='completado') return allObjs.filter(o=>o.estado==='completado');
+  if(['semana','mes','trimestre','año','libre'].includes(currentFilter)) return allObjs.filter(o=>o.estado==='activo'&&o.categoria!='personal'&&o.categoria!='proyecto'&&(o.descripcion||'').toLowerCase().includes(currentFilter)||allObjs.filter(o=>o.estado==='activo'&&o.descripcion==='p')[0]);
+  // Simple: filter by cat or period stored in descripcion
+  return allObjs.filter(o=>o.estado==='activo'&&(o.categoria===currentFilter||(o.descripcion||'').includes(currentFilter)));
 }
-async function setProgress(id,val,meta){
-  const np=Math.max(0,Math.min(meta,Number(val)||0));
-  const sb=getSB();
-  await sb.from('objetivos').update({progreso:np}).eq('id',id);
-  load();
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.periodo-tab').forEach(b=>b.classList.remove('active'));
+  btn?.classList.add('active');
+  render();
+}
+
+function render(){
+  // For simplicity, show all activos but allow category filter
+  let filtered;
+  if(currentFilter==='completado') filtered=allObjs.filter(o=>o.estado==='completado');
+  else if(currentFilter==='personal') filtered=allObjs.filter(o=>o.estado==='activo'&&o.categoria==='personal');
+  else if(currentFilter==='proyecto') filtered=allObjs.filter(o=>o.estado==='activo'&&o.categoria==='proyecto');
+  else if(currentFilter==='activo') filtered=allObjs.filter(o=>o.estado==='activo');
+  else filtered=allObjs.filter(o=>o.estado==='activo');
+
+  const el=document.getElementById('objContent');
+  document.getElementById('objSub').textContent=`${filtered.length} objetivo${filtered.length!==1?'s':''} · ${currentFilter}`;
+
+  if(!filtered.length){
+    el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">⭐</div><div class="ops-empty-text">Sin objetivos en esta categoría</div><button class="btn btn-primary" onclick="openNew()" style="margin-top:12px;">+ Crear objetivo</button></div>`;
+    return;
+  }
+
+  el.innerHTML=filtered.map(o=>renderOKR(o)).join('');
+}
+
+function renderOKR(o){
+  const krs=Array.isArray(o.hooks_respuestas)?o.hooks_respuestas:[];
+  const done=krs.filter(k=>k.done).length;
+  const pct=krs.length?Math.round(done/krs.length*100):0;
+  const color=CAT_COLORS[o.categoria]||'var(--text3)';
+  const icon=CAT_ICONS[o.categoria]||'🎯';
+  const pLabel=PERIODO_LABELS[o.descripcion?.split('|')[1]||'']||'';
+
+  return `<div class="okr-card">
+    <div class="okr-header">
+      <div class="okr-cat-dot" style="background:${color};box-shadow:0 0 8px ${color}44;"></div>
+      <div style="flex:1;">
+        <div class="okr-titulo">${o.titulo}</div>
+        ${o.descripcion?`<div class="okr-desc">${o.descripcion.split('|')[0]}</div>`:''}
+        <div class="okr-meta">
+          <span class="badge" style="background:${color}18;color:${color};border:1px solid ${color}33;">${icon} ${o.categoria}</span>
+          ${pLabel?`<span class="badge badge-gray">${pLabel}</span>`:''}
+          ${o.fecha_limite?`<span class="badge badge-yellow">📅 ${o.fecha_limite}</span>`:''}
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-family:var(--fd);font-size:28px;color:${pct>=100?'var(--green)':'var(--h1)'};">${pct}%</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--text3);">${done}/${krs.length} KRs</div>
+      </div>
+    </div>
+
+    <div class="okr-progress">
+      <div class="okr-pbar-wrap">
+        <div class="okr-pbar"><div class="okr-pfill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}aa);"></div></div>
+      </div>
+    </div>
+
+    ${krs.length?`<div class="krs-label" style="margin-top:14px;">Resultados Clave</div>
+    <div>${krs.map((kr,i)=>`<div class="kr-item">
+      <div class="kr-check ${kr.done?'done':''}" onclick="toggleKR('${o.id}',${i})"></div>
+      <span class="kr-text ${kr.done?'done-txt':''}">${kr.texto}</span>
+      <button class="kr-del" onclick="deleteKR('${o.id}',${i})">×</button>
+    </div>`).join('')}</div>`:'<div style="font-size:12px;color:var(--text3);padding:8px 0;">Sin resultados clave aún.</div>'}
+
+    <div class="add-kr-wrap">
+      <input class="add-kr-input" placeholder="+ Agregar resultado clave…" maxlength="200"
+        onkeydown="if(event.key==='Enter')addKR('${o.id}',this)"
+        id="kr-input-${o.id}">
+      <button class="btn btn-ghost btn-sm" onclick="addKR('${o.id}',document.getElementById('kr-input-${o.id}'))">+ KR</button>
+    </div>
+
+    <div class="okr-footer">
+      <button class="btn btn-ghost btn-sm" onclick="editObj('${o.id}')">✏️ Editar</button>
+      ${pct>=100?`<button class="btn btn-primary btn-sm" onclick="completeObj('${o.id}')">🏆 Marcar completado</button>`:''}
+      <button class="btn btn-danger btn-sm" onclick="deleteObj('${o.id}')">Eliminar</button>
+    </div>
+  </div>`;
+}
+
+async function toggleKR(objId, idx){
+  const sb=getSB(); const o=allObjs.find(x=>x.id===objId); if(!o)return;
+  const krs=Array.isArray(o.hooks_respuestas)?[...o.hooks_respuestas]:[];
+  krs[idx]={...krs[idx],done:!krs[idx].done};
+  await sb.from('objetivos').update({hooks_respuestas:krs}).eq('id',objId);
+  o.hooks_respuestas=krs; render();
+}
+async function deleteKR(objId, idx){
+  const sb=getSB(); const o=allObjs.find(x=>x.id===objId); if(!o)return;
+  const krs=Array.isArray(o.hooks_respuestas)?[...o.hooks_respuestas]:[];
+  krs.splice(idx,1);
+  await sb.from('objetivos').update({hooks_respuestas:krs}).eq('id',objId);
+  o.hooks_respuestas=krs; render();
+}
+async function addKR(objId, inputEl){
+  const texto=inputEl.value.trim(); if(!texto)return;
+  inputEl.value='';
+  const sb=getSB(); const o=allObjs.find(x=>x.id===objId); if(!o)return;
+  const krs=Array.isArray(o.hooks_respuestas)?[...o.hooks_respuestas]:[];
+  krs.push({texto,done:false});
+  await sb.from('objetivos').update({hooks_respuestas:krs}).eq('id',objId);
+  o.hooks_respuestas=krs; render();
 }
 async function completeObj(id){
   const sb=getSB();
   await sb.from('objetivos').update({estado:'completado'}).eq('id',id);
-  load(); opsToast('Objetivo completado 🎯');
+  allObjs=allObjs.filter(o=>o.id!==id); render(); opsToast('¡Objetivo completado! 🏆');
 }
-
-function openNew(){ editingId=null; document.getElementById('objTitulo').value=''; document.getElementById('objDesc').value=''; document.getElementById('objMeta').value=100; document.getElementById('objModal').classList.add('open'); }
-function editObj(id,titulo,desc,cat,meta){ editingId=id; document.getElementById('objTitulo').value=titulo; document.getElementById('objDesc').value=desc; document.getElementById('objCat').value=cat; document.getElementById('objMeta').value=meta; document.getElementById('objModal').classList.add('open'); }
-function closeModal(){ document.getElementById('objModal').classList.remove('open'); }
-
-async function saveObj(){
-  const titulo=document.getElementById('objTitulo').value.trim();
-  if(!titulo){alert('Agregá un título.');return;}
+async function deleteObj(id){
+  if(!confirm('¿Eliminar este objetivo?'))return;
   const sb=getSB();
-  const data={titulo,descripcion:document.getElementById('objDesc').value.trim(),categoria:document.getElementById('objCat').value,meta:Number(document.getElementById('objMeta').value)||100};
-  if(editingId) await sb.from('objetivos').update(data).eq('id',editingId);
-  else await sb.from('objetivos').insert(data);
-  closeModal(); load(); opsToast(editingId?'Objetivo actualizado':'Objetivo creado');
+  await sb.from('objetivos').delete().eq('id',id);
+  allObjs=allObjs.filter(o=>o.id!==id); render();
 }
 
-(async function(){
-  const session=await opsRequireAuth(); if(!session)return;
-  await opsInitNav(); await load();
-})();
+/* Modal */
+let newKrsList=[];
+function openNew(){ editId=null; newKrsList=[]; document.getElementById('objTitulo').value=''; document.getElementById('objDesc').value=''; document.getElementById('objFecha').value=''; renderNewKrs(); document.getElementById('objModal').classList.add('open'); setTimeout(()=>document.getElementById('objTitulo').focus(),100); }
+function editObj(id){ const o=allObjs.find(x=>x.id===id); if(!o)return; editId=id; newKrsList=Array.isArray(o.hooks_respuestas)?[...o.hooks_respuestas]:[]; document.getElementById('objTitulo').value=o.titulo; document.getElementById('objDesc').value=(o.descripcion||'').split('|')[0]; document.getElementById('objCat').value=o.categoria||'negocio'; document.getElementById('objFecha').value=o.fecha_limite||''; renderNewKrs(); document.getElementById('objModal').classList.add('open'); }
+function closeModal(){ document.getElementById('objModal').classList.remove('open'); }
+function renderNewKrs(){ document.getElementById('newKrsList').innerHTML=newKrsList.map((kr,i)=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;"><span style="flex:1;font-size:12px;color:var(--text2);">→ ${typeof kr==='string'?kr:kr.texto}</span><button onclick="newKrsList.splice(${i},1);renderNewKrs();" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">×</button></div>`).join('');}
+function addNewKr(){ const input=document.getElementById('newKrInput'); const t=input.value.trim(); if(!t)return; newKrsList.push({texto:t,done:false}); input.value=''; renderNewKrs(); }
+async function saveObj(){
+  const titulo=document.getElementById('objTitulo').value.trim(); if(!titulo){alert('Agregá un título.');return;}
+  const desc=document.getElementById('objDesc').value.trim();
+  const per=document.getElementById('objPeriodo').value;
+  const data={titulo,descripcion:`${desc}|${per}`,categoria:document.getElementById('objCat').value,fecha_limite:document.getElementById('objFecha').value||null,hooks_respuestas:newKrsList,estado:'activo'};
+  const sb=getSB();
+  if(editId){ await sb.from('objetivos').update(data).eq('id',editId); const idx=allObjs.findIndex(o=>o.id===editId); if(idx>=0)allObjs[idx]={...allObjs[idx],...data}; }
+  else{ const {data:n}=await sb.from('objetivos').insert(data).select().single(); allObjs.unshift(n); }
+  closeModal(); render(); opsToast(editId?'Objetivo actualizado':'Objetivo creado');
+}
+
+(async function(){ const session=await opsRequireAuth(); if(!session)return; await opsInitNav(); await load(); })();
 </script>
 </body>
 </html>

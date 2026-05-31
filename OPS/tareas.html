@@ -9,98 +9,282 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="/OPS/shared/ops.css">
 <style>
-.tarea-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;transition:.15s;}
-.tarea-item:hover{border-color:var(--border2);}
-.tarea-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;}
-.tarea-check.done{background:var(--green);border-color:var(--green);}
-.tarea-check.done::after{content:'✓';color:#fff;font-size:10px;}
-.tarea-titulo{flex:1;font-size:13px;color:var(--text);}
-.tarea-titulo.done-txt{text-decoration:line-through;color:var(--text3);}
-.tarea-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 4px;border-radius:3px;transition:.15s;}
-.tarea-del:hover{color:var(--red);}
-.filter-tabs{display:flex;gap:6px;margin-bottom:16px;}
-.filter-tab{padding:5px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--card2);
-  font-family:var(--fm);font-size:9px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
-.filter-tab.active{background:rgba(255,107,53,.1);border-color:var(--h1);color:var(--h1);}
+/* Kanban */
+.kanban-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start;}
+@media(max-width:1100px){.kanban-wrap{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.kanban-wrap{grid-template-columns:1fr;}}
+
+.kanban-col{background:var(--card2);border:1px solid var(--border);border-radius:12px;min-height:200px;}
+.kanban-col-header{
+  padding:12px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.col-title-row{display:flex;align-items:center;gap:8px;}
+.col-dot{width:8px;height:8px;border-radius:50%;}
+.col-title{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);}
+.col-count{font-family:var(--fm);font-size:9px;background:var(--card3);border-radius:10px;padding:1px 7px;color:var(--text3);}
+.col-add{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;transition:.15s;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;}
+.col-add:hover{background:rgba(255,107,53,.1);color:var(--h1);}
+
+.kanban-cards{padding:8px;display:flex;flex-direction:column;gap:6px;min-height:80px;}
+.kanban-col.drag-over .kanban-cards{background:rgba(255,107,53,.03);border-radius:8px;}
+
+/* Task card */
+.task-card{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;
+  cursor:grab;transition:.15s;user-select:none;
+}
+.task-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
+.task-card.dragging{opacity:.5;cursor:grabbing;}
+.task-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.4;}
+.task-card-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
+.task-card-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.task-pri{font-family:var(--fm);font-size:7px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;text-transform:uppercase;}
+.pri-alta{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.pri-media{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.pri-baja{background:var(--card3);color:var(--text3);border:1px solid var(--border);}
+.task-label{font-family:var(--fm);font-size:7px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;background:rgba(99,102,241,.1);color:var(--indigo2);border:1px solid rgba(99,102,241,.2);}
+.task-date{font-family:var(--fm);font-size:8px;color:var(--text3);display:flex;align-items:center;gap:3px;}
+.task-date.overdue{color:var(--red);}
+.task-card-actions{display:flex;gap:4px;margin-top:8px;opacity:0;transition:.15s;}
+.task-card:hover .task-card-actions{opacity:1;}
+.task-action{background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 6px;border-radius:3px;font-family:var(--fm);letter-spacing:.3px;transition:.15s;}
+.task-action:hover{background:var(--card2);color:var(--text);}
+
+/* Quick add */
+.quick-add-input{
+  width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text);font-family:var(--fb);font-size:12px;padding:8px 10px;outline:none;
+  margin-top:2px;display:none;
+}
+.quick-add-input.visible{display:block;}
+.quick-add-input:focus{border-color:var(--h1);}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.label-filter{padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--card2);
+  font-family:var(--fm);font-size:8px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
+.label-filter:hover{color:var(--text);}
+.label-filter.active{background:rgba(99,102,241,.1);border-color:var(--indigo2);color:var(--indigo2);}
+
+/* Modal tarea */
+.task-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center;}
+.task-modal-bg.open{display:flex;}
+.task-modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
 </style>
 </head>
 <body>
 <div class="ops-layout">
   <main class="ops-main">
     <div class="ops-header">
-      <div><div class="ops-page-title">Tareas</div><div class="ops-page-sub" id="tareasSub">Lista personal de tareas</div></div>
+      <div><div class="ops-page-title">Tareas</div><div class="ops-page-sub" id="tareasHdr">Kanban personal</div></div>
+      <div class="ops-header-actions">
+        <button class="btn btn-primary btn-sm" onclick="openNewTask()">+ Nueva tarea</button>
+      </div>
     </div>
-    <div class="ops-content" style="max-width:680px;">
-      <!-- Input -->
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <input id="tareasInput" class="ops-input" type="text" placeholder="Nueva tarea…" maxlength="200"
-          onkeydown="if(event.key==='Enter')addTarea()" style="flex:1;">
-        <button class="btn btn-primary" onclick="addTarea()">Agregar</button>
+    <div class="ops-content">
+      <div class="filter-bar" id="labelFilters">
+        <span style="font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:1px;">ETIQUETA:</span>
+        <button class="label-filter active" onclick="setLabelFilter('',this)">Todas</button>
+        <button class="label-filter" onclick="setLabelFilter('diseño',this)">🎨 Diseño</button>
+        <button class="label-filter" onclick="setLabelFilter('dev',this)">💻 Dev</button>
+        <button class="label-filter" onclick="setLabelFilter('negocio',this)">💼 Negocio</button>
+        <button class="label-filter" onclick="setLabelFilter('personal',this)">🧑 Personal</button>
+        <button class="label-filter" onclick="setLabelFilter('urgente',this)">🔥 Urgente</button>
       </div>
-      <!-- Filtros -->
-      <div class="filter-tabs">
-        <button class="filter-tab active" onclick="setFilter('pendiente',this)">Pendientes</button>
-        <button class="filter-tab" onclick="setFilter('completada',this)">Completadas</button>
-        <button class="filter-tab" onclick="setFilter('all',this)">Todas</button>
+
+      <div id="tareasLoading" class="ops-loading"><div class="ops-spinner"></div></div>
+      <div class="kanban-wrap" id="kanban" style="display:none;">
+        <!-- cols inyectadas por JS -->
       </div>
-      <!-- Lista -->
-      <div id="tareasLista"><div class="ops-loading"><div class="ops-spinner"></div></div></div>
     </div>
   </main>
 </div>
+
+<!-- Modal tarea -->
+<div class="task-modal-bg" id="taskModal">
+  <div class="task-modal">
+    <div style="font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;" id="taskModalTitle">Nueva Tarea</div>
+    <div class="ops-field"><label class="ops-label">Título</label><input class="ops-input" id="taskTitulo" placeholder="¿Qué hay que hacer?" maxlength="200"></div>
+    <div class="ops-field"><label class="ops-label">Descripción <span style="color:var(--text3)">(opcional)</span></label><textarea class="ops-input" id="taskDesc" rows="3" placeholder="Más detalle, criterios de aceptación…"></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="ops-field">
+        <label class="ops-label">Etapa</label>
+        <select class="ops-input" id="taskEtapa">
+          <option value="backlog">📋 Backlog</option>
+          <option value="en_foco">🎯 En Foco</option>
+          <option value="revision">🔍 Revisión</option>
+          <option value="hecho">✅ Hecho</option>
+        </select>
+      </div>
+      <div class="ops-field">
+        <label class="ops-label">Prioridad</label>
+        <select class="ops-input" id="taskPri">
+          <option value="alta">🔴 Alta</option>
+          <option value="media" selected>🟡 Media</option>
+          <option value="baja">⚫ Baja</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="ops-field">
+        <label class="ops-label">Etiqueta</label>
+        <select class="ops-input" id="taskLabel">
+          <option value="">Sin etiqueta</option>
+          <option value="diseño">🎨 Diseño</option>
+          <option value="dev">💻 Dev</option>
+          <option value="negocio">💼 Negocio</option>
+          <option value="personal">🧑 Personal</option>
+          <option value="urgente">🔥 Urgente</option>
+        </select>
+      </div>
+      <div class="ops-field"><label class="ops-label">Fecha límite</label><input class="ops-input" type="date" id="taskFecha"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary" onclick="saveTask()" style="flex:1;justify-content:center;">Guardar</button>
+      <button class="btn btn-ghost" onclick="closeTaskModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script src="/OPS/shared/ops-auth.js"></script>
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
-let currentFilter='pendiente';
+const COLS=[
+  {key:'backlog',  label:'Backlog',   dot:'var(--text3)'},
+  {key:'en_foco',  label:'En Foco',   dot:'var(--h1)'},
+  {key:'revision', label:'Revisión',  dot:'var(--indigo2)'},
+  {key:'hecho',    label:'Hecho',     dot:'var(--green)'},
+];
+let allTasks=[], activeLabel='', editTaskId=null, dragId=null;
 
 async function load(){
   const sb=getSB();
-  let query=sb.from('prioridades').select('*').order('created_at',{ascending:false});
-  if(currentFilter==='pendiente') query=query.eq('completado',false);
-  else if(currentFilter==='completada') query=query.eq('completado',true);
-  const {data}=await query;
-  const el=document.getElementById('tareasLista');
-  document.getElementById('tareasSub').textContent=`${(data||[]).length} tarea${(data||[]).length!==1?'s':''}`;
-  if(!data?.length){el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">✅</div><div class="ops-empty-text">${currentFilter==='pendiente'?'¡Todo al día!':'Sin tareas'}</div></div>`;return;}
-  el.innerHTML=data.map(t=>`<div class="tarea-item" id="t-${t.id}">
-    <div class="tarea-check ${t.completado?'done':''}" onclick="toggle('${t.id}',${!t.completado})"></div>
-    <span class="tarea-titulo ${t.completado?'done-txt':''}">${t.titulo}</span>
-    <button class="tarea-del" onclick="del('${t.id}')">×</button>
-  </div>`).join('');
+  const {data}=await sb.from('tareas').select('*').order('created_at',{ascending:false});
+  allTasks=data||[];
+  document.getElementById('tareasLoading').style.display='none';
+  document.getElementById('kanban').style.display='grid';
+  renderKanban();
 }
 
-async function addTarea(){
-  const input=document.getElementById('tareasInput');
-  const titulo=input.value.trim(); if(!titulo)return;
-  input.value='';
-  const sb=getSB();
-  await sb.from('prioridades').insert({titulo});
-  load();
+function getFiltered(){
+  if(!activeLabel) return allTasks;
+  return allTasks.filter(t=>t.etiqueta===activeLabel);
 }
 
-async function toggle(id,completado){
-  const sb=getSB();
-  await sb.from('prioridades').update({completado}).eq('id',id);
-  load();
-}
-
-async function del(id){
-  const sb=getSB();
-  await sb.from('prioridades').delete().eq('id',id);
-  load();
-}
-
-function setFilter(f,btn){
-  currentFilter=f;
-  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+function setLabelFilter(label,btn){
+  activeLabel=label;
+  document.querySelectorAll('.label-filter').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  load();
+  renderKanban();
 }
 
-(async function(){
-  const session=await opsRequireAuth(); if(!session)return;
-  await opsInitNav(); await load();
-})();
+function renderKanban(){
+  const filtered=getFiltered();
+  const total=filtered.length;
+  document.getElementById('tareasHdr').textContent=`${total} tarea${total!==1?'s':''} · Kanban`;
+
+  document.getElementById('kanban').innerHTML=COLS.map(col=>{
+    const cards=filtered.filter(t=>t.etapa===col.key);
+    return `<div class="kanban-col" id="col-${col.key}" ondragover="onDragOver(event,'${col.key}')" ondrop="onDrop(event,'${col.key}')" ondragleave="onDragLeave(event)">
+      <div class="kanban-col-header">
+        <div class="col-title-row">
+          <div class="col-dot" style="background:${col.dot};"></div>
+          <span class="col-title">${col.label}</span>
+          <span class="col-count">${cards.length}</span>
+        </div>
+        <button class="col-add" onclick="openNewTask('${col.key}')" title="Agregar tarea">+</button>
+      </div>
+      <div class="kanban-cards" id="cards-${col.key}">
+        ${cards.map(t=>renderCard(t)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCard(t){
+  const today=new Date().toISOString().slice(0,10);
+  const isOverdue=t.fecha_limite&&t.fecha_limite<today&&t.etapa!=='hecho';
+  const priClass={alta:'pri-alta',media:'pri-media',baja:'pri-baja'}[t.prioridad]||'pri-media';
+  const labelIcons={diseño:'🎨',dev:'💻',negocio:'💼',personal:'🧑',urgente:'🔥'};
+  return `<div class="task-card" id="tc-${t.id}" draggable="true"
+    ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd(event)">
+    <div class="task-card-title">${t.titulo}</div>
+    ${t.descripcion?`<div class="task-card-desc">${t.descripcion.substring(0,80)}${t.descripcion.length>80?'…':''}</div>`:''}
+    <div class="task-card-meta">
+      <span class="task-pri ${priClass}">${t.prioridad}</span>
+      ${t.etiqueta?`<span class="task-label">${labelIcons[t.etiqueta]||''} ${t.etiqueta}</span>`:''}
+      ${t.fecha_limite?`<span class="task-date ${isOverdue?'overdue':''}">📅 ${t.fecha_limite}</span>`:''}
+    </div>
+    <div class="task-card-actions">
+      <button class="task-action" onclick="editTask('${t.id}')">✏️ Editar</button>
+      <button class="task-action" onclick="deleteTask('${t.id}')">🗑</button>
+    </div>
+  </div>`;
+}
+
+/* Drag & Drop */
+function onDragStart(e,id){ dragId=id; e.currentTarget.classList.add('dragging'); }
+function onDragEnd(e){ e.currentTarget.classList.remove('dragging'); dragId=null; }
+function onDragOver(e,col){ e.preventDefault(); document.getElementById('col-'+col).classList.add('drag-over'); }
+function onDragLeave(e){ e.currentTarget.classList?.remove('drag-over'); }
+async function onDrop(e,col){
+  e.preventDefault();
+  document.getElementById('col-'+col).classList.remove('drag-over');
+  if(!dragId) return;
+  const task=allTasks.find(t=>t.id===dragId); if(!task||task.etapa===col) return;
+  task.etapa=col;
+  renderKanban();
+  const sb=getSB();
+  await sb.from('tareas').update({etapa:col}).eq('id',dragId);
+}
+
+/* Modal */
+function openNewTask(etapa='backlog'){
+  editTaskId=null;
+  document.getElementById('taskTitulo').value='';
+  document.getElementById('taskDesc').value='';
+  document.getElementById('taskEtapa').value=etapa;
+  document.getElementById('taskPri').value='media';
+  document.getElementById('taskLabel').value='';
+  document.getElementById('taskFecha').value='';
+  document.getElementById('taskModalTitle').textContent='Nueva Tarea';
+  document.getElementById('taskModal').classList.add('open');
+  setTimeout(()=>document.getElementById('taskTitulo').focus(),100);
+}
+function editTask(id){
+  const t=allTasks.find(x=>x.id===id); if(!t)return;
+  editTaskId=id;
+  document.getElementById('taskTitulo').value=t.titulo;
+  document.getElementById('taskDesc').value=t.descripcion||'';
+  document.getElementById('taskEtapa').value=t.etapa;
+  document.getElementById('taskPri').value=t.prioridad||'media';
+  document.getElementById('taskLabel').value=t.etiqueta||'';
+  document.getElementById('taskFecha').value=t.fecha_limite||'';
+  document.getElementById('taskModalTitle').textContent='Editar Tarea';
+  document.getElementById('taskModal').classList.add('open');
+}
+function closeTaskModal(){ document.getElementById('taskModal').classList.remove('open'); }
+async function saveTask(){
+  const titulo=document.getElementById('taskTitulo').value.trim(); if(!titulo)return;
+  const data={titulo,descripcion:document.getElementById('taskDesc').value.trim(),etapa:document.getElementById('taskEtapa').value,prioridad:document.getElementById('taskPri').value,etiqueta:document.getElementById('taskLabel').value,fecha_limite:document.getElementById('taskFecha').value||null};
+  const sb=getSB();
+  if(editTaskId){
+    await sb.from('tareas').update(data).eq('id',editTaskId);
+    const idx=allTasks.findIndex(t=>t.id===editTaskId); if(idx>=0) allTasks[idx]={...allTasks[idx],...data};
+  } else {
+    const {data:n}=await sb.from('tareas').insert(data).select().single();
+    allTasks.unshift(n);
+  }
+  closeTaskModal(); renderKanban(); opsToast(editTaskId?'Tarea actualizada':'Tarea creada');
+}
+async function deleteTask(id){
+  if(!confirm('¿Eliminar tarea?'))return;
+  const sb=getSB(); await sb.from('tareas').delete().eq('id',id);
+  allTasks=allTasks.filter(t=>t.id!==id); renderKanban();
+}
+
+(async function(){ const session=await opsRequireAuth(); if(!session)return; await opsInitNav(); await load(); })();
 </script>
 </body>
 </html>

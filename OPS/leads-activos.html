@@ -9,86 +9,206 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="/OPS/shared/ops.css">
 <style>
-.lead-row{
-  display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:12px;
-  padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;
-  transition:.15s;
+/* Header stats */
+.la-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+
+/* Lead card expandible */
+.lead-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:10px;overflow:hidden;transition:.15s;
 }
-.lead-row:hover{border-color:var(--border2);}
+.lead-card:hover{border-color:var(--border2);}
+.lead-card-header{
+  display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;
+}
+.lead-avatar{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--h1),var(--h2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:18px;color:#fff;
+}
+.lead-info{flex:1;}
 .lead-name{font-size:14px;font-weight:600;color:var(--text);}
-.lead-empresa{font-size:11px;color:var(--text3);margin-top:2px;}
-.lead-plan{font-family:var(--fm);font-size:8px;background:rgba(255,107,53,.08);color:var(--h2);
-  border:1px solid rgba(255,107,53,.15);border-radius:4px;padding:3px 8px;}
-.mrr-input{width:100px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;
-  color:var(--text);font-family:var(--fm);font-size:11px;padding:5px 8px;outline:none;text-align:right;}
-.mrr-input:focus{border-color:var(--h1);}
+.lead-empresa{font-size:11px;color:var(--text3);margin-top:1px;font-family:var(--fm);}
+.lead-badges{display:flex;gap:6px;align-items:center;margin-top:5px;flex-wrap:wrap;}
+
+/* MRR stepper — estilo HORIZON */
+.mrr-stepper{display:flex;align-items:center;gap:0;flex-shrink:0;}
+.mrr-stepper-label{font-family:var(--fm);font-size:7px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.mrr-stepper-wrap{display:flex;align-items:center;background:var(--card2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;}
+.mrr-btn{
+  background:none;border:none;color:var(--text2);cursor:pointer;
+  width:32px;height:36px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:600;transition:.15s;
+}
+.mrr-btn:hover{background:rgba(255,107,53,.1);color:var(--h1);}
+.mrr-val{
+  font-family:var(--fd);font-size:18px;color:var(--text);
+  min-width:90px;text-align:center;padding:0 6px;border-left:1px solid var(--border);border-right:1px solid var(--border);
+}
+.mrr-val.positive{color:var(--green);}
+
+/* Lead expandido */
+.lead-body{
+  padding:0 18px 16px;border-top:1px solid var(--border);
+  display:none;
+}
+.lead-body.open{display:block;}
+.lead-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px;}
+.lead-field{display:flex;flex-direction:column;gap:4px;}
+.lead-field-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
+.lead-field-val{font-size:13px;color:var(--text2);}
+.lead-actions-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+
+/* Status badge colores */
+.s-arranque{background:rgba(255,107,53,.1);color:var(--h1);border:1px solid rgba(255,107,53,.2);}
+.s-activo{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+
+/* Retainer info */
+.retainer-info{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.12);border-radius:8px;margin-top:12px;
+}
+.retainer-icon{font-size:16px;}
+.retainer-text{font-size:12px;color:var(--text2);line-height:1.5;}
 </style>
 </head>
 <body>
 <div class="ops-layout">
   <main class="ops-main">
     <div class="ops-header">
-      <div>
-        <div class="ops-page-title">Leads Activos</div>
-        <div class="ops-page-sub" id="leadsSub">Cargando…</div>
-      </div>
+      <div><div class="ops-page-title">Leads Activos</div><div class="ops-page-sub" id="laSub">Retainers y proyectos en curso</div></div>
       <div class="ops-header-actions">
         <a href="/ops/pipeline" class="btn btn-ghost btn-sm">Ver pipeline completo →</a>
       </div>
     </div>
     <div class="ops-content">
-      <div id="leadsLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando leads…</div>
-      <div id="leadsContent" style="display:none;"></div>
+      <!-- Stats -->
+      <div class="la-stats">
+        <div class="stat-card"><div class="stat-label">MRR Total <span class="stat-badge">Activo</span></div><div class="stat-value green" id="stMrr">$0</div><div class="stat-sub" id="stMrrSub">0 retainers</div></div>
+        <div class="stat-card"><div class="stat-label">En Arranque</div><div class="stat-value orange" id="stArranque">0</div><div class="stat-sub">listos para activar</div></div>
+        <div class="stat-card"><div class="stat-label">Proyectos Activos</div><div class="stat-value indigo" id="stActivos">0</div><div class="stat-sub">en construcción</div></div>
+      </div>
+
+      <div id="laLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando…</div>
+      <div id="laContent" style="display:none;"></div>
     </div>
   </main>
 </div>
 <script src="/OPS/shared/ops-auth.js"></script>
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
-const PLANS={plan01:'Presencia Digital',plan02:'Ecosistema Digital',plan03:'Negocio Activo',plan04:'Sistema con IA',plan05:'Agente IA'};
-const STATUSES=['arranque','activo'];
+const PLANS={plan01:{label:'Presencia Digital',color:'#ff6b35'},plan02:{label:'Ecosistema Digital',color:'#ff8c42'},plan03:{label:'Negocio Activo',color:'#ffb347'},plan04:{label:'Sistema con IA',color:'#a855f7'},plan05:{label:'Agente IA',color:'#6366f1'}};
+const MRR_STEP=10000;
+let leads=[];
 
 async function load(){
   const sb=getSB();
-  const {data:leads}=await sb.from('leads').select('*').in('status',STATUSES).order('created_at',{ascending:false});
-  document.getElementById('leadsLoading').style.display='none';
-  document.getElementById('leadsContent').style.display='block';
-  document.getElementById('leadsSub').textContent=`${(leads||[]).length} leads en arranque o activos`;
+  const {data}=await sb.from('leads').select('*').in('status',['arranque','activo']).order('status',{ascending:false}).order('created_at',{ascending:false});
+  leads=data||[];
 
-  if(!leads?.length){
-    document.getElementById('leadsContent').innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">👥</div><div class="ops-empty-text">Sin leads activos aún</div><a href="/ops/pipeline" class="btn btn-primary" style="margin-top:12px;">Ir al Pipeline</a></div>`;
+  // Stats
+  const activos=leads.filter(l=>l.status==='activo');
+  const arranques=leads.filter(l=>l.status==='arranque');
+  const mrrTotal=activos.reduce((s,l)=>s+(l.mrr||0),0);
+  document.getElementById('stMrr').textContent='$'+mrrTotal.toLocaleString('es-CL');
+  document.getElementById('stMrrSub').textContent=`${activos.length} retainer${activos.length!==1?'s':''}`;
+  document.getElementById('stArranque').textContent=arranques.length;
+  document.getElementById('stActivos').textContent=activos.length;
+  document.getElementById('laSub').textContent=`${leads.length} clientes activos y en arranque`;
+
+  document.getElementById('laLoading').style.display='none';
+  document.getElementById('laContent').style.display='block';
+
+  if(!leads.length){
+    document.getElementById('laContent').innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">👥</div><div class="ops-empty-text">Sin leads activos. Promové uno desde el Pipeline.</div><a href="/ops/pipeline" class="btn btn-primary" style="margin-top:12px;">Ir al Pipeline →</a></div>`;
     return;
   }
 
-  document.getElementById('leadsContent').innerHTML = leads.map(l=>`
-    <div class="lead-row">
-      <div>
-        <div class="lead-name">${l.nombre||'Sin nombre'}</div>
-        <div class="lead-empresa">${l.empresa||l.email||'—'} · ${l.telefono||''}</div>
-      </div>
-      <span class="lead-plan">${PLANS[l.plan]||l.plan||'—'}</span>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <span style="font-family:var(--fm);font-size:9px;color:var(--text3);">MRR $</span>
-        <input class="mrr-input" type="number" value="${l.mrr||0}" min="0" step="10000"
-          onchange="updateMrr('${l.id}',this.value)" title="Retainer mensual CLP">
-      </div>
-      <div style="display:flex;gap:6px;">
-        ${l.portal_token?`<a href="/c/${l.portal_token}" target="_blank" class="btn btn-ghost btn-sm">Portal ↗</a>`:''}
-        <a href="/ops/pipeline" class="btn btn-ghost btn-sm">CRM →</a>
-      </div>
-    </div>`).join('');
+  document.getElementById('laContent').innerHTML=leads.map(l=>renderCard(l)).join('');
 }
 
-async function updateMrr(id, value){
+function renderCard(l){
+  const plan=PLANS[l.plan]||{label:l.plan||'—',color:'var(--text3)'};
+  const initials=(l.nombre||'?')[0].toUpperCase();
+  const mrr=l.mrr||0;
+  const isActivo=l.status==='activo';
+  return `<div class="lead-card" id="card-${l.id}">
+    <div class="lead-card-header" onclick="toggleCard('${l.id}')">
+      <div class="lead-avatar" style="background:linear-gradient(135deg,${plan.color},${plan.color}88)">${initials}</div>
+      <div class="lead-info">
+        <div class="lead-name">${l.nombre||'Sin nombre'}</div>
+        <div class="lead-empresa">${l.empresa||l.email||'—'}</div>
+        <div class="lead-badges">
+          <span class="badge ${isActivo?'badge-green s-activo':'badge-orange s-arranque'}">${isActivo?'Activo':'Arranque'}</span>
+          <span class="badge badge-gray">${plan.label}</span>
+          ${l.telefono?`<span style="font-family:var(--fm);font-size:9px;color:var(--text3);">${l.telefono}</span>`:''}
+        </div>
+      </div>
+      <div style="flex-shrink:0;text-align:right;">
+        <div class="mrr-stepper-label">Retainer / mes</div>
+        <div class="mrr-stepper-wrap">
+          <button class="mrr-btn" onclick="event.stopPropagation();stepMrr('${l.id}',-1)">−</button>
+          <div class="mrr-val ${mrr>0?'positive':''}" id="mrr-${l.id}">${mrr>0?'$'+mrr.toLocaleString('es-CL'):'$0'}</div>
+          <button class="mrr-btn" onclick="event.stopPropagation();stepMrr('${l.id}',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="lead-body" id="body-${l.id}">
+      <div class="lead-grid">
+        <div class="lead-field"><div class="lead-field-label">Email</div><div class="lead-field-val">${l.email||'—'}</div></div>
+        <div class="lead-field"><div class="lead-field-label">Canal</div><div class="lead-field-val">${l.canal||'—'}</div></div>
+        <div class="lead-field"><div class="lead-field-label">Prioridad</div><div class="lead-field-val">${l.prioridad||'Media'}</div></div>
+      </div>
+      ${l.nota?`<div style="margin-top:12px;font-size:12px;color:var(--text2);background:var(--card2);border-radius:7px;padding:10px 12px;border-left:2px solid var(--h1);">${l.nota}</div>`:''}
+      ${mrr>0?`<div class="retainer-info"><div class="retainer-icon">💰</div><div class="retainer-text">Retainer activo: <strong>$${mrr.toLocaleString('es-CL')} CLP/mes</strong><br>Anualizado: <strong>$${(mrr*12).toLocaleString('es-CL')} CLP/año</strong></div></div>`:''}
+      <div class="lead-actions-row">
+        ${l.portal_token?`<a href="/c/${l.portal_token}" target="_blank" class="btn btn-ghost btn-sm">Portal del cliente ↗</a>`:''}
+        <a href="/ops/pipeline" class="btn btn-ghost btn-sm">Ver en CRM →</a>
+        ${l.cal_link?`<a href="${l.cal_link}" target="_blank" class="btn btn-ghost btn-sm">Meet ↗</a>`:''}
+        ${l.status==='arranque'?`<button class="btn btn-primary btn-sm" onclick="activarProyecto('${l.id}')">▶ Activar Proyecto</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleCard(id){
+  const body=document.getElementById('body-'+id);
+  body.classList.toggle('open');
+}
+
+async function stepMrr(id, dir){
+  const lead=leads.find(l=>l.id===id); if(!lead)return;
+  const newMrr=Math.max(0,(lead.mrr||0)+dir*MRR_STEP);
+  lead.mrr=newMrr;
+  const el=document.getElementById('mrr-'+id);
+  el.textContent=newMrr>0?'$'+newMrr.toLocaleString('es-CL'):'$0';
+  el.className='mrr-val'+(newMrr>0?' positive':'');
+  // Debounce save
+  clearTimeout(el._saveTimer);
+  el._saveTimer=setTimeout(async()=>{
+    const headers=await opsAuthHeaders();
+    await fetch(`/api/ops/leads?id=${id}`,{method:'PATCH',headers,body:JSON.stringify({mrr:newMrr})});
+    // Update stats
+    const total=leads.filter(l=>l.status==='activo').reduce((s,l)=>s+(l.mrr||0),0);
+    document.getElementById('stMrr').textContent='$'+total.toLocaleString('es-CL');
+    opsToast('MRR actualizado');
+  },800);
+}
+
+async function activarProyecto(leadId){
+  if(!confirm('¿Activar proyecto para este cliente?')) return;
   const headers=await opsAuthHeaders();
-  await fetch(`/api/ops/leads?id=${id}`,{method:'PATCH',headers,body:JSON.stringify({mrr:Number(value)||0})});
-  opsToast('MRR actualizado');
+  const r=await fetch('/api/ops/promote-lead',{method:'POST',headers,body:JSON.stringify({lead_id:leadId})});
+  const d=await r.json();
+  if(!r.ok){opsToast(d.error||'Error','error');return;}
+  opsToast('Proyecto activado ✓');
+  setTimeout(()=>window.location.href='/ops/proyectos',1200);
 }
 
 (async function(){
   const session=await opsRequireAuth(); if(!session)return;
-  await opsInitNav();
-  await load();
+  await opsInitNav(); await load();
 })();
 </script>
 </body>
