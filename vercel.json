@@ -25,8 +25,9 @@
     { "source": "/ops/leads-activos", "destination": "/OPS/leads-activos.html" },
     { "source": "/ops/objetivos",     "destination": "/OPS/objetivos.html" },
     { "source": "/ops/agenda",        "destination": "/OPS/agenda.html" },
-    { "source": "/ops/tareas",        "destination": "/OPS/tareas.html" },
-    { "source": "/ops/notas",         "destination": "/OPS/notas.html" }
+    { "source": "/ops/tareas",          "destination": "/OPS/tareas.html" },
+    { "source": "/ops/notas",           "destination": "/OPS/notas.html" },
+    { "source": "/ops/saas-clientes",   "destination": "/OPS/saas-clientes.html" }
   ],
   "headers": [
     {
@@ -38,7 +39,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co; frame-src 'none'; frame-ancestors 'none';" }
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://api.mercadopago.com https://graph.facebook.com https://api.anthropic.com; frame-src 'none'; frame-ancestors 'none';" }
       ]
     }
   ]

@@ -99,6 +99,8 @@ Para: "¿Qué está bloqueando el proyecto de Floremané?", "Armame la arquitect
 
 **Stack:** Claude API (claude-sonnet-4-6). Context injection desde los datos del módulo activo. Sin historial persistente — cada conversación arranca limpia desde el contexto del momento.
 
+**Insumo pendiente para Modo Socio:** preguntas como *"¿qué objeción está apareciendo más este mes?"* o *"¿qué lead necesita seguimiento ya?"* requieren que exista el registro de inteligencia de llamadas y la lógica de niveles/seguimiento descritos en `SISTEMA-DE-CIERRE.md` (Componentes 1, 4 y 5). Sin ese insumo el Agente solo puede responder con métricas, no con contexto de venta real.
+
 ---
 
 ## Schema de Base de Datos — Tablas Nuevas

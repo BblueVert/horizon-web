@@ -145,6 +145,21 @@
           </div>
         </div>
 
+        <!-- Widget SaaS MRR -->
+        <div class="ops-card" style="margin-bottom:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;" id="saasWidget">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 10px;font-size:18px;">🏪</div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">SaaS — Clientes Activos</div>
+              <div style="display:flex;align-items:baseline;gap:10px;">
+                <span style="font-family:var(--fd);font-size:24px;color:var(--green);" id="saasMrr">$0</span>
+                <span style="font-family:var(--fm);font-size:9px;color:var(--text3);" id="saasCount">0 activos · 0 trials</span>
+              </div>
+            </div>
+          </div>
+          <a href="/ops/saas-clientes" class="btn btn-ghost btn-sm">Ver clientes →</a>
+        </div>
+
         <!-- Cupos -->
         <div class="ops-card" style="margin-bottom:16px;">
           <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Cupos Fundadores</div>
@@ -393,6 +408,24 @@ function renderPrioridades(items){
   </div>`).join('');
 }
 
+/* ─── Widget SaaS ─── */
+async function loadSaasWidget(){
+  try {
+    const sbSaas = supabase.createClient(
+      'https://khvfhvpqhcchgxrtmrjo.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtodmZodnBxaGNjaGd4cnRtcmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MzkwNTMsImV4cCI6MjA5NjExNTA1M30.lYHscLNuqaB1UObLDRbPLJH5vFm--WPTitN8lJXZeF4'
+    );
+    const { data } = await sbSaas.from('tenants').select('plan, status');
+    if (!data) return;
+    const PRICES = { starter: 29900, pro: 79900, studio: 149900 };
+    const active = data.filter(t => t.status === 'active');
+    const trials = data.filter(t => t.status === 'trial');
+    const mrr    = active.reduce((s, t) => s + (PRICES[t.plan] || 0), 0);
+    document.getElementById('saasMrr').textContent  = '$' + mrr.toLocaleString('es-CL');
+    document.getElementById('saasCount').textContent = `${active.length} activo${active.length!==1?'s':''} · ${trials.length} trial${trials.length!==1?'s':''}`;
+  } catch(e) { /* widget no crítico, falla silencioso */ }
+}
+
 async function loadPrioridades(){
   const sb=sbPri();
   const {data}=await sb.from('prioridades').select('*').order('created_at',{ascending:true});
@@ -431,7 +464,7 @@ async function deletePri(id){
     now.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
   renderMiniCal();
-  await Promise.all([loadDashboard(), loadPrioridades()]);
+  await Promise.all([loadDashboard(), loadPrioridades(), loadSaasWidget()]);
 })();
 </script>
 </body>
