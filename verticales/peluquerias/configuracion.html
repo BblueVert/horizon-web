@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    .config-sections { display: flex; flex-direction: column; gap: 20px; max-width: 680px; }
+    .config-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .config-card-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .config-card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .config-card-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .config-card-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .link-preview { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; }
+    .link-preview span { color: var(--text3); }
+    .link-preview strong { color: var(--text); font-family: monospace; }
+    .mp-status { display: flex; align-items: center; gap: 10px; }
+    .mp-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .mp-dot.connected { background: var(--success); }
+    .mp-dot.disconnected { background: var(--text3); }
+    .mp-label { font-size: 13px; color: var(--text2); }
+    .plan-badge { padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; background: rgba(74,222,128,.12); color: var(--success); }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+    <div class="page-header">
+      <h1>Configuración</h1>
+      <p>Datos del negocio, link de reserva y pagos</p>
+    </div>
+
+    <div class="config-sections" id="configSections">
+      <div class="empty-state"><p>Cargando...</p></div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+let _tenantId, _tenant;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function renderConfig(tenant) {
+  const baseUrl = window.location.origin;
+  const bookingUrl = `${baseUrl}/verticales/peluquerias/public/booking.html?t=${tenant.slug}`;
+  const planLabels = { starter: 'Starter', pro: 'Pro', studio: 'Studio' };
+
+  document.getElementById('configSections').innerHTML = `
+    <!-- Datos del negocio -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div>
+          <div class="config-card-title">Datos del negocio</div>
+          <div class="config-card-sub">Nombre, dirección y contacto</div>
+        </div>
+      </div>
+      <div class="config-card-body">
+        <div class="form-group">
+          <label class="form-label">Nombre del negocio</label>
+          <input class="form-input" id="cName" value="${tenant.name || ''}" placeholder="Barbería El Corte">
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Teléfono / WhatsApp</label>
+            <input class="form-input" id="cPhone" value="${tenant.phone || ''}" placeholder="+56912345678">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dirección</label>
+            <input class="form-input" id="cAddress" value="${tenant.address || ''}" placeholder="Av. Principal 123">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="align-self:flex-start;" onclick="saveDatos()">Guardar datos</button>
+      </div>
+    </div>
+
+    <!-- Link de reserva -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div>
+          <div class="config-card-title">Link de reserva</div>
+          <div class="config-card-sub">Comparte este link con tus clientes</div>
+        </div>
+      </div>
+      <div class="config-card-body">
+        <div class="link-preview">
+          <span>🔗</span>
+          <strong id="bookingLinkText">${bookingUrl}</strong>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" onclick="copyLink('${bookingUrl}')">Copiar link</button>
+          <a class="btn btn-ghost" href="${bookingUrl}" target="_blank">Abrir →</a>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Slug (parte del URL)</label>
+          <input class="form-input" id="cSlug" value="${tenant.slug || ''}" placeholder="mi-barberia" pattern="[a-z0-9\\-]+">
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">Solo minúsculas, números y guiones</div>
+        </div>
+        <button class="btn btn-primary" style="align-self:flex-start;" onclick="saveSlug()">Actualizar slug</button>
+      </div>
+    </div>
+
+    <!-- MercadoPago -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div>
+          <div class="config-card-title">MercadoPago</div>
+          <div class="config-card-sub">Cobra la seña al momento de la reserva</div>
+        </div>
+      </div>
+      <div class="config-card-body">
+        <div class="mp-status">
+          <div class="mp-dot ${tenant.mp_access_token ? 'connected' : 'disconnected'}"></div>
+          <span class="mp-label">${tenant.mp_access_token ? 'Cuenta conectada' : 'Sin cuenta conectada'}</span>
+        </div>
+        ${tenant.mp_access_token ? `
+          <div style="font-size:12px;color:var(--text2);">Tu cuenta de MercadoPago está activa. Los cobros de seña van directo a tu cuenta.</div>
+          <button class="btn btn-ghost" style="color:var(--danger);align-self:flex-start;" onclick="disconnectMP()">Desconectar</button>
+        ` : `
+          <div style="font-size:12px;color:var(--text2);">Conecta tu cuenta de MercadoPago para cobrar señas automáticamente al reservar.</div>
+          <div class="form-group">
+            <label class="form-label">Access Token de MercadoPago</label>
+            <input class="form-input" id="cMpToken" type="password" placeholder="APP_USR-...">
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">Obtén tu token en mercadopago.cl → Tus integraciones → Credenciales</div>
+          </div>
+          <button class="btn btn-primary" style="align-self:flex-start;" onclick="connectMP()">Conectar MercadoPago</button>
+        `}
+      </div>
+    </div>
+
+    <!-- Plan -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div>
+          <div class="config-card-title">Plan actual</div>
+          <div class="config-card-sub">Tu suscripción con HORIZON</div>
+        </div>
+        <span class="plan-badge">${planLabels[tenant.plan] || tenant.plan}</span>
+      </div>
+      <div class="config-card-body">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          ${[
+            ['Starter','$29.900','1 barbero'],
+            ['Pro','$79.900','hasta 4 barberos'],
+            ['Studio','$149.900','hasta 10 barberos']
+          ].map(([name,price,desc]) => `
+            <div style="padding:14px;border:1px solid var(--border);border-radius:8px;${tenant.plan?.toLowerCase()===name.toLowerCase()?'border-color:var(--success);background:rgba(74,222,128,.04)':''}">
+              <div style="font-size:13px;font-weight:600;color:var(--text);">${name}</div>
+              <div style="font-size:18px;font-weight:700;color:var(--text);margin:6px 0;">${price}<span style="font-size:11px;font-weight:400;color:var(--text3);">/mes</span></div>
+              <div style="font-size:11px;color:var(--text3);">${desc}</div>
+            </div>`).join('')}
+        </div>
+        <div style="font-size:12px;color:var(--text2);">Para cambiar de plan contacta a soporte@horizonweb.cl</div>
+      </div>
+    </div>
+  `;
+}
+
+window.saveDatos = async function() {
+  const name    = document.getElementById('cName').value.trim();
+  const phone   = document.getElementById('cPhone').value.trim();
+  const address = document.getElementById('cAddress').value.trim();
+  await sb.from('tenants').update({ name, phone, address, updated_at: new Date() }).eq('id', _tenantId);
+  showToast('✓ Datos guardados');
+};
+
+window.saveSlug = async function() {
+  const slug = document.getElementById('cSlug').value.trim();
+  if (!/^[a-z0-9-]+$/.test(slug)) { showToast('Slug inválido — solo minúsculas, números y guiones'); return; }
+  await sb.from('tenants').update({ slug, updated_at: new Date() }).eq('id', _tenantId);
+  showToast('✓ Slug actualizado');
+};
+
+window.connectMP = async function() {
+  const token = document.getElementById('cMpToken')?.value?.trim();
+  if (!token) return;
+  await sb.from('tenants').update({ mp_access_token: token, updated_at: new Date() }).eq('id', _tenantId);
+  showToast('✓ MercadoPago conectado');
+  await loadConfig();
+};
+
+window.disconnectMP = async function() {
+  await sb.from('tenants').update({ mp_access_token: null, updated_at: new Date() }).eq('id', _tenantId);
+  showToast('MercadoPago desconectado');
+  await loadConfig();
+};
+
+window.copyLink = function(url) {
+  navigator.clipboard.writeText(url).then(() => showToast('✓ Link copiado'));
+};
+
+async function loadConfig() {
+  const { data } = await sb.from('tenants').select('*').eq('id', _tenantId).single();
+  if (data) { _tenant = data; renderConfig(data); }
+}
+
+(async () => {
+  const user = await requireAuth(['owner', 'super_admin']);
+  if (!user) return;
+  _tenantId = user.tenant_id;
+  await renderNav('Config');
+  await loadConfig();
+})();
+</script>
+</body>
+</html>

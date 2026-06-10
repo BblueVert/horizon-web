@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+</head>
+<body>
+  <div class="saas-layout">
+    <nav id="saas-nav"></nav>
+    <main class="saas-main">
+      <div class="page-header">
+        <h1 id="greeting">Buenos días</h1>
+        <p id="date-str"></p>
+      </div>
+
+      <div class="stats-grid" id="stats"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+        <div class="card">
+          <h3 style="font-size:14px;font-weight:600;margin-bottom:16px;">Próximas reservas hoy</h3>
+          <div id="today-appointments">
+            <div class="empty-state"><p>Cargando...</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="font-size:14px;font-weight:600;margin-bottom:16px;">Actividad reciente</h3>
+          <div id="recent-activity">
+            <div class="empty-state"><p>Cargando...</p></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function formatCLP(n) {
+      return '$' + Number(n).toLocaleString('es-CL');
+    }
+
+    function greetingByHour() {
+      const h = new Date().getHours();
+      if (h < 12) return 'Buenos días';
+      if (h < 19) return 'Buenas tardes';
+      return 'Buenas noches';
+    }
+
+    async function loadDashboard() {
+      const user = await requireAuth(['owner', 'super_admin']);
+      if (!user) return;
+
+      await renderNav('Inicio');
+
+      document.getElementById('greeting').textContent =
+        greetingByHour() + (user.tenant ? ', ' + user.tenant.name : '');
+
+      document.getElementById('date-str').textContent =
+        new Date().toLocaleDateString('es-CL', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+      const tenantId = user.tenant_id;
+      const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+      const todayEnd   = new Date(); todayEnd.setHours(23,59,59,999);
+      const monthStart = new Date(todayStart.getFullYear(), todayStart.getMonth(), 1);
+
+      const [apptToday, apptMonth, staffCount, clientCount] = await Promise.all([
+        sb.from('biz_appointments')
+          .select('id, status', { count: 'exact' })
+          .eq('tenant_id', tenantId)
+          .gte('starts_at', todayStart.toISOString())
+          .lte('starts_at', todayEnd.toISOString()),
+        sb.from('biz_appointments')
+          .select('deposit_paid, status')
+          .eq('tenant_id', tenantId)
+          .gte('starts_at', monthStart.toISOString())
+          .neq('status', 'cancelled'),
+        sb.from('biz_staff').select('id', { count: 'exact' }).eq('tenant_id', tenantId).eq('active', true),
+        sb.from('biz_clients').select('id', { count: 'exact' }).eq('tenant_id', tenantId)
+      ]);
+
+      const ingresosMes = (apptMonth.data || [])
+        .reduce((s, a) => s + parseFloat(a.deposit_paid || 0), 0);
+
+      const noShows = (apptToday.data || []).filter(a => a.status === 'no_show').length;
+
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Reservas hoy</div>
+          <div class="stat-value">${apptToday.count || 0}</div>
+          <div class="stat-sub">${noShows} no-shows</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Ingresos este mes</div>
+          <div class="stat-value">${formatCLP(ingresosMes)}</div>
+          <div class="stat-sub">señas cobradas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Barberos activos</div>
+          <div class="stat-value">${staffCount.count || 0}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Clientes totales</div>
+          <div class="stat-value">${clientCount.count || 0}</div>
+        </div>
+      `;
+
+      // Reservas de hoy
+      const { data: todayFull } = await sb
+        .from('biz_appointments')
+        .select('starts_at, client_name, status, biz_staff(name), biz_services(name)')
+        .eq('tenant_id', tenantId)
+        .gte('starts_at', todayStart.toISOString())
+        .lte('starts_at', todayEnd.toISOString())
+        .order('starts_at');
+
+      const apptEl = document.getElementById('today-appointments');
+      if (!todayFull?.length) {
+        apptEl.innerHTML = '<div class="empty-state"><p>Sin reservas para hoy</p></div>';
+      } else {
+        apptEl.innerHTML = todayFull.map(a => {
+          const hora = new Date(a.starts_at).toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+          const statusMap = {
+            confirmed: ['badge-green','Confirmada'],
+            pending: ['badge-yellow','Pendiente'],
+            completed: ['badge-gray','Completada'],
+            no_show: ['badge-red','No-show'],
+            cancelled: ['badge-red','Cancelada']
+          };
+          const [cls, lbl] = statusMap[a.status] || ['badge-gray', a.status];
+          return `
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text3);font-size:12px;min-width:42px;">${hora}</span>
+              <div style="flex:1;">
+                <div style="font-size:13px;color:var(--text);">${a.client_name}</div>
+                <div style="font-size:11px;color:var(--text3);">${a.biz_services?.name} · ${a.biz_staff?.name}</div>
+              </div>
+              <span class="badge ${cls}">${lbl}</span>
+            </div>`;
+        }).join('');
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

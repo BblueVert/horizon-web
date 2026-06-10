@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comisiones — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    .comm-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width:800px){ .comm-layout { grid-template-columns: 1fr; } }
+
+    /* Tarjeta barbero con regla */
+    .staff-comm-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .scc-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .scc-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+    .scc-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .scc-role { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+    .pct-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .pct-field label { font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 5px; }
+    .pct-input-wrap { position: relative; }
+    .pct-input-wrap input { width: 100%; padding: 8px 28px 8px 10px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 14px; font-weight: 600; box-sizing: border-box; }
+    .pct-input-wrap::after { content: '%'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text3); pointer-events: none; }
+
+    .comm-preview { background: var(--surface2); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; }
+    .preview-title { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .preview-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+    .preview-row.final { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--border); }
+    .example-base { font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+
+    .intermediary-info { font-size: 11px; color: var(--text3); margin-bottom: 12px; line-height: 1.5; }
+    .intermediary-info b { color: var(--text2); }
+
+    /* Liquidaciones */
+    .period-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+    .period-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); color: var(--text2); font-size: 12px; font-weight: 500; cursor: pointer; transition: .12s; }
+    .period-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .period-custom { display: flex; gap: 8px; align-items: center; }
+    .period-custom input { padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); font-size: 12px; }
+
+    .settlement-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .settlement-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+    .sc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .sc-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .sc-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .sc-period { font-size: 11px; color: var(--text3); }
+    .sc-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 5px; }
+    .sc-row.total { font-size: 14px; font-weight: 700; color: var(--text); padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--border); }
+    .sc-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .status-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; }
+    .status-draft { background: rgba(217,119,6,.15); color: #fbbf24; }
+    .status-settled { background: rgba(37,99,235,.15); color: #60a5fa; }
+    .status-paid { background: rgba(22,163,74,.15); color: var(--success); }
+
+    /* Modal liquidación guardada */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: .2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+    .hist-item { padding: 14px 0; border-bottom: 1px solid var(--border2); }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-period { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .hist-meta { font-size: 11px; color: var(--text3); display: flex; gap: 12px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+
+    <div class="page-header" style="margin-bottom:28px;">
+      <h1>Comisiones</h1>
+      <p>Configura porcentajes y liquida pagos al staff</p>
+    </div>
+
+    <!-- ── Sección 1: Configurar reglas ──────────────────────────────────── -->
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px;">Reglas de comisión por barbero</div>
+    <div class="comm-layout" id="rulesGrid" style="margin-bottom:32px;">
+      <div class="empty-state" style="grid-column:1/-1;"><p>Cargando...</p></div>
+    </div>
+
+    <!-- ── Sección 2: Calcular liquidación ───────────────────────────────── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);">Calcular liquidación</div>
+      <button class="btn" onclick="openHistoryModal()" style="font-size:11px;">Ver historial de pagos</button>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="period-selector">
+        <button class="period-btn active" onclick="setPeriod('semana',this)">Esta semana</button>
+        <button class="period-btn" onclick="setPeriod('quincena',this)">Quincena</button>
+        <button class="period-btn" onclick="setPeriod('mes',this)">Este mes</button>
+        <div class="period-custom">
+          <input type="date" id="customFrom">
+          <span style="font-size:12px;color:var(--text3);">→</span>
+          <input type="date" id="customTo">
+          <button class="btn" onclick="setPeriod('custom',null)" style="font-size:11px;padding:5px 12px;">Calcular</button>
+        </div>
+      </div>
+      <div id="periodLabel" style="font-size:11px;color:var(--text3);margin-bottom:16px;"></div>
+      <button class="btn btn-primary" onclick="calcSettlements()" style="margin-bottom:16px;">Calcular comisiones del período</button>
+    </div>
+
+    <div class="settlement-grid" id="settlementGrid">
+      <div class="empty-state" style="grid-column:1/-1;"><p>Selecciona un período y calcula</p></div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- Modal historial de pagos -->
+<div class="modal-overlay" id="historyModal" onclick="if(event.target===this)closeHistoryModal()">
+  <div class="modal">
+    <div class="modal-title">Historial de liquidaciones</div>
+    <div id="historyModalContent"><p style="color:var(--text3);font-size:13px;">Cargando...</p></div>
+    <div style="margin-top:20px;">
+      <button class="btn" onclick="closeHistoryModal()" style="width:100%;">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+let currentUser = null;
+let staffList = [];
+let rules = {};
+let periodStart = null;
+let periodEnd = null;
+let currentSettlements = [];
+
+function showToast(msg, err = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? '#dc2626' : '';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function fCLP(n) { return '$' + Number(n || 0).toLocaleString('es-CL'); }
+function fPct(n) { return Number(n || 0).toFixed(1) + '%'; }
+
+function fDate(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('es-CL', { day:'numeric', month:'short' });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  currentUser = await requireAuth(['owner', 'super_admin']);
+  if (!currentUser) return;
+  renderNav('Comisiones');
+  await loadStaffAndRules();
+  setPeriod('mes', document.querySelector('.period-btn.active'));
+}
+
+async function loadStaffAndRules() {
+  const [{ data: staff }, { data: rulesData }] = await Promise.all([
+    sb.from('biz_staff').select('id,name,color,icon').eq('active', true).order('name'),
+    sb.from('biz_commission_rules').select('*'),
+  ]);
+  staffList = staff || [];
+  rules = {};
+  (rulesData || []).forEach(r => { rules[r.staff_id] = r; });
+  renderRulesGrid();
+}
+
+// ── Reglas ────────────────────────────────────────────────────────────────────
+function renderRulesGrid() {
+  const el = document.getElementById('rulesGrid');
+  if (!staffList.length) {
+    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><p>No hay staff activo</p></div>';
+    return;
+  }
+
+  el.innerHTML = staffList.map(s => {
+    const rule = rules[s.id] || { commission_pct: 50, intermediary_pct: 0 };
+    const commPct = rule.commission_pct;
+    const intPct = rule.intermediary_pct;
+    const exBase = 10000;
+    const afterInt = exBase * (1 - intPct / 100);
+    const staffNet = Math.round(afterInt * commPct / 100);
+    const ownerNet = Math.round(exBase - staffNet - (exBase * intPct / 100));
+
+    return `
+    <div class="staff-comm-card">
+      <div class="scc-header">
+        <div class="scc-avatar" style="background:${s.color}22;color:${s.color};">${s.icon || s.name[0]}</div>
+        <div>
+          <div class="scc-name">${s.name}</div>
+          <div class="scc-role">${s.icon || ''}</div>
+        </div>
+      </div>
+
+      <div class="pct-row">
+        <div class="pct-field">
+          <label>% Comisión barbero</label>
+          <div class="pct-input-wrap">
+            <input type="number" id="comm_${s.id}" value="${commPct}" min="0" max="100" step="0.5"
+              oninput="updatePreview('${s.id}')">
+          </div>
+        </div>
+        <div class="pct-field">
+          <label>% Intermediario</label>
+          <div class="pct-input-wrap">
+            <input type="number" id="int_${s.id}" value="${intPct}" min="0" max="30" step="0.1"
+              oninput="updatePreview('${s.id}')">
+          </div>
+        </div>
+      </div>
+
+      <div class="intermediary-info">
+        <b>Intermediario:</b> descuento por método de pago (ej: MercadoPago cobra ~3.49%). Se descuenta del bruto antes de calcular comisión.
+      </div>
+
+      <div class="comm-preview" id="preview_${s.id}">
+        <div class="preview-title">Ejemplo sobre $10.000</div>
+        <div class="example-base">Venta bruta: ${fCLP(exBase)}</div>
+        <div class="preview-row"><span>Descuento intermediario (${fPct(intPct)})</span><span>-${fCLP(Math.round(exBase * intPct / 100))}</span></div>
+        <div class="preview-row"><span>Comisión barbero (${fPct(commPct)})</span><span>${fCLP(staffNet)}</span></div>
+        <div class="preview-row final"><span>Local (dueño)</span><span>${fCLP(ownerNet)}</span></div>
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="saveRule('${s.id}')">Guardar</button>
+        <button class="btn" style="font-size:11px;" onclick="resetToDefault('${s.id}')">Reset 50%</button>
+      </div>
+    </div>
+  `}).join('');
+}
+
+function updatePreview(staffId) {
+  const commPct = parseFloat(document.getElementById(`comm_${staffId}`).value) || 0;
+  const intPct = parseFloat(document.getElementById(`int_${staffId}`).value) || 0;
+  const exBase = 10000;
+  const afterInt = exBase * (1 - intPct / 100);
+  const staffNet = Math.round(afterInt * commPct / 100);
+  const ownerNet = Math.round(exBase - staffNet - (exBase * intPct / 100));
+
+  const el = document.getElementById(`preview_${staffId}`);
+  el.innerHTML = `
+    <div class="preview-title">Ejemplo sobre $10.000</div>
+    <div class="example-base">Venta bruta: ${fCLP(exBase)}</div>
+    <div class="preview-row"><span>Descuento intermediario (${fPct(intPct)})</span><span>-${fCLP(Math.round(exBase * intPct / 100))}</span></div>
+    <div class="preview-row"><span>Comisión barbero (${fPct(commPct)})</span><span>${fCLP(staffNet)}</span></div>
+    <div class="preview-row final"><span>Local (dueño)</span><span>${fCLP(ownerNet)}</span></div>
+  `;
+}
+
+async function saveRule(staffId) {
+  const commPct = parseFloat(document.getElementById(`comm_${staffId}`).value) || 0;
+  const intPct = parseFloat(document.getElementById(`int_${staffId}`).value) || 0;
+
+  const payload = {
+    tenant_id: currentUser.tenant_id,
+    staff_id: staffId,
+    commission_pct: commPct,
+    intermediary_pct: intPct,
+    updated_at: new Date().toISOString(),
+  };
+
+  const existing = rules[staffId];
+  let error;
+  if (existing?.id) {
+    ({ error } = await sb.from('biz_commission_rules').update(payload).eq('id', existing.id));
+  } else {
+    ({ error } = await sb.from('biz_commission_rules').insert(payload));
+  }
+
+  if (error) { showToast('Error al guardar', true); return; }
+  rules[staffId] = { ...payload, id: existing?.id };
+  showToast(`Regla de ${staffList.find(s => s.id === staffId)?.name} guardada`);
+}
+
+function resetToDefault(staffId) {
+  document.getElementById(`comm_${staffId}`).value = 50;
+  document.getElementById(`int_${staffId}`).value = 0;
+  updatePreview(staffId);
+}
+
+// ── Período ───────────────────────────────────────────────────────────────────
+function setPeriod(type, btn) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const now = new Date();
+  if (type === 'semana') {
+    const day = now.getDay();
+    const mon = new Date(now); mon.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+    periodStart = mon.toISOString().slice(0, 10);
+    periodEnd = now.toISOString().slice(0, 10);
+  } else if (type === 'quincena') {
+    if (now.getDate() <= 15) {
+      periodStart = now.toISOString().slice(0, 8) + '01';
+      periodEnd = now.toISOString().slice(0, 8) + '15';
+    } else {
+      periodStart = now.toISOString().slice(0, 8) + '16';
+      const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      periodEnd = last.toISOString().slice(0, 10);
+    }
+  } else if (type === 'mes') {
+    periodStart = now.toISOString().slice(0, 8) + '01';
+    periodEnd = now.toISOString().slice(0, 10);
+  } else if (type === 'custom') {
+    periodStart = document.getElementById('customFrom').value;
+    periodEnd = document.getElementById('customTo').value;
+    if (!periodStart || !periodEnd) { showToast('Selecciona fechas', true); return; }
+  }
+
+  document.getElementById('periodLabel').textContent =
+    `Período: ${fDate(periodStart)} → ${fDate(periodEnd)}`;
+}
+
+// ── Calcular liquidación ──────────────────────────────────────────────────────
+async function calcSettlements() {
+  if (!periodStart || !periodEnd) { showToast('Selecciona un período', true); return; }
+
+  const { data: sales } = await sb.from('biz_sales')
+    .select('id,total,staff_id,payment_method')
+    .gte('created_at', periodStart + 'T00:00:00')
+    .lte('created_at', periodEnd + 'T23:59:59')
+    .eq('payment_status', 'paid');
+
+  const grouped = {};
+  (sales || []).forEach(s => {
+    if (!s.staff_id) return;
+    if (!grouped[s.staff_id]) grouped[s.staff_id] = { total: 0, count: 0 };
+    grouped[s.staff_id].total += s.total || 0;
+    grouped[s.staff_id].count++;
+  });
+
+  currentSettlements = staffList.map(s => {
+    const rule = rules[s.id] || { commission_pct: 50, intermediary_pct: 0 };
+    const gross = grouped[s.id]?.total || 0;
+    const count = grouped[s.id]?.count || 0;
+    const intPct = rule.intermediary_pct || 0;
+    const commPct = rule.commission_pct || 50;
+    const intermediary_amount = Math.round(gross * intPct / 100);
+    const netAfterInt = gross - intermediary_amount;
+    const commission_amount = Math.round(netAfterInt * commPct / 100);
+    const net_to_staff = commission_amount;
+    return { staff: s, rule, gross, count, intermediary_amount, commission_amount, net_to_staff, intPct, commPct };
+  }).filter(x => x.gross > 0);
+
+  renderSettlementGrid();
+}
+
+function renderSettlementGrid() {
+  const el = document.getElementById('settlementGrid');
+  if (!currentSettlements.length) {
+    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><p>Sin ventas con barbero asignado en este período</p></div>';
+    return;
+  }
+
+  el.innerHTML = currentSettlements.map((x, i) => `
+    <div class="settlement-card">
+      <div class="sc-header">
+        <div class="sc-avatar" style="background:${x.staff.color}22;color:${x.staff.color};">${x.staff.emoji || x.staff.name[0]}</div>
+        <div>
+          <div class="sc-name">${x.staff.name}</div>
+          <div class="sc-period">${fDate(periodStart)} → ${fDate(periodEnd)} · ${x.count} venta${x.count !== 1 ? 's' : ''}</div>
+        </div>
+      </div>
+      <div class="sc-row"><span>Ventas brutas</span><span>${fCLP(x.gross)}</span></div>
+      <div class="sc-row"><span>Descuento intermediario (${fPct(x.intPct)})</span><span>-${fCLP(x.intermediary_amount)}</span></div>
+      <div class="sc-row"><span>Base para comisión</span><span>${fCLP(x.gross - x.intermediary_amount)}</span></div>
+      <div class="sc-row"><span>% comisión barbero (${fPct(x.commPct)})</span><span style="color:var(--success);">${fCLP(x.commission_amount)}</span></div>
+      <div class="sc-row total"><span>A pagar a ${x.staff.name}</span><span>${fCLP(x.net_to_staff)}</span></div>
+      <div class="sc-actions">
+        <button class="btn btn-primary" style="flex:1;font-size:12px;" onclick="markPaid(${i})">Marcar pagado</button>
+        <button class="btn" style="font-size:12px;" onclick="saveSettlement(${i},'draft')">Guardar borrador</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function saveSettlement(idx, status) {
+  const x = currentSettlements[idx];
+  const payload = {
+    tenant_id: currentUser.tenant_id,
+    staff_id: x.staff.id,
+    period_start: periodStart,
+    period_end: periodEnd,
+    gross_amount: x.gross,
+    commission_pct: x.commPct,
+    intermediary_pct: x.intPct,
+    intermediary_amount: x.intermediary_amount,
+    commission_amount: x.commission_amount,
+    net_to_staff: x.net_to_staff,
+    sales_count: x.count,
+    status,
+    settled_at: status !== 'draft' ? new Date().toISOString() : null,
+  };
+  const { error } = await sb.from('biz_commission_settlements').insert(payload);
+  if (error) { showToast('Error al guardar', true); return; }
+  showToast(`Liquidación de ${x.staff.name} guardada`);
+}
+
+async function markPaid(idx) {
+  await saveSettlement(idx, 'paid');
+}
+
+// ── Historial de liquidaciones ─────────────────────────────────────────────
+async function openHistoryModal() {
+  document.getElementById('historyModal').classList.add('open');
+  const { data } = await sb.from('biz_commission_settlements')
+    .select('*,biz_staff(name,emoji,color)')
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  const el = document.getElementById('historyModalContent');
+  if (!data?.length) { el.innerHTML = '<p style="color:var(--text3);font-size:13px;">Sin liquidaciones guardadas aún</p>'; return; }
+
+  const statusLabels = { draft: 'Borrador', settled: 'Calculado', paid: 'Pagado' };
+  const statusClass = { draft: 'status-draft', settled: 'status-settled', paid: 'status-paid' };
+
+  el.innerHTML = data.map(s => `
+    <div class="hist-item">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <span style="font-size:16px;">${s.biz_staff?.emoji || ''}</span>
+        <div style="flex:1;">
+          <div class="hist-period">${s.biz_staff?.name} · ${fDate(s.period_start)} → ${fDate(s.period_end)}</div>
+          <div class="hist-meta">
+            <span>Bruto: ${fCLP(s.gross_amount)}</span>
+            <span>Comisión ${fPct(s.commission_pct)}: ${fCLP(s.commission_amount)}</span>
+            ${s.intermediary_pct > 0 ? `<span>Int. ${fPct(s.intermediary_pct)}: -${fCLP(s.intermediary_amount)}</span>` : ''}
+            <span style="font-weight:700;color:var(--text);">A pagar: ${fCLP(s.net_to_staff)}</span>
+          </div>
+        </div>
+        <span class="status-badge ${statusClass[s.status]}">${statusLabels[s.status]}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function closeHistoryModal() { document.getElementById('historyModal').classList.remove('open'); }
+
+init();
+</script>
+</body>
+</html>

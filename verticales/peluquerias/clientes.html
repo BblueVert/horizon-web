@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clientes — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    .clients-layout { display: grid; grid-template-columns: 1fr 320px; gap: 18px; align-items: start; }
+    @media(max-width:900px){ .clients-layout { grid-template-columns: 1fr; } }
+    .client-row { display: grid; grid-template-columns: 1fr 80px 80px 100px; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; }
+    .client-row:hover { background: var(--surface2); }
+    .client-row:last-child { border-bottom: none; }
+    .client-head { display: grid; grid-template-columns: 1fr 80px 80px 100px; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--border); }
+    .client-head span { font-size: 9px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
+    .client-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .client-phone { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .client-detail { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: sticky; top: 20px; }
+    .detail-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .detail-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: var(--text2); flex-shrink: 0; }
+    .visit-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .visit-item:last-child { border-bottom: none; }
+    .visit-date { color: var(--text3); min-width: 80px; }
+    .visit-service { color: var(--text2); flex: 1; }
+    .visit-amount { color: var(--success); font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h1>Clientes</h1>
+        <p id="clientCount">Cargando...</p>
+      </div>
+      <input class="form-input" id="searchInput" style="width:220px;" placeholder="Buscar por nombre o teléfono..." oninput="filterClients(this.value)">
+    </div>
+
+    <div class="clients-layout">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="client-head">
+          <span>Cliente</span><span>Visitas</span><span>Última</span><span>Total gastado</span>
+        </div>
+        <div id="clientsList"></div>
+      </div>
+      <div class="client-detail" id="clientDetail" style="display:none;">
+        <div class="detail-header">
+          <div class="detail-avatar" id="dAvatar">?</div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);" id="dName">—</div>
+            <div style="font-size:12px;color:var(--text3);" id="dPhone">—</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas internas</label>
+          <textarea class="form-input" id="dNotes" rows="3" placeholder="Siempre pide degradado con fade..." onblur="saveNotes()"></textarea>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Historial de visitas</div>
+        <div id="dVisits"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+let _tenantId, _allClients = [], _selectedId = null;
+
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+}
+function formatCLP(n) { return '$' + Number(n).toLocaleString('es-CL'); }
+
+function renderClients(list) {
+  const el = document.getElementById('clientsList');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:32px;"><h3>Sin clientes aún</h3><p>Los clientes aparecen cuando realizan su primera reserva</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map(c => {
+    const initials = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const lastVisit = c.last_visit ? new Date(c.last_visit).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '—';
+    return `<div class="client-row ${_selectedId===c.id?'background:var(--surface2)':''}" onclick="selectClient('${c.id}')">
+      <div>
+        <div class="client-name">${c.name}</div>
+        <div class="client-phone">${c.phone}</div>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);">${c.visit_count || 0}</div>
+      <div style="font-size:12px;color:var(--text2);">${lastVisit}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--success);">${c.total_spent > 0 ? formatCLP(c.total_spent) : '—'}</div>
+    </div>`;
+  }).join('');
+}
+
+window.filterClients = function(q) {
+  const filtered = q ? _allClients.filter(c =>
+    c.name.toLowerCase().includes(q.toLowerCase()) || c.phone.includes(q)
+  ) : _allClients;
+  renderClients(filtered);
+};
+
+window.selectClient = async function(id) {
+  _selectedId = id;
+  const client = _allClients.find(c => c.id === id);
+  if (!client) return;
+
+  document.getElementById('clientDetail').style.display = 'block';
+  document.getElementById('dAvatar').textContent = client.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('dName').textContent  = client.name;
+  document.getElementById('dPhone').textContent = client.phone;
+  document.getElementById('dNotes').value       = client.notes || '';
+
+  const { data: visits } = await sb.from('biz_appointments')
+    .select('starts_at, status, biz_services(name), deposit_paid')
+    .eq('client_id', id)
+    .eq('tenant_id', _tenantId)
+    .order('starts_at', { ascending: false })
+    .limit(10);
+
+  const visitsEl = document.getElementById('dVisits');
+  if (!visits?.length) {
+    visitsEl.innerHTML = `<div style="font-size:12px;color:var(--text3);">Sin visitas registradas</div>`;
+    return;
+  }
+  visitsEl.innerHTML = visits.map(v => {
+    const d = new Date(v.starts_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'});
+    return `<div class="visit-item">
+      <span class="visit-date">${d}</span>
+      <span class="visit-service">${v.biz_services?.name || '—'}</span>
+      <span class="visit-amount">${v.deposit_paid > 0 ? formatCLP(v.deposit_paid) : ''}</span>
+    </div>`;
+  }).join('');
+};
+
+window.saveNotes = async function() {
+  if (!_selectedId) return;
+  const notes = document.getElementById('dNotes').value;
+  await sb.from('biz_clients').update({ notes }).eq('id', _selectedId);
+  showToast('✓ Notas guardadas');
+};
+
+async function loadClients() {
+  const { data: clients } = await sb.from('biz_clients')
+    .select('*').eq('tenant_id', _tenantId).order('created_at', { ascending: false });
+
+  if (!clients?.length) { renderClients([]); document.getElementById('clientCount').textContent = '0 clientes'; return; }
+
+  // Enriquecer con stats de citas
+  const { data: stats } = await sb.from('biz_appointments')
+    .select('client_id, deposit_paid, starts_at')
+    .eq('tenant_id', _tenantId)
+    .eq('status', 'completed');
+
+  const statsMap = {};
+  (stats || []).forEach(a => {
+    if (!statsMap[a.client_id]) statsMap[a.client_id] = { count: 0, total: 0, last: null };
+    statsMap[a.client_id].count++;
+    statsMap[a.client_id].total += parseFloat(a.deposit_paid || 0);
+    if (!statsMap[a.client_id].last || a.starts_at > statsMap[a.client_id].last)
+      statsMap[a.client_id].last = a.starts_at;
+  });
+
+  _allClients = clients.map(c => ({
+    ...c,
+    visit_count:  statsMap[c.id]?.count || 0,
+    total_spent:  statsMap[c.id]?.total || 0,
+    last_visit:   statsMap[c.id]?.last  || null
+  }));
+
+  document.getElementById('clientCount').textContent = `${_allClients.length} cliente${_allClients.length!==1?'s':''}`;
+  renderClients(_allClients);
+}
+
+(async () => {
+  const user = await requireAuth(['owner', 'super_admin']);
+  if (!user) return;
+  _tenantId = user.tenant_id;
+  await renderNav('Clientes');
+  await loadClients();
+})();
+</script>
+</body>
+</html>

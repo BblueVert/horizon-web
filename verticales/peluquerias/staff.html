@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .staff-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .staff-card-header { display: flex; align-items: center; gap: 14px; }
+    .staff-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #333, #222); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; color: #fff; flex-shrink: 0; overflow: hidden; }
+    .staff-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .staff-info h3 { font-size: 15px; font-weight: 600; color: var(--text); }
+    .staff-info p { font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.4; }
+    .staff-schedule { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .day-pill { text-align: center; padding: 4px 2px; border-radius: 5px; font-size: 9px; font-weight: 600; }
+    .day-pill.on { background: rgba(74,222,128,.12); color: var(--success); }
+    .day-pill.off { background: var(--surface2); color: var(--text3); }
+    .day-name { display: block; margin-bottom: 2px; }
+    .day-time { font-size: 8px; font-weight: 400; }
+    .staff-actions { display: flex; gap: 8px; padding-top: 4px; border-top: 1px solid var(--border); }
+    .link-chip { font-size: 11px; color: var(--text3); background: var(--surface2); padding: 4px 10px; border-radius: 6px; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: .2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 30px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+    .schedule-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 6px; }
+    .sched-day { display: flex; flex-direction: column; gap: 4px; }
+    .sched-label { font-size: 10px; color: var(--text2); font-weight: 600; text-align: center; }
+    .sched-toggle { display: flex; justify-content: center; }
+    .sched-toggle input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--success); }
+    .sched-time { font-size: 9px; }
+    .sched-time input { width: 100%; padding: 4px 3px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px; color: var(--text2); font-size: 9px; text-align: center; }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h1>Staff</h1>
+        <p>Barberos y profesionales de tu negocio</p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">+ Agregar barbero</button>
+    </div>
+
+    <div id="staffGrid" class="staff-grid">
+      <div class="empty-state"><p>Cargando...</p></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Nuevo barbero</div>
+    <form id="staffForm" onsubmit="saveStaff(event)">
+      <input type="hidden" id="fId">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Nombre completo</label>
+          <input class="form-input" id="fName" placeholder="Diego Ramírez" required>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Bio corta</label>
+          <textarea class="form-input" id="fBio" rows="2" placeholder="Especialista en degradados..."></textarea>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Slug (URL del barbero)</label>
+          <input class="form-input" id="fSlug" placeholder="diego" pattern="[a-z0-9\-]+">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:6px;">
+        <label class="form-label">Horario semanal</label>
+        <div class="schedule-grid" id="schedGrid"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btnSave">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+const DAYS = ['lun','mar','mié','jue','vie','sáb','dom'];
+const DAYS_KEY = ['mon','tue','wed','thu','fri','sat','sun'];
+let _user, _tenantId;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function initScheduleGrid(current = {}) {
+  const grid = document.getElementById('schedGrid');
+  grid.innerHTML = DAYS_KEY.map((k, i) => {
+    const active = current[k] !== null && current[k] !== undefined;
+    const start = current[k]?.start || '09:00';
+    const end   = current[k]?.end   || '18:00';
+    return `<div class="sched-day">
+      <div class="sched-label">${DAYS[i]}</div>
+      <div class="sched-toggle"><input type="checkbox" id="sday_${k}" ${active ? 'checked' : ''} onchange="toggleDay('${k}')"></div>
+      <div class="sched-time" id="stime_${k}" style="${active ? '' : 'opacity:.3;pointer-events:none'}">
+        <input type="time" id="sstart_${k}" value="${start}">
+        <input type="time" id="send_${k}"   value="${end}">
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.toggleDay = function(k) {
+  const on = document.getElementById('sday_'+k).checked;
+  const el = document.getElementById('stime_'+k);
+  el.style.opacity = on ? '1' : '.3';
+  el.style.pointerEvents = on ? 'auto' : 'none';
+};
+
+function getScheduleFromForm() {
+  const sched = {};
+  DAYS_KEY.forEach(k => {
+    if (document.getElementById('sday_'+k)?.checked) {
+      sched[k] = {
+        start: document.getElementById('sstart_'+k).value,
+        end:   document.getElementById('send_'+k).value
+      };
+    } else {
+      sched[k] = null;
+    }
+  });
+  return sched;
+}
+
+function renderStaffCard(s) {
+  const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const sched = s.schedule_json || {};
+  const bookingUrl = `${window.location.origin}/verticales/peluquerias/public/booking.html?slug=${s.slug}`;
+  return `<div class="staff-card">
+    <div class="staff-card-header">
+      <div class="staff-avatar">
+        ${s.photo_url ? `<img src="${s.photo_url}" alt="${s.name}">` : initials}
+      </div>
+      <div class="staff-info">
+        <h3>${s.name}</h3>
+        <p>${s.bio || 'Sin bio'}</p>
+      </div>
+    </div>
+    <div class="staff-schedule">
+      ${DAYS_KEY.map((k,i) => {
+        const on = sched[k] !== null && sched[k] !== undefined;
+        return `<div class="day-pill ${on?'on':'off'}">
+          <span class="day-name">${DAYS[i].slice(0,1).toUpperCase()}</span>
+          <span class="day-time">${on ? sched[k]?.start?.slice(0,5) : '—'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="staff-actions">
+      <span class="link-chip" title="${bookingUrl}">/${s.slug}</span>
+      <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px;" onclick="editStaff(${JSON.stringify(s).replace(/"/g,'&quot;')})">Editar</button>
+      <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px;color:var(--danger);" onclick="toggleActive('${s.id}', ${s.active})">
+        ${s.active ? 'Desactivar' : 'Activar'}
+      </button>
+    </div>
+  </div>`;
+}
+
+async function loadStaff() {
+  const { data } = await sb.from('biz_staff')
+    .select('*').eq('tenant_id', _tenantId).order('created_at');
+  const grid = document.getElementById('staffGrid');
+  if (!data?.length) {
+    grid.innerHTML = `<div class="empty-state"><h3>Sin barberos aún</h3><p>Agrega tu primer barbero con el botón de arriba</p></div>`;
+    return;
+  }
+  grid.innerHTML = data.map(renderStaffCard).join('');
+}
+
+window.editStaff = function(s) {
+  document.getElementById('modalTitle').textContent = 'Editar barbero';
+  document.getElementById('fId').value   = s.id;
+  document.getElementById('fName').value = s.name;
+  document.getElementById('fBio').value  = s.bio || '';
+  document.getElementById('fSlug').value = s.slug;
+  initScheduleGrid(s.schedule_json || {});
+  document.getElementById('modalOverlay').classList.add('open');
+};
+
+window.toggleActive = async function(id, current) {
+  await sb.from('biz_staff').update({ active: !current }).eq('id', id);
+  await loadStaff();
+  showToast(current ? 'Barbero desactivado' : 'Barbero activado');
+};
+
+async function saveStaff(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true; btn.textContent = 'Guardando…';
+
+  const id     = document.getElementById('fId').value;
+  const name   = document.getElementById('fName').value.trim();
+  const bio    = document.getElementById('fBio').value.trim();
+  const slug   = document.getElementById('fSlug').value.trim() ||
+                 name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-');
+  const schedule_json = getScheduleFromForm();
+
+  try {
+    if (id) {
+      await sb.from('biz_staff').update({ name, bio, slug, schedule_json, updated_at: new Date() }).eq('id', id);
+    } else {
+      await sb.from('biz_staff').insert({ tenant_id: _tenantId, name, bio, slug, schedule_json });
+    }
+    closeModal();
+    await loadStaff();
+    showToast(id ? '✓ Barbero actualizado' : '✓ Barbero creado');
+  } catch(err) {
+    showToast('Error: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Guardar';
+  }
+}
+
+function openModal() {
+  document.getElementById('modalTitle').textContent = 'Nuevo barbero';
+  document.getElementById('staffForm').reset();
+  document.getElementById('fId').value = '';
+  initScheduleGrid();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+document.getElementById('fName').addEventListener?.('input', function() {
+  if (document.getElementById('fId').value) return;
+  document.getElementById('fSlug').value = this.value.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+});
+
+(async () => {
+  _user = await requireAuth(['owner', 'super_admin']);
+  if (!_user) return;
+  _tenantId = _user.tenant_id;
+  await renderNav('Staff');
+  await loadStaff();
+})();
+</script>
+</body>
+</html>

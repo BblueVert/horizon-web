@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservar turno</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../_core/saas-config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f9fa; --surface: #fff; --surface2: #f1f3f5;
+      --border: #e9ecef; --border2: #dee2e6;
+      --text: #1a1d23; --text2: #6c757d; --text3: #adb5bd;
+      --accent: #c8940a; --accent-light: #e0a80c; --accent-dim: rgba(200,148,10,.1);
+      --navy: #1e3a8a; --navy-dim: rgba(30,58,138,.08);
+      --success: #198754; --danger: #dc3545;
+      --shadow: 0 1px 4px rgba(0,0,0,.08);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.1);
+    }
+    [data-theme="dark"] {
+      --bg: #0c0d0f; --surface: #111318; --surface2: #181a1f;
+      --border: #1f2229; --border2: #272b33;
+      --text: #edeef0; --text2: #8a8f9a; --text3: #4a5060;
+      --shadow: 0 1px 4px rgba(0,0,0,.3);
+      --shadow-md: 0 4px 20px rgba(0,0,0,.4);
+      --success: #4ade80; --danger: #f87171;
+    }
+
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+    /* ── Top bar ── */
+    .top-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; }
+    .top-bar-brand { font-size: 13px; font-weight: 700; color: var(--text); }
+    .top-bar-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-theme { background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); padding: 4px 10px; font-size: 12px; cursor: pointer; }
+    .btn-theme:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Hero / Info negocio ── */
+    .biz-hero { background: var(--surface); border-bottom: 1px solid var(--border); }
+    .biz-cover { width: 100%; height: 200px; object-fit: cover; background: linear-gradient(135deg, #0d1b2e 0%, #1e3a4a 50%, #0d2b1a 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .biz-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .biz-cover-placeholder { font-size: 60px; opacity: .4; }
+    .biz-info-row { max-width: 800px; margin: 0 auto; padding: 16px 20px 20px; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: flex-start; }
+    .biz-logo { width: 72px; height: 72px; border-radius: 12px; border: 3px solid var(--surface); margin-top: -36px; background: var(--surface2); overflow: hidden; box-shadow: var(--shadow-md); flex-shrink: 0; }
+    .biz-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .biz-logo-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: var(--accent); background: var(--navy-dim); }
+    .biz-name { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .biz-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .biz-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
+    .biz-meta-item a { color: var(--accent); text-decoration: none; }
+    .biz-meta-item a:hover { text-decoration: underline; }
+
+    /* ── Staff bubbles ── */
+    .staff-section { max-width: 800px; margin: 0 auto; padding: 16px 20px 0; }
+    .staff-bubbles { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 4px; }
+    .staff-bubbles::-webkit-scrollbar { height: 3px; }
+    .staff-bubbles::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+    .staff-bubble { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
+    .staff-bubble-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--surface2); border: 2px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--text2); transition: border-color .15s; }
+    .staff-bubble-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .staff-bubble.active .staff-bubble-avatar { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+    .staff-bubble-name { font-size: 11px; color: var(--text2); font-weight: 500; }
+    .staff-bubble.active .staff-bubble-name { color: var(--accent); font-weight: 700; }
+
+    /* ── Servicios ── */
+    .services-section { max-width: 800px; margin: 0 auto; padding: 20px; }
+    .section-title { font-size: 13px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+    .services-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+    .service-item { background: var(--surface); padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: background .12s; }
+    .service-item:hover { background: var(--surface2); }
+    .service-item-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--navy-dim); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .service-item-info { flex: 1; min-width: 0; }
+    .service-item-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .service-item-meta { font-size: 12px; color: var(--text2); margin-top: 2px; display: flex; gap: 8px; }
+    .service-item-price { font-size: 15px; font-weight: 700; color: var(--text); flex-shrink: 0; white-space: nowrap; }
+    .btn-reservar { padding: 7px 16px; background: var(--accent); color: #000; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: background .12s; white-space: nowrap; }
+    .btn-reservar:hover { background: var(--accent-light); }
+    .category-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; padding: 8px 16px 4px; background: var(--surface2); }
+
+    /* ── Wizard (drawer) ── */
+    .wizard-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .wizard-overlay.open { opacity: 1; pointer-events: all; }
+    .wizard-drawer { position: fixed; bottom: 0; left: 0; right: 0; max-height: 90vh; background: var(--surface); border-radius: 20px 20px 0 0; z-index: 101; transform: translateY(100%); transition: transform .3s cubic-bezier(.4,0,.2,1); overflow-y: auto; }
+    .wizard-overlay.open .wizard-drawer { transform: translateY(0); }
+    .wizard-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 4px; }
+    .wizard-content { padding: 4px 20px 32px; max-width: 520px; margin: 0 auto; }
+    .wizard-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .wizard-sub { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+
+    /* Steps */
+    .step-pills { display: flex; gap: 6px; margin-bottom: 20px; }
+    .step-pill { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
+    .step-pill.done { background: var(--success); }
+    .step-pill.active { background: var(--accent); }
+
+    .select-list { display: flex; flex-direction: column; gap: 8px; }
+    .select-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: border-color .12s; }
+    .select-item:hover { border-color: var(--accent); }
+    .select-item.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .select-item-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+    .select-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .select-item-info h4 { font-size: 13px; font-weight: 600; color: var(--text); }
+    .select-item-info p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+    /* Calendario */
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .cal-month { font-size: 14px; font-weight: 600; color: var(--text); }
+    .cal-btn { width: 28px; height: 28px; border: 1px solid var(--border2); border-radius: 6px; background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 13px; display:flex;align-items:center;justify-content:center; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+    .cal-dow { text-align:center; font-size:9px; color:var(--text3); padding:3px 0; font-weight:600; }
+    .cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:7px; font-size:13px; cursor:pointer; color:var(--text2); transition:.12s; }
+    .cal-day:hover:not(.disabled):not(.empty):not(.past) { background:var(--accent-dim); color:var(--accent); }
+    .cal-day.today { font-weight:700; color:var(--text); border:1px solid var(--border2); }
+    .cal-day.selected { background:var(--accent); color:#000; font-weight:700; border-radius:7px; }
+    .cal-day.disabled,.cal-day.past { opacity:.2; cursor:default; }
+    .cal-day.empty { cursor:default; }
+
+    /* Horarios */
+    .times-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .time-chip { padding:10px 4px; text-align:center; border:1.5px solid var(--border); border-radius:8px; font-size:13px; font-weight:500; color:var(--text2); cursor:pointer; transition:.12s; background:var(--surface2); }
+    .time-chip:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+    .time-chip.selected { background:var(--accent); color:#000; border-color:var(--accent); font-weight:700; }
+    .time-chip.taken { opacity:.2; cursor:default; }
+
+    /* Form */
+    .form-group { margin-bottom:14px; }
+    .form-label { display:block; font-size:12px; color:var(--text2); margin-bottom:5px; font-weight:500; }
+    .form-input { width:100%; padding:11px 14px; background:var(--surface2); border:1.5px solid var(--border); border-radius:9px; color:var(--text); font-size:14px; outline:none; transition:border-color .12s; font-family:inherit; }
+    .form-input:focus { border-color:var(--accent); }
+
+    /* Resumen en wizard */
+    .summary-box { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:16px; }
+    .summary-row { display:flex; justify-content:space-between; padding:5px 0; font-size:13px; border-bottom:1px solid var(--border); }
+    .summary-row:last-child { border-bottom:none; }
+    .summary-row span:first-child { color:var(--text2); }
+    .summary-row span:last-child { font-weight:600; color:var(--text); }
+
+    /* Botones wizard */
+    .btn-primary { width:100%; padding:13px; background:var(--accent); color:#000; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; transition:background .12s; margin-top:8px; }
+    .btn-primary:hover { background:var(--accent-light); }
+    .btn-primary:disabled { opacity:.35; cursor:not-allowed; }
+    .btn-back { background:none; border:none; color:var(--text3); font-size:13px; cursor:pointer; padding:0 0 16px; display:flex; align-items:center; gap:4px; }
+    .btn-back:hover { color:var(--accent); }
+
+    /* Confirmación */
+    .confirm-screen { text-align:center; padding:20px 0 10px; }
+    .confirm-icon { font-size:48px; margin-bottom:12px; }
+    .confirm-title { font-size:20px; font-weight:800; color:var(--text); margin-bottom:6px; }
+    .confirm-sub { font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px; }
+    .wa-btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; margin-top:8px; }
+
+    /* Loading */
+    .loading { text-align:center; padding:40px; color:var(--text3); font-size:13px; }
+    .spinner { width:22px; height:22px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 10px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    @media(max-width:600px) {
+      .biz-info-row { grid-template-columns:1fr; }
+      .biz-logo { width:60px; height:60px; margin-top:-30px; }
+      .biz-name { font-size:17px; }
+      .service-item { flex-wrap:wrap; gap:8px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <span class="top-bar-brand" id="topBarName">Reservar turno</span>
+  <div class="top-bar-actions">
+    <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙 Oscuro</button>
+  </div>
+</div>
+
+<!-- Hero del negocio -->
+<div class="biz-hero">
+  <div class="biz-cover" id="bizCover">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3DTPiXxjrb9ho4Ox2elnxCCObMe/hf_20260605_072414_42ac3745-685f-4531-8b2e-eb6c74b140b5.jpeg" alt="Barbería O'Higgins" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+  <div class="biz-info-row">
+    <div class="biz-logo" id="bizLogo">
+      <div class="biz-logo-placeholder" id="bizLogoText">B</div>
+    </div>
+    <div>
+      <div class="biz-name" id="bizName">Cargando...</div>
+      <div class="biz-meta" id="bizMeta"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Descripción + Mapa -->
+<div style="max-width:800px;margin:0 auto;padding:16px 20px 0;display:grid;grid-template-columns:1fr 1fr;gap:16px;" id="contextSection">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
+    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Sobre nosotros</div>
+    <p id="bizDesc" style="font-size:13px;color:var(--text2);line-height:1.65;">Barbería O'Higgins es un espacio donde la tradición y el estilo se unen. Ofrecemos cortes clásicos y modernos, perfilado de barba y masajes de relajación, en un ambiente cálido y profesional.</p>
+    <div id="bizRating" style="display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+      <span style="font-size:22px;font-weight:800;color:var(--accent);">4.8</span>
+      <div>
+        <div style="color:#f59e0b;font-size:14px;letter-spacing:1px;">★★★★★</div>
+        <div style="font-size:11px;color:var(--text3);">74 reseñas en Google</div>
+      </div>
+      <a href="https://g.co/kgs/ohiggins" target="_blank" style="margin-left:auto;font-size:11px;color:var(--accent);text-decoration:none;border:1px solid var(--accent);padding:4px 10px;border-radius:6px;">Ver reseñas →</a>
+    </div>
+  </div>
+  <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);min-height:180px;">
+    <iframe
+      src="https://maps.google.com/maps?q=Alc%C3%A1zar+320%2C+Rancagua%2C+O%27Higgins%2C+Chile&output=embed&z=16"
+      width="100%" height="100%" style="border:0;display:block;min-height:180px;"
+      allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</div>
+
+<!-- Reseñas destacadas -->
+<div style="max-width:800px;margin:16px auto 0;padding:0 20px;">
+  <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Reseñas recientes</div>
+  <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;" id="reviewsRow">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:220px;max-width:260px;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--navy-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);">J</div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--text);">Jorge P.</div><div style="font-size:11px;color:#f59e0b;">★★★★★</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.5;">"Excelente atención, Russio es un crack. El corte + barba quedó perfecto."</p>
+      <div style="font-size:10px;color:var(--text3);margin-top:8px;">hace 2 días</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:220px;max-width:260px;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--navy-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);">C</div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--text);">Camilo R.</div><div style="font-size:11px;color:#f59e0b;">★★★★★</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.5;">"Super buena experiencia, muy profesionales. Me atendió Criss y quedé muy satisfecho."</p>
+      <div style="font-size:10px;color:var(--text3);margin-top:8px;">hace 1 semana</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:220px;max-width:260px;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--navy-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);">N</div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--text);">Nicolás V.</div><div style="font-size:11px;color:#f59e0b;">★★★★☆</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.5;">"Buen ambiente, buen corte. A veces hay espera pero vale la pena."</p>
+      <div style="font-size:10px;color:var(--text3);margin-top:8px;">hace 2 semanas</div>
+    </div>
+  </div>
+</div>
+
+<!-- Staff bubbles -->
+<div class="staff-section">
+  <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Nuestro equipo</div>
+  <div class="staff-bubbles" id="staffBubbles"></div>
+</div>
+
+<!-- Servicios -->
+<div class="services-section" id="servicesSection">
+  <div class="loading"><div class="spinner"></div>Cargando servicios...</div>
+</div>
+
+<!-- Wizard drawer -->
+<div class="wizard-overlay" id="wizardOverlay" onclick="if(event.target===this)closeWizard()">
+  <div class="wizard-drawer" id="wizardDrawer">
+    <div class="wizard-handle"></div>
+    <div class="wizard-content" id="wizardContent"></div>
+  </div>
+</div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+
+const state = {
+  tenant: null, staff: [], services: [],
+  filteredStaffId: null,
+  wiz: { step: 1, service: null, staff: null, date: null, time: null, name: '', phone: '' },
+  calYear: new Date().getFullYear(), calMonth: new Date().getMonth(),
+  takenSlots: []
+};
+
+const MONTHS   = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DOWS     = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+const DAY_KEYS = ['mon','tue','wed','thu','fri','sat','sun'];
+
+function formatCLP(n) { return '$' + Number(n).toLocaleString('es-CL'); }
+function formatDate(d) {
+  return d.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'}).replace(/^\w/,c=>c.toUpperCase());
+}
+function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+// ── Tema ──────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const cur  = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('bk-theme', next);
+  document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
+}
+(function(){
+  const t = localStorage.getItem('bk-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = t === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
+  });
+})();
+
+// ── Render negocio ────────────────────────────────────────────────────────────
+function renderBizInfo(tenant) {
+  document.title  = `Reservar — ${tenant.name}`;
+  document.getElementById('topBarName').textContent = tenant.name;
+  document.getElementById('bizName').textContent    = tenant.name;
+  document.getElementById('bizLogoText').textContent = initials(tenant.name);
+
+  const meta = [];
+  if (tenant.address) meta.push(`<span class="biz-meta-item">📍 ${tenant.address}</span>`);
+  if (tenant.phone)   meta.push(`<span class="biz-meta-item">📱 <a href="https://wa.me/${tenant.phone.replace(/\D/g,'')}">WhatsApp</a></span>`);
+  document.getElementById('bizMeta').innerHTML = meta.join('');
+}
+
+// ── Staff bubbles ─────────────────────────────────────────────────────────────
+function renderStaffBubbles() {
+  const all = [{ id: null, name: 'Todos' }, ...state.staff];
+  document.getElementById('staffBubbles').innerHTML = all.map(s => {
+    const active = state.filteredStaffId === s.id;
+    return `<div class="staff-bubble ${active?'active':''}" onclick="filterByStaff('${s.id}')">
+      <div class="staff-bubble-avatar">
+        ${s.photo_url ? `<img src="${s.photo_url}">` : (s.id ? initials(s.name) : '👥')}
+      </div>
+      <span class="staff-bubble-name">${s.name}</span>
+    </div>`;
+  }).join('');
+}
+
+window.filterByStaff = function(id) {
+  state.filteredStaffId = id === 'null' ? null : id;
+  renderStaffBubbles();
+  renderServices();
+};
+
+// ── Render servicios ──────────────────────────────────────────────────────────
+function renderServices() {
+  const filtered = state.filteredStaffId
+    ? state.services // Si hay filtro de barbero, todos sus servicios
+    : state.services;
+
+  const barberia = filtered.filter(s => !isManicure(s.name));
+  const otros    = filtered.filter(s => isManicure(s.name));
+
+  let html = '';
+
+  if (barberia.length) {
+    html += `<div class="section-title">Barbería</div>
+    <div class="services-list">`;
+    barberia.forEach(s => { html += serviceItemHTML(s); });
+    html += `</div>`;
+  }
+
+  if (otros.length) {
+    html += `<div class="section-title" style="margin-top:20px;">Otros servicios</div>
+    <div class="services-list">`;
+    otros.forEach(s => { html += serviceItemHTML(s); });
+    html += `</div>`;
+  }
+
+  document.getElementById('servicesSection').innerHTML = html || `<div class="loading">Sin servicios disponibles</div>`;
+}
+
+function isManicure(name) {
+  const n = name.toLowerCase();
+  return n.includes('uña') || n.includes('esmalt') || n.includes('kapping') || n.includes('softgel') || n.includes('polygel') || n.includes('retiro');
+}
+
+function serviceItemHTML(s) {
+  const icon = isManicure(s.name) ? '💅' : '✂️';
+  const deposit = s.deposit_clp > 0 ? `· seña ${formatCLP(s.deposit_clp)}` : '';
+  return `<div class="service-item">
+    <div class="service-item-icon">${icon}</div>
+    <div class="service-item-info">
+      <div class="service-item-name">${s.name}</div>
+      <div class="service-item-meta">
+        <span>${s.duration_min} min</span>
+        ${deposit ? `<span>${deposit}</span>` : ''}
+      </div>
+    </div>
+    <div class="service-item-price">${formatCLP(s.price_clp)}</div>
+    <button class="btn-reservar" onclick="startBooking('${s.id}')">Reservar</button>
+  </div>`;
+}
+
+// ── WIZARD ────────────────────────────────────────────────────────────────────
+window.startBooking = function(serviceId) {
+  state.wiz = { step: 1, service: state.services.find(s=>s.id===serviceId), staff: null, date: null, time: null, name: '', phone: '' };
+  state.calYear  = new Date().getFullYear();
+  state.calMonth = new Date().getMonth();
+  openWizard();
+};
+
+function openWizard()  { document.getElementById('wizardOverlay').classList.add('open'); renderWizard(); }
+function closeWizard() { document.getElementById('wizardOverlay').classList.remove('open'); }
+function back()        { if (state.wiz.step > 1) { state.wiz.step--; renderWizard(); } }
+
+function renderWizard() {
+  const c = document.getElementById('wizardContent');
+  const steps = 4;
+  const pillsHTML = Array.from({length:steps},(_,i)=>{
+    const n=i+1; const cls = n<state.wiz.step?'done':n===state.wiz.step?'active':'';
+    return `<div class="step-pill ${cls}"></div>`;
+  }).join('');
+
+  const titleMap = ['','¿Con quién?','¿Qué día?','¿A qué hora?','Tus datos'];
+  const subMap   = ['',
+    'Elige tu barbero preferido',
+    `Servicio: ${state.wiz.service?.name}`,
+    formatDate(state.wiz.date || new Date()),
+    'Para confirmar tu reserva'
+  ];
+
+  const backBtn = state.wiz.step > 1
+    ? `<button class="btn-back" onclick="back()">← Volver</button>` : '';
+
+  let body = '';
+  switch(state.wiz.step) {
+    case 1: body = renderWizStaff();   break;
+    case 2: body = renderWizDate();    break;
+    case 3: body = renderWizTime();    break;
+    case 4: body = renderWizClient();  break;
+    case 5: body = renderWizConfirm(); break;
+  }
+
+  c.innerHTML = `
+    <div class="step-pills">${pillsHTML}</div>
+    ${backBtn}
+    <div class="wizard-title">${titleMap[state.wiz.step] || ''}</div>
+    <div class="wizard-sub">${subMap[state.wiz.step] || ''}</div>
+    ${body}`;
+}
+
+function renderWizStaff() {
+  const all = [{ id:'__any__', name:'Sin preferencia', bio:'El primer barbero disponible', photo_url:null }, ...state.staff];
+  return `<div class="select-list">
+    ${all.map(s=>`
+      <div class="select-item ${state.wiz.staff?.id===s.id?'selected':''}" onclick="wiz1Select('${s.id}')">
+        <div class="select-item-avatar">
+          ${s.photo_url?`<img src="${s.photo_url}">`:(s.id==='__any__'?'👥':initials(s.name))}
+        </div>
+        <div class="select-item-info">
+          <h4>${s.name}</h4>
+          <p>${s.bio||''}</p>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+window.wiz1Select = function(id) {
+  state.wiz.staff = id==='__any__'?{id:'__any__',name:'Sin preferencia'}:state.staff.find(s=>s.id===id);
+  state.wiz.step = 2; renderWizard();
+};
+
+function renderWizDate() {
+  const today   = new Date(); today.setHours(0,0,0,0);
+  const first   = new Date(state.calYear, state.calMonth, 1);
+  const nDays   = new Date(state.calYear, state.calMonth+1, 0).getDate();
+  const startDow= (first.getDay()+6)%7;
+  const staffSched = state.wiz.staff?.id!=='__any__' ? (state.wiz.staff?.schedule_json||{}) : null;
+
+  function avail(d) {
+    if (d<today) return false;
+    if (!staffSched) return true;
+    const k = DAY_KEYS[(d.getDay()+6)%7];
+    return !!staffSched[k];
+  }
+
+  let days = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++) days+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=nDays;d++){
+    const dt=new Date(state.calYear,state.calMonth,d);
+    const sel=state.wiz.date?.getTime()===dt.getTime();
+    const ok=avail(dt), past=dt<today;
+    const cls=`cal-day${past?' past':!ok?' disabled':sel?' selected':dt.getTime()===today.getTime()?' today':''}`;
+    const click=ok&&!past?`onclick="wiz2Select(${state.calYear},${state.calMonth},${d})"`:''
+    days+=`<div class="${cls}" ${click}>${d}</div>`;
+  }
+
+  return `<div class="cal-header">
+    <span class="cal-month">${MONTHS[state.calMonth]} ${state.calYear}</span>
+    <div style="display:flex;gap:6px;">
+      <button class="cal-btn" onclick="calPrev()">‹</button>
+      <button class="cal-btn" onclick="calNext()">›</button>
+    </div>
+  </div>
+  <div class="cal-grid">${days}</div>`;
+}
+
+window.wiz2Select = async function(y,m,d) {
+  state.wiz.date = new Date(y,m,d);
+  state.wiz.time = null;
+  await loadTaken();
+  state.wiz.step=3; renderWizard();
+};
+window.calPrev=function(){ if(--state.calMonth<0){state.calMonth=11;state.calYear--;} renderWizard(); };
+window.calNext=function(){ if(++state.calMonth>11){state.calMonth=0;state.calYear++;} renderWizard(); };
+
+async function loadTaken() {
+  const ds=new Date(state.wiz.date); ds.setHours(0,0,0,0);
+  const de=new Date(state.wiz.date); de.setHours(23,59,59,999);
+  let q=sb.from('biz_appointments').select('starts_at')
+    .eq('tenant_id',state.tenant.id)
+    .gte('starts_at',ds.toISOString()).lte('starts_at',de.toISOString())
+    .neq('status','cancelled');
+  if(state.wiz.staff?.id!=='__any__') q=q.eq('staff_id',state.wiz.staff.id);
+  const {data}=await q;
+  state.takenSlots=(data||[]).map(a=>{ const t=new Date(a.starts_at); return t.getHours()*60+t.getMinutes(); });
+}
+
+function renderWizTime() {
+  const sched = state.wiz.staff?.id!=='__any__' && state.wiz.staff?.schedule_json
+    ? state.wiz.staff.schedule_json
+    : { mon:{start:'10:00',end:'20:00'}, tue:{start:'10:00',end:'20:00'}, wed:{start:'10:00',end:'20:00'}, thu:{start:'10:00',end:'20:00'}, fri:{start:'10:00',end:'20:00'}, sat:{start:'10:00',end:'18:00'} };
+  const key=DAY_KEYS[(state.wiz.date.getDay()+6)%7];
+  const dc=sched[key]||{start:'10:00',end:'19:00'};
+  const [sh,sm]=(dc.start||'10:00').split(':').map(Number);
+  const [eh,em]=(dc.end||'20:00').split(':').map(Number);
+  const dur=state.wiz.service?.duration_min||30;
+  const now=new Date(); const isToday=state.wiz.date.toDateString()===now.toDateString();
+
+  const slots=[]; let cur=sh*60+sm;
+  while(cur+dur<=eh*60+em){ slots.push(cur); cur+=dur; }
+
+  if(!slots.length) return `<div class="loading">Sin horarios disponibles este día</div>`;
+
+  return `<div class="times-grid">
+    ${slots.map(min=>{
+      const h=Math.floor(min/60), m=min%60;
+      const lbl=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const taken=state.takenSlots.includes(min);
+      const past=isToday&&(h<now.getHours()||(h===now.getHours()&&m<=now.getMinutes()));
+      const sel=state.wiz.time===min;
+      return `<div class="time-chip${taken||past?' taken':sel?' selected':''}" ${!taken&&!past?`onclick="wiz3Select(${min})"`:''}>
+        ${lbl}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+window.wiz3Select=function(min){ state.wiz.time=min; state.wiz.step=4; renderWizard(); };
+
+function renderWizClient() {
+  const h=Math.floor(state.wiz.time/60), m=state.wiz.time%60;
+  const ts=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  return `
+    <div class="summary-box">
+      <div class="summary-row"><span>Servicio</span><span>${state.wiz.service.name}</span></div>
+      <div class="summary-row"><span>Barbero</span><span>${state.wiz.staff?.id==='__any__'?'Sin preferencia':state.wiz.staff?.name}</span></div>
+      <div class="summary-row"><span>Fecha</span><span>${formatDate(state.wiz.date)}</span></div>
+      <div class="summary-row"><span>Hora</span><span>${ts}</span></div>
+      <div class="summary-row"><span>Precio</span><span style="color:var(--accent)">${formatCLP(state.wiz.service.price_clp)}</span></div>
+      ${state.wiz.service.deposit_clp>0?`<div class="summary-row"><span>Seña ahora</span><span style="color:var(--accent);font-weight:800">${formatCLP(state.wiz.service.deposit_clp)}</span></div>`:''}
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu nombre</label>
+      <input class="form-input" id="wizName" type="text" placeholder="Juan Pérez" value="${state.wiz.name}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu WhatsApp</label>
+      <input class="form-input" id="wizPhone" type="tel" placeholder="+56912345678" value="${state.wiz.phone}">
+    </div>
+    ${state.wiz.service.deposit_clp>0?`<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px;">Se cobrará una seña de ${formatCLP(state.wiz.service.deposit_clp)} vía MercadoPago para confirmar.</div>`:''}
+    <button class="btn-primary" id="btnConfirm" onclick="wizConfirm()">
+      ${state.wiz.service.deposit_clp>0?`Confirmar y pagar seña`:'Confirmar reserva'}
+    </button>`;
+}
+
+window.wizConfirm = async function() {
+  const name  = document.getElementById('wizName')?.value?.trim();
+  const phone = document.getElementById('wizPhone')?.value?.trim();
+  if (!name||!phone) { alert('Completa tu nombre y teléfono'); return; }
+  state.wiz.name=name; state.wiz.phone=phone;
+
+  const btn=document.getElementById('btnConfirm');
+  if(btn){ btn.disabled=true; btn.textContent='Confirmando...'; }
+
+  try {
+    await sb.from('biz_clients')
+      .upsert({tenant_id:state.tenant.id,name,phone},{onConflict:'tenant_id,phone'});
+
+    const starts=new Date(state.wiz.date);
+    starts.setHours(Math.floor(state.wiz.time/60),state.wiz.time%60,0,0);
+    const ends=new Date(starts.getTime()+state.wiz.service.duration_min*60000);
+
+    let staffId=state.wiz.staff?.id;
+    if(staffId==='__any__') staffId=state.staff[0]?.id||null;
+
+    const {error}=await sb.from('biz_appointments').insert({
+      tenant_id:state.tenant.id, staff_id:staffId,
+      service_id:state.wiz.service.id,
+      client_name:name, client_phone:phone,
+      starts_at:starts.toISOString(), ends_at:ends.toISOString(),
+      status:'confirmed', deposit_paid:0
+    });
+    if(error) throw error;
+
+    state.wiz.step=5; renderWizard();
+  } catch(e) {
+    if(btn){ btn.disabled=false; btn.textContent='Confirmar reserva'; }
+    alert('Error: '+e.message);
+  }
+};
+
+function renderWizConfirm() {
+  const h=Math.floor(state.wiz.time/60), m=state.wiz.time%60;
+  const ts=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const waMsg=encodeURIComponent(`Hola! Acabo de reservar un turno:\n✂ ${state.wiz.service.name}\n📅 ${formatDate(state.wiz.date)} a las ${ts}\n👤 ${state.wiz.name}`);
+  const waUrl=state.tenant.phone?`https://wa.me/${state.tenant.phone.replace(/\D/g,'')}?text=${waMsg}`:'#';
+  return `<div class="confirm-screen">
+    <div class="confirm-icon">✅</div>
+    <div class="confirm-title">¡Turno confirmado!</div>
+    <div class="confirm-sub">Recibirás un recordatorio por WhatsApp el día antes.</div>
+    <div class="summary-box">
+      <div class="summary-row"><span>Servicio</span><span>${state.wiz.service.name}</span></div>
+      <div class="summary-row"><span>Fecha</span><span>${formatDate(state.wiz.date)} ${ts}</span></div>
+      <div class="summary-row"><span>Barbero</span><span>${state.wiz.staff?.id==='__any__'?state.staff[0]?.name||'—':state.wiz.staff?.name}</span></div>
+    </div>
+    <a class="wa-btn" href="${waUrl}" target="_blank">💬 Contactar por WhatsApp</a>
+    <button class="btn-primary" style="margin-top:10px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);" onclick="closeWizard()">
+      Volver al inicio
+    </button>
+  </div>`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const slug   = params.get('t') || params.get('slug');
+
+  if(!slug){
+    document.getElementById('servicesSection').innerHTML=`<div class="loading">⚠️ Link inválido. Contacta al negocio.</div>`;
+    return;
+  }
+
+  let { data: tenant } = await sb.from('tenants').select('id,name,slug,phone,address,type')
+    .eq('slug',slug).maybeSingle();
+
+  if(!tenant){
+    document.getElementById('servicesSection').innerHTML=`<div class="loading">😕 Negocio no encontrado.</div>`;
+    return;
+  }
+
+  state.tenant=tenant;
+  renderBizInfo(tenant);
+
+  const [{data:staff},{data:services}]=await Promise.all([
+    sb.from('biz_staff').select('id,name,bio,photo_url,schedule_json').eq('tenant_id',tenant.id).eq('active',true).order('created_at'),
+    sb.from('biz_services').select('id,name,duration_min,price_clp,deposit_clp').eq('tenant_id',tenant.id).eq('active',true).order('created_at')
+  ]);
+
+  state.staff    = staff    || [];
+  state.services = services || [];
+
+  renderStaffBubbles();
+  renderServices();
+}
+
+init();
+</script>
+</body>
+</html>

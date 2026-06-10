@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
@@ -10,6 +12,8 @@ const opsLeads    = require('./api/ops/leads');
 const promoteLead = require('./api/ops/promote-lead');
 const tasks       = require('./api/ops/tasks');
 const agente      = require('./api/ops/agente');
+const waHandler   = require('./api/saas/whatsapp');
+const mpHandler   = require('./api/saas/mercadopago');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,7 +34,7 @@ app.use((req, res, next) => {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co",
+      "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com",
       "frame-src 'none'",
       "frame-ancestors 'none'",
     ].join('; ')
@@ -138,10 +142,27 @@ const opsPages = {
   '/ops/agenda':          'OPS/agenda.html',
   '/ops/tareas':          'OPS/tareas.html',
   '/ops/notas':           'OPS/notas.html',
+  '/ops/saas-clientes':   'OPS/saas-clientes.html',
 };
 Object.entries(opsPages).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
 });
+
+// ── Verticales SaaS ──────────────────────────────────────────────────────────
+const saasPages = {
+  '/saas/login':                      'verticales/peluquerias/login.html',
+  '/verticales/peluquerias/login':    'verticales/peluquerias/login.html',
+  '/verticales/peluquerias/dashboard':'verticales/peluquerias/dashboard.html',
+};
+Object.entries(saasPages).forEach(([from, to]) => {
+  app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
+});
+
+// SaaS API — WhatsApp
+app.all('/api/saas/whatsapp/:action', waHandler);
+
+// SaaS API — MercadoPago
+app.all('/api/saas/mp/:action', mpHandler);
 
 // OPS API endpoints
 app.get('/api/ops/dashboard',     opsData);

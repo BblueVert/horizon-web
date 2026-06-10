@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reportes — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width:800px){ .report-grid { grid-template-columns: 1fr; } }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .bar-label { font-size: 12px; color: var(--text2); width: 140px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #16a34a, #4ade80); transition: width .4s; }
+    .bar-value { font-size: 11px; color: var(--text3); width: 70px; text-align: right; flex-shrink: 0; }
+    .month-selector { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+    .month-selector button { padding: 5px 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--text2); font-size: 12px; cursor: pointer; transition: .12s; }
+    .month-selector button:hover, .month-selector button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .noshows-comparison { display: flex; gap: 16px; }
+    .comparison-item { flex: 1; background: var(--surface2); border-radius: 8px; padding: 14px; text-align: center; }
+    .comparison-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+    .comparison-value { font-size: 28px; font-weight: 700; }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1>Reportes</h1>
+        <p>Resumen del negocio por mes</p>
+      </div>
+      <div class="month-selector" id="monthSelector"></div>
+    </div>
+
+    <div class="stats-grid" id="mainStats" style="margin-bottom:20px;"></div>
+
+    <div class="report-grid">
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;">Ingresos por barbero</div>
+        <div id="staffBars"></div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;">Servicios más solicitados</div>
+        <div id="serviceBars"></div>
+      </div>
+      <div class="card" style="grid-column:1/-1;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;">No-shows este mes vs. mes anterior</div>
+        <div class="noshows-comparison">
+          <div class="comparison-item">
+            <div class="comparison-label">Mes anterior</div>
+            <div class="comparison-value" id="noPrev" style="color:var(--danger);">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="noShowPrevPct">—</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-label">Este mes</div>
+            <div class="comparison-value" id="noCurrent" style="color:var(--success);">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="noShowCurrPct">—</div>
+          </div>
+          <div class="comparison-item" style="background:transparent;border:1px solid var(--border);">
+            <div class="comparison-label">Cambio</div>
+            <div class="comparison-value" id="noDiff" style="font-size:22px;">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">vs. mes anterior</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+let _tenantId, _selectedMonth = new Date().getMonth(), _selectedYear = new Date().getFullYear();
+const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+function formatCLP(n) { return '$' + Number(n).toLocaleString('es-CL'); }
+
+function buildMonthSelector() {
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ m: d.getMonth(), y: d.getFullYear(), label: `${MONTHS[d.getMonth()]} ${d.getFullYear()}` });
+  }
+  document.getElementById('monthSelector').innerHTML = months.map(m =>
+    `<button class="${m.m===_selectedMonth && m.y===_selectedYear ? 'active' : ''}"
+      onclick="selectMonth(${m.m},${m.y})">${m.label}</button>`
+  ).join('');
+}
+
+window.selectMonth = function(m, y) {
+  _selectedMonth = m; _selectedYear = y;
+  buildMonthSelector();
+  loadReports();
+};
+
+function renderBars(containerId, items, valueKey, labelKey, formatFn) {
+  const max = Math.max(...items.map(i => i[valueKey]), 1);
+  document.getElementById(containerId).innerHTML = items.length
+    ? items.map(i => `
+      <div class="bar-row">
+        <span class="bar-label" title="${i[labelKey]}">${i[labelKey]}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${(i[valueKey]/max*100).toFixed(1)}%"></div></div>
+        <span class="bar-value">${formatFn(i[valueKey])}</span>
+      </div>`).join('')
+    : `<div style="font-size:12px;color:var(--text3);">Sin datos este mes</div>`;
+}
+
+async function loadReports() {
+  const start = new Date(_selectedYear, _selectedMonth, 1);
+  const end   = new Date(_selectedYear, _selectedMonth + 1, 0, 23, 59, 59);
+  const prevStart = new Date(_selectedYear, _selectedMonth - 1, 1);
+  const prevEnd   = new Date(_selectedYear, _selectedMonth, 0, 23, 59, 59);
+
+  const [{ data: appts }, { data: prevAppts }] = await Promise.all([
+    sb.from('biz_appointments')
+      .select('status, deposit_paid, starts_at, biz_staff(name), biz_services(name)')
+      .eq('tenant_id', _tenantId)
+      .gte('starts_at', start.toISOString())
+      .lte('starts_at', end.toISOString()),
+    sb.from('biz_appointments')
+      .select('status')
+      .eq('tenant_id', _tenantId)
+      .gte('starts_at', prevStart.toISOString())
+      .lte('starts_at', prevEnd.toISOString())
+  ]);
+
+  const all = appts || [];
+  const completed = all.filter(a => a.status === 'completed');
+  const noShows   = all.filter(a => a.status === 'no_show');
+  const total     = all.length;
+  const ingresos  = completed.reduce((s, a) => s + parseFloat(a.deposit_paid || 0), 0);
+
+  // Main stats
+  document.getElementById('mainStats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Ingresos señas</div><div class="stat-value">${formatCLP(ingresos)}</div><div class="stat-sub">señas cobradas</div></div>
+    <div class="stat-card"><div class="stat-label">Reservas totales</div><div class="stat-value">${total}</div><div class="stat-sub">${completed.length} completadas</div></div>
+    <div class="stat-card"><div class="stat-label">No-shows</div><div class="stat-value" style="color:var(--danger)">${noShows.length}</div><div class="stat-sub">${total ? ((noShows.length/total)*100).toFixed(0) : 0}% del total</div></div>
+    <div class="stat-card"><div class="stat-label">Tasa completadas</div><div class="stat-value" style="color:var(--success)">${total ? ((completed.length/total)*100).toFixed(0) : 0}%</div><div class="stat-sub">del total de reservas</div></div>
+  `;
+
+  // Staff bars
+  const staffMap = {};
+  completed.forEach(a => {
+    const n = a.biz_staff?.name || 'Sin asignar';
+    if (!staffMap[n]) staffMap[n] = 0;
+    staffMap[n] += parseFloat(a.deposit_paid || 0);
+  });
+  const staffItems = Object.entries(staffMap).map(([name, total]) => ({ name, total })).sort((a,b) => b.total-a.total);
+  renderBars('staffBars', staffItems, 'total', 'name', formatCLP);
+
+  // Service bars
+  const serviceMap = {};
+  all.forEach(a => {
+    const n = a.biz_services?.name || 'Sin servicio';
+    serviceMap[n] = (serviceMap[n] || 0) + 1;
+  });
+  const serviceItems = Object.entries(serviceMap).map(([name, count]) => ({ name, count })).sort((a,b) => b.count-a.count).slice(0,6);
+  renderBars('serviceBars', serviceItems, 'count', 'name', n => `${n} veces`);
+
+  // No-show comparison
+  const prevAll     = prevAppts || [];
+  const prevNoShows = prevAll.filter(a => a.status === 'no_show').length;
+  const currNoShows = noShows.length;
+  const diff = currNoShows - prevNoShows;
+  const pctPrev = prevAll.length ? ((prevNoShows/prevAll.length)*100).toFixed(0) : 0;
+  const pctCurr = total ? ((currNoShows/total)*100).toFixed(0) : 0;
+  document.getElementById('noPrev').textContent       = prevNoShows;
+  document.getElementById('noCurrent').textContent    = currNoShows;
+  document.getElementById('noShowPrevPct').textContent = `${pctPrev}% del mes`;
+  document.getElementById('noShowCurrPct').textContent = `${pctCurr}% del mes`;
+  const diffEl = document.getElementById('noDiff');
+  diffEl.textContent = diff === 0 ? '=' : (diff > 0 ? `+${diff}` : `${diff}`);
+  diffEl.style.color = diff < 0 ? 'var(--success)' : diff > 0 ? 'var(--danger)' : 'var(--text2)';
+}
+
+(async () => {
+  const user = await requireAuth(['owner', 'super_admin']);
+  if (!user) return;
+  _tenantId = user.tenant_id;
+  await renderNav('Reportes');
+  buildMonthSelector();
+  await loadReports();
+})();
+</script>
+</body>
+</html>

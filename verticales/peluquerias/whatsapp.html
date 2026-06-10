@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    /* Tabs principales */
+    .main-tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+    .main-tab { flex: 1; padding: 8px 12px; border-radius: 7px; background: none; border: none; color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; transition: .12s; text-align: center; }
+    .main-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+
+    /* Configuración credenciales */
+    .cred-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
+    .cred-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 16px; }
+    .cred-status.ok { background: rgba(22,163,74,.15); color: var(--success); }
+    .cred-status.pending { background: rgba(217,119,6,.15); color: #fbbf24; }
+    .cred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media(max-width:700px){ .cred-grid { grid-template-columns: 1fr; } }
+    .steps-list { counter-reset: step; list-style: none; padding: 0; margin: 16px 0 0; }
+    .steps-list li { counter-increment: step; display: flex; gap: 10px; margin-bottom: 10px; font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .steps-list li::before { content: counter(step); min-width: 20px; height: 20px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text3); flex-shrink: 0; margin-top: 1px; }
+    .steps-list a { color: #60a5fa; text-decoration: none; }
+
+    /* Plantillas */
+    .templates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+    .tpl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+    .tpl-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .tpl-icon-label { display: flex; align-items: center; gap: 10px; }
+    .tpl-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .tpl-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .tpl-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .tpl-timing { font-size: 10px; color: var(--text3); background: var(--surface2); padding: 2px 8px; border-radius: 4px; }
+    /* Toggle */
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+    .toggle { position: relative; width: 36px; height: 20px; cursor: pointer; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track { position: absolute; inset: 0; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; transition: .2s; }
+    .toggle input:checked + .toggle-track { background: #16a34a; border-color: #16a34a; }
+    .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: .2s; }
+    .toggle input:checked ~ .toggle-thumb { left: 18px; }
+
+    .tpl-body { margin-bottom: 12px; }
+    .tpl-body textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 12px; padding: 10px 12px; resize: vertical; min-height: 80px; font-family: inherit; line-height: 1.5; box-sizing: border-box; }
+    .tpl-body textarea:focus { outline: none; border-color: #2563eb; }
+    .vars-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .var-chip { font-size: 10px; padding: 2px 8px; background: rgba(37,99,235,.12); color: #60a5fa; border-radius: 4px; cursor: pointer; font-family: monospace; transition: .1s; border: none; }
+    .var-chip:hover { background: rgba(37,99,235,.25); }
+
+    /* Preview WhatsApp */
+    .wa-preview { background: #1a2432; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+    .wa-preview-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #64748b; margin-bottom: 8px; }
+    .wa-bubble { background: #1f5c3a; border-radius: 0 8px 8px 8px; padding: 8px 12px; max-width: 85%; font-size: 12px; color: #e2e8f0; line-height: 1.5; position: relative; }
+    .wa-bubble::before { content: ''; position: absolute; top: 0; left: -7px; width: 0; height: 0; border-top: 7px solid #1f5c3a; border-left: 7px solid transparent; }
+    .wa-time { font-size: 10px; color: #94a3b8; text-align: right; margin-top: 4px; }
+
+    .tpl-footer { display: flex; gap: 8px; }
+
+    /* Delay config */
+    .delay-cfg { background: var(--surface2); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 11px; color: var(--text2); }
+    .delay-cfg select, .delay-cfg input[type=number] { padding: 4px 8px; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); font-size: 11px; }
+
+    /* Blast */
+    .blast-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width:800px){ .blast-layout { grid-template-columns: 1fr; } }
+    .segment-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .segment-opt { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; transition: .12s; }
+    .segment-opt.selected { border-color: #2563eb; background: rgba(37,99,235,.06); }
+    .segment-opt input[type=radio] { accent-color: #2563eb; }
+    .segment-opt-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .segment-opt-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .blast-count { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
+    .blast-count b { color: var(--text); }
+
+    /* Historial */
+    .log-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .log-filter-btn { padding: 5px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); color: var(--text2); font-size: 11px; font-weight: 500; cursor: pointer; transition: .12s; }
+    .log-filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .log-table th { padding: 8px 12px; text-align: left; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--border); }
+    .log-table td { padding: 10px 12px; border-bottom: 1px solid var(--border2); color: var(--text2); vertical-align: top; }
+    .log-table tr:last-child td { border-bottom: none; }
+    .log-table tr:hover td { background: var(--surface2); }
+    .status-chip { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+    .status-sent    { background: rgba(22,163,74,.15); color: var(--success); }
+    .status-pending { background: rgba(217,119,6,.15); color: #fbbf24; }
+    .status-failed  { background: rgba(220,38,38,.15); color: #f87171; }
+    .status-skipped { background: rgba(100,116,139,.15); color: var(--text3); }
+
+    /* Stats bar */
+    .wa-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+    @media(max-width:700px){ .wa-stats { grid-template-columns: repeat(2,1fr); } }
+    .wa-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+    .wa-stat-val { font-size: 22px; font-weight: 700; color: var(--text); }
+    .wa-stat-lbl { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: .2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 100%; max-width: 460px; }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+
+    <div class="page-header" style="margin-bottom:20px;">
+      <h1>WhatsApp</h1>
+      <p>Automatización de mensajes y seguimiento de clientes</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="wa-stats" id="waStats">
+      <div class="wa-stat"><div class="wa-stat-val" id="statSent">—</div><div class="wa-stat-lbl">Enviados este mes</div></div>
+      <div class="wa-stat"><div class="wa-stat-val" id="statPending">—</div><div class="wa-stat-lbl">Pendientes hoy</div></div>
+      <div class="wa-stat"><div class="wa-stat-val" id="statFailed">—</div><div class="wa-stat-lbl">Fallidos</div></div>
+      <div class="wa-stat"><div class="wa-stat-val" id="statTemplates">—</div><div class="wa-stat-lbl">Plantillas activas</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="main-tabs">
+      <button class="main-tab active" onclick="switchTab('config',this)">⚙ Configuración</button>
+      <button class="main-tab" onclick="switchTab('templates',this)">✉ Plantillas</button>
+      <button class="main-tab" onclick="switchTab('blast',this)">📣 Envío masivo</button>
+      <button class="main-tab" onclick="switchTab('log',this)">📋 Historial</button>
+    </div>
+
+    <!-- Tab: Configuración -->
+    <div id="tab-config">
+      <div class="cred-card">
+        <div id="credStatus" class="cred-status pending">⚪ Sin configurar — modo previsualización</div>
+        <h3 style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;">Credenciales WhatsApp Business API</h3>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:16px;">Necesitas una cuenta de Meta Business con WhatsApp Business API activada.</p>
+
+        <div class="cred-grid">
+          <div class="form-group">
+            <label class="form-label">Token permanente (Access Token)</label>
+            <input class="form-input" id="waToken" type="password" placeholder="EAAxxxxx..." autocomplete="off">
+            <div style="font-size:10px;color:var(--text3);margin-top:4px;">Meta Business → App → WhatsApp → Access Tokens</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number ID</label>
+            <input class="form-input" id="waPhoneId" placeholder="123456789012345">
+            <div style="font-size:10px;color:var(--text3);margin-top:4px;">Meta Business → WhatsApp → Phone Numbers → ID</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveCredentials()" style="margin-bottom:20px;">Guardar credenciales</button>
+
+        <details>
+          <summary style="font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:8px;">Cómo obtener las credenciales (paso a paso)</summary>
+          <ol class="steps-list">
+            <li>Ve a <a href="https://developers.facebook.com" target="_blank">developers.facebook.com</a> y crea una app de tipo "Business".</li>
+            <li>En el panel de la app, agrega el producto <b>WhatsApp</b>.</li>
+            <li>En <b>WhatsApp → Configuración → Números de teléfono</b>, agrega y verifica el número del negocio.</li>
+            <li>Copia el <b>Phone Number ID</b> (número largo) y pégalo arriba.</li>
+            <li>En <b>Configuración → Acceso a la API</b>, genera un <b>token permanente</b> de System User con permisos <code>whatsapp_business_messaging</code>.</li>
+            <li>Pega el token arriba y guarda.</li>
+          </ol>
+        </details>
+      </div>
+
+      <div class="cred-card">
+        <h3 style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;">Automatización con n8n</h3>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Para enviar recordatorios automáticos, configura n8n para llamar este endpoint cada 30 minutos.</p>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:8px;padding:10px 14px;">
+          <code id="webhookUrl" style="font-size:11px;color:#60a5fa;flex:1;">Cargando...</code>
+          <button class="btn" onclick="copyWebhook()" style="font-size:11px;padding:5px 12px;">Copiar</button>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:10px;">Método: <b>POST</b> · Trigger: cada 30 min · Body: <code>{"tenant_id":"..."}</code></p>
+      </div>
+    </div>
+
+    <!-- Tab: Plantillas -->
+    <div id="tab-templates" style="display:none;">
+      <div class="templates-grid" id="templatesGrid">
+        <div class="empty-state"><p>Cargando plantillas...</p></div>
+      </div>
+    </div>
+
+    <!-- Tab: Envío masivo -->
+    <div id="tab-blast" style="display:none;">
+      <div class="blast-layout">
+        <div>
+          <div class="card">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;">Segmento de destinatarios</div>
+            <div class="segment-options" id="segmentOptions">
+              <label class="segment-opt selected" onclick="selectSegment(this,'all')">
+                <input type="radio" name="segment" value="all" checked>
+                <div>
+                  <div class="segment-opt-label">Todos los clientes</div>
+                  <div class="segment-opt-desc">Con número de teléfono registrado</div>
+                </div>
+              </label>
+              <label class="segment-opt" onclick="selectSegment(this,'inactive_30')">
+                <input type="radio" name="segment" value="inactive_30">
+                <div>
+                  <div class="segment-opt-label">Sin visita en 30+ días</div>
+                  <div class="segment-opt-desc">Clientes que no han vuelto este mes</div>
+                </div>
+              </label>
+              <label class="segment-opt" onclick="selectSegment(this,'inactive_7')">
+                <input type="radio" name="segment" value="inactive_7">
+                <div>
+                  <div class="segment-opt-label">Sin visita en 7–29 días</div>
+                  <div class="segment-opt-desc">Clientes que podrían estar por volver</div>
+                </div>
+              </label>
+              <label class="segment-opt" onclick="selectSegment(this,'frequent')">
+                <input type="radio" name="segment" value="frequent">
+                <div>
+                  <div class="segment-opt-label">Clientes frecuentes</div>
+                  <div class="segment-opt-desc">3+ visitas registradas</div>
+                </div>
+              </label>
+            </div>
+            <div class="blast-count" id="blastCount">Calculando...</div>
+
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">Mensaje</div>
+            <div class="vars-chips" style="margin-bottom:8px;">
+              <button class="var-chip" onclick="insertBlastVar('{nombre}')">nombre</button>
+              <button class="var-chip" onclick="insertBlastVar('{local}')">local</button>
+              <button class="var-chip" onclick="insertBlastVar('{descuento}')">descuento</button>
+            </div>
+            <textarea id="blastMessage" class="form-input" rows="5" placeholder="Hola {nombre}, te esperamos en {local}. Esta semana tienes un {descuento}% de descuento en tu próxima visita." style="width:100%;resize:vertical;"></textarea>
+            <div style="display:flex;gap:10px;margin-top:12px;">
+              <input type="number" id="blastDiscount" class="form-input" placeholder="% descuento" min="0" max="100" style="width:120px;">
+              <button class="btn btn-primary" style="flex:1;" onclick="sendBlast()">Enviar a segmento</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px;">Preview</div>
+            <div class="wa-preview">
+              <div class="wa-preview-label">Vista previa del mensaje</div>
+              <div class="wa-bubble" id="blastPreviewBubble">Escribe el mensaje para ver el preview...</div>
+              <div class="wa-time">✓✓ 18:30</div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.6;">
+              <b style="color:var(--text2);">Buenas prácticas:</b><br>
+              · Envía máximo 1 vez por semana al mismo cliente<br>
+              · Personaliza con {nombre} para mayor apertura<br>
+              · Los mensajes se envían con 2 seg de delay entre cada uno<br>
+              · Horario recomendado: 10:00–19:00
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Historial -->
+    <div id="tab-log" style="display:none;">
+      <div class="log-filters">
+        <button class="log-filter-btn active" onclick="filterLog('all',this)">Todos</button>
+        <button class="log-filter-btn" onclick="filterLog('sent',this)">Enviados</button>
+        <button class="log-filter-btn" onclick="filterLog('pending',this)">Pendientes</button>
+        <button class="log-filter-btn" onclick="filterLog('failed',this)">Fallidos</button>
+      </div>
+      <div class="card" style="overflow-x:auto;">
+        <table class="log-table" id="logTable">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Trigger</th>
+              <th>Cliente</th>
+              <th>Mensaje</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="logBody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px;">Cargando historial...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- Modal confirmación blast -->
+<div class="modal-overlay" id="blastModal" onclick="if(event.target===this)closeBlastModal()">
+  <div class="modal">
+    <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:12px;">Confirmar envío masivo</div>
+    <div id="blastConfirmText" style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6;"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn" onclick="closeBlastModal()" style="flex:1;">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmBlast()" style="flex:1;" id="confirmBlastBtn">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+let currentUser = null;
+let allTemplates = [];
+let allClients = [];
+let logFilter = 'all';
+let blastSegment = 'all';
+let blastClientCount = 0;
+
+const TRIGGER_META = {
+  booking_confirmed: { label: 'Reserva confirmada',   icon: '✅', bg: '#16a34a22', timing: 'Al confirmar la reserva',         delay: 0 },
+  reminder_24h:     { label: 'Recordatorio 24h',      icon: '🔔', bg: '#2563eb22', timing: '24h antes de la cita',            delay: -24 },
+  reminder_2h:      { label: 'Recordatorio 2h',       icon: '⏰', bg: '#7c3aed22', timing: '2h antes de la cita',             delay: -2 },
+  post_service:     { label: 'Post-servicio',          icon: '⭐', bg: '#d97706' + '22', timing: '2h después del servicio',    delay: 2 },
+  review_request:   { label: 'Solicitar reseña',       icon: '📝', bg: '#0891b222', timing: '1 día después del servicio',     delay: 24 },
+  win_back_7d:      { label: 'Recuperar — 7 días',    icon: '💫', bg: '#db277722', timing: 'A los 7 días sin visita nueva',   delay: 168 },
+  win_back_30d:     { label: 'Recuperar — 30 días',   icon: '🎯', bg: '#dc262622', timing: 'A los 30 días sin visita',        delay: 720 },
+  promo_blast:      { label: 'Plantilla oferta',       icon: '🎁', bg: '#16a34a22', timing: 'Envío manual',                   delay: 0 },
+};
+
+const DEFAULT_BODIES = {
+  booking_confirmed: 'Hola {nombre} ✂️ Tu reserva en {local} está confirmada para el {fecha} a las {hora} con {barbero}. ¡Te esperamos!',
+  reminder_24h:      '⏰ Recordatorio: mañana tienes tu cita en {local} a las {hora} con {barbero}. Si necesitas reagendar, avísanos. ¡Nos vemos!',
+  reminder_2h:       '🕐 Tu cita es en 2 horas. Te esperamos en {local} a las {hora} con {barbero}. ¡Llegando puntual te atendemos sin espera!',
+  post_service:      '¡Gracias por visitarnos, {nombre}! Esperamos que hayas quedado 100% satisfecho con tu corte. Cuéntanos qué te pareció 😊',
+  review_request:    'Hola {nombre}, ¿te gustó tu visita en {local}? Deja tu reseña aquí → {link_reseña} — ¡nos ayuda muchísimo! 🙏',
+  win_back_7d:       '¡Ey {nombre}! Hace una semana que no te vemos por {local}. Esta semana tienes un {descuento}% off en tu próxima visita. 💈 ¿Cuándo pasas?',
+  win_back_30d:      'Hola {nombre}, te echamos de menos en {local} 😔 Hace un mes que no pasas. Vuelve esta semana y te damos {descuento}% de descuento. ¡Te esperamos!',
+  promo_blast:       'Hola {nombre} 👋 Esta semana en {local} tenemos una promo especial para ti: {descuento}% de descuento en cualquier servicio. ¡Reserva ahora!',
+};
+
+const VARS = ['{nombre}', '{fecha}', '{hora}', '{barbero}', '{servicio}', '{local}', '{descuento}', '{link_reseña}'];
+
+function showToast(msg, err = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? '#dc2626' : '';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function fCLP(n) { return '$' + Number(n || 0).toLocaleString('es-CL'); }
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  currentUser = await requireAuth(['owner', 'super_admin']);
+  if (!currentUser) return;
+  renderNav('WhatsApp');
+
+  const base = window.location.origin;
+  document.getElementById('webhookUrl').textContent =
+    `${base}/api/saas/whatsapp/process?tenant_id=${currentUser.tenant_id}`;
+
+  await Promise.all([loadCredentials(), loadTemplates(), loadClients(), loadStats()]);
+  updateBlastCount();
+  renderTemplates();
+
+  // Live preview blast
+  document.getElementById('blastMessage').addEventListener('input', updateBlastPreview);
+  document.getElementById('blastDiscount').addEventListener('input', updateBlastPreview);
+}
+
+// ── Credenciales ──────────────────────────────────────────────────────────────
+async function loadCredentials() {
+  const { data } = await sb.from('tenants')
+    .select('wa_token, wa_phone_number_id')
+    .eq('id', currentUser.tenant_id)
+    .maybeSingle();
+  if (!data) return;
+
+  if (data.wa_token) document.getElementById('waToken').value = data.wa_token;
+  if (data.wa_phone_number_id) document.getElementById('waPhoneId').value = data.wa_phone_number_id;
+
+  const hasCredentials = data.wa_token && data.wa_phone_number_id;
+  const el = document.getElementById('credStatus');
+  if (hasCredentials) {
+    el.className = 'cred-status ok';
+    el.textContent = '🟢 WhatsApp conectado — mensajes reales activados';
+  }
+}
+
+async function saveCredentials() {
+  const token = document.getElementById('waToken').value.trim();
+  const phoneId = document.getElementById('waPhoneId').value.trim();
+  const { error } = await sb.from('tenants').update({
+    wa_token: token || null,
+    wa_phone_number_id: phoneId || null,
+  }).eq('id', currentUser.tenant_id);
+  if (error) { showToast('Error al guardar', true); return; }
+  showToast('Credenciales guardadas');
+  loadCredentials();
+}
+
+// ── Plantillas ────────────────────────────────────────────────────────────────
+async function loadTemplates() {
+  const { data } = await sb.from('biz_message_templates')
+    .select('*')
+    .eq('tenant_id', currentUser.tenant_id);
+  allTemplates = data || [];
+}
+
+function getTemplate(key) {
+  return allTemplates.find(t => t.trigger_key === key) || {
+    trigger_key: key, active: true, body: DEFAULT_BODIES[key] || '', delay_hours: TRIGGER_META[key]?.delay || 0, discount_pct: 10
+  };
+}
+
+function renderTemplates() {
+  const grid = document.getElementById('templatesGrid');
+  grid.innerHTML = Object.keys(TRIGGER_META).map(key => {
+    const meta = TRIGGER_META[key];
+    const tpl = getTemplate(key);
+    return `
+    <div class="tpl-card" id="tplcard_${key}">
+      <div class="tpl-header">
+        <div class="tpl-icon-label">
+          <div class="tpl-icon" style="background:${meta.bg};">${meta.icon}</div>
+          <div>
+            <div class="tpl-name">${meta.label}</div>
+            <div class="tpl-desc">${meta.timing}</div>
+          </div>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" id="tpl_active_${key}" ${tpl.active ? 'checked' : ''} onchange="toggleTemplate('${key}')">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="vars-chips">
+        ${VARS.map(v => `<button class="var-chip" onclick="insertVar('${key}','${v}')">${v}</button>`).join('')}
+      </div>
+
+      <div class="tpl-body">
+        <textarea id="tpl_body_${key}" oninput="updatePreview('${key}')">${tpl.body}</textarea>
+      </div>
+
+      ${key === 'win_back_7d' || key === 'win_back_30d' || key === 'promo_blast' ? `
+      <div class="delay-cfg">
+        <span>Descuento:</span>
+        <input type="number" id="tpl_disc_${key}" value="${tpl.discount_pct}" min="0" max="100" style="width:60px;" oninput="updatePreview('${key}')"> %
+      </div>` : ''}
+
+      <div class="wa-preview">
+        <div class="wa-preview-label">Preview</div>
+        <div class="wa-bubble" id="tpl_preview_${key}">${renderPreviewText(tpl.body, tpl.discount_pct)}</div>
+        <div class="wa-time">✓✓ ahora</div>
+      </div>
+
+      <div class="tpl-footer">
+        <button class="btn btn-primary" style="flex:1;" onclick="saveTemplate('${key}')">Guardar</button>
+        <button class="btn" onclick="resetTemplate('${key}')" style="font-size:11px;">Restablecer</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPreviewText(body, discountPct) {
+  return (body || '')
+    .replace(/\{nombre\}/g, 'Carlos')
+    .replace(/\{fecha\}/g, 'lunes 9 de jun')
+    .replace(/\{hora\}/g, '15:30')
+    .replace(/\{barbero\}/g, 'Criss')
+    .replace(/\{servicio\}/g, 'Corte clásico')
+    .replace(/\{local\}/g, currentUser?.tenant?.name || 'tu barbería')
+    .replace(/\{descuento\}/g, discountPct || '10')
+    .replace(/\{link_reseña\}/g, 'g.page/reseña')
+    .replace(/\n/g, '<br>');
+}
+
+function updatePreview(key) {
+  const body = document.getElementById(`tpl_body_${key}`)?.value || '';
+  const disc = document.getElementById(`tpl_disc_${key}`)?.value || 10;
+  const el = document.getElementById(`tpl_preview_${key}`);
+  if (el) el.innerHTML = renderPreviewText(body, disc);
+}
+
+function insertVar(key, v) {
+  const ta = document.getElementById(`tpl_body_${key}`);
+  if (!ta) return;
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0, pos) + v + ta.value.slice(ta.selectionEnd);
+  ta.selectionStart = ta.selectionEnd = pos + v.length;
+  ta.focus();
+  updatePreview(key);
+}
+
+async function saveTemplate(key) {
+  const body = document.getElementById(`tpl_body_${key}`)?.value.trim() || '';
+  const active = document.getElementById(`tpl_active_${key}`)?.checked ?? true;
+  const disc = parseInt(document.getElementById(`tpl_disc_${key}`)?.value || 0);
+  const existing = allTemplates.find(t => t.trigger_key === key);
+  const payload = { tenant_id: currentUser.tenant_id, trigger_key: key, label: TRIGGER_META[key].label, body, active, discount_pct: disc, updated_at: new Date().toISOString() };
+
+  let error;
+  if (existing) {
+    ({ error } = await sb.from('biz_message_templates').update(payload).eq('id', existing.id));
+  } else {
+    ({ error } = await sb.from('biz_message_templates').insert(payload));
+  }
+  if (error) { showToast('Error al guardar', true); return; }
+  showToast(`Plantilla "${TRIGGER_META[key].label}" guardada`);
+  await loadTemplates();
+  loadStats();
+}
+
+async function toggleTemplate(key) {
+  const active = document.getElementById(`tpl_active_${key}`)?.checked;
+  const existing = allTemplates.find(t => t.trigger_key === key);
+  if (existing) {
+    await sb.from('biz_message_templates').update({ active }).eq('id', existing.id);
+  } else {
+    const body = document.getElementById(`tpl_body_${key}`)?.value || DEFAULT_BODIES[key] || '';
+    await sb.from('biz_message_templates').insert({ tenant_id: currentUser.tenant_id, trigger_key: key, label: TRIGGER_META[key].label, body, active });
+  }
+  await loadTemplates();
+  loadStats();
+}
+
+function resetTemplate(key) {
+  const ta = document.getElementById(`tpl_body_${key}`);
+  if (ta) { ta.value = DEFAULT_BODIES[key] || ''; updatePreview(key); }
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+async function loadStats() {
+  const startMonth = new Date(); startMonth.setDate(1); startMonth.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const [{ data: logData }, activeCount] = await Promise.all([
+    sb.from('biz_whatsapp_log').select('status,created_at').eq('tenant_id', currentUser.tenant_id),
+    allTemplates.filter(t => t.active).length,
+  ]);
+
+  const logs = logData || [];
+  const sent = logs.filter(l => l.status === 'sent' && new Date(l.created_at) >= startMonth).length;
+  const pending = logs.filter(l => l.status === 'pending' && new Date(l.created_at) >= today).length;
+  const failed = logs.filter(l => l.status === 'failed').length;
+
+  document.getElementById('statSent').textContent = sent;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statFailed').textContent = failed;
+  document.getElementById('statTemplates').textContent = allTemplates.filter(t => t.active).length;
+}
+
+// ── Clientes + Blast ──────────────────────────────────────────────────────────
+async function loadClients() {
+  const { data } = await sb.from('biz_clients').select('id,name,phone,created_at').not('phone', 'is', null);
+  allClients = data || [];
+}
+
+function selectSegment(label, value) {
+  blastSegment = value;
+  document.querySelectorAll('.segment-opt').forEach(l => l.classList.remove('selected'));
+  label.classList.add('selected');
+  updateBlastCount();
+}
+
+function updateBlastCount() {
+  const filtered = filterClients(blastSegment);
+  blastClientCount = filtered.length;
+  document.getElementById('blastCount').innerHTML = `<b>${blastClientCount}</b> clientes en este segmento`;
+}
+
+function filterClients(segment) {
+  const now = Date.now();
+  if (segment === 'all') return allClients;
+  if (segment === 'inactive_30') return allClients.filter(c => (now - new Date(c.created_at).getTime()) > 30 * 86400000);
+  if (segment === 'inactive_7') {
+    const age = (now - new Date(c.created_at).getTime());
+    return allClients.filter(c => age > 7 * 86400000 && age <= 29 * 86400000);
+  }
+  if (segment === 'frequent') return allClients; // simplificado — todo el segmento
+  return allClients;
+}
+
+function insertBlastVar(v) {
+  const ta = document.getElementById('blastMessage');
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0, pos) + v + ta.value.slice(ta.selectionEnd);
+  ta.selectionStart = ta.selectionEnd = pos + v.length;
+  ta.focus();
+  updateBlastPreview();
+}
+
+function updateBlastPreview() {
+  const body = document.getElementById('blastMessage').value;
+  const disc = document.getElementById('blastDiscount').value || '10';
+  document.getElementById('blastPreviewBubble').innerHTML = renderPreviewText(body, disc);
+}
+
+function sendBlast() {
+  const msg = document.getElementById('blastMessage').value.trim();
+  if (!msg) { showToast('Escribe el mensaje antes de enviar', true); return; }
+  if (!blastClientCount) { showToast('No hay clientes en este segmento', true); return; }
+  document.getElementById('blastConfirmText').innerHTML =
+    `Vas a enviar un mensaje a <b>${blastClientCount} clientes</b>.<br><br>Mensaje:<br><i style="color:var(--text3);">"${msg.slice(0,120)}${msg.length > 120 ? '…' : ''}"</i>`;
+  document.getElementById('blastModal').classList.add('open');
+}
+
+function closeBlastModal() { document.getElementById('blastModal').classList.remove('open'); }
+
+async function confirmBlast() {
+  const btn = document.getElementById('confirmBlastBtn');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+
+  const msg = document.getElementById('blastMessage').value.trim();
+  const disc = document.getElementById('blastDiscount').value || '0';
+  const clients = filterClients(blastSegment);
+  const tenantName = currentUser?.tenant?.name || '';
+
+  const logs = clients.map(c => ({
+    tenant_id: currentUser.tenant_id,
+    client_id: c.id,
+    trigger_key: 'promo_blast',
+    phone: c.phone,
+    message: msg.replace(/\{nombre\}/g, c.name || 'cliente').replace(/\{local\}/g, tenantName).replace(/\{descuento\}/g, disc),
+    status: 'pending',
+    scheduled_at: new Date().toISOString(),
+  }));
+
+  const { error } = await sb.from('biz_whatsapp_log').insert(logs);
+  if (error) { showToast('Error al programar envíos', true); btn.disabled = false; btn.textContent = 'Enviar'; return; }
+
+  showToast(`${clients.length} mensajes programados para envío`);
+  closeBlastModal();
+  btn.disabled = false; btn.textContent = 'Enviar';
+  loadStats();
+  loadLog();
+}
+
+// ── Historial ─────────────────────────────────────────────────────────────────
+async function loadLog() {
+  const query = sb.from('biz_whatsapp_log')
+    .select('id,trigger_key,phone,message,status,sent_at,created_at,biz_clients(name)')
+    .eq('tenant_id', currentUser.tenant_id)
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  const { data } = await query;
+  renderLog(data || []);
+}
+
+function filterLog(filter, btn) {
+  logFilter = filter;
+  document.querySelectorAll('.log-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadLog();
+}
+
+function renderLog(rows) {
+  const filtered = logFilter === 'all' ? rows : rows.filter(r => r.status === logFilter);
+  const tbody = document.getElementById('logBody');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px;">Sin registros</td></tr>';
+    return;
+  }
+
+  const triggerLabels = Object.fromEntries(Object.entries(TRIGGER_META).map(([k,v]) => [k, v.icon + ' ' + v.label]));
+
+  tbody.innerHTML = filtered.map(r => {
+    const dt = new Date(r.created_at).toLocaleDateString('es-CL', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+    const clientName = r.biz_clients?.name || r.phone;
+    const msg = (r.message || '').slice(0, 60) + (r.message?.length > 60 ? '…' : '');
+    return `
+      <tr>
+        <td style="white-space:nowrap;">${dt}</td>
+        <td>${triggerLabels[r.trigger_key] || r.trigger_key}</td>
+        <td>${clientName}</td>
+        <td style="max-width:220px;">${msg}</td>
+        <td><span class="status-chip status-${r.status}">${r.status}</span></td>
+      </tr>`;
+  }).join('');
+}
+
+// ── UI helpers ────────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  ['config','templates','blast','log'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.main-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (name === 'log') loadLog();
+}
+
+function copyWebhook() {
+  const url = document.getElementById('webhookUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('URL copiada'));
+}
+
+init();
+</script>
+</body>
+</html>

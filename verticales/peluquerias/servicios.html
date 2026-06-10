@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servicios — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .service-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; transition: border-color .15s; }
+    .service-card:hover { border-color: var(--border2); }
+    .service-card.inactive { opacity: .45; }
+    .service-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .service-name { font-size: 15px; font-weight: 600; color: var(--text); }
+    .service-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+    .service-meta { display: flex; gap: 10px; }
+    .meta-chip { display: flex; flex-direction: column; gap: 2px; }
+    .meta-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
+    .meta-value { font-size: 16px; font-weight: 600; color: var(--text); }
+    .meta-value.green { color: var(--success); }
+    .service-deposit { font-size: 11px; color: var(--text3); }
+    .service-actions { display: flex; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: .2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 30px; width: 100%; max-width: 460px; }
+    .modal-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h1>Servicios</h1>
+        <p>Catálogo de servicios y precios de tu negocio</p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">+ Agregar servicio</button>
+    </div>
+
+    <div id="servicesGrid" class="services-grid">
+      <div class="empty-state"><p>Cargando...</p></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Nuevo servicio</div>
+    <form id="serviceForm" onsubmit="saveService(event)">
+      <input type="hidden" id="fId">
+      <div class="form-group">
+        <label class="form-label">Nombre del servicio</label>
+        <input class="form-input" id="fName" placeholder="Corte clásico" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción (opcional)</label>
+        <input class="form-input" id="fDesc" placeholder="Corte con tijera y máquina...">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Duración (min)</label>
+          <input class="form-input" id="fDuration" type="number" min="5" step="5" value="30" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Precio (CLP)</label>
+          <input class="form-input" id="fPrice" type="number" min="0" step="500" placeholder="12000" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Seña (CLP)</label>
+          <input class="form-input" id="fDeposit" type="number" min="0" step="500" value="0">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btnSave">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+let _tenantId;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function formatCLP(n) { return '$' + Number(n).toLocaleString('es-CL'); }
+function formatMin(m) { return m >= 60 ? `${Math.floor(m/60)}h${m%60?` ${m%60}min`:''}` : `${m} min`; }
+
+function renderServiceCard(s) {
+  return `<div class="service-card ${s.active ? '' : 'inactive'}">
+    <div class="service-top">
+      <div>
+        <div class="service-name">${s.name}</div>
+        ${s.description ? `<div class="service-desc">${s.description}</div>` : ''}
+      </div>
+      <span class="badge ${s.active ? 'badge-green' : 'badge-gray'}">${s.active ? 'Activo' : 'Inactivo'}</span>
+    </div>
+    <div class="service-meta">
+      <div class="meta-chip">
+        <span class="meta-label">Precio</span>
+        <span class="meta-value green">${formatCLP(s.price_clp)}</span>
+      </div>
+      <div class="meta-chip">
+        <span class="meta-label">Duración</span>
+        <span class="meta-value">${formatMin(s.duration_min)}</span>
+      </div>
+      ${s.deposit_clp > 0 ? `<div class="meta-chip">
+        <span class="meta-label">Seña</span>
+        <span class="meta-value">${formatCLP(s.deposit_clp)}</span>
+      </div>` : ''}
+    </div>
+    <div class="service-actions">
+      <button class="btn btn-ghost" style="flex:1;font-size:12px;" onclick='editService(${JSON.stringify(s).replace(/'/g,"\\'")} )'>Editar</button>
+      <button class="btn btn-ghost" style="font-size:12px;color:var(--danger);" onclick="toggleService('${s.id}',${s.active})">
+        ${s.active ? 'Desactivar' : 'Activar'}
+      </button>
+    </div>
+  </div>`;
+}
+
+async function loadServices() {
+  const { data } = await sb.from('biz_services')
+    .select('*').eq('tenant_id', _tenantId).order('created_at');
+  const grid = document.getElementById('servicesGrid');
+  if (!data?.length) {
+    grid.innerHTML = `<div class="empty-state"><h3>Sin servicios aún</h3><p>Agrega los servicios que ofrece tu negocio</p></div>`;
+    return;
+  }
+  grid.innerHTML = data.map(renderServiceCard).join('');
+}
+
+window.editService = function(s) {
+  document.getElementById('modalTitle').textContent = 'Editar servicio';
+  document.getElementById('fId').value       = s.id;
+  document.getElementById('fName').value     = s.name;
+  document.getElementById('fDesc').value     = s.description || '';
+  document.getElementById('fDuration').value = s.duration_min;
+  document.getElementById('fPrice').value    = s.price_clp;
+  document.getElementById('fDeposit').value  = s.deposit_clp || 0;
+  document.getElementById('modalOverlay').classList.add('open');
+};
+
+window.toggleService = async function(id, current) {
+  await sb.from('biz_services').update({ active: !current }).eq('id', id);
+  await loadServices();
+  showToast(current ? 'Servicio desactivado' : 'Servicio activado');
+};
+
+async function saveService(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true; btn.textContent = 'Guardando…';
+
+  const id       = document.getElementById('fId').value;
+  const payload  = {
+    name:         document.getElementById('fName').value.trim(),
+    description:  document.getElementById('fDesc').value.trim() || null,
+    duration_min: parseInt(document.getElementById('fDuration').value),
+    price_clp:    parseFloat(document.getElementById('fPrice').value),
+    deposit_clp:  parseFloat(document.getElementById('fDeposit').value) || 0,
+    updated_at:   new Date()
+  };
+
+  try {
+    if (id) {
+      await sb.from('biz_services').update(payload).eq('id', id);
+    } else {
+      await sb.from('biz_services').insert({ ...payload, tenant_id: _tenantId });
+    }
+    closeModal();
+    await loadServices();
+    showToast(id ? '✓ Servicio actualizado' : '✓ Servicio creado');
+  } catch(err) {
+    showToast('Error: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Guardar';
+  }
+}
+
+function openModal() {
+  document.getElementById('modalTitle').textContent = 'Nuevo servicio';
+  document.getElementById('serviceForm').reset();
+  document.getElementById('fId').value = '';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+(async () => {
+  const user = await requireAuth(['owner', 'super_admin']);
+  if (!user) return;
+  _tenantId = user.tenant_id;
+  await renderNav('Servicios');
+  await loadServices();
+})();
+</script>
+</body>
+</html>

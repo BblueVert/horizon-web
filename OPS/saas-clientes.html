@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Clientes SaaS</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/verticales/_core/saas-config.js"></script>
+<script src="/verticales/_core/saas-auth.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.saas-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:900px){.saas-stats{grid-template-columns:repeat(2,1fr);}}
+
+.tenant-row{display:grid;grid-template-columns:1fr 110px 90px 100px 120px 100px;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);transition:.12s;}
+.tenant-row:last-child{border-bottom:none;}
+.tenant-row:hover{background:var(--card2);}
+.tenant-name{font-size:13px;font-weight:600;color:var(--text);}
+.tenant-slug{font-family:var(--fm);font-size:10px;color:var(--text3);margin-top:2px;}
+.tenant-head{display:grid;grid-template-columns:1fr 110px 90px 100px 120px 100px;gap:12px;padding:8px 16px;border-bottom:1px solid var(--border);}
+.tenant-head span{font-family:var(--fm);font-size:8px;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:.2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 32px;width:100%;max-width:440px;transform:translateY(10px);transition:.2s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-title{font-family:var(--fd);font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;}
+.modal-sub{font-family:var(--fm);font-size:10px;color:var(--text3);margin-bottom:22px;}
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-family:var(--fm);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:5px;}
+.form-input{width:100%;padding:9px 12px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;transition:.12s;font-family:inherit;}
+.form-input:focus{border-color:var(--h1);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Clientes SaaS</div>
+        <div class="ops-page-sub">Gestión de tenants · horizon-saas</div>
+      </div>
+      <div class="ops-header-actions">
+        <button class="btn btn-primary btn-sm" onclick="openModal()">+ Nuevo cliente</button>
+      </div>
+    </div>
+
+    <div class="ops-content">
+      <div id="pageLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando…</div>
+      <div id="pageContent" style="display:none;">
+
+        <!-- Stats -->
+        <div class="saas-stats">
+          <div class="stat-card">
+            <div class="stat-label">MRR SaaS <span class="stat-badge">Este mes</span></div>
+            <div class="stat-value green" id="statMrr">$0</div>
+            <div class="stat-sub" id="statMrrSub">0 activos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">En Trial <span class="stat-badge orange">Convertir</span></div>
+            <div class="stat-value orange" id="statTrial">0</div>
+            <div class="stat-sub" id="statTrialSub">clientes en prueba</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Churn</div>
+            <div class="stat-value" id="statChurn">0</div>
+            <div class="stat-sub">cancelados este mes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Negocios</div>
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-sub">todos los tenants</div>
+          </div>
+        </div>
+
+        <!-- Tabla de tenants -->
+        <div class="ops-card" style="padding:0;overflow:hidden;">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;flex:1;">Tenants</span>
+            <input id="searchInput" class="ops-input" type="text" placeholder="Buscar por nombre…" style="width:200px;padding:6px 10px;font-size:12px;" oninput="filterTenants(this.value)">
+          </div>
+          <div class="tenant-head">
+            <span>Negocio</span>
+            <span>Nicho</span>
+            <span>Plan</span>
+            <span>Estado</span>
+            <span>MRR</span>
+            <span>Acciones</span>
+          </div>
+          <div id="tenantsList"></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Nuevo Tenant -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">Nuevo Cliente SaaS</div>
+    <div class="modal-sub">Crea el negocio y el acceso del dueño</div>
+    <form id="tenantForm" onsubmit="createTenant(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre del negocio</label>
+          <input class="form-input" id="fName" placeholder="Barbería El Corte" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Slug (URL)</label>
+          <input class="form-input" id="fSlug" placeholder="el-corte" required pattern="[a-z0-9\-]+">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nicho</label>
+          <select class="form-input" id="fType">
+            <option value="barbershop">Peluquería / Barbería</option>
+            <option value="restaurant">Restaurante</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Plan</label>
+          <select class="form-input" id="fPlan">
+            <option value="starter">Starter — $29.900</option>
+            <option value="pro" selected>Pro — $79.900</option>
+            <option value="studio">Studio — $149.900</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email del dueño</label>
+        <input class="form-input" id="fEmail" type="email" placeholder="dueño@barberia.cl" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Teléfono (WhatsApp)</label>
+        <input class="form-input" id="fPhone" placeholder="+56912345678">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-sm" id="btnCreate">Crear cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const SAAS_URL  = 'https://khvfhvpqhcchgxrtmrjo.supabase.co';
+const SAAS_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtodmZodnBxaGNjaGd4cnRtcmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MzkwNTMsImV4cCI6MjA5NjExNTA1M30.lYHscLNuqaB1UObLDRbPLJH5vFm--WPTitN8lJXZeF4';
+const sbSaas = supabase.createClient(SAAS_URL, SAAS_KEY);
+
+const PLAN_PRICES = { starter: 29900, pro: 79900, studio: 149900 };
+const PLAN_LABELS = { starter: 'Starter', pro: 'Pro', studio: 'Studio' };
+const TYPE_LABELS = { barbershop: 'Peluquería', restaurant: 'Restaurante' };
+const STATUS_CFG  = {
+  trial:     { cls: 'badge-orange', label: 'Trial'    },
+  active:    { cls: 'badge-green',  label: 'Activo'   },
+  paused:    { cls: 'badge-gray',   label: 'Pausado'  },
+  cancelled: { cls: 'badge-red',    label: 'Cancelado'},
+};
+
+let allTenants = [];
+
+function fmt$(n){ return n ? '$' + Number(n).toLocaleString('es-CL') : '$0'; }
+
+function renderTenants(list) {
+  const el = document.getElementById('tenantsList');
+  if (!list.length) {
+    el.innerHTML = `<div class="ops-empty" style="padding:32px;"><div class="ops-empty-icon">🏪</div><div class="ops-empty-text">Sin clientes SaaS aún</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(t => {
+    const cfg = STATUS_CFG[t.status] || STATUS_CFG.trial;
+    const mrr = t.status === 'active' ? PLAN_PRICES[t.plan] || 0 : 0;
+    const trialEnd = t.subscriptions?.[0]?.trial_ends_at
+      ? new Date(t.subscriptions[0].trial_ends_at).toLocaleDateString('es-CL', { day:'numeric', month:'short' })
+      : '—';
+    return `<div class="tenant-row">
+      <div>
+        <div class="tenant-name">${t.name}</div>
+        <div class="tenant-slug">/${t.slug}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);">${TYPE_LABELS[t.type] || t.type}</div>
+      <div><span style="font-family:var(--fm);font-size:11px;color:var(--text2);">${PLAN_LABELS[t.plan] || t.plan}</span></div>
+      <div><span class="badge ${cfg.cls}">${cfg.label}</span>${t.status==='trial'?`<div style="font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:3px;">vence ${trialEnd}</div>`:''}</div>
+      <div style="font-family:var(--fd);font-size:16px;color:${mrr?'var(--green)':'var(--text3)'};">${mrr ? fmt$(mrr) : '—'}</div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="impersonate('${t.id}','${t.slug}')">Ver</button>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="toggleStatus('${t.id}','${t.status}')">
+          ${t.status === 'active' ? 'Pausar' : 'Activar'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterTenants(q) {
+  const filtered = q
+    ? allTenants.filter(t => t.name.toLowerCase().includes(q.toLowerCase()) || t.slug.includes(q.toLowerCase()))
+    : allTenants;
+  renderTenants(filtered);
+}
+
+async function loadTenants() {
+  const { data, error } = await sbSaas
+    .from('tenants')
+    .select('*, subscriptions(plan, price_clp, status, trial_ends_at)')
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error(error); return; }
+  allTenants = data || [];
+
+  const active    = allTenants.filter(t => t.status === 'active');
+  const trials    = allTenants.filter(t => t.status === 'trial');
+  const cancelled = allTenants.filter(t => t.status === 'cancelled');
+  const mrr       = active.reduce((s, t) => s + (PLAN_PRICES[t.plan] || 0), 0);
+
+  document.getElementById('statMrr').textContent    = fmt$(mrr);
+  document.getElementById('statMrrSub').textContent = `${active.length} activo${active.length !== 1 ? 's' : ''}`;
+  document.getElementById('statTrial').textContent  = trials.length;
+  document.getElementById('statTrialSub').textContent = `${trials.length} cliente${trials.length !== 1 ? 's' : ''} en prueba`;
+  document.getElementById('statChurn').textContent  = cancelled.length;
+  document.getElementById('statTotal').textContent  = allTenants.length;
+
+  renderTenants(allTenants);
+}
+
+async function createTenant(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnCreate');
+  btn.disabled = true;
+  btn.textContent = 'Creando…';
+
+  const name  = document.getElementById('fName').value.trim();
+  const slug  = document.getElementById('fSlug').value.trim().toLowerCase();
+  const type  = document.getElementById('fType').value;
+  const plan  = document.getElementById('fPlan').value;
+  const email = document.getElementById('fEmail').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+
+  try {
+    // 1. Crear tenant
+    const { data: tenant, error: tErr } = await sbSaas
+      .from('tenants')
+      .insert({ name, slug, type, plan, status: 'trial', phone })
+      .select()
+      .single();
+    if (tErr) throw tErr;
+
+    // 2. Crear suscripción
+    await sbSaas.from('subscriptions').insert({
+      tenant_id: tenant.id,
+      plan,
+      price_clp: PLAN_PRICES[plan],
+      status: 'trial'
+    });
+
+    // Nota: la creación del usuario Auth del dueño requiere el service_role key
+    // y debe hacerse desde el servidor (api/saas-admin.js). Aquí registramos el tenant
+    // y el API se encarga de enviar el invite por email.
+    await fetch('/api/saas/invite-owner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(await opsAuthHeaders()) },
+      body: JSON.stringify({ tenant_id: tenant.id, email, name })
+    }).catch(() => {}); // no-throw: el tenant ya quedó creado
+
+    closeModal();
+    document.getElementById('tenantForm').reset();
+    await loadTenants();
+    opsToast(`✓ Tenant "${name}" creado — invitación enviada a ${email}`);
+  } catch (err) {
+    opsToast('Error: ' + err.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Crear cliente';
+  }
+}
+
+async function toggleStatus(id, currentStatus) {
+  const newStatus = currentStatus === 'active' ? 'paused' : 'active';
+  const { error } = await sbSaas.from('tenants').update({ status: newStatus }).eq('id', id);
+  if (error) { opsToast('Error: ' + error.message, true); return; }
+  await loadTenants();
+  opsToast(`Estado actualizado a "${newStatus}"`);
+}
+
+function impersonate(tenantId, slug) {
+  // Guarda el tenant a impersonar y abre el dashboard del SaaS
+  sessionStorage.setItem('ops_impersonate_tenant', tenantId);
+  window.open(`/verticales/peluquerias/dashboard.html?tenant=${tenantId}`, '_blank');
+}
+
+function openModal()  { document.getElementById('modalOverlay').classList.add('open'); document.getElementById('fName').focus(); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+// Auto-slug desde el nombre
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('fName')?.addEventListener('input', function() {
+    const slug = this.value.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim().replace(/\s+/g, '-');
+    document.getElementById('fSlug').value = slug;
+  });
+});
+
+function opsToast(msg, isError = false) {
+  const existing = document.getElementById('opsToast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'opsToast';
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position:'fixed', bottom:'24px', right:'24px',
+    background: isError ? 'var(--card)' : 'var(--card)',
+    border: `1px solid ${isError ? 'var(--red)' : 'var(--green)'}`,
+    borderRadius:'8px', padding:'10px 16px',
+    fontFamily:'var(--fm)', fontSize:'11px',
+    color: isError ? 'var(--red)' : 'var(--green)',
+    zIndex:999, boxShadow:'0 4px 20px rgba(0,0,0,.4)'
+  });
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+(async function() {
+  const user = await requireAuth(['super_admin']);
+  if (!user) return;
+
+  // Intentar cargar nav de OPS si hay sesión OPS activa, si no mostrar nav mínimo
+  renderMinNav();
+
+  await loadTenants();
+  document.getElementById('pageLoading').style.display = 'none';
+  document.getElementById('pageContent').style.display = 'block';
+})();
+
+function renderMinNav() {
+  const layout = document.querySelector('.ops-layout');
+  if (!layout) return;
+  const aside = document.createElement('aside');
+  aside.className = 'ops-sidebar';
+  aside.innerHTML = `
+    <div class="ops-sidebar-top">
+      <a href="/ops" class="ops-logo" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+        <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON">
+        <span class="ops-logo-badge">OPS</span>
+      </a>
+    </div>
+    <nav class="ops-nav">
+      <div class="ops-nav-section">SAAS</div>
+      <a href="/ops/saas-clientes" class="ops-nav-item active">
+        <span class="ops-nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+        <span class="ops-nav-label">Clientes SaaS</span>
+      </a>
+      <div class="ops-nav-section">HORIZON</div>
+      <a href="/ops" class="ops-nav-item">
+        <span class="ops-nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+        <span class="ops-nav-label">Dashboard OPS</span>
+      </a>
+    </nav>
+    <div class="ops-sidebar-footer">
+      <button class="ops-nav-item ops-nav-item--danger" onclick="logout()">
+        <span class="ops-nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span class="ops-nav-label">Cerrar sesión</span>
+      </button>
+    </div>
+  `;
+  layout.prepend(aside);
+}
+</script>
+</body>
+</html>
