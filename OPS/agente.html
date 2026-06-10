@@ -371,8 +371,15 @@ async function send(){
 
   try{
     const headers=await opsAuthHeaders();
+    let contexto=null;
+    try{
+      if(modo==='socio'){
+        const dr=await fetch('/api/ops/dashboard',{headers});
+        if(dr.ok) contexto=await dr.json();
+      }
+    }catch(_){}
     const r=await fetch('/api/ops/agente',{method:'POST',headers,
-      body:JSON.stringify({modo,mensaje:msg,historial:msgs.slice(-12).slice(0,-1)})});
+      body:JSON.stringify({modo,mensaje:msg,contexto,historial:msgs.slice(-12).slice(0,-1)})});
     const data=await r.json();
     document.getElementById(tid)?.remove();
     const reply={role:'agente',content:data.respuesta||data.error||'Error.',ts:new Date().toISOString()};
