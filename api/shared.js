@@ -99,4 +99,22 @@ function uid() {
   return crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
 }
 
-module.exports = { sanitize, sanitizeEmail, rateLimit, getIp, httpsPost, httpsRequest, verifyHmac, uid };
+async function verifyOpsAuth(req) {
+  const auth = req.headers['authorization'] || '';
+  const token = auth.replace(/^Bearer\s+/i, '').trim();
+  if (!token) return false;
+  const sbUrl = process.env.SUPABASE_URL;
+  const sbKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!sbUrl || !sbKey) return false;
+  try {
+    const r = await httpsRequest('GET', `${sbUrl}/auth/v1/user`, {
+      'apikey': sbKey,
+      'Authorization': 'Bearer ' + token,
+    });
+    return r.status === 200;
+  } catch {
+    return false;
+  }
+}
+
+module.exports = { sanitize, sanitizeEmail, rateLimit, getIp, httpsPost, httpsRequest, verifyHmac, uid, verifyOpsAuth };

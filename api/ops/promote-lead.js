@@ -1,6 +1,6 @@
 'use strict';
 
-const { sanitize, httpsRequest, rateLimit, getIp, uid } = require('../shared');
+const { sanitize, httpsRequest, rateLimit, getIp, uid, verifyOpsAuth } = require('../shared');
 
 const MILESTONES_BASE = {
   plan01: ['Diagnóstico y diseño','Desarrollo y contenido','Deploy y entrega'],
@@ -19,6 +19,7 @@ module.exports = async function handler(req, res) {
 
   const ip = getIp(req);
   if (rateLimit(ip, 60_000, 10)) return res.status(429).json({ error: 'Demasiadas solicitudes' });
+  if (!await verifyOpsAuth(req)) return res.status(401).json({ error: 'No autorizado' });
 
   const SB_URL = process.env.SUPABASE_URL;
   const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;

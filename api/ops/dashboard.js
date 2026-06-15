@@ -1,6 +1,6 @@
 'use strict';
 
-const { httpsRequest, rateLimit, getIp } = require('../shared');
+const { httpsRequest, rateLimit, getIp, verifyOpsAuth } = require('../shared');
 
 const PLAN_PRICES = { plan01:290000, plan02:490000, plan03:690000, plan04:890000, plan05:null };
 const PIPELINE_STATUSES = ['new','contactado','propuesta','arranque'];
@@ -12,6 +12,7 @@ module.exports = async function handler(req, res) {
 
   const ip = getIp(req);
   if (rateLimit(ip, 60_000, 60)) return res.status(429).json({ error: 'Demasiadas solicitudes' });
+  if (!await verifyOpsAuth(req)) return res.status(401).json({ error: 'No autorizado' });
 
   const SB_URL = process.env.SUPABASE_URL;
   const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;

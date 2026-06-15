@@ -1,7 +1,7 @@
 'use strict';
 
 const https = require('https');
-const { sanitize, rateLimit, getIp } = require('../shared');
+const { sanitize, rateLimit, getIp, verifyOpsAuth } = require('../shared');
 
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 1024;
@@ -44,6 +44,7 @@ module.exports = async function handler(req, res) {
 
   const ip = getIp(req);
   if (rateLimit(ip, 60_000, 10)) return res.status(429).json({ error: 'Máximo 10 consultas por minuto.' });
+  if (!await verifyOpsAuth(req)) return res.status(401).json({ error: 'No autorizado' });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(503).json({ error: 'Agente no configurado. Falta ANTHROPIC_API_KEY.' });
