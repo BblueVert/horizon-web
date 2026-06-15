@@ -244,16 +244,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
         <div class="price-val">$290.000</div>
         <div class="price-tachado">$580.000</div>
       </div>
-      <div class="price-currency">CLP · Pago único · Solo primeros 10 clientes</div>
-    </div>
-    <div class="price-divider"></div>
-    <div>
-      <div class="cupos-strip-label" style="margin-bottom:8px;">Cupos fundadores</div>
-      <div class="cupos-strip-head" style="margin-bottom:6px;">
-        <span style="font-family:var(--fb);font-size:11px;color:var(--text2);" id="cupos-sub">Cargando disponibilidad...</span>
-        <span class="cupos-strip-num" id="cupos-num">— / 10</span>
-      </div>
-      <div class="cupos-strip-bar"><div class="cupos-strip-fill" id="cupos-fill"></div></div>
+      <div class="price-currency">CLP · Pago único</div>
     </div>
     <div class="price-divider"></div>
     <div class="price-retainer">
@@ -517,27 +508,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   els.forEach(function(el){ obs.observe(el); });
-})();
-</script>
-<script>
-(function(){
-  var SB='https://dkitbnrpwmwrfnmztdfc.supabase.co';
-  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
-  var PLAN='plan01', TOTAL=10;
-  fetch(SB+'/rest/v1/leads?select=id&plan=eq.'+PLAN+'&status=eq.converted',{
-    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'count=exact','Range-Unit':'items','Range':'0-0'}
-  }).then(function(r){
-    var ct=r.headers.get('Content-Range');
-    var tomados=ct?Math.max(0,parseInt(ct.split('/')[1])||0):0;
-    var libres=Math.max(0,TOTAL-tomados);
-    var n=document.getElementById('cupos-num');
-    var f=document.getElementById('cupos-fill');
-    var s=document.getElementById('cupos-sub');
-    if(n) n.textContent=libres+' / '+TOTAL;
-    if(f) f.style.width=Math.min(100,tomados/TOTAL*100)+'%';
-    if(s) s.textContent=libres===0?'Sin cupos fundadores disponibles':libres<=3?'⚡ Solo quedan '+libres+' cupos al precio fundador':libres+' cupos disponibles al precio fundador';
-    if(n&&libres<=3) n.style.color='var(--rose,#e8637a)';
-  }).catch(function(){});
 })();
 </script>
 </body>
