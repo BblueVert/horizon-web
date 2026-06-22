@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ventas / Caja — HORIZON SaaS</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script src="../_core/saas-config.js"></script>
   <script src="../_core/saas-auth.js"></script>
   <script src="../_core/saas-nav.js"></script>
@@ -85,6 +86,16 @@
     .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
 
     .empty-catalog { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
+
+    /* Transfer banner (inline) */
+    .transfer-banner { background: rgba(26,63,168,.06); border: 1px solid rgba(26,63,168,.18); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+    .tx-row-sm { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 0; color: var(--text2); }
+    .tx-row-sm span:first-child { color: var(--text3); }
+
+    /* Transfer modal rows */
+    .tx-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px; background: var(--surface2); border-radius: 8px; margin-bottom: 4px; }
+    .tx-row span:first-child { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
+    .tx-row span:last-child { font-size: 13px; font-weight: 600; color: var(--text); }
   </style>
 </head>
 <body>
@@ -162,6 +173,9 @@
             <div id="mpReadyBanner" class="mp-banner mp-ready" style="display:none;">
               <strong>MercadoPago activo</strong> — Se generará un link de pago al confirmar.
             </div>
+            <div id="transferBanner" class="transfer-banner" style="display:none;">
+              <div id="transferBannerContent"></div>
+            </div>
           </div>
 
           <button class="btn btn-primary" style="width:100%;margin-top:16px;" onclick="confirmSale()" id="confirmBtn" disabled>
@@ -215,6 +229,33 @@
         <button type="submit" class="btn btn-primary" style="flex:1;">Guardar</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal cobro por transferencia -->
+<div class="modal-overlay" id="transferModal" onclick="if(event.target===this)closeTransferModal()">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-title">🏦 Cobro por transferencia</div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Total a pagar</div>
+      <div id="txAmount" style="font-size:40px;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1;"></div>
+    </div>
+    <div id="txBankDetails" style="margin-bottom:16px;"></div>
+    <div style="display:flex;justify-content:center;margin-bottom:16px;" id="txQRWrap">
+      <canvas id="txQR" style="border-radius:10px;border:1px solid var(--border);padding:8px;"></canvas>
+    </div>
+    <div class="form-group" style="margin-bottom:12px;">
+      <label class="form-label">WhatsApp del cliente (opcional)</label>
+      <div style="display:flex;gap:8px;">
+        <input class="form-input" id="txPhone" placeholder="+56 9 1234 5678" style="flex:1;">
+        <button class="btn" onclick="sendTransferWhatsApp()" style="background:#25D366;border-color:#25D366;color:#fff;flex-shrink:0;font-weight:600;">Enviar</button>
+      </div>
+    </div>
+    <input type="hidden" id="txSaleId">
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeTransferModal()">Cerrar</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="markTransferPaid()" id="txMarkPaidBtn">✓ Marcar pagado</button>
+    </div>
   </div>
 </div>
 
@@ -394,8 +435,32 @@ function selectPayMethod(btn) {
   btn.classList.add('selected');
   selectedPayMethod = btn.dataset.method;
 
-  document.getElementById('mpBanner').style.display = selectedPayMethod === 'mercadopago' && !tenantMpToken ? 'block' : 'none';
-  document.getElementById('mpReadyBanner').style.display = selectedPayMethod === 'mercadopago' && tenantMpToken ? 'block' : 'none';
+  document.getElementById('mpBanner').style.display        = selectedPayMethod === 'mercadopago' && !tenantMpToken ? 'block' : 'none';
+  document.getElementById('mpReadyBanner').style.display   = selectedPayMethod === 'mercadopago' && tenantMpToken  ? 'block' : 'none';
+  const txBanner = document.getElementById('transferBanner');
+  if (selectedPayMethod === 'transferencia') { renderTransferBanner(); txBanner.style.display = 'block'; }
+  else { txBanner.style.display = 'none'; }
+}
+
+function renderTransferBanner() {
+  const bank = currentUser?.tenant?.config_json?.bank || {};
+  const el   = document.getElementById('transferBannerContent');
+  if (bank.account) {
+    const rows = [['Titular', bank.holder], ['Banco', bank.name], ['RUT', bank.rut], ['N° Cuenta', bank.account], ['Tipo', bank.type || 'Cta. Corriente']];
+    el.innerHTML = `
+      <div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;">Datos de transferencia</div>
+      ${rows.filter(r => r[1]).map(r => `<div class="tx-row-sm"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('')}
+      <button onclick="copyBankDetails()" class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:11px;">Copiar datos</button>
+    `;
+  } else {
+    el.innerHTML = `<span style="font-size:12px;color:var(--text3);">Sin datos bancarios. <a href="configuracion.html" style="color:var(--accent);">Configura en ajustes →</a></span>`;
+  }
+}
+
+function copyBankDetails() {
+  const bank = currentUser?.tenant?.config_json?.bank || {};
+  const text = `Datos bancarios:\nTitular: ${bank.holder || ''}\nRUT: ${bank.rut || ''}\nBanco: ${bank.name || ''}\nN° Cuenta: ${bank.account || ''}\nTipo: ${bank.type || 'Cta. Corriente'}`;
+  navigator.clipboard.writeText(text).then(() => showToast('Datos copiados'));
 }
 
 // ── Confirmar venta ───────────────────────────────────────────────────────────
@@ -434,6 +499,17 @@ async function confirmSale() {
     subtotal: c.price * c.qty,
   }));
   await sb.from('biz_sale_items').insert(items);
+
+  // ── Flujo Transferencia: mostrar modal de cobro ───────────────────────────
+  if (selectedPayMethod === 'transferencia') {
+    clearCart();
+    document.getElementById('discountInput').value = '';
+    btn.disabled = false;
+    btn.textContent = 'Confirmar venta';
+    loadTodayHistory();
+    showTransferModal(sale, total);
+    return;
+  }
 
   // ── Flujo MercadoPago: crear preferencia y redirigir al checkout ──────────
   if (isMp) {
@@ -539,6 +615,56 @@ async function saveProduct(e) {
   document.getElementById('pName').value = '';
   document.getElementById('pPrice').value = '';
   document.getElementById('pStock').value = '0';
+}
+
+// ── Modal transferencia ───────────────────────────────────────────────────────
+function showTransferModal(sale, total) {
+  const bank = currentUser?.tenant?.config_json?.bank || {};
+  document.getElementById('txAmount').textContent = fCLP(total);
+  document.getElementById('txSaleId').value = sale.id;
+  document.getElementById('txPhone').value = '';
+  document.getElementById('txMarkPaidBtn').disabled = false;
+  document.getElementById('txMarkPaidBtn').textContent = '✓ Marcar pagado';
+
+  const detailsEl = document.getElementById('txBankDetails');
+  if (bank.account) {
+    const rows = [['Titular', bank.holder], ['Banco', bank.name], ['RUT', bank.rut], ['N° Cuenta', bank.account], ['Tipo', bank.type || 'Cta. Corriente']];
+    detailsEl.innerHTML = rows.filter(r => r[1]).map(r => `<div class="tx-row"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
+    const qrText = `${currentUser?.tenant?.name || 'Pago'}\nTitular: ${bank.holder}\nBanco: ${bank.name}\nRUT: ${bank.rut}\nCuenta: ${bank.account}\nMonto: ${fCLP(total)}`;
+    QRCode.toCanvas(document.getElementById('txQR'), qrText, { width: 160, margin: 2, color: { dark: '#0b1630', light: '#ffffff' } });
+    document.getElementById('txQRWrap').style.display = 'flex';
+  } else {
+    detailsEl.innerHTML = `<div style="text-align:center;color:var(--text3);font-size:12px;padding:16px 0;">Sin datos bancarios configurados.<br><a href="configuracion.html" style="color:var(--accent);font-weight:600;">Configurar cuenta →</a></div>`;
+    document.getElementById('txQRWrap').style.display = 'none';
+  }
+  document.getElementById('transferModal').classList.add('open');
+}
+
+function closeTransferModal() {
+  document.getElementById('transferModal').classList.remove('open');
+}
+
+function sendTransferWhatsApp() {
+  const bank  = currentUser?.tenant?.config_json?.bank || {};
+  const amount = document.getElementById('txAmount').textContent;
+  const phone  = document.getElementById('txPhone').value.replace(/\D/g, '');
+  const name   = currentUser?.tenant?.name || 'el local';
+  const details = bank.account
+    ? `\n\nTransferencia a:\n• Titular: ${bank.holder}\n• RUT: ${bank.rut}\n• Banco: ${bank.name}\n• N° Cuenta: ${bank.account}\n\nEnvía el comprobante cuando completes el pago. ¡Gracias!`
+    : '';
+  const msg = encodeURIComponent(`Hola! Tu servicio en ${name} es por ${amount}.${details}`);
+  window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+}
+
+async function markTransferPaid() {
+  const saleId = document.getElementById('txSaleId').value;
+  const btn = document.getElementById('txMarkPaidBtn');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  const { error } = await sb.from('biz_sales').update({ payment_status: 'paid' }).eq('id', saleId);
+  if (error) { showToast('Error al actualizar', true); btn.disabled = false; btn.textContent = '✓ Marcar pagado'; return; }
+  showToast('Venta marcada como pagada');
+  closeTransferModal();
+  loadTodayHistory();
 }
 
 init();

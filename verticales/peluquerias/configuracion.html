@@ -114,6 +114,49 @@ function renderConfig(tenant) {
       </div>
     </div>
 
+    <!-- Datos bancarios -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div>
+          <div class="config-card-title">Datos bancarios</div>
+          <div class="config-card-sub">Para cobros por transferencia y QR en caja</div>
+        </div>
+      </div>
+      <div class="config-card-body">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Titular de la cuenta</label>
+            <input class="form-input" id="bHolder" value="${tenant.config_json?.bank?.holder || ''}" placeholder="Juan Pérez">
+          </div>
+          <div class="form-group">
+            <label class="form-label">RUT titular</label>
+            <input class="form-input" id="bRut" value="${tenant.config_json?.bank?.rut || ''}" placeholder="12.345.678-9">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Banco</label>
+            <select class="form-input" id="bName">
+              ${['Banco Estado','Banco de Chile','Santander','BCI','Scotiabank','Itaú','Falabella','Ripley','MACH','Mercado Pago','Otro'].map(b =>
+                `<option value="${b}" ${(tenant.config_json?.bank?.name || '') === b ? 'selected' : ''}>${b}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de cuenta</label>
+            <select class="form-input" id="bType">
+              ${['Cuenta Corriente','Cuenta Vista','Cuenta RUT','Cuenta Ahorro'].map(t =>
+                `<option value="${t}" ${(tenant.config_json?.bank?.type || 'Cuenta Corriente') === t ? 'selected' : ''}>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de cuenta</label>
+          <input class="form-input" id="bAccount" value="${tenant.config_json?.bank?.account || ''}" placeholder="12345678">
+        </div>
+        <button class="btn btn-primary" style="align-self:flex-start;" onclick="saveBankDetails()">Guardar datos bancarios</button>
+      </div>
+    </div>
+
     <!-- MercadoPago -->
     <div class="config-card">
       <div class="config-card-header">
@@ -197,6 +240,21 @@ window.disconnectMP = async function() {
   await sb.from('tenants').update({ mp_access_token: null, updated_at: new Date() }).eq('id', _tenantId);
   showToast('MercadoPago desconectado');
   await loadConfig();
+};
+
+window.saveBankDetails = async function() {
+  const bank = {
+    holder:  document.getElementById('bHolder').value.trim(),
+    rut:     document.getElementById('bRut').value.trim(),
+    name:    document.getElementById('bName').value,
+    type:    document.getElementById('bType').value,
+    account: document.getElementById('bAccount').value.trim(),
+  };
+  if (!bank.account || !bank.holder) { showToast('Completa titular y número de cuenta'); return; }
+  const config_json = { ...(_tenant.config_json || {}), bank };
+  await sb.from('tenants').update({ config_json, updated_at: new Date() }).eq('id', _tenantId);
+  _tenant.config_json = config_json;
+  showToast('✓ Datos bancarios guardados');
 };
 
 window.copyLink = function(url) {
