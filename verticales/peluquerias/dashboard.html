@@ -21,7 +21,7 @@
 
       <div class="stats-grid" id="stats"></div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;">
         <div class="card">
           <h3 style="font-size:14px;font-weight:600;margin-bottom:16px;">Próximas reservas hoy</h3>
           <div id="today-appointments">
@@ -34,6 +34,39 @@
             <div class="empty-state"><p>Cargando...</p></div>
           </div>
         </div>
+      </div>
+
+      <!-- ── Pagos y Retiros ─────────────────────────────────────────────── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+
+        <!-- Retiros pendientes -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <h3 style="font-size:14px;font-weight:600;">Retiros solicitados</h3>
+            <span id="wrCountBadge" style="display:none;font-size:11px;font-weight:700;background:rgba(245,158,11,.18);color:#f59e0b;padding:2px 8px;border-radius:12px;"></span>
+          </div>
+          <div id="dashWithdrawals">
+            <div class="empty-state"><p>Cargando...</p></div>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+            <a href="/verticales/peluquerias/mi-billetera.html" style="font-size:12px;color:var(--text3);">Ver todas las billeteras →</a>
+          </div>
+        </div>
+
+        <!-- Últimos pagos registrados -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <h3 style="font-size:14px;font-weight:600;">Últimos pagos del día</h3>
+            <span id="todayTotalBadge" style="font-size:12px;font-weight:700;color:var(--success);"></span>
+          </div>
+          <div id="dashCredits">
+            <div class="empty-state"><p>Cargando...</p></div>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+            <a href="/verticales/peluquerias/comisiones.html" style="font-size:12px;color:var(--text3);">Ver comisiones →</a>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
@@ -78,7 +111,7 @@
       const todayEnd   = new Date(); todayEnd.setHours(23,59,59,999);
       const monthStart = new Date(todayStart.getFullYear(), todayStart.getMonth(), 1);
 
-      const [apptToday, apptMonth, staffCount, clientCount] = await Promise.all([
+      const [apptToday, apptMonth, staffCount, clientCount, pendingWithdrawals] = await Promise.all([
         sb.from('biz_appointments')
           .select('id, status', { count: 'exact' })
           .eq('tenant_id', tenantId)
@@ -90,13 +123,20 @@
           .gte('starts_at', monthStart.toISOString())
           .neq('status', 'cancelled'),
         sb.from('biz_staff').select('id', { count: 'exact' }).eq('tenant_id', tenantId).eq('active', true),
-        sb.from('biz_clients').select('id', { count: 'exact' }).eq('tenant_id', tenantId)
+        sb.from('biz_clients').select('id', { count: 'exact' }).eq('tenant_id', tenantId),
+        sb.from('biz_wallet_transactions')
+          .select('id,amount_clp,biz_staff(name,color,icon)', { count: 'exact' })
+          .eq('tenant_id', tenantId)
+          .eq('type', 'withdrawal')
+          .eq('status', 'pending')
       ]);
 
       const ingresosMes = (apptMonth.data || [])
         .reduce((s, a) => s + parseFloat(a.deposit_paid || 0), 0);
 
       const noShows = (apptToday.data || []).filter(a => a.status === 'no_show').length;
+      const pendingCount = pendingWithdrawals.count || 0;
+      const pendingData  = pendingWithdrawals.data || [];
 
       document.getElementById('stats').innerHTML = `
         <div class="stat-card">
@@ -117,7 +157,33 @@
           <div class="stat-label">Clientes totales</div>
           <div class="stat-value">${clientCount.count || 0}</div>
         </div>
+        <div class="stat-card" style="${pendingCount > 0 ? 'border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.05);' : ''}" onclick="window.location='/verticales/peluquerias/comisiones.html'" ${pendingCount > 0 ? 'style="cursor:pointer;"' : ''}>
+          <div class="stat-label">Retiros pendientes</div>
+          <div class="stat-value" style="${pendingCount > 0 ? 'color:#f59e0b;' : ''}">${pendingCount}</div>
+          <div class="stat-sub">${pendingCount > 0 ? 'Ver en Comisiones →' : 'sin solicitudes'}</div>
+        </div>
       `;
+
+      // Alerta de retiros pendientes
+      if (pendingCount > 0) {
+        const totalPending = pendingData.reduce((s, t) => s + (t.amount_clp || 0), 0);
+        const names = [...new Set(pendingData.map(t => t.biz_staff?.name).filter(Boolean))];
+        const alertEl = document.createElement('div');
+        alertEl.style.cssText = 'background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;';
+        alertEl.innerHTML = `
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#f59e0b;margin-bottom:3px;">
+              ${pendingCount} retiro${pendingCount > 1 ? 's' : ''} pendiente${pendingCount > 1 ? 's' : ''} — ${formatCLP(totalPending)}
+            </div>
+            <div style="font-size:12px;color:var(--text3);">${names.join(', ')} está${names.length > 1 ? 'n' : ''} esperando pago</div>
+          </div>
+          <a href="/verticales/peluquerias/comisiones.html" class="btn" style="font-size:12px;border-color:rgba(245,158,11,.4);color:#f59e0b;white-space:nowrap;">Ir a Comisiones</a>
+        `;
+        document.getElementById('stats').after(alertEl);
+      }
+
+      // Sección pagos y retiros (en paralelo)
+      loadPaymentsSection(tenantId);
 
       // Reservas de hoy
       const { data: todayFull } = await sb
@@ -154,6 +220,140 @@
         }).join('');
       }
     }
+
+    async function loadPaymentsSection(tenantId) {
+      const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+
+      const [{ data: withdrawals }, { data: credits }] = await Promise.all([
+        sb.from('biz_wallet_transactions')
+          .select('id,amount_clp,status,requested_at,biz_staff(id,name,color,icon)')
+          .eq('tenant_id', tenantId)
+          .eq('type', 'withdrawal')
+          .eq('status', 'pending')
+          .order('requested_at', { ascending: true }),
+        sb.from('biz_wallet_transactions')
+          .select('id,amount_clp,note,created_at,biz_staff(name,color,icon)')
+          .eq('tenant_id', tenantId)
+          .eq('type', 'credit')
+          .eq('status', 'completed')
+          .gte('created_at', todayStart.toISOString())
+          .order('created_at', { ascending: false })
+          .limit(8),
+      ]);
+
+      // ── Retiros pendientes ───────────────────────────────────────────────
+      const wrEl    = document.getElementById('dashWithdrawals');
+      const badge   = document.getElementById('wrCountBadge');
+      const pending = withdrawals || [];
+
+      if (pending.length) {
+        badge.textContent = pending.length;
+        badge.style.display = 'inline';
+      }
+
+      if (!pending.length) {
+        wrEl.innerHTML = '<div class="empty-state"><p>Sin retiros pendientes</p></div>';
+      } else {
+        wrEl.innerHTML = pending.map(tx => {
+          const s = tx.biz_staff || {};
+          const when = tx.requested_at
+            ? new Date(tx.requested_at).toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' })
+            : '—';
+          return `
+            <div id="dwr_${tx.id}" style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border2);">
+              <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;background:${s.color||'#888'}22;color:${s.color||'#888'};">
+                ${s.icon || (s.name||'?')[0]}
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;color:var(--text);">${s.name||'Barbero'}</div>
+                <div style="font-size:11px;color:var(--text3);">Solicitado ${when}</div>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-right:6px;">${formatCLP(tx.amount_clp)}</div>
+              <div style="display:flex;gap:4px;">
+                <button onclick="dashApprove('${tx.id}','${s.id}',${tx.amount_clp})"
+                  style="padding:4px 10px;font-size:11px;background:var(--success);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">
+                  Pagar
+                </button>
+                <button onclick="dashReject('${tx.id}')"
+                  style="padding:4px 8px;font-size:11px;background:var(--surface2);color:var(--danger);border:1px solid var(--border);border-radius:6px;cursor:pointer;">
+                  ✕
+                </button>
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      // ── Créditos del día ─────────────────────────────────────────────────
+      const crEl      = document.getElementById('dashCredits');
+      const todayList = credits || [];
+      const todayTotal = todayList.reduce((s, t) => s + (t.amount_clp || 0), 0);
+
+      if (todayTotal > 0) {
+        document.getElementById('todayTotalBadge').textContent = formatCLP(todayTotal);
+      }
+
+      if (!todayList.length) {
+        crEl.innerHTML = '<div class="empty-state"><p>Sin pagos registrados hoy</p></div>';
+      } else {
+        crEl.innerHTML = todayList.map(tx => {
+          const s = tx.biz_staff || {};
+          const hora = new Date(tx.created_at).toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+          return `
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2);">
+              <div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:${s.color||'#888'}22;color:${s.color||'#888'};">
+                ${s.icon || (s.name||'?')[0]}
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:12px;color:var(--text);">${tx.note || 'Servicio'}</div>
+                <div style="font-size:11px;color:var(--text3);">${s.name||''} · ${hora}</div>
+              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--success);">+${formatCLP(tx.amount_clp)}</div>
+            </div>`;
+        }).join('');
+      }
+    }
+
+    window.dashApprove = async function(txId, staffId, amount) {
+      const sb2 = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+      await sb2.from('biz_wallet_transactions')
+        .update({ status: 'completed', processed_at: new Date().toISOString() })
+        .eq('id', txId);
+
+      const { data: w } = await sb2.from('biz_barber_wallets').select('id,balance_clp,total_withdrawn_clp').eq('staff_id', staffId).single();
+      if (w) {
+        await sb2.from('biz_barber_wallets').update({
+          balance_clp: Math.max(0, (w.balance_clp || 0) - amount),
+          total_withdrawn_clp: (w.total_withdrawn_clp || 0) + amount,
+        }).eq('id', w.id);
+      }
+
+      document.getElementById('dwr_' + txId)?.remove();
+      const rem = document.querySelectorAll('[id^="dwr_"]').length;
+      const badge = document.getElementById('wrCountBadge');
+      if (rem === 0) {
+        badge.style.display = 'none';
+        document.getElementById('dashWithdrawals').innerHTML = '<div class="empty-state"><p>Sin retiros pendientes</p></div>';
+      } else {
+        badge.textContent = rem;
+      }
+    };
+
+    window.dashReject = async function(txId) {
+      const sb2 = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+      await sb2.from('biz_wallet_transactions')
+        .update({ status: 'rejected', processed_at: new Date().toISOString() })
+        .eq('id', txId);
+
+      document.getElementById('dwr_' + txId)?.remove();
+      const rem = document.querySelectorAll('[id^="dwr_"]').length;
+      const badge = document.getElementById('wrCountBadge');
+      if (rem === 0) {
+        badge.style.display = 'none';
+        document.getElementById('dashWithdrawals').innerHTML = '<div class="empty-state"><p>Sin retiros pendientes</p></div>';
+      } else {
+        badge.textContent = rem;
+      }
+    };
 
     loadDashboard();
   </script>

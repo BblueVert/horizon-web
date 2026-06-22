@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Billetera — HORIZON SaaS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../_core/saas-config.js"></script>
+  <script src="../_core/saas-auth.js"></script>
+  <script src="../_core/saas-nav.js"></script>
+  <link rel="stylesheet" href="../_core/saas.css">
+  <style>
+    /* ── Layout general ─────────────────────────────────────── */
+    .wallet-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    @media(max-width:700px){ .wallet-top { grid-template-columns: 1fr; } }
+
+    /* ── Tarjeta saldo principal ────────────────────────────── */
+    .balance-card {
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(37,99,235,.08) 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .balance-left { display: flex; align-items: center; gap: 18px; }
+    .balance-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 700; flex-shrink: 0;
+    }
+    .balance-name { font-size: 18px; font-weight: 700; color: var(--text); }
+    .balance-role { font-size: 12px; color: var(--text3); margin-top: 2px; }
+    .balance-amount { text-align: right; }
+    .balance-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .balance-num { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -.5px; }
+    .balance-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+    /* ── Stat cards ─────────────────────────────────────────── */
+    .mini-stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .ms-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .ms-val { font-size: 20px; font-weight: 700; color: var(--text); }
+    .ms-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+    /* ── Preferencia de pago ────────────────────────────────── */
+    .pref-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .pref-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+    .pref-options { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pref-option {
+      flex: 1; min-width: 130px;
+      border: 2px solid var(--border); border-radius: 10px; padding: 14px 16px;
+      cursor: pointer; transition: .15s; text-align: left; background: var(--surface2);
+    }
+    .pref-option:hover { border-color: var(--text3); }
+    .pref-option.selected { border-color: #2563eb; background: rgba(37,99,235,.07); }
+    .pref-option-icon { font-size: 20px; margin-bottom: 6px; }
+    .pref-option-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .pref-option-desc { font-size: 11px; color: var(--text3); line-height: 1.4; }
+
+    /* ── QR section ─────────────────────────────────────────── */
+    .qr-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; margin-bottom: 24px; display: flex; gap: 20px; align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .qr-box {
+      background: #fff; border-radius: 10px; padding: 10px;
+      display: flex; align-items: center; justify-content: center;
+      width: 130px; height: 130px; flex-shrink: 0;
+    }
+    .qr-box canvas { display: block; }
+    .qr-info { flex: 1; min-width: 180px; }
+    .qr-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .qr-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 12px; }
+    .qr-link { font-size: 11px; font-family: monospace; color: var(--text3); background: var(--surface2); padding: 6px 10px; border-radius: 6px; word-break: break-all; display: block; margin-bottom: 10px; }
+
+    /* ── Historial ──────────────────────────────────────────── */
+    .hist-section { margin-bottom: 24px; }
+    .hist-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .hist-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .hist-list { display: flex; flex-direction: column; gap: 8px; }
+    .hist-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+    }
+    .hist-icon {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+    }
+    .hist-icon.credit { background: rgba(22,163,74,.15); }
+    .hist-icon.withdrawal { background: rgba(217,119,6,.15); }
+    .hist-icon.pending-w { background: rgba(107,114,128,.15); }
+    .hist-body { flex: 1; }
+    .hist-desc { font-size: 13px; font-weight: 500; color: var(--text); }
+    .hist-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .hist-amount { font-size: 14px; font-weight: 700; text-align: right; }
+    .hist-amount.credit { color: var(--success); }
+    .hist-amount.withdrawal { color: #f59e0b; }
+    .hist-status { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-top: 3px; display: inline-block; }
+    .s-pending { background: rgba(107,114,128,.15); color: var(--text3); }
+    .s-completed { background: rgba(22,163,74,.12); color: var(--success); }
+    .s-rejected { background: rgba(220,38,38,.12); color: var(--danger); }
+
+    /* ── Modal retiro ───────────────────────────────────────── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: .2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 100%; max-width: 420px; }
+    .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .modal-sub { font-size: 12px; color: var(--text3); margin-bottom: 20px; }
+    .amount-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .amount-chip {
+      padding: 10px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--surface2); font-size: 13px; font-weight: 600; color: var(--text2);
+      cursor: pointer; text-align: center; transition: .12s;
+    }
+    .amount-chip:hover { border-color: var(--text3); }
+    .amount-chip.selected { border-color: #2563eb; color: var(--text); background: rgba(37,99,235,.07); }
+    .custom-amount-row { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+    .custom-amount-row label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+
+    /* ── Selector de barbero (para owner) ───────────────────── */
+    .staff-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .staff-chip {
+      display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+      border: 1px solid var(--border); border-radius: 20px;
+      background: var(--surface); cursor: pointer; transition: .12s;
+    }
+    .staff-chip:hover { border-color: var(--text3); }
+    .staff-chip.active { border-color: #2563eb; background: rgba(37,99,235,.07); }
+    .staff-chip-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .staff-chip-name { font-size: 12px; font-weight: 500; color: var(--text2); }
+    .staff-chip.active .staff-chip-name { color: var(--text); }
+  </style>
+</head>
+<body>
+<div class="saas-layout">
+  <nav id="saas-nav"></nav>
+  <main class="saas-main">
+
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+      <div>
+        <h1>Mi billetera</h1>
+        <p>Tus ganancias, historial y preferencias de cobro</p>
+      </div>
+      <button class="btn btn-primary" onclick="openWithdrawModal()">Solicitar retiro</button>
+    </div>
+
+    <!-- Selector de barbero (solo visible para owner) -->
+    <div id="staffSelectorWrap" style="display:none;">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Ver billetera de</div>
+      <div class="staff-selector" id="staffSelector"></div>
+    </div>
+
+    <!-- Saldo principal + stats -->
+    <div class="wallet-top" id="walletTop">
+      <div class="empty-state" style="grid-column:1/-1;"><p>Cargando...</p></div>
+    </div>
+
+    <!-- Preferencia de cobro -->
+    <div class="pref-card">
+      <div class="pref-title">¿Cuándo quieres recibir tu plata?</div>
+      <div class="pref-options">
+        <button class="pref-option" data-pref="instant" onclick="setPref('instant')">
+          <div class="pref-option-icon">⚡</div>
+          <div class="pref-option-title">Al instante</div>
+          <div class="pref-option-desc">Cada servicio pagado genera una solicitud de retiro automática.</div>
+        </button>
+        <button class="pref-option" data-pref="end_of_day" onclick="setPref('end_of_day')">
+          <div class="pref-option-icon">🌙</div>
+          <div class="pref-option-title">Al final del día</div>
+          <div class="pref-option-desc">Acumulas todo el día y se liquida una sola vez al cierre.</div>
+        </button>
+        <button class="pref-option" data-pref="manual" onclick="setPref('manual')">
+          <div class="pref-option-icon">🏦</div>
+          <div class="pref-option-title">Cuando quiera</div>
+          <div class="pref-option-desc">Tu plata se acumula acá y la retiras tú cuando lo decides.</div>
+        </button>
+      </div>
+      <button class="btn btn-primary" style="margin-top:14px;font-size:12px;" onclick="savePref()">Guardar preferencia</button>
+    </div>
+
+    <!-- QR personal -->
+    <div class="qr-card" id="qrSection">
+      <div class="qr-box" id="qrContainer">
+        <div style="font-size:11px;color:#999;text-align:center;">Generando QR...</div>
+      </div>
+      <div class="qr-info">
+        <div class="qr-title">Tu QR de reservas</div>
+        <div class="qr-desc">Los clientes escanean este código y van directo a tu agenda. Los pagos que recibas quedan registrados en tu billetera según el porcentaje acordado.</div>
+        <span class="qr-link" id="qrLinkText">—</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn" style="font-size:11px;" onclick="copyQrLink()">Copiar link</button>
+          <button class="btn" style="font-size:11px;" onclick="downloadQR()">Descargar QR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de movimientos -->
+    <div class="hist-section">
+      <div class="hist-header">
+        <div class="hist-title">Movimientos recientes</div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn" style="font-size:11px;" onclick="filterTx('all')" id="fAll">Todos</button>
+          <button class="btn" style="font-size:11px;" onclick="filterTx('credit')" id="fCredit">Ingresos</button>
+          <button class="btn" style="font-size:11px;" onclick="filterTx('withdrawal')" id="fWith">Retiros</button>
+        </div>
+      </div>
+      <div class="hist-list" id="txList">
+        <div class="empty-state"><p>Cargando movimientos...</p></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- Modal solicitar retiro -->
+<div class="modal-overlay" id="withdrawModal" onclick="if(event.target===this)closeWithdrawModal()">
+  <div class="modal">
+    <div class="modal-title">Solicitar retiro</div>
+    <div class="modal-sub" id="wModalSub">Saldo disponible: $0</div>
+
+    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">¿Cuánto quieres retirar?</div>
+    <div class="amount-options" id="amountChips"></div>
+
+    <div class="custom-amount-row">
+      <label>Otro monto:</label>
+      <input class="form-input" type="number" id="customAmount" placeholder="Ej: 15000" min="1000" style="flex:1;">
+    </div>
+
+    <div style="background:var(--surface2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text2);margin-bottom:20px;">
+      El dueño del local aprueba el retiro. Generalmente se transfiere el mismo día o al día siguiente.
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn" style="flex:1;" onclick="closeWithdrawModal()">Cancelar</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="requestWithdrawal()">Solicitar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
+
+let currentUser = null;
+let staffList    = [];
+let activeStaff  = null;   // { id, name, color, icon, slug }
+let wallet       = null;   // biz_barber_wallets row
+let allTx        = [];
+let txFilter     = 'all';
+let selectedPref = 'manual';
+let selectedAmount = 0;
+
+function showToast(msg, err = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? '#dc2626' : '';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function fCLP(n) { return '$' + Number(n || 0).toLocaleString('es-CL'); }
+function fDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleString('es-CL', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  currentUser = await requireAuth(['owner', 'staff', 'super_admin']);
+  if (!currentUser) return;
+
+  const isOwner = currentUser.role === 'owner' || currentUser.role === 'super_admin';
+
+  if (isOwner) {
+    renderNav('Billetera');
+    await loadAllStaff();
+  } else {
+    renderNav('Mi billetera');
+    await loadMyStaff();
+  }
+}
+
+// ── Carga staff (owner ve todos, staff ve solo el suyo) ───────────────────────
+async function loadAllStaff() {
+  const { data } = await sb.from('biz_staff')
+    .select('id,name,color,icon,slug')
+    .eq('active', true)
+    .order('name');
+
+  staffList = data || [];
+
+  if (!staffList.length) {
+    document.getElementById('walletTop').innerHTML =
+      '<div class="empty-state" style="grid-column:1/-1;"><p>No hay barberos activos</p></div>';
+    return;
+  }
+
+  // Mostrar selector
+  const wrap = document.getElementById('staffSelectorWrap');
+  wrap.style.display = 'block';
+  renderStaffSelector();
+
+  // Cargar el primero por defecto (o el que viene por ?staff_id=)
+  const params = new URLSearchParams(window.location.search);
+  const preselect = params.get('staff_id');
+  const initial = (preselect && staffList.find(s => s.id === preselect)) || staffList[0];
+  selectStaff(initial);
+}
+
+async function loadMyStaff() {
+  // Staff logueado: busca su propio biz_staff por auth_user_id
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+
+  const { data } = await sb.from('biz_staff')
+    .select('id,name,color,icon,slug')
+    .eq('auth_user_id', user.id)
+    .single();
+
+  if (!data) {
+    // Fallback: no tiene biz_staff vinculado, mostrar mensaje
+    document.getElementById('walletTop').innerHTML =
+      '<div class="empty-state" style="grid-column:1/-1;"><p>Tu perfil de barbero no está vinculado aún. Pídele al dueño que te configure el acceso.</p></div>';
+    return;
+  }
+
+  activeStaff = data;
+  await loadWalletData();
+}
+
+function renderStaffSelector() {
+  const el = document.getElementById('staffSelector');
+  el.innerHTML = staffList.map(s => `
+    <div class="staff-chip" id="chip_${s.id}" onclick="selectStaff(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+      <div class="staff-chip-dot" style="background:${s.color || '#888'};"></div>
+      <span class="staff-chip-name">${s.name}</span>
+    </div>
+  `).join('');
+}
+
+function selectStaff(s) {
+  activeStaff = s;
+  document.querySelectorAll('.staff-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.getElementById('chip_' + s.id);
+  if (chip) chip.classList.add('active');
+  loadWalletData();
+}
+
+// ── Datos de billetera ────────────────────────────────────────────────────────
+async function loadWalletData() {
+  if (!activeStaff) return;
+
+  const [{ data: w }, { data: txData }] = await Promise.all([
+    sb.from('biz_barber_wallets')
+      .select('*')
+      .eq('staff_id', activeStaff.id)
+      .single(),
+    sb.from('biz_wallet_transactions')
+      .select('*')
+      .eq('staff_id', activeStaff.id)
+      .order('created_at', { ascending: false })
+      .limit(50),
+  ]);
+
+  wallet = w;
+  allTx  = txData || [];
+
+  renderWalletTop();
+  renderPrefSelector(w?.payout_preference || 'manual');
+  renderQR();
+  renderTxList();
+}
+
+// ── Saldo + stats ─────────────────────────────────────────────────────────────
+function renderWalletTop() {
+  const balance  = wallet?.balance_clp || 0;
+  const earned   = wallet?.total_earned_clp || 0;
+  const withdrawn = wallet?.total_withdrawn_clp || 0;
+
+  const todayCredits = allTx
+    .filter(t => t.type === 'credit' && t.status === 'completed' && isToday(t.created_at))
+    .reduce((sum, t) => sum + t.amount_clp, 0);
+
+  const pending = allTx
+    .filter(t => t.type === 'withdrawal' && t.status === 'pending')
+    .reduce((sum, t) => sum + t.amount_clp, 0);
+
+  document.getElementById('walletTop').innerHTML = `
+    <div class="balance-card">
+      <div class="balance-left">
+        <div class="balance-avatar" style="background:${activeStaff.color || '#333'}22;color:${activeStaff.color || '#888'};">
+          ${activeStaff.icon || activeStaff.name[0]}
+        </div>
+        <div>
+          <div class="balance-name">${activeStaff.name}</div>
+          <div class="balance-role">Billetera personal</div>
+        </div>
+      </div>
+      <div class="balance-amount">
+        <div class="balance-label">Saldo disponible</div>
+        <div class="balance-num">${fCLP(balance)}</div>
+        ${pending > 0 ? `<div class="balance-sub">${fCLP(pending)} en retiro pendiente</div>` : ''}
+      </div>
+    </div>
+
+    <div class="mini-stat">
+      <div class="ms-label">Ganado hoy</div>
+      <div class="ms-val">${fCLP(todayCredits)}</div>
+      <div class="ms-sub">${allTx.filter(t => t.type==='credit' && isToday(t.created_at)).length} servicios</div>
+    </div>
+
+    <div class="mini-stat">
+      <div class="ms-label">Total histórico</div>
+      <div class="ms-val">${fCLP(earned)}</div>
+      <div class="ms-sub">desde el inicio</div>
+    </div>
+
+    <div class="mini-stat">
+      <div class="ms-label">Total retirado</div>
+      <div class="ms-val">${fCLP(withdrawn)}</div>
+      <div class="ms-sub">pagos completados</div>
+    </div>
+  `;
+}
+
+function isToday(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  const n = new Date();
+  return d.getDate() === n.getDate() && d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear();
+}
+
+// ── Preferencia de cobro ──────────────────────────────────────────────────────
+function renderPrefSelector(pref) {
+  selectedPref = pref || 'manual';
+  document.querySelectorAll('.pref-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.pref === selectedPref);
+  });
+}
+
+function setPref(p) {
+  selectedPref = p;
+  document.querySelectorAll('.pref-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.pref === p);
+  });
+}
+
+async function savePref() {
+  if (!activeStaff) return;
+  const payload = {
+    tenant_id: currentUser.tenant_id,
+    staff_id: activeStaff.id,
+    payout_preference: selectedPref,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = wallet?.id
+    ? await sb.from('biz_barber_wallets').update(payload).eq('id', wallet.id)
+    : await sb.from('biz_barber_wallets').insert({ ...payload, balance_clp: 0 });
+
+  if (error) { showToast('Error al guardar', true); return; }
+  showToast('Preferencia guardada');
+
+  const labels = { instant: 'al instante', end_of_day: 'al final del día', manual: 'cuando quiera' };
+  if (!wallet) wallet = { ...payload };
+  else wallet.payout_preference = selectedPref;
+}
+
+// ── QR personal ───────────────────────────────────────────────────────────────
+function renderQR() {
+  if (!activeStaff?.slug) return;
+  const base = window.location.origin;
+  const link = `${base}/verticales/peluquerias/public/booking.html?slug=${activeStaff.slug}`;
+
+  document.getElementById('qrLinkText').textContent = link;
+
+  const container = document.getElementById('qrContainer');
+  container.innerHTML = '';
+  const canvas = document.createElement('canvas');
+  container.appendChild(canvas);
+
+  QRCode.toCanvas(canvas, link, {
+    width: 110,
+    margin: 1,
+    color: { dark: '#000000', light: '#ffffff' }
+  });
+}
+
+window.copyQrLink = function() {
+  const link = document.getElementById('qrLinkText').textContent;
+  navigator.clipboard.writeText(link).then(() => showToast('Link copiado'));
+};
+
+window.downloadQR = function() {
+  const canvas = document.querySelector('#qrContainer canvas');
+  if (!canvas) return;
+  const a = document.createElement('a');
+  a.download = `qr-${activeStaff?.slug || 'barbero'}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+};
+
+// ── Historial ─────────────────────────────────────────────────────────────────
+function filterTx(type) {
+  txFilter = type;
+  ['all','credit','withdrawal'].forEach(f => {
+    const btn = document.getElementById('f' + f.charAt(0).toUpperCase() + f.slice(1));
+    if (btn) btn.style.background = f === type ? 'var(--text)' : '';
+    if (btn) btn.style.color = f === type ? 'var(--bg)' : '';
+  });
+  renderTxList();
+}
+
+function renderTxList() {
+  const filtered = txFilter === 'all' ? allTx : allTx.filter(t => t.type === txFilter);
+  const el = document.getElementById('txList');
+
+  if (!filtered.length) {
+    el.innerHTML = '<div class="empty-state"><p>Sin movimientos aún</p></div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map(tx => {
+    const isCredit = tx.type === 'credit';
+    const isPending = tx.status === 'pending';
+    const icon = isCredit ? '↑' : (isPending ? '⏳' : '↓');
+    const iconClass = isCredit ? 'credit' : (isPending ? 'pending-w' : 'withdrawal');
+    const amountClass = isCredit ? 'credit' : 'withdrawal';
+    const sign = isCredit ? '+' : '−';
+    const desc = tx.note || (isCredit ? 'Servicio completado' : 'Solicitud de retiro');
+
+    return `
+      <div class="hist-item">
+        <div class="hist-icon ${iconClass}">${icon}</div>
+        <div class="hist-body">
+          <div class="hist-desc">${desc}</div>
+          <div class="hist-meta">${fDate(tx.created_at)}</div>
+          <span class="hist-status s-${tx.status}">${statusLabel(tx.status)}</span>
+        </div>
+        <div style="text-align:right;">
+          <div class="hist-amount ${amountClass}">${sign}${fCLP(tx.amount_clp)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function statusLabel(s) {
+  return { pending: 'Pendiente', completed: 'Completado', rejected: 'Rechazado' }[s] || s;
+}
+
+// ── Solicitar retiro ──────────────────────────────────────────────────────────
+window.openWithdrawModal = function() {
+  const balance = wallet?.balance_clp || 0;
+  if (balance <= 0) { showToast('No tienes saldo disponible', true); return; }
+
+  document.getElementById('wModalSub').textContent = `Saldo disponible: ${fCLP(balance)}`;
+  selectedAmount = 0;
+
+  const chips = document.getElementById('amountChips');
+  const opts = [
+    Math.round(balance * 0.25),
+    Math.round(balance * 0.5),
+    Math.round(balance * 0.75),
+    balance,
+  ].filter((v, i, a) => v > 0 && a.indexOf(v) === i);
+
+  const labels = ['25%', '50%', '75%', 'Todo'];
+  chips.innerHTML = opts.map((v, i) => `
+    <div class="amount-chip" data-amount="${v}" onclick="selectAmount(${v}, this)">
+      <div>${labels[i] || ''}</div>
+      <div>${fCLP(v)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('customAmount').value = '';
+  document.getElementById('withdrawModal').classList.add('open');
+};
+
+window.selectAmount = function(amount, el) {
+  selectedAmount = amount;
+  document.getElementById('customAmount').value = '';
+  document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+};
+
+window.closeWithdrawModal = function() {
+  document.getElementById('withdrawModal').classList.remove('open');
+};
+
+window.requestWithdrawal = async function() {
+  const custom = parseInt(document.getElementById('customAmount').value) || 0;
+  const amount = custom > 0 ? custom : selectedAmount;
+  const balance = wallet?.balance_clp || 0;
+
+  if (!amount || amount <= 0) { showToast('Elige un monto', true); return; }
+  if (amount > balance) { showToast('No tienes suficiente saldo', true); return; }
+
+  const { error } = await sb.from('biz_wallet_transactions').insert({
+    tenant_id: currentUser.tenant_id,
+    staff_id: activeStaff.id,
+    type: 'withdrawal',
+    amount_clp: amount,
+    status: 'pending',
+    note: 'Solicitud de retiro',
+  });
+
+  if (error) { showToast('Error al solicitar', true); console.error(error); return; }
+
+  closeWithdrawModal();
+  showToast('Retiro solicitado. El dueño lo verá en Comisiones.');
+  await loadWalletData();
+};
+
+document.getElementById('customAmount').addEventListener('input', () => {
+  document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('selected'));
+  selectedAmount = 0;
+});
+
+init();
+</script>
+</body>
+</html>

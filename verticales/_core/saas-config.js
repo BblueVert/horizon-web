@@ -6,9 +6,10 @@ const SAAS_CONFIG = {
   routes: {
     superAdmin:  '/OPS/saas-clientes.html',
     tenantOwner: '/verticales/peluquerias/dashboard.html',
-    tenantStaff: '/verticales/peluquerias/staff.html',
+    tenantStaff: '/verticales/peluquerias/mi-billetera.html',
     login:       '/verticales/peluquerias/login.html',
-    bookingBase: '/verticales/peluquerias/public/booking.html'
+    bookingBase: '/verticales/peluquerias/public/booking.html',
+    wallet:      '/verticales/peluquerias/mi-billetera.html'
   },
   plans: {
     starter: { name: 'Starter', price_clp: 29900, max_staff: 1 },

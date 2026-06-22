@@ -56,6 +56,20 @@
     .status-settled { background: rgba(37,99,235,.15); color: #60a5fa; }
     .status-paid { background: rgba(22,163,74,.15); color: var(--success); }
 
+    /* Retiros pendientes */
+    .withdrawals-section { margin-bottom: 32px; }
+    .wr-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .wr-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .wr-badge { font-size: 11px; font-weight: 700; background: rgba(217,119,6,.18); color: #f59e0b; padding: 2px 8px; border-radius: 12px; }
+    .wr-list { display: flex; flex-direction: column; gap: 8px; }
+    .wr-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+    .wr-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+    .wr-body { flex: 1; }
+    .wr-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .wr-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .wr-amount { font-size: 16px; font-weight: 700; color: var(--text); margin-right: 4px; }
+    .wr-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
     /* Modal liquidación guardada */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: .2s; }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
@@ -109,6 +123,20 @@
       <div class="empty-state" style="grid-column:1/-1;"><p>Selecciona un período y calcula</p></div>
     </div>
 
+    <!-- ── Sección 3: Retiros solicitados por barberos ────────────────────── -->
+    <div class="withdrawals-section" id="withdrawalsSection" style="display:none;">
+      <div class="wr-header">
+        <div class="wr-title">
+          Retiros solicitados
+          <span class="wr-badge" id="wrBadge">0</span>
+        </div>
+        <a href="/verticales/peluquerias/mi-billetera.html" class="btn" style="font-size:11px;">Ver billeteras</a>
+      </div>
+      <div class="wr-list" id="wrList">
+        <div class="empty-state"><p>Sin retiros pendientes</p></div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -154,7 +182,10 @@ async function init() {
   currentUser = await requireAuth(['owner', 'super_admin']);
   if (!currentUser) return;
   renderNav('Comisiones');
-  await loadStaffAndRules();
+  await Promise.all([
+    loadStaffAndRules(),
+    loadPendingWithdrawals(),
+  ]);
   setPeriod('mes', document.querySelector('.period-btn.active'));
 }
 
@@ -438,6 +469,98 @@ async function openHistoryModal() {
 }
 
 function closeHistoryModal() { document.getElementById('historyModal').classList.remove('open'); }
+
+// ── Retiros pendientes ────────────────────────────────────────────────────────
+async function loadPendingWithdrawals() {
+  const { data } = await sb
+    .from('biz_wallet_transactions')
+    .select('*,biz_staff(id,name,color,icon)')
+    .eq('type', 'withdrawal')
+    .eq('status', 'pending')
+    .order('requested_at', { ascending: true });
+
+  const pending = data || [];
+  const section = document.getElementById('withdrawalsSection');
+  const badge   = document.getElementById('wrBadge');
+  const list    = document.getElementById('wrList');
+
+  section.style.display = pending.length ? 'block' : 'none';
+  badge.textContent = pending.length;
+
+  if (!pending.length) {
+    list.innerHTML = '<div class="empty-state"><p>Sin retiros pendientes</p></div>';
+    return;
+  }
+
+  list.innerHTML = pending.map(tx => {
+    const s = tx.biz_staff || {};
+    const when = tx.requested_at
+      ? new Date(tx.requested_at).toLocaleString('es-CL', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+      : '—';
+    return `
+      <div class="wr-item" id="wr_${tx.id}">
+        <div class="wr-avatar" style="background:${s.color || '#888'}22;color:${s.color || '#888'};">
+          ${s.icon || (s.name || '?')[0]}
+        </div>
+        <div class="wr-body">
+          <div class="wr-name">${s.name || 'Barbero'}</div>
+          <div class="wr-meta">Solicitado el ${when}</div>
+        </div>
+        <div class="wr-amount">${fCLP(tx.amount_clp)}</div>
+        <div class="wr-actions">
+          <button class="btn btn-primary" style="font-size:11px;padding:5px 12px;" onclick="approveWithdrawal('${tx.id}','${s.id}',${tx.amount_clp})">Pagar</button>
+          <button class="btn" style="font-size:11px;padding:5px 10px;color:var(--danger);" onclick="rejectWithdrawal('${tx.id}')">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function approveWithdrawal(txId, staffId, amount) {
+  const { error: e1 } = await sb
+    .from('biz_wallet_transactions')
+    .update({ status: 'completed', processed_at: new Date().toISOString() })
+    .eq('id', txId);
+
+  if (e1) { showToast('Error al aprobar', true); return; }
+
+  // Descontar del saldo de la billetera
+  const { data: walletRow } = await sb
+    .from('biz_barber_wallets')
+    .select('id,balance_clp,total_withdrawn_clp')
+    .eq('staff_id', staffId)
+    .single();
+
+  if (walletRow) {
+    await sb.from('biz_barber_wallets').update({
+      balance_clp: Math.max(0, (walletRow.balance_clp || 0) - amount),
+      total_withdrawn_clp: (walletRow.total_withdrawn_clp || 0) + amount,
+      updated_at: new Date().toISOString(),
+    }).eq('id', walletRow.id);
+  }
+
+  showToast('Pago aprobado y registrado');
+  document.getElementById('wr_' + txId)?.remove();
+  const remaining = document.querySelectorAll('[id^="wr_"]').length;
+  if (!remaining) {
+    document.getElementById('withdrawalsSection').style.display = 'none';
+  }
+  document.getElementById('wrBadge').textContent = remaining;
+}
+
+async function rejectWithdrawal(txId) {
+  const { error } = await sb
+    .from('biz_wallet_transactions')
+    .update({ status: 'rejected', processed_at: new Date().toISOString() })
+    .eq('id', txId);
+
+  if (error) { showToast('Error', true); return; }
+  showToast('Solicitud rechazada');
+  document.getElementById('wr_' + txId)?.remove();
+  const remaining = document.querySelectorAll('[id^="wr_"]').length;
+  if (!remaining) document.getElementById('withdrawalsSection').style.display = 'none';
+  document.getElementById('wrBadge').textContent = remaining;
+}
 
 init();
 </script>

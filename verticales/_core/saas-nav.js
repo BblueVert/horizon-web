@@ -9,8 +9,9 @@ async function renderNav(activeSection) {
     { href: '/verticales/peluquerias/agenda.html',        icon: '◷', label: 'Agenda' },
     { href: '/verticales/peluquerias/staff.html',         icon: '✦', label: 'Staff' },
     { href: '/verticales/peluquerias/servicios.html',     icon: '✧', label: 'Servicios' },
-    { href: '/verticales/peluquerias/ventas.html',         icon: '⊕', label: 'Ventas' },
+    { href: '/verticales/peluquerias/ventas.html',        icon: '⊕', label: 'Ventas' },
     { href: '/verticales/peluquerias/comisiones.html',    icon: '◈', label: 'Comisiones' },
+    { href: '/verticales/peluquerias/mi-billetera.html',  icon: '◎', label: 'Billeteras' },
     { href: '/verticales/peluquerias/whatsapp.html',      icon: '✉', label: 'WhatsApp' },
     { href: '/verticales/peluquerias/clientes.html',      icon: '◉', label: 'Clientes' },
     { href: '/verticales/peluquerias/reportes.html',      icon: '▲', label: 'Reportes' },
@@ -18,7 +19,8 @@ async function renderNav(activeSection) {
   ];
 
   const staffLinks = [
-    { href: '/verticales/peluquerias/agenda.html', icon: '◷', label: 'Mi agenda' },
+    { href: '/verticales/peluquerias/agenda.html',       icon: '◷', label: 'Mi agenda' },
+    { href: '/verticales/peluquerias/mi-billetera.html', icon: '◎', label: 'Mi billetera' },
   ];
 
   const links = isOwner ? ownerLinks : staffLinks;
