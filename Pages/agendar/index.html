@@ -457,6 +457,35 @@ textarea{resize:none;line-height:1.5;}
   while(init.getDay()===0||init.getDay()===6) init.setDate(init.getDate()+1);
   calClick(toStr(init));
 
+  // Leer URL params para pre-rellenar desde propuestas externas
+  const _up = new URLSearchParams(window.location.search);
+  window._bookingSource = _up.get('source') || '';
+  const _plan = _up.get('plan');
+  if(_plan){
+    const sel = document.getElementById('planSel');
+    if(sel){
+      sel.value = _plan;
+      sel.disabled = true;
+      sel.style.opacity = '0.5';
+      sel.style.cursor  = 'not-allowed';
+      sel.style.pointerEvents = 'none';
+      // Asegurar que el valor viaje aunque el campo esté disabled
+      const hidden = document.createElement('input');
+      hidden.type  = 'hidden';
+      hidden.name  = 'plan';
+      hidden.value = _plan;
+      sel.parentNode.appendChild(hidden);
+      // Etiqueta visual
+      const lbl = sel.previousElementSibling;
+      if(lbl){
+        const badge = document.createElement('span');
+        badge.textContent = ' · incluido en tu propuesta';
+        badge.style.cssText = 'font-family:var(--fm);font-size:9px;color:var(--h1);letter-spacing:.3px;';
+        lbl.appendChild(badge);
+      }
+    }
+  }
+
   document.getElementById('agendarForm').addEventListener('submit',async function(e){
     e.preventDefault();
     const status=document.getElementById('formStatus');
@@ -497,7 +526,7 @@ textarea{resize:none;line-height:1.5;}
     try{
       const r=await fetch('/api/schedule-meet',{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({nombre,email,telefono,fecha,hora:selHora,contexto,plan})
+        body:JSON.stringify({nombre,email,telefono,fecha,hora:selHora,contexto,plan,source:window._bookingSource||''})
       });
       const data=await r.json();
       if(!r.ok||!data.ok){

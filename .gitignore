@@ -36,14 +36,17 @@ node_modules/
 .claude/
 .playwright-mcp/
 CLAUDE_HORIZON_2026.md
-Skills Horizon/
-Skills Juanpe/
-files/
-cal-*.png
-n8n-*.png
-test-*.png
-header-*.png
-hero-*.png
-landing-*.png
-planes-*.png
-seccion-*.png
+
+# Carpetas de soporte / documentación interna (no van al repo del sitio)
+_capturas/
+_docs-internos/
+_workflows-n8n/
+_recursos/
+_archivo/
+CONTENIDO/
+BRAND-VOICE.md
+ESTRATEGIA-CONTENIDO-2026.md
+
+# Entradas obsoletas (ya reemplazadas por carpetas organizadas)
+# Skills Horizon/  →  _recursos/skills/
+# files/           →  _docs-internos/
