@@ -281,7 +281,7 @@ async function init() {
   const isOwner = currentUser.role === 'owner' || currentUser.role === 'super_admin';
 
   if (isOwner) {
-    renderNav('Billetera');
+    renderNav('Billeteras');
     await loadAllStaff();
   } else {
     renderNav('Mi billetera');
@@ -478,7 +478,7 @@ async function savePref() {
 // ── QR personal ───────────────────────────────────────────────────────────────
 function renderQR() {
   if (!activeStaff?.slug) return;
-  const base = window.location.origin;
+  const base = SAAS_CONFIG.bookingDomain || window.location.origin;
   const link = `${base}/verticales/peluquerias/public/booking.html?slug=${activeStaff.slug}`;
 
   document.getElementById('qrLinkText').textContent = link;

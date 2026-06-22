@@ -28,10 +28,10 @@ async function renderNav(activeSection) {
   if (!nav) return;
 
   // Aplicar tema guardado
-  const savedTheme = localStorage.getItem('admin-theme') || 'dark';
+  const savedTheme = localStorage.getItem('admin-theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
 
-  const themeLabel = savedTheme === 'light' ? '🌙 Modo oscuro' : '☀️ Modo claro';
+  const themeLabel = savedTheme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
 
   nav.innerHTML = `
     <div class="nav-brand">
@@ -60,5 +60,5 @@ window.toggleAdminTheme = function() {
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('admin-theme', next);
   const btn = document.getElementById('navThemeBtn');
-  if (btn) btn.textContent = next === 'light' ? '🌙 Modo oscuro' : '☀️ Modo claro';
+  if (btn) btn.textContent = next === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
 };

@@ -111,7 +111,7 @@
       const todayEnd   = new Date(); todayEnd.setHours(23,59,59,999);
       const monthStart = new Date(todayStart.getFullYear(), todayStart.getMonth(), 1);
 
-      const [apptToday, apptMonth, staffCount, clientCount, pendingWithdrawals] = await Promise.all([
+      const [apptToday, apptMonth, salesMonth, staffCount, clientCount, pendingWithdrawals] = await Promise.all([
         sb.from('biz_appointments')
           .select('id, status', { count: 'exact' })
           .eq('tenant_id', tenantId)
@@ -122,6 +122,10 @@
           .eq('tenant_id', tenantId)
           .gte('starts_at', monthStart.toISOString())
           .neq('status', 'cancelled'),
+        sb.from('biz_sales')
+          .select('total_clp')
+          .eq('tenant_id', tenantId)
+          .gte('created_at', monthStart.toISOString()),
         sb.from('biz_staff').select('id', { count: 'exact' }).eq('tenant_id', tenantId).eq('active', true),
         sb.from('biz_clients').select('id', { count: 'exact' }).eq('tenant_id', tenantId),
         sb.from('biz_wallet_transactions')
@@ -131,8 +135,11 @@
           .eq('status', 'pending')
       ]);
 
-      const ingresosMes = (apptMonth.data || [])
+      const ingresosAppt = (apptMonth.data || [])
         .reduce((s, a) => s + parseFloat(a.deposit_paid || 0), 0);
+      const ingresosPOS = (salesMonth.data || [])
+        .reduce((s, v) => s + parseFloat(v.total_clp || 0), 0);
+      const ingresosMes = ingresosAppt + ingresosPOS;
 
       const noShows = (apptToday.data || []).filter(a => a.status === 'no_show').length;
       const pendingCount = pendingWithdrawals.count || 0;
@@ -147,7 +154,7 @@
         <div class="stat-card">
           <div class="stat-label">Ingresos este mes</div>
           <div class="stat-value">${formatCLP(ingresosMes)}</div>
-          <div class="stat-sub">señas cobradas</div>
+          <div class="stat-sub">reservas + caja POS</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Barberos activos</div>

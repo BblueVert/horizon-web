@@ -148,7 +148,7 @@ function getScheduleFromForm() {
 function renderStaffCard(s) {
   const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const sched = s.schedule_json || {};
-  const bookingUrl = `${window.location.origin}/verticales/peluquerias/public/booking.html?slug=${s.slug}`;
+  const bookingUrl = `${SAAS_CONFIG.bookingDomain || window.location.origin}/verticales/peluquerias/public/booking.html?slug=${s.slug}`;
   return `<div class="staff-card">
     <div class="staff-card-header">
       <div class="staff-avatar">

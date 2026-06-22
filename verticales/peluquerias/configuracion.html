@@ -56,7 +56,7 @@ function showToast(msg) {
 }
 
 function renderConfig(tenant) {
-  const baseUrl = window.location.origin;
+  const baseUrl = SAAS_CONFIG.bookingDomain || window.location.origin;
   const bookingUrl = `${baseUrl}/verticales/peluquerias/public/booking.html?t=${tenant.slug}`;
   const planLabels = { starter: 'Starter', pro: 'Pro', studio: 'Studio' };
 
