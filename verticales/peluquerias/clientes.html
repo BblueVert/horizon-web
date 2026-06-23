@@ -14,6 +14,7 @@
     @media(max-width:900px){ .clients-layout { grid-template-columns: 1fr; } }
     .client-row { display: grid; grid-template-columns: 1fr 80px 80px 100px; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; }
     .client-row:hover { background: var(--surface2); }
+    .client-row.selected { background: var(--surface2); border-left: 3px solid #3b82f6; }
     .client-row:last-child { border-bottom: none; }
     .client-head { display: grid; grid-template-columns: 1fr 80px 80px 100px; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--border); }
     .client-head span { font-size: 9px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
@@ -21,12 +22,15 @@
     .client-phone { font-size: 11px; color: var(--text3); margin-top: 2px; }
     .client-detail { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: sticky; top: 20px; }
     .detail-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-    .detail-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: var(--text2); flex-shrink: 0; }
+    .detail-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
     .visit-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
     .visit-item:last-child { border-bottom: none; }
     .visit-date { color: var(--text3); min-width: 80px; }
     .visit-service { color: var(--text2); flex: 1; }
     .visit-amount { color: var(--success); font-weight: 500; }
+    .client-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+    .badge-vip { background: #fef3c7; color: #92400e; }
+    .badge-new { background: #d1fae5; color: #065f46; }
   </style>
 </head>
 <body>
@@ -54,11 +58,22 @@
           <div>
             <div style="font-size:15px;font-weight:600;color:var(--text);" id="dName">—</div>
             <div style="font-size:12px;color:var(--text3);" id="dPhone">—</div>
+            <div id="dBadge" style="margin-top:4px;"></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Visitas</div>
+            <div style="font-size:20px;font-weight:700;color:var(--text);" id="dVisitCount">0</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Total gastado</div>
+            <div style="font-size:16px;font-weight:700;color:var(--success);" id="dTotalSpent">$0</div>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Notas internas</label>
-          <textarea class="form-input" id="dNotes" rows="3" placeholder="Siempre pide degradado con fade..." onblur="saveNotes()"></textarea>
+          <textarea class="form-input" id="dNotes" rows="3" placeholder="Preferencias, corte habitual..." onblur="saveNotes()"></textarea>
         </div>
         <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Historial de visitas</div>
         <div id="dVisits"></div>
@@ -73,27 +88,158 @@
 const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 let _tenantId, _allClients = [], _selectedId = null;
 
+const AVATAR_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899'];
+
+const DEMO_CLIENTS = [
+  { id:'dc1',  name:'Juan Pérez',       phone:'+56 9 1234 5678', notes:'Siempre pide degradado tipo fade. Viene cada 2 semanas.',
+    visit_count:14, total_spent:154000, last_visit:'2026-06-18T10:00:00',
+    visits:[
+      {starts_at:'2026-06-18T10:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-06-04T11:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-05-21T09:30:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-05-07T10:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+    ]},
+  { id:'dc2',  name:'Diego Morales',    phone:'+56 9 8765 4321', notes:'Prefiere atención con Andrés. Barba corta.',
+    visit_count:9,  total_spent:99000,  last_visit:'2026-06-22T10:00:00',
+    visits:[
+      {starts_at:'2026-06-22T10:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-06-08T10:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-05-25T09:00:00', biz_services:{name:'Barba'},           deposit_paid:0},
+    ]},
+  { id:'dc3',  name:'Carlos Ruiz',      phone:'+56 9 5555 1122', notes:'Cliente desde 2024. Siempre pide lo mismo: fade con raya.',
+    visit_count:22, total_spent:242000, last_visit:'2026-06-20T14:00:00',
+    visits:[
+      {starts_at:'2026-06-20T14:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-06-06T15:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-05-23T14:30:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-05-09T14:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+    ]},
+  { id:'dc4',  name:'Sofía Castro',     phone:'+56 9 3344 5566', notes:'Tinte caoba. Alérgica al amoniaco — usar tinte sin amoníaco.',
+    visit_count:6,  total_spent:145000, last_visit:'2026-06-22T12:00:00',
+    visits:[
+      {starts_at:'2026-06-22T12:00:00', biz_services:{name:'Tinte'},           deposit_paid:5000},
+      {starts_at:'2026-04-15T11:00:00', biz_services:{name:'Tinte'},           deposit_paid:5000},
+      {starts_at:'2026-02-20T11:00:00', biz_services:{name:'Keratina'},        deposit_paid:8000},
+    ]},
+  { id:'dc5',  name:'Matías Torres',    phone:'+56 9 9988 7766', notes:'',
+    visit_count:5,  total_spent:55000,  last_visit:'2026-06-22T11:30:00',
+    visits:[
+      {starts_at:'2026-06-22T11:30:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-05-28T12:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+    ]},
+  { id:'dc6',  name:'Pablo Vera',       phone:'+56 9 7766 5544', notes:'Barba larga, solo perfilar los bordes.',
+    visit_count:11, total_spent:88000,  last_visit:'2026-06-22T14:00:00',
+    visits:[
+      {starts_at:'2026-06-22T14:00:00', biz_services:{name:'Barba'},           deposit_paid:0},
+      {starts_at:'2026-06-08T14:00:00', biz_services:{name:'Barba'},           deposit_paid:0},
+      {starts_at:'2026-05-25T13:30:00', biz_services:{name:'Diseño de barba'}, deposit_paid:0},
+    ]},
+  { id:'dc7',  name:'Valentina Ríos',   phone:'+56 9 4433 2211', notes:'Keratina + corte cada 3 meses aprox.',
+    visit_count:4,  total_spent:128000, last_visit:'2026-06-22T15:00:00',
+    visits:[
+      {starts_at:'2026-06-22T15:00:00', biz_services:{name:'Keratina'},        deposit_paid:8000},
+      {starts_at:'2026-03-10T10:00:00', biz_services:{name:'Keratina'},        deposit_paid:8000},
+      {starts_at:'2026-03-10T10:00:00', biz_services:{name:'Tinte'},           deposit_paid:5000},
+    ]},
+  { id:'dc8',  name:'Rodrigo Muñoz',    phone:'+56 9 6655 4433', notes:'',
+    visit_count:7,  total_spent:77000,  last_visit:'2026-06-22T16:00:00',
+    visits:[
+      {starts_at:'2026-06-22T16:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-06-08T16:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+    ]},
+  { id:'dc9',  name:'Camilo Soto',      phone:'+56 9 2233 4455', notes:'Trae a su hijo también. Corte de niño $5.000.',
+    visit_count:16, total_spent:168000, last_visit:'2026-06-17T09:00:00',
+    visits:[
+      {starts_at:'2026-06-17T09:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-06-03T09:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+    ]},
+  { id:'dc10', name:'Ignacio Lagos',    phone:'+56 9 8811 2233', notes:'',
+    visit_count:3,  total_spent:19000,  last_visit:'2026-06-15T11:00:00',
+    visits:[
+      {starts_at:'2026-06-15T11:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-05-01T11:00:00', biz_services:{name:'Barba'},           deposit_paid:0},
+    ]},
+  { id:'dc11', name:'Felipe Navarro',   phone:'+56 9 7722 8833', notes:'Degradado alto con línea a la derecha.',
+    visit_count:8,  total_spent:88000,  last_visit:'2026-06-12T13:00:00',
+    visits:[
+      {starts_at:'2026-06-12T13:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-05-29T13:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+    ]},
+  { id:'dc12', name:'Benjamín Araya',   phone:'+56 9 5544 1199', notes:'',
+    visit_count:2,  total_spent:14000,  last_visit:'2026-06-10T10:30:00',
+    visits:[
+      {starts_at:'2026-06-10T10:30:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-06-10T10:30:00', biz_services:{name:'Barba'},           deposit_paid:0},
+    ]},
+  { id:'dc13', name:'Sebastián Vega',   phone:'+56 9 3322 7788', notes:'Cliente VIP. Siempre puntual. Trato preferencial.',
+    visit_count:19, total_spent:247000, last_visit:'2026-06-08T09:00:00',
+    visits:[
+      {starts_at:'2026-06-08T09:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+      {starts_at:'2026-05-25T09:00:00', biz_services:{name:'Diseño de barba'}, deposit_paid:0},
+      {starts_at:'2026-05-11T09:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+    ]},
+  { id:'dc14', name:'Martín Espinoza',  phone:'+56 9 1100 9988', notes:'',
+    visit_count:1,  total_spent:7000,   last_visit:'2026-06-05T15:00:00',
+    visits:[
+      {starts_at:'2026-06-05T15:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+    ]},
+  { id:'dc15', name:'Daniela Fuentes',  phone:'+56 9 4411 6677', notes:'Color platinado. Proceso largo ~3 horas. Confirmar día antes.',
+    visit_count:3,  total_spent:90000,  last_visit:'2026-05-30T10:00:00',
+    visits:[
+      {starts_at:'2026-05-30T10:00:00', biz_services:{name:'Tinte'},           deposit_paid:5000},
+      {starts_at:'2026-02-14T10:00:00', biz_services:{name:'Keratina'},        deposit_paid:8000},
+    ]},
+  { id:'dc16', name:'Ricardo Poblete',  phone:'+56 9 9900 1122', notes:'',
+    visit_count:6,  total_spent:66000,  last_visit:'2026-05-28T12:30:00',
+    visits:[
+      {starts_at:'2026-05-28T12:30:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-05-14T12:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+    ]},
+  { id:'dc17', name:'Alejandra Mora',   phone:'+56 9 6633 4422', notes:'Tinte rubio ceniza. Muy exigente con el proceso.',
+    visit_count:5,  total_spent:115000, last_visit:'2026-05-22T14:00:00',
+    visits:[
+      {starts_at:'2026-05-22T14:00:00', biz_services:{name:'Tinte'},           deposit_paid:5000},
+      {starts_at:'2026-03-05T14:00:00', biz_services:{name:'Tinte'},           deposit_paid:5000},
+      {starts_at:'2026-03-05T14:00:00', biz_services:{name:'Keratina'},        deposit_paid:8000},
+    ]},
+  { id:'dc18', name:'Tomás Herrera',    phone:'+56 9 8844 2200', notes:'',
+    visit_count:4,  total_spent:44000,  last_visit:'2026-05-20T16:00:00',
+    visits:[
+      {starts_at:'2026-05-20T16:00:00', biz_services:{name:'Corte de pelo'},  deposit_paid:0},
+      {starts_at:'2026-05-06T16:00:00', biz_services:{name:'Corte + Barba'},  deposit_paid:3000},
+    ]},
+];
+
 function showToast(msg) {
   const t = document.getElementById('toast'); t.textContent = msg;
   t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
 }
 function formatCLP(n) { return '$' + Number(n).toLocaleString('es-CL'); }
 
+function avatarColor(name) {
+  let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
 function renderClients(list) {
   const el = document.getElementById('clientsList');
   if (!list.length) {
-    el.innerHTML = `<div class="empty-state" style="padding:32px;"><h3>Sin clientes aún</h3><p>Los clientes aparecen cuando realizan su primera reserva</p></div>`;
+    el.innerHTML = `<div class="empty-state" style="padding:32px;"><h3>Sin resultados</h3><p>No hay clientes que coincidan</p></div>`;
     return;
   }
   el.innerHTML = list.map(c => {
     const initials = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const lastVisit = c.last_visit ? new Date(c.last_visit).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '—';
-    return `<div class="client-row ${_selectedId===c.id?'background:var(--surface2)':''}" onclick="selectClient('${c.id}')">
-      <div>
-        <div class="client-name">${c.name}</div>
-        <div class="client-phone">${c.phone}</div>
+    const isVip = c.visit_count >= 12;
+    return `<div class="client-row ${_selectedId===c.id?'selected':''}" onclick="selectClient('${c.id}')">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:${avatarColor(c.name)};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">${initials}</div>
+        <div>
+          <div class="client-name">${c.name}${isVip?' <span class="client-badge badge-vip">VIP</span>':''}</div>
+          <div class="client-phone">${c.phone}</div>
+        </div>
       </div>
-      <div style="font-size:14px;font-weight:600;color:var(--text);">${c.visit_count || 0}</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);">${c.visit_count}</div>
       <div style="font-size:12px;color:var(--text2);">${lastVisit}</div>
       <div style="font-size:13px;font-weight:600;color:var(--success);">${c.total_spent > 0 ? formatCLP(c.total_spent) : '—'}</div>
     </div>`;
@@ -107,26 +253,35 @@ window.filterClients = function(q) {
   renderClients(filtered);
 };
 
-window.selectClient = async function(id) {
+window.selectClient = function(id) {
   _selectedId = id;
+  const q = document.getElementById('searchInput').value;
+  renderClients(q ? _allClients.filter(c =>
+    c.name.toLowerCase().includes(q.toLowerCase()) || c.phone.includes(q)) : _allClients);
+
   const client = _allClients.find(c => c.id === id);
   if (!client) return;
 
   document.getElementById('clientDetail').style.display = 'block';
-  document.getElementById('dAvatar').textContent = client.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  document.getElementById('dName').textContent  = client.name;
-  document.getElementById('dPhone').textContent = client.phone;
-  document.getElementById('dNotes').value       = client.notes || '';
+  const initials = client.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const av = document.getElementById('dAvatar');
+  av.textContent = initials;
+  av.style.background = avatarColor(client.name);
+  document.getElementById('dName').textContent      = client.name;
+  document.getElementById('dPhone').textContent     = client.phone;
+  document.getElementById('dNotes').value           = client.notes || '';
+  document.getElementById('dVisitCount').textContent = client.visit_count;
+  document.getElementById('dTotalSpent').textContent = formatCLP(client.total_spent);
 
-  const { data: visits } = await sb.from('biz_appointments')
-    .select('starts_at, status, biz_services(name), deposit_paid')
-    .eq('client_id', id)
-    .eq('tenant_id', _tenantId)
-    .order('starts_at', { ascending: false })
-    .limit(10);
+  const isVip = client.visit_count >= 12;
+  const isNew = client.visit_count <= 2;
+  document.getElementById('dBadge').innerHTML = isVip
+    ? '<span class="client-badge badge-vip">⭐ Cliente VIP</span>'
+    : isNew ? '<span class="client-badge badge-new">✦ Nuevo cliente</span>' : '';
 
   const visitsEl = document.getElementById('dVisits');
-  if (!visits?.length) {
+  const visits = client.visits || [];
+  if (!visits.length) {
     visitsEl.innerHTML = `<div style="font-size:12px;color:var(--text3);">Sin visitas registradas</div>`;
     return;
   }
@@ -138,26 +293,50 @@ window.selectClient = async function(id) {
       <span class="visit-amount">${v.deposit_paid > 0 ? formatCLP(v.deposit_paid) : ''}</span>
     </div>`;
   }).join('');
+
+  if (!window._DEMO_MODE) {
+    sb.from('biz_appointments')
+      .select('starts_at, status, biz_services(name), deposit_paid')
+      .eq('client_id', id).eq('tenant_id', _tenantId)
+      .order('starts_at', { ascending: false }).limit(10)
+      .then(({ data }) => {
+        if (!data?.length) return;
+        visitsEl.innerHTML = data.map(v => {
+          const d = new Date(v.starts_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'});
+          return `<div class="visit-item">
+            <span class="visit-date">${d}</span>
+            <span class="visit-service">${v.biz_services?.name || '—'}</span>
+            <span class="visit-amount">${v.deposit_paid > 0 ? formatCLP(v.deposit_paid) : ''}</span>
+          </div>`;
+        }).join('');
+      });
+  }
 };
 
-window.saveNotes = async function() {
+window.saveNotes = function() {
   if (!_selectedId) return;
   const notes = document.getElementById('dNotes').value;
-  await sb.from('biz_clients').update({ notes }).eq('id', _selectedId);
-  showToast('✓ Notas guardadas');
+  if (window._DEMO_MODE) { showToast('✓ Notas guardadas'); return; }
+  sb.from('biz_clients').update({ notes }).eq('id', _selectedId)
+    .then(() => showToast('✓ Notas guardadas'));
 };
 
 async function loadClients() {
+  if (window._DEMO_MODE) {
+    _allClients = DEMO_CLIENTS;
+    document.getElementById('clientCount').textContent = `${_allClients.length} clientes`;
+    renderClients(_allClients);
+    return;
+  }
+
   const { data: clients } = await sb.from('biz_clients')
     .select('*').eq('tenant_id', _tenantId).order('created_at', { ascending: false });
 
   if (!clients?.length) { renderClients([]); document.getElementById('clientCount').textContent = '0 clientes'; return; }
 
-  // Enriquecer con stats de citas
   const { data: stats } = await sb.from('biz_appointments')
     .select('client_id, deposit_paid, starts_at')
-    .eq('tenant_id', _tenantId)
-    .eq('status', 'completed');
+    .eq('tenant_id', _tenantId).eq('status', 'completed');
 
   const statsMap = {};
   (stats || []).forEach(a => {
@@ -170,9 +349,10 @@ async function loadClients() {
 
   _allClients = clients.map(c => ({
     ...c,
-    visit_count:  statsMap[c.id]?.count || 0,
-    total_spent:  statsMap[c.id]?.total || 0,
-    last_visit:   statsMap[c.id]?.last  || null
+    visit_count: statsMap[c.id]?.count || 0,
+    total_spent: statsMap[c.id]?.total || 0,
+    last_visit:  statsMap[c.id]?.last  || null,
+    visits: []
   }));
 
   document.getElementById('clientCount').textContent = `${_allClients.length} cliente${_allClients.length!==1?'s':''}`;

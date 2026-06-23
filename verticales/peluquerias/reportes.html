@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reportes — HORIZON SaaS</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <script src="../_core/saas-config.js"></script>
   <script src="../_core/saas-auth.js"></script>
   <script src="../_core/saas-nav.js"></script>
@@ -12,18 +13,19 @@
   <style>
     .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media(max-width:800px){ .report-grid { grid-template-columns: 1fr; } }
-    .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .bar-label { font-size: 12px; color: var(--text2); width: 140px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bar-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #16a34a, #4ade80); transition: width .4s; }
-    .bar-value { font-size: 11px; color: var(--text3); width: 70px; text-align: right; flex-shrink: 0; }
-    .month-selector { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+    .month-selector { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .month-selector button { padding: 5px 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--text2); font-size: 12px; cursor: pointer; transition: .12s; }
     .month-selector button:hover, .month-selector button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .chart-wrap { position: relative; height: 220px; }
+    .chart-wrap-tall { position: relative; height: 260px; }
     .noshows-comparison { display: flex; gap: 16px; }
     .comparison-item { flex: 1; background: var(--surface2); border-radius: 8px; padding: 14px; text-align: center; }
     .comparison-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
     .comparison-value { font-size: 28px; font-weight: 700; }
+    .trend-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .trend-up { background: #d1fae5; color: #065f46; }
+    .trend-down { background: #fee2e2; color: #991b1b; }
+    .trend-flat { background: var(--surface2); color: var(--text2); }
   </style>
 </head>
 <body>
@@ -40,14 +42,32 @@
 
     <div class="stats-grid" id="mainStats" style="margin-bottom:20px;"></div>
 
+    <!-- Revenue chart full width -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);">Ingresos mensuales</div>
+        <span class="trend-chip trend-up" id="revenueTrend">▲ 0%</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
     <div class="report-grid">
       <div class="card">
         <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;">Ingresos por barbero</div>
-        <div id="staffBars"></div>
+        <div class="chart-wrap">
+          <canvas id="staffChart"></canvas>
+        </div>
       </div>
       <div class="card">
         <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;">Servicios más solicitados</div>
-        <div id="serviceBars"></div>
+        <div style="display:flex;gap:16px;align-items:center;">
+          <div style="flex:1;position:relative;height:200px;">
+            <canvas id="servicesChart"></canvas>
+          </div>
+          <div id="servicesLegend" style="flex-shrink:0;font-size:11px;"></div>
+        </div>
       </div>
       <div class="card" style="grid-column:1/-1;">
         <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;">No-shows este mes vs. mes anterior</div>
@@ -78,7 +98,36 @@
 <script>
 const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 let _tenantId, _selectedMonth = new Date().getMonth(), _selectedYear = new Date().getFullYear();
+let _revenueChart, _staffChart, _servicesChart;
+
 const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+// ── Demo data per month (Jan=0 … Jun=5) ────────────────────────────────────
+const DEMO_DATA = {
+  0: { ingresos:320000, reservas:28, completadas:25, noShows:2, prevNoShows:3,
+       staff:[{n:'Andrés',v:144000},{n:'Felipe',v:112000},{n:'Camila',v:64000}],
+       services:[{n:'Corte de pelo',c:9},{n:'Corte + Barba',c:8},{n:'Barba',c:5},{n:'Tinte',c:4},{n:'Diseño',c:2}] },
+  1: { ingresos:284000, reservas:24, completadas:21, noShows:3, prevNoShows:2,
+       staff:[{n:'Andrés',v:128000},{n:'Felipe',v:99000},{n:'Camila',v:57000}],
+       services:[{n:'Corte de pelo',c:8},{n:'Corte + Barba',c:7},{n:'Barba',c:5},{n:'Tinte',c:3},{n:'Diseño',c:1}] },
+  2: { ingresos:445000, reservas:38, completadas:35, noShows:2, prevNoShows:3,
+       staff:[{n:'Andrés',v:200000},{n:'Felipe',v:156000},{n:'Camila',v:89000}],
+       services:[{n:'Corte de pelo',c:12},{n:'Corte + Barba',c:11},{n:'Barba',c:8},{n:'Tinte',c:5},{n:'Diseño',c:2}] },
+  3: { ingresos:512000, reservas:42, completadas:39, noShows:1, prevNoShows:2,
+       staff:[{n:'Andrés',v:230000},{n:'Felipe',v:179000},{n:'Camila',v:103000}],
+       services:[{n:'Corte de pelo',c:14},{n:'Corte + Barba',c:12},{n:'Barba',c:9},{n:'Tinte',c:5},{n:'Diseño',c:2}] },
+  4: { ingresos:486000, reservas:39, completadas:36, noShows:2, prevNoShows:1,
+       staff:[{n:'Andrés',v:218000},{n:'Felipe',v:170000},{n:'Camila',v:98000}],
+       services:[{n:'Corte de pelo',c:13},{n:'Corte + Barba',c:11},{n:'Barba',c:8},{n:'Tinte',c:5},{n:'Keratina',c:2}] },
+  5: { ingresos:384000, reservas:31, completadas:28, noShows:1, prevNoShows:2,
+       staff:[{n:'Andrés',v:172000},{n:'Felipe',v:134000},{n:'Camila',v:78000}],
+       services:[{n:'Corte + Barba',c:10},{n:'Corte de pelo',c:9},{n:'Barba',c:7},{n:'Tinte',c:3},{n:'Diseño',c:2}] },
+};
+
+const REVENUE_HISTORY = [320000, 284000, 445000, 512000, 486000, 384000];
+const REVENUE_LABELS  = ['Ene 2026','Feb 2026','Mar 2026','Abr 2026','May 2026','Jun 2026'];
+
+const CHART_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
 
 function formatCLP(n) { return '$' + Number(n).toLocaleString('es-CL'); }
 
@@ -101,19 +150,185 @@ window.selectMonth = function(m, y) {
   loadReports();
 };
 
-function renderBars(containerId, items, valueKey, labelKey, formatFn) {
-  const max = Math.max(...items.map(i => i[valueKey]), 1);
-  document.getElementById(containerId).innerHTML = items.length
-    ? items.map(i => `
-      <div class="bar-row">
-        <span class="bar-label" title="${i[labelKey]}">${i[labelKey]}</span>
-        <div class="bar-track"><div class="bar-fill" style="width:${(i[valueKey]/max*100).toFixed(1)}%"></div></div>
-        <span class="bar-value">${formatFn(i[valueKey])}</span>
-      </div>`).join('')
-    : `<div style="font-size:12px;color:var(--text3);">Sin datos este mes</div>`;
+function getChartDefaults() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return {
+    textColor: isDark ? '#94a3b8' : '#64748b',
+    gridColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+  };
+}
+
+function buildRevenueChart(monthIdx) {
+  const { textColor, gridColor } = getChartDefaults();
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+  gradient.addColorStop(0, 'rgba(59,130,246,0.35)');
+  gradient.addColorStop(1, 'rgba(59,130,246,0.00)');
+
+  const cfg = {
+    type: 'line',
+    data: {
+      labels: REVENUE_LABELS,
+      datasets: [{
+        label: 'Ingresos',
+        data: REVENUE_HISTORY,
+        borderColor: '#3b82f6',
+        backgroundColor: gradient,
+        borderWidth: 2.5,
+        pointBackgroundColor: REVENUE_LABELS.map((_,i) => i === monthIdx ? '#3b82f6' : 'transparent'),
+        pointBorderColor: '#3b82f6',
+        pointBorderWidth: REVENUE_LABELS.map((_,i) => i === monthIdx ? 2 : 1),
+        pointRadius: REVENUE_LABELS.map((_,i) => i === monthIdx ? 6 : 3),
+        tension: 0.4,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 700, easing: 'easeInOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + formatCLP(ctx.parsed.y)
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11 } } },
+        y: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { size: 11 }, callback: v => '$' + (v/1000).toFixed(0) + 'k' }
+        }
+      }
+    }
+  };
+
+  if (_revenueChart) { _revenueChart.destroy(); }
+  _revenueChart = new Chart(ctx, cfg);
+}
+
+function buildStaffChart(staffData) {
+  const { textColor, gridColor } = getChartDefaults();
+  const ctx = document.getElementById('staffChart').getContext('2d');
+
+  const cfg = {
+    type: 'bar',
+    data: {
+      labels: staffData.map(s => s.n),
+      datasets: [{
+        label: 'Ingresos',
+        data: staffData.map(s => s.v),
+        backgroundColor: ['rgba(59,130,246,0.85)','rgba(16,185,129,0.85)','rgba(244,114,182,0.85)'],
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 700, easing: 'easeInOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' ' + formatCLP(ctx.parsed.y) } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: textColor, font: { size: 12 } } },
+        y: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { size: 11 }, callback: v => '$' + (v/1000).toFixed(0) + 'k' }
+        }
+      }
+    }
+  };
+
+  if (_staffChart) { _staffChart.destroy(); }
+  _staffChart = new Chart(ctx, cfg);
+}
+
+function buildServicesChart(servicesData) {
+  const ctx = document.getElementById('servicesChart').getContext('2d');
+  const total = servicesData.reduce((s,x) => s + x.c, 0);
+
+  const cfg = {
+    type: 'doughnut',
+    data: {
+      labels: servicesData.map(s => s.n),
+      datasets: [{
+        data: servicesData.map(s => s.c),
+        backgroundColor: CHART_COLORS.slice(0, servicesData.length),
+        borderWidth: 2,
+        borderColor: 'var(--surface)',
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '65%',
+      animation: { animateRotate: true, duration: 700, easing: 'easeInOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${ctx.parsed} (${((ctx.parsed/total)*100).toFixed(0)}%)`
+          }
+        }
+      }
+    }
+  };
+
+  if (_servicesChart) { _servicesChart.destroy(); }
+  _servicesChart = new Chart(ctx, cfg);
+
+  document.getElementById('servicesLegend').innerHTML = servicesData.map((s,i) =>
+    `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+      <span style="width:10px;height:10px;border-radius:2px;background:${CHART_COLORS[i]};flex-shrink:0;"></span>
+      <span style="color:var(--text2);">${s.n}</span>
+      <span style="color:var(--text3);margin-left:auto;padding-left:8px;">${s.c}</span>
+    </div>`
+  ).join('');
 }
 
 async function loadReports() {
+  if (window._DEMO_MODE) {
+    const idx = _selectedMonth <= 5 ? _selectedMonth : 5;
+    const d = DEMO_DATA[idx] || DEMO_DATA[5];
+
+    // Stats
+    const tasa = d.reservas ? ((d.completadas / d.reservas) * 100).toFixed(0) : 0;
+    document.getElementById('mainStats').innerHTML = `
+      <div class="stat-card"><div class="stat-label">Ingresos totales</div><div class="stat-value">${formatCLP(d.ingresos)}</div><div class="stat-sub">${d.completadas} servicios completados</div></div>
+      <div class="stat-card"><div class="stat-label">Reservas totales</div><div class="stat-value">${d.reservas}</div><div class="stat-sub">${d.completadas} completadas</div></div>
+      <div class="stat-card"><div class="stat-label">No-shows</div><div class="stat-value" style="color:var(--danger)">${d.noShows}</div><div class="stat-sub">${d.reservas ? ((d.noShows/d.reservas)*100).toFixed(0) : 0}% del total</div></div>
+      <div class="stat-card"><div class="stat-label">Tasa completadas</div><div class="stat-value" style="color:var(--success)">${tasa}%</div><div class="stat-sub">del total de reservas</div></div>
+    `;
+
+    // Revenue trend chip
+    const prevIdx = idx > 0 ? idx - 1 : idx;
+    const prevRev = REVENUE_HISTORY[prevIdx];
+    const currRev = REVENUE_HISTORY[idx];
+    const revPct  = prevRev ? (((currRev - prevRev) / prevRev) * 100).toFixed(0) : 0;
+    const trendEl = document.getElementById('revenueTrend');
+    if (revPct > 0) { trendEl.textContent = `▲ ${revPct}%`; trendEl.className = 'trend-chip trend-up'; }
+    else if (revPct < 0) { trendEl.textContent = `▼ ${Math.abs(revPct)}%`; trendEl.className = 'trend-chip trend-down'; }
+    else { trendEl.textContent = '→ sin cambio'; trendEl.className = 'trend-chip trend-flat'; }
+
+    buildRevenueChart(idx);
+    buildStaffChart(d.staff);
+    buildServicesChart(d.services);
+
+    // No-shows
+    const diff = d.noShows - d.prevNoShows;
+    document.getElementById('noPrev').textContent        = d.prevNoShows;
+    document.getElementById('noCurrent').textContent     = d.noShows;
+    document.getElementById('noShowPrevPct').textContent = d.reservas ? `${((d.prevNoShows/d.reservas)*100).toFixed(0)}% del mes` : '0% del mes';
+    document.getElementById('noShowCurrPct').textContent = d.reservas ? `${((d.noShows/d.reservas)*100).toFixed(0)}% del mes` : '0% del mes';
+    const diffEl = document.getElementById('noDiff');
+    diffEl.textContent = diff === 0 ? '=' : (diff > 0 ? `+${diff}` : `${diff}`);
+    diffEl.style.color = diff < 0 ? 'var(--success)' : diff > 0 ? 'var(--danger)' : 'var(--text2)';
+    return;
+  }
+
   const start = new Date(_selectedYear, _selectedMonth, 1);
   const end   = new Date(_selectedYear, _selectedMonth + 1, 0, 23, 59, 59);
   const prevStart = new Date(_selectedYear, _selectedMonth - 1, 1);
@@ -138,7 +353,6 @@ async function loadReports() {
   const total     = all.length;
   const ingresos  = completed.reduce((s, a) => s + parseFloat(a.deposit_paid || 0), 0);
 
-  // Main stats
   document.getElementById('mainStats').innerHTML = `
     <div class="stat-card"><div class="stat-label">Ingresos señas</div><div class="stat-value">${formatCLP(ingresos)}</div><div class="stat-sub">señas cobradas</div></div>
     <div class="stat-card"><div class="stat-label">Reservas totales</div><div class="stat-value">${total}</div><div class="stat-sub">${completed.length} completadas</div></div>
@@ -146,36 +360,30 @@ async function loadReports() {
     <div class="stat-card"><div class="stat-label">Tasa completadas</div><div class="stat-value" style="color:var(--success)">${total ? ((completed.length/total)*100).toFixed(0) : 0}%</div><div class="stat-sub">del total de reservas</div></div>
   `;
 
-  // Staff bars
   const staffMap = {};
   completed.forEach(a => {
     const n = a.biz_staff?.name || 'Sin asignar';
-    if (!staffMap[n]) staffMap[n] = 0;
-    staffMap[n] += parseFloat(a.deposit_paid || 0);
+    staffMap[n] = (staffMap[n] || 0) + parseFloat(a.deposit_paid || 0);
   });
-  const staffItems = Object.entries(staffMap).map(([name, total]) => ({ name, total })).sort((a,b) => b.total-a.total);
-  renderBars('staffBars', staffItems, 'total', 'name', formatCLP);
+  const staffData = Object.entries(staffMap).map(([n,v]) => ({n,v})).sort((a,b)=>b.v-a.v);
+  buildStaffChart(staffData.length ? staffData : [{n:'Sin datos',v:0}]);
 
-  // Service bars
-  const serviceMap = {};
-  all.forEach(a => {
-    const n = a.biz_services?.name || 'Sin servicio';
-    serviceMap[n] = (serviceMap[n] || 0) + 1;
-  });
-  const serviceItems = Object.entries(serviceMap).map(([name, count]) => ({ name, count })).sort((a,b) => b.count-a.count).slice(0,6);
-  renderBars('serviceBars', serviceItems, 'count', 'name', n => `${n} veces`);
+  const svcMap = {};
+  all.forEach(a => { const n = a.biz_services?.name || 'Sin servicio'; svcMap[n] = (svcMap[n]||0)+1; });
+  const svcData = Object.entries(svcMap).map(([n,c]) => ({n,c})).sort((a,b)=>b.c-a.c).slice(0,6);
+  buildServicesChart(svcData.length ? svcData : [{n:'Sin datos',c:1}]);
 
-  // No-show comparison
+  buildRevenueChart(_selectedMonth);
+  document.getElementById('revenueTrend').textContent = '';
+
   const prevAll     = prevAppts || [];
   const prevNoShows = prevAll.filter(a => a.status === 'no_show').length;
   const currNoShows = noShows.length;
   const diff = currNoShows - prevNoShows;
-  const pctPrev = prevAll.length ? ((prevNoShows/prevAll.length)*100).toFixed(0) : 0;
-  const pctCurr = total ? ((currNoShows/total)*100).toFixed(0) : 0;
-  document.getElementById('noPrev').textContent       = prevNoShows;
-  document.getElementById('noCurrent').textContent    = currNoShows;
-  document.getElementById('noShowPrevPct').textContent = `${pctPrev}% del mes`;
-  document.getElementById('noShowCurrPct').textContent = `${pctCurr}% del mes`;
+  document.getElementById('noPrev').textContent        = prevNoShows;
+  document.getElementById('noCurrent').textContent     = currNoShows;
+  document.getElementById('noShowPrevPct').textContent = `${prevAll.length ? ((prevNoShows/prevAll.length)*100).toFixed(0) : 0}% del mes`;
+  document.getElementById('noShowCurrPct').textContent = `${total ? ((currNoShows/total)*100).toFixed(0) : 0}% del mes`;
   const diffEl = document.getElementById('noDiff');
   diffEl.textContent = diff === 0 ? '=' : (diff > 0 ? `+${diff}` : `${diff}`);
   diffEl.style.color = diff < 0 ? 'var(--success)' : diff > 0 ? 'var(--danger)' : 'var(--text2)';

@@ -1,12 +1,8 @@
 const { createClient } = supabase;
 const _sb = createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 
-// ── Demo mode ─────────────────────────────────────────────────────────────────
-window._DEMO_MODE = new URLSearchParams(window.location.search).has('demo') ||
-                    sessionStorage.getItem('horizon_demo') === '1';
-if (new URLSearchParams(window.location.search).has('demo')) {
-  sessionStorage.setItem('horizon_demo', '1');
-}
+// ── Demo mode (prototipo) ─────────────────────────────────────────────────────
+window._DEMO_MODE = true;
 
 window._DEMO_TENANT = {
   name: 'Barbería Binks', slug: 'binks', plan: 'pro', status: 'active',
