@@ -31,6 +31,10 @@ node_modules/
 *.jpeg
 !Identidad/
 !Identidad/**
+!verticales/peluquerias/public/*.jpg
+!verticales/peluquerias/public/*.jpeg
+!verticales/peluquerias/public/*.png
+!verticales/peluquerias/public/*.webp
 
 # Archivos internos de Claude / desarrollo
 .claude/
