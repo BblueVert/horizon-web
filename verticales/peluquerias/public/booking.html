@@ -10,157 +10,204 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f8f9fa; --surface: #fff; --surface2: #f1f3f5;
-      --border: #e9ecef; --border2: #dee2e6;
-      --text: #1a1d23; --text2: #6c757d; --text3: #adb5bd;
-      --accent: #c8940a; --accent-light: #e0a80c; --accent-dim: rgba(200,148,10,.1);
-      --navy: #1e3a8a; --navy-dim: rgba(30,58,138,.08);
-      --success: #198754; --danger: #dc3545;
-      --shadow: 0 1px 4px rgba(0,0,0,.08);
-      --shadow-md: 0 4px 16px rgba(0,0,0,.1);
+      --bg: #f4f6f9; --surface: #fff; --surface2: #f1f3f5; --surface3: #e9edf2;
+      --border: #e4e8ee; --border2: #d0d7e2;
+      --text: #1a1d23; --text2: #5a6472; --text3: #9ba5b2;
+      --accent: #3b82f6; --accent-light: #60a5fa; --accent-dim: rgba(59,130,246,.1);
+      --gold: #f59e0b; --gold-dim: rgba(245,158,11,.1);
+      --success: #10b981; --danger: #ef4444;
+      --shadow: 0 1px 4px rgba(0,0,0,.07);
+      --shadow-md: 0 4px 18px rgba(0,0,0,.11);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.14);
     }
     [data-theme="dark"] {
-      --bg: #0c0d0f; --surface: #111318; --surface2: #181a1f;
-      --border: #1f2229; --border2: #272b33;
-      --text: #edeef0; --text2: #8a8f9a; --text3: #4a5060;
-      --shadow: 0 1px 4px rgba(0,0,0,.3);
-      --shadow-md: 0 4px 20px rgba(0,0,0,.4);
-      --success: #4ade80; --danger: #f87171;
+      --bg: #0d0f12; --surface: #13161c; --surface2: #181c24; --surface3: #1e2330;
+      --border: #222836; --border2: #2c3444;
+      --text: #edeef0; --text2: #8a95a8; --text3: #4a5668;
+      --shadow: 0 1px 4px rgba(0,0,0,.4); --shadow-md: 0 4px 20px rgba(0,0,0,.5);
+      --success: #34d399; --danger: #f87171;
     }
 
     body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
 
     /* ── Top bar ── */
-    .top-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; }
-    .top-bar-brand { font-size: 13px; font-weight: 700; color: var(--text); }
-    .top-bar-actions { display: flex; gap: 10px; align-items: center; }
-    .btn-theme { background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); padding: 4px 10px; font-size: 12px; cursor: pointer; }
+    .top-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; backdrop-filter: blur(8px); }
+    .top-bar-brand { display: flex; align-items: center; gap: 10px; }
+    .top-bar-logo { width: 28px; height: 28px; border-radius: 6px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; }
+    .top-bar-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .btn-theme { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; color: var(--text2); padding: 5px 12px; font-size: 12px; cursor: pointer; transition: .12s; }
     .btn-theme:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ── Hero / Info negocio ── */
-    .biz-hero { background: var(--surface); border-bottom: 1px solid var(--border); }
-    .biz-cover { width: 100%; height: 200px; object-fit: cover; background: linear-gradient(135deg, #0d1b2e 0%, #1e3a4a 50%, #0d2b1a 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    /* ── Hero ── */
+    .biz-hero { position: relative; }
+    .biz-cover {
+      width: 100%; height: 220px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 45%, #0c2340 70%, #162032 100%);
+      display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+    }
+    .biz-cover::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,.4) 100%);
+    }
+    .biz-cover-emoji { font-size: 80px; opacity: .18; user-select: none; }
     .biz-cover img { width: 100%; height: 100%; object-fit: cover; }
-    .biz-cover-placeholder { font-size: 60px; opacity: .4; }
-    .biz-info-row { max-width: 800px; margin: 0 auto; padding: 16px 20px 20px; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: flex-start; }
-    .biz-logo { width: 72px; height: 72px; border-radius: 12px; border: 3px solid var(--surface); margin-top: -36px; background: var(--surface2); overflow: hidden; box-shadow: var(--shadow-md); flex-shrink: 0; }
+    .biz-info-row { max-width: 820px; margin: 0 auto; padding: 0 20px 20px; display: flex; gap: 16px; align-items: flex-start; }
+    .biz-logo { width: 76px; height: 76px; border-radius: 14px; border: 3px solid var(--surface); margin-top: -38px; background: var(--surface2); overflow: hidden; box-shadow: var(--shadow-lg); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .biz-logo-text { font-size: 26px; font-weight: 900; color: var(--accent); }
     .biz-logo img { width: 100%; height: 100%; object-fit: cover; }
-    .biz-logo-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: var(--accent); background: var(--navy-dim); }
-    .biz-name { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.2; }
-    .biz-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
-    .biz-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
-    .biz-meta-item a { color: var(--accent); text-decoration: none; }
-    .biz-meta-item a:hover { text-decoration: underline; }
+    .biz-details { flex: 1; padding-top: 10px; }
+    .biz-name { font-size: 22px; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .biz-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .biz-badge { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; }
+    .biz-badge a { color: var(--accent); text-decoration: none; }
+    .rating-badge { background: var(--gold-dim); border-color: rgba(245,158,11,.3); color: var(--gold); font-weight: 600; }
+
+    /* ── Layout ── */
+    .page-body { max-width: 820px; margin: 0 auto; padding: 0 20px 60px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+    @media(max-width:600px) { .two-col { grid-template-columns: 1fr; } }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .card-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+
+    /* ── Reviews ── */
+    .reviews-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin: 16px 0 0; }
+    .reviews-row::-webkit-scrollbar { height: 3px; }
+    .reviews-row::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+    .review-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; min-width: 210px; max-width: 250px; flex-shrink: 0; }
+    .review-header { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+    .review-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .review-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .review-stars { font-size: 11px; color: var(--gold); }
+    .review-text { font-size: 12px; color: var(--text2); line-height: 1.55; }
+    .review-time { font-size: 10px; color: var(--text3); margin-top: 7px; }
 
     /* ── Staff bubbles ── */
-    .staff-section { max-width: 800px; margin: 0 auto; padding: 16px 20px 0; }
-    .staff-bubbles { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 4px; }
+    .staff-section { margin: 20px 0 0; }
+    .staff-bubbles { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; }
     .staff-bubbles::-webkit-scrollbar { height: 3px; }
-    .staff-bubbles::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-    .staff-bubble { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
-    .staff-bubble-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--surface2); border: 2px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--text2); transition: border-color .15s; }
-    .staff-bubble-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .staff-bubble.active .staff-bubble-avatar { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
-    .staff-bubble-name { font-size: 11px; color: var(--text2); font-weight: 500; }
+    .staff-bubbles::-webkit-scrollbar-thumb { background: var(--border2); }
+    .staff-bubble { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; transition: transform .12s; }
+    .staff-bubble:hover { transform: translateY(-2px); }
+    .staff-bubble-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--surface2); border: 2.5px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--text2); transition: border-color .15s, box-shadow .15s; }
+    .staff-bubble.active .staff-bubble-avatar { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    .staff-bubble-name { font-size: 11px; color: var(--text2); font-weight: 500; text-align: center; }
     .staff-bubble.active .staff-bubble-name { color: var(--accent); font-weight: 700; }
 
     /* ── Servicios ── */
-    .services-section { max-width: 800px; margin: 0 auto; padding: 20px; }
-    .section-title { font-size: 13px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
-    .services-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
-    .service-item { background: var(--surface); padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: background .12s; }
+    .services-section { margin: 20px 0 0; }
+    .section-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+    .services-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 14px; }
+    .service-item { background: var(--surface); padding: 15px 16px; display: flex; align-items: center; gap: 14px; transition: background .1s; cursor: default; }
     .service-item:hover { background: var(--surface2); }
-    .service-item-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--navy-dim); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-    .service-item-info { flex: 1; min-width: 0; }
-    .service-item-name { font-size: 14px; font-weight: 600; color: var(--text); }
-    .service-item-meta { font-size: 12px; color: var(--text2); margin-top: 2px; display: flex; gap: 8px; }
-    .service-item-price { font-size: 15px; font-weight: 700; color: var(--text); flex-shrink: 0; white-space: nowrap; }
-    .btn-reservar { padding: 7px 16px; background: var(--accent); color: #000; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: background .12s; white-space: nowrap; }
-    .btn-reservar:hover { background: var(--accent-light); }
-    .category-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; padding: 8px 16px 4px; background: var(--surface2); }
+    .service-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .service-info { flex: 1; min-width: 0; }
+    .service-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .service-meta { font-size: 12px; color: var(--text2); margin-top: 3px; display: flex; gap: 8px; align-items: center; }
+    .service-deposit { font-size: 10px; background: var(--gold-dim); color: var(--gold); border-radius: 4px; padding: 1px 6px; font-weight: 600; }
+    .service-price { font-size: 16px; font-weight: 700; color: var(--text); flex-shrink: 0; white-space: nowrap; }
+    .btn-book { padding: 8px 18px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: background .1s, transform .1s; white-space: nowrap; }
+    .btn-book:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .btn-book:active { transform: translateY(0); }
 
-    /* ── Wizard (drawer) ── */
-    .wizard-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    /* ── Wizard drawer ── */
+    .wizard-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100; opacity: 0; pointer-events: none; transition: opacity .25s; }
     .wizard-overlay.open { opacity: 1; pointer-events: all; }
-    .wizard-drawer { position: fixed; bottom: 0; left: 0; right: 0; max-height: 90vh; background: var(--surface); border-radius: 20px 20px 0 0; z-index: 101; transform: translateY(100%); transition: transform .3s cubic-bezier(.4,0,.2,1); overflow-y: auto; }
+    .wizard-drawer { position: fixed; bottom: 0; left: 0; right: 0; max-height: 92vh; background: var(--surface); border-radius: 22px 22px 0 0; z-index: 101; transform: translateY(100%); transition: transform .3s cubic-bezier(.32,0,.15,1); overflow-y: auto; }
     .wizard-overlay.open .wizard-drawer { transform: translateY(0); }
-    .wizard-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 4px; }
-    .wizard-content { padding: 4px 20px 32px; max-width: 520px; margin: 0 auto; }
-    .wizard-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .wizard-sub { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+    .wizard-handle { width: 40px; height: 4px; background: var(--border2); border-radius: 2px; margin: 14px auto 6px; }
+    .wizard-content { padding: 4px 20px 36px; max-width: 520px; margin: 0 auto; }
 
     /* Steps */
-    .step-pills { display: flex; gap: 6px; margin-bottom: 20px; }
+    .step-pills { display: flex; gap: 5px; margin-bottom: 18px; }
     .step-pill { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
     .step-pill.done { background: var(--success); }
     .step-pill.active { background: var(--accent); }
 
+    .wizard-title { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .wizard-sub { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+
+    /* Service summary chip en wizard */
+    .svc-chip { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-dim); border: 1px solid rgba(59,130,246,.2); border-radius: 10px; padding: 8px 14px; margin-bottom: 18px; }
+    .svc-chip-name { font-size: 13px; font-weight: 700; color: var(--accent); }
+    .svc-chip-meta { font-size: 12px; color: var(--text2); }
+
+    /* Select list */
     .select-list { display: flex; flex-direction: column; gap: 8px; }
-    .select-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: border-color .12s; }
-    .select-item:hover { border-color: var(--accent); }
+    .select-item { display: flex; align-items: center; gap: 12px; padding: 13px 14px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: border-color .12s, background .12s; }
+    .select-item:hover { border-color: var(--accent); background: var(--accent-dim); }
     .select-item.selected { border-color: var(--accent); background: var(--accent-dim); }
-    .select-item-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
-    .select-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .select-item-info h4 { font-size: 13px; font-weight: 600; color: var(--text); }
-    .select-item-info p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+    .sel-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--surface3); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+    .sel-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .sel-info h4 { font-size: 13px; font-weight: 600; color: var(--text); }
+    .sel-info p { font-size: 11px; color: var(--text2); margin-top: 2px; }
 
     /* Calendario */
-    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .cal-month { font-size: 14px; font-weight: 600; color: var(--text); }
-    .cal-btn { width: 28px; height: 28px; border: 1px solid var(--border2); border-radius: 6px; background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 13px; display:flex;align-items:center;justify-content:center; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-    .cal-dow { text-align:center; font-size:9px; color:var(--text3); padding:3px 0; font-weight:600; }
-    .cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:7px; font-size:13px; cursor:pointer; color:var(--text2); transition:.12s; }
-    .cal-day:hover:not(.disabled):not(.empty):not(.past) { background:var(--accent-dim); color:var(--accent); }
-    .cal-day.today { font-weight:700; color:var(--text); border:1px solid var(--border2); }
-    .cal-day.selected { background:var(--accent); color:#000; font-weight:700; border-radius:7px; }
-    .cal-day.disabled,.cal-day.past { opacity:.2; cursor:default; }
-    .cal-day.empty { cursor:default; }
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .cal-month { font-size: 15px; font-weight: 700; color: var(--text); }
+    .cal-btn { width: 32px; height: 32px; border: 1px solid var(--border2); border-radius: 8px; background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: .12s; }
+    .cal-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-dow { text-align: center; font-size: 9px; color: var(--text3); padding: 4px 0; font-weight: 600; }
+    .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; cursor: pointer; color: var(--text2); transition: .12s; }
+    .cal-day:hover:not(.disabled):not(.empty):not(.past) { background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+    .cal-day.today { font-weight: 700; color: var(--text); border: 1.5px solid var(--border2); }
+    .cal-day.selected { background: var(--accent); color: #fff; font-weight: 700; }
+    .cal-day.disabled, .cal-day.past { opacity: .22; cursor: default; }
+    .cal-day.empty { cursor: default; }
 
     /* Horarios */
-    .times-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-    .time-chip { padding:10px 4px; text-align:center; border:1.5px solid var(--border); border-radius:8px; font-size:13px; font-weight:500; color:var(--text2); cursor:pointer; transition:.12s; background:var(--surface2); }
-    .time-chip:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
-    .time-chip.selected { background:var(--accent); color:#000; border-color:var(--accent); font-weight:700; }
-    .time-chip.taken { opacity:.2; cursor:default; }
+    .times-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .time-chip { padding: 11px 4px; text-align: center; border: 1.5px solid var(--border); border-radius: 9px; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; transition: .12s; background: var(--surface2); }
+    .time-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .time-chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .time-chip.taken { opacity: .22; cursor: default; text-decoration: line-through; }
 
     /* Form */
-    .form-group { margin-bottom:14px; }
-    .form-label { display:block; font-size:12px; color:var(--text2); margin-bottom:5px; font-weight:500; }
-    .form-input { width:100%; padding:11px 14px; background:var(--surface2); border:1.5px solid var(--border); border-radius:9px; color:var(--text); font-size:14px; outline:none; transition:border-color .12s; font-family:inherit; }
-    .form-input:focus { border-color:var(--accent); }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 5px; font-weight: 600; }
+    .form-input { width: 100%; padding: 12px 14px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; outline: none; transition: border-color .12s; font-family: inherit; }
+    .form-input:focus { border-color: var(--accent); background: var(--surface); }
 
-    /* Resumen en wizard */
-    .summary-box { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:16px; }
-    .summary-row { display:flex; justify-content:space-between; padding:5px 0; font-size:13px; border-bottom:1px solid var(--border); }
-    .summary-row:last-child { border-bottom:none; }
-    .summary-row span:first-child { color:var(--text2); }
-    .summary-row span:last-child { font-weight:600; color:var(--text); }
+    /* Resumen */
+    .summary-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row span:first-child { color: var(--text2); }
+    .summary-row span:last-child { font-weight: 600; color: var(--text); }
 
-    /* Botones wizard */
-    .btn-primary { width:100%; padding:13px; background:var(--accent); color:#000; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; transition:background .12s; margin-top:8px; }
-    .btn-primary:hover { background:var(--accent-light); }
-    .btn-primary:disabled { opacity:.35; cursor:not-allowed; }
-    .btn-back { background:none; border:none; color:var(--text3); font-size:13px; cursor:pointer; padding:0 0 16px; display:flex; align-items:center; gap:4px; }
-    .btn-back:hover { color:var(--accent); }
+    /* Botones */
+    .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 11px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .12s, transform .1s; margin-top: 8px; letter-spacing: .01em; }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .btn-back { background: none; border: none; color: var(--text3); font-size: 13px; cursor: pointer; padding: 0 0 14px; display: flex; align-items: center; gap: 4px; }
+    .btn-back:hover { color: var(--accent); }
+    .btn-secondary { width: 100%; padding: 12px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); border-radius: 11px; font-size: 14px; font-weight: 600; cursor: pointer; transition: .12s; margin-top: 8px; }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
     /* Confirmación */
-    .confirm-screen { text-align:center; padding:20px 0 10px; }
-    .confirm-icon { font-size:48px; margin-bottom:12px; }
-    .confirm-title { font-size:20px; font-weight:800; color:var(--text); margin-bottom:6px; }
-    .confirm-sub { font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px; }
-    .wa-btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; margin-top:8px; }
+    .confirm-screen { text-align: center; padding: 16px 0 8px; }
+    .confirm-icon { font-size: 52px; margin-bottom: 12px; }
+    .confirm-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .confirm-sub { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 20px; }
+    .wa-btn { display: inline-flex; align-items: center; gap: 9px; padding: 13px 24px; background: #22c55e; color: #fff; border: none; border-radius: 11px; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none; width: 100%; justify-content: center; margin-top: 4px; transition: background .12s; }
+    .wa-btn:hover { background: #16a34a; }
 
     /* Loading */
-    .loading { text-align:center; padding:40px; color:var(--text3); font-size:13px; }
-    .spinner { width:22px; height:22px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 10px; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
+    .spinner { width: 24px; height: 24px; border: 2.5px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 10px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Powered by */
+    .powered { text-align: center; padding: 20px 0 10px; font-size: 11px; color: var(--text3); }
+    .powered a { color: var(--accent); text-decoration: none; font-weight: 600; }
 
     @media(max-width:600px) {
-      .biz-info-row { grid-template-columns:1fr; }
-      .biz-logo { width:60px; height:60px; margin-top:-30px; }
-      .biz-name { font-size:17px; }
-      .service-item { flex-wrap:wrap; gap:8px; }
+      .biz-info-row { flex-direction: column; gap: 0; }
+      .biz-logo { width: 64px; height: 64px; margin-top: -32px; }
+      .biz-name { font-size: 18px; }
+      .service-item { flex-wrap: wrap; gap: 8px; }
+      .btn-book { width: 100%; text-align: center; }
+      .times-grid { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -168,96 +215,65 @@
 
 <!-- Top bar -->
 <div class="top-bar">
-  <span class="top-bar-brand" id="topBarName">Reservar turno</span>
-  <div class="top-bar-actions">
-    <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙 Oscuro</button>
+  <div class="top-bar-brand">
+    <div class="top-bar-logo" id="topBarLogo">B</div>
+    <span class="top-bar-name" id="topBarName">Reservar turno</span>
   </div>
+  <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙 Oscuro</button>
 </div>
 
-<!-- Hero del negocio -->
+<!-- Hero -->
 <div class="biz-hero">
   <div class="biz-cover" id="bizCover">
-    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3DTPiXxjrb9ho4Ox2elnxCCObMe/hf_20260605_072414_42ac3745-685f-4531-8b2e-eb6c74b140b5.jpeg" alt="Barbería O'Higgins" style="width:100%;height:100%;object-fit:cover;">
+    <span class="biz-cover-emoji">✂️</span>
   </div>
   <div class="biz-info-row">
     <div class="biz-logo" id="bizLogo">
-      <div class="biz-logo-placeholder" id="bizLogoText">B</div>
+      <span class="biz-logo-text" id="bizLogoText">B</span>
     </div>
-    <div>
+    <div class="biz-details">
       <div class="biz-name" id="bizName">Cargando...</div>
-      <div class="biz-meta" id="bizMeta"></div>
+      <div class="biz-badges" id="bizBadges"></div>
     </div>
   </div>
 </div>
 
-<!-- Descripción + Mapa -->
-<div style="max-width:800px;margin:0 auto;padding:16px 20px 0;display:grid;grid-template-columns:1fr 1fr;gap:16px;" id="contextSection">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
-    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Sobre nosotros</div>
-    <p id="bizDesc" style="font-size:13px;color:var(--text2);line-height:1.65;">Barbería O'Higgins es un espacio donde la tradición y el estilo se unen. Ofrecemos cortes clásicos y modernos, perfilado de barba y masajes de relajación, en un ambiente cálido y profesional.</p>
-    <div id="bizRating" style="display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-      <span style="font-size:22px;font-weight:800;color:var(--accent);">4.8</span>
-      <div>
-        <div style="color:#f59e0b;font-size:14px;letter-spacing:1px;">★★★★★</div>
-        <div style="font-size:11px;color:var(--text3);">74 reseñas en Google</div>
-      </div>
-      <a href="https://g.co/kgs/ohiggins" target="_blank" style="margin-left:auto;font-size:11px;color:var(--accent);text-decoration:none;border:1px solid var(--accent);padding:4px 10px;border-radius:6px;">Ver reseñas →</a>
-    </div>
-  </div>
-  <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);min-height:180px;">
-    <iframe
-      src="https://maps.google.com/maps?q=Alc%C3%A1zar+320%2C+Rancagua%2C+O%27Higgins%2C+Chile&output=embed&z=16"
-      width="100%" height="100%" style="border:0;display:block;min-height:180px;"
-      allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
-  </div>
-</div>
+<!-- Body -->
+<div class="page-body">
 
-<!-- Reseñas destacadas -->
-<div style="max-width:800px;margin:16px auto 0;padding:0 20px;">
-  <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Reseñas recientes</div>
-  <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;" id="reviewsRow">
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:220px;max-width:260px;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--navy-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);">J</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--text);">Jorge P.</div><div style="font-size:11px;color:#f59e0b;">★★★★★</div></div>
-      </div>
-      <p style="font-size:12px;color:var(--text2);line-height:1.5;">"Excelente atención, Russio es un crack. El corte + barba quedó perfecto."</p>
-      <div style="font-size:10px;color:var(--text3);margin-top:8px;">hace 2 días</div>
+  <!-- Sobre nosotros + mapa -->
+  <div class="two-col" id="contextSection">
+    <div class="card">
+      <div class="card-title">Sobre nosotros</div>
+      <p id="bizDesc" style="font-size:13px;color:var(--text2);line-height:1.65;"></p>
+      <div id="bizRating" style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);"></div>
     </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:220px;max-width:260px;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--navy-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);">C</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--text);">Camilo R.</div><div style="font-size:11px;color:#f59e0b;">★★★★★</div></div>
-      </div>
-      <p style="font-size:12px;color:var(--text2);line-height:1.5;">"Super buena experiencia, muy profesionales. Me atendió Criss y quedé muy satisfecho."</p>
-      <div style="font-size:10px;color:var(--text3);margin-top:8px;">hace 1 semana</div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:220px;max-width:260px;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--navy-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);">N</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--text);">Nicolás V.</div><div style="font-size:11px;color:#f59e0b;">★★★★☆</div></div>
-      </div>
-      <p style="font-size:12px;color:var(--text2);line-height:1.5;">"Buen ambiente, buen corte. A veces hay espera pero vale la pena."</p>
-      <div style="font-size:10px;color:var(--text3);margin-top:8px;">hace 2 semanas</div>
-    </div>
+    <div id="bizMapCard" style="border-radius:14px;overflow:hidden;border:1px solid var(--border);min-height:180px;background:var(--surface2);"></div>
   </div>
-</div>
 
-<!-- Staff bubbles -->
-<div class="staff-section">
-  <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Nuestro equipo</div>
-  <div class="staff-bubbles" id="staffBubbles"></div>
-</div>
+  <!-- Reseñas -->
+  <div>
+    <div class="card-title" style="margin-top:20px;margin-bottom:10px;">Reseñas recientes</div>
+    <div class="reviews-row" id="reviewsRow"></div>
+  </div>
 
-<!-- Servicios -->
-<div class="services-section" id="servicesSection">
-  <div class="loading"><div class="spinner"></div>Cargando servicios...</div>
+  <!-- Staff -->
+  <div class="staff-section">
+    <div class="card-title" style="margin-bottom:10px;">Nuestro equipo</div>
+    <div class="staff-bubbles" id="staffBubbles"></div>
+  </div>
+
+  <!-- Servicios -->
+  <div class="services-section" id="servicesSection">
+    <div class="loading"><div class="spinner"></div>Cargando servicios...</div>
+  </div>
+
+  <div class="powered">Reservas gestionadas por <a href="https://www.horizonweb.cl" target="_blank">HORIZON</a></div>
 </div>
 
 <!-- Wizard drawer -->
 <div class="wizard-overlay" id="wizardOverlay" onclick="if(event.target===this)closeWizard()">
-  <div class="wizard-drawer" id="wizardDrawer">
+  <div class="wizard-drawer">
     <div class="wizard-handle"></div>
     <div class="wizard-content" id="wizardContent"></div>
   </div>
@@ -266,12 +282,39 @@
 <script>
 const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 
+// ── Demo data ──────────────────────────────────────────────────────────────────
+const DEMO_SLUG = 'binks';
+const DEMO_TENANT = {
+  id: 'demo', name: 'Barbería Binks', slug: 'binks',
+  phone: '+56912345678', address: 'Av. Bernardo O\'Higgins 1230, Santiago',
+  description: 'En Barbería Binks combinamos tradición e innovación. Nuestro equipo de barberos certificados garantiza el corte que buscas en un ambiente moderno y relajado.'
+};
+const DEMO_STAFF = [
+  { id:'ds1', name:'Andrés Mejías', bio:'Especialista en degradados y diseño de barba.', schedule_json:{ mon:{start:'09:00',end:'19:00'}, tue:{start:'09:00',end:'19:00'}, wed:{start:'09:00',end:'19:00'}, thu:{start:'09:00',end:'19:00'}, fri:{start:'09:00',end:'19:00'}, sat:{start:'10:00',end:'17:00'} }, color:'#3b82f6', initials:'AM' },
+  { id:'ds2', name:'Felipe Reyes',  bio:'10 años de experiencia. Experto en cortes clásicos.',   schedule_json:{ mon:{start:'10:00',end:'20:00'}, tue:{start:'10:00',end:'20:00'}, wed:{start:'10:00',end:'20:00'}, thu:{start:'10:00',end:'20:00'}, fri:{start:'10:00',end:'20:00'}, sat:{start:'10:00',end:'18:00'} }, color:'#10b981', initials:'FR' },
+  { id:'ds3', name:'Camila Lagos',  bio:'Colorista certificada, especialista en técnicas de color.', schedule_json:{ tue:{start:'10:00',end:'19:00'}, wed:{start:'10:00',end:'19:00'}, thu:{start:'10:00',end:'19:00'}, fri:{start:'10:00',end:'19:00'}, sat:{start:'10:00',end:'16:00'} }, color:'#f472b6', initials:'CL' },
+];
+const DEMO_SERVICES = [
+  { id:'dv1', name:'Corte de pelo',   duration_min:30, price_clp:7000,  deposit_clp:0,    description:'Corte clásico o moderno con lavado.' },
+  { id:'dv2', name:'Barba',           duration_min:20, price_clp:5000,  deposit_clp:0,    description:'Perfilado y arreglo de barba completo.' },
+  { id:'dv3', name:'Corte + Barba',   duration_min:45, price_clp:11000, deposit_clp:3000, description:'Pack completo corte y barba.' },
+  { id:'dv4', name:'Tinte',           duration_min:60, price_clp:15000, deposit_clp:5000, description:'Coloración completa con tinte profesional.' },
+  { id:'dv5', name:'Diseño de barba', duration_min:25, price_clp:6000,  deposit_clp:0,    description:'Diseño personalizado de barba y bigote.' },
+  { id:'dv6', name:'Keratina',        duration_min:90, price_clp:25000, deposit_clp:8000, description:'Tratamiento alisador de larga duración.' },
+];
+const DEMO_REVIEWS = [
+  { name:'Jorge P.',    initial:'J', color:'#3b82f6', stars:'★★★★★', text:'"El corte + barba con Andrés quedó perfecto. Muy profesional y el ambiente es increíble."', time:'hace 2 días' },
+  { name:'Camilo R.',   initial:'C', color:'#10b981', stars:'★★★★★', text:'"Super buena experiencia. Felipe me atendió genial, sabe exactamente qué pedir."', time:'hace 1 semana' },
+  { name:'Valentina S.',initial:'V', color:'#f472b6', stars:'★★★★★', text:'"Camila hizo un trabajo excelente con mi color. Salí contentísima, volveré seguro."', time:'hace 1 semana' },
+  { name:'Nicolás V.',  initial:'N', color:'#f59e0b', stars:'★★★★☆', text:'"Buen ambiente, buen corte. A veces hay espera pero vale totalmente la pena."', time:'hace 2 semanas' },
+];
+
+// ── State ──────────────────────────────────────────────────────────────────────
 const state = {
-  tenant: null, staff: [], services: [],
-  filteredStaffId: null,
-  wiz: { step: 1, service: null, staff: null, date: null, time: null, name: '', phone: '' },
+  tenant: null, staff: [], services: [], filteredStaffId: null,
+  wiz: { step:1, service:null, staff:null, date:null, time:null, name:'', phone:'' },
   calYear: new Date().getFullYear(), calMonth: new Date().getMonth(),
-  takenSlots: []
+  takenSlots: [], isDemo: false
 };
 
 const MONTHS   = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -301,29 +344,79 @@ function toggleTheme() {
   });
 })();
 
-// ── Render negocio ────────────────────────────────────────────────────────────
+// ── Render biz info ────────────────────────────────────────────────────────────
 function renderBizInfo(tenant) {
-  document.title  = `Reservar — ${tenant.name}`;
+  document.title = `Reservar — ${tenant.name}`;
+  const ini = initials(tenant.name);
   document.getElementById('topBarName').textContent = tenant.name;
-  document.getElementById('bizName').textContent    = tenant.name;
-  document.getElementById('bizLogoText').textContent = initials(tenant.name);
+  document.getElementById('topBarLogo').textContent = ini;
+  document.getElementById('bizLogoText').textContent = ini;
+  document.getElementById('bizName').textContent = tenant.name;
 
-  const meta = [];
-  if (tenant.address) meta.push(`<span class="biz-meta-item">📍 ${tenant.address}</span>`);
-  if (tenant.phone)   meta.push(`<span class="biz-meta-item">📱 <a href="https://wa.me/${tenant.phone.replace(/\D/g,'')}">WhatsApp</a></span>`);
-  document.getElementById('bizMeta').innerHTML = meta.join('');
+  const badges = [];
+  if (tenant.address) badges.push(`<span class="biz-badge">📍 ${tenant.address}</span>`);
+  if (tenant.phone)   badges.push(`<span class="biz-badge">📱 <a href="https://wa.me/${tenant.phone.replace(/\D/g,'')}">WhatsApp</a></span>`);
+  badges.push(`<span class="biz-badge rating-badge">★ 4.8 · 74 reseñas</span>`);
+  document.getElementById('bizBadges').innerHTML = badges.join('');
+
+  document.getElementById('bizDesc').textContent = tenant.description ||
+    'Bienvenido. Ofrecemos los mejores servicios de barbería y estilismo para que salgas siempre impecable.';
+
+  document.getElementById('bizRating').innerHTML = `
+    <span style="font-size:24px;font-weight:900;color:var(--gold);">4.8</span>
+    <div>
+      <div style="color:var(--gold);font-size:14px;letter-spacing:1px;">★★★★★</div>
+      <div style="font-size:11px;color:var(--text3);">74 reseñas en Google</div>
+    </div>
+    <a href="#" style="margin-left:auto;font-size:11px;color:var(--accent);text-decoration:none;border:1px solid var(--accent);padding:4px 10px;border-radius:6px;">Ver reseñas →</a>
+  `;
+
+  if (state.isDemo) {
+    document.getElementById('bizMapCard').innerHTML = `
+      <div style="width:100%;height:100%;min-height:180px;background:linear-gradient(135deg,#e8f0fe,#dbeafe);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
+        <span style="font-size:36px;">📍</span>
+        <span style="font-size:13px;color:#3b82f6;font-weight:600;">Av. Bernardo O'Higgins 1230</span>
+        <span style="font-size:11px;color:#6b7280;">Santiago, Chile</span>
+      </div>`;
+  } else if (tenant.address) {
+    document.getElementById('bizMapCard').innerHTML = `
+      <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(tenant.address)}&output=embed&z=16"
+        width="100%" height="100%" style="border:0;display:block;min-height:180px;"
+        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  } else {
+    document.getElementById('bizMapCard').style.display = 'none';
+    document.getElementById('contextSection').style.gridTemplateColumns = '1fr';
+  }
+}
+
+// ── Reviews ────────────────────────────────────────────────────────────────────
+function renderReviews() {
+  document.getElementById('reviewsRow').innerHTML = DEMO_REVIEWS.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-avatar" style="background:${r.color};">${r.initial}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-stars">${r.stars}</div>
+        </div>
+      </div>
+      <p class="review-text">${r.text}</p>
+      <div class="review-time">${r.time}</div>
+    </div>`).join('');
 }
 
 // ── Staff bubbles ─────────────────────────────────────────────────────────────
 function renderStaffBubbles() {
-  const all = [{ id: null, name: 'Todos' }, ...state.staff];
+  const all = [{ id:null, name:'Todos', color:'#6b7280', initials:'👥' }, ...state.staff];
   document.getElementById('staffBubbles').innerHTML = all.map(s => {
     const active = state.filteredStaffId === s.id;
+    const avatarStyle = s.color ? `background:${s.color}20;border-color:${active?s.color:''};` : '';
+    const textStyle   = s.color ? `color:${s.color};` : '';
     return `<div class="staff-bubble ${active?'active':''}" onclick="filterByStaff('${s.id}')">
-      <div class="staff-bubble-avatar">
-        ${s.photo_url ? `<img src="${s.photo_url}">` : (s.id ? initials(s.name) : '👥')}
+      <div class="staff-bubble-avatar" style="${avatarStyle}">
+        ${s.photo_url ? `<img src="${s.photo_url}">` : `<span style="${textStyle}">${s.initials||initials(s.name)}</span>`}
       </div>
-      <span class="staff-bubble-name">${s.name}</span>
+      <span class="staff-bubble-name">${s.name.split(' ')[0]}</span>
     </div>`;
   }).join('');
 }
@@ -335,84 +428,95 @@ window.filterByStaff = function(id) {
 };
 
 // ── Render servicios ──────────────────────────────────────────────────────────
-function renderServices() {
-  const filtered = state.filteredStaffId
-    ? state.services // Si hay filtro de barbero, todos sus servicios
-    : state.services;
+function serviceIcon(name) {
+  const n = name.toLowerCase();
+  if (n.includes('barba')) return '🧔';
+  if (n.includes('tinte') || n.includes('color') || n.includes('keratina')) return '💈';
+  if (n.includes('uña') || n.includes('esmalt')) return '💅';
+  return '✂️';
+}
 
-  const barberia = filtered.filter(s => !isManicure(s.name));
-  const otros    = filtered.filter(s => isManicure(s.name));
+function renderServices() {
+  const list = state.services;
+  if (!list.length) {
+    document.getElementById('servicesSection').innerHTML = `<div class="loading">Sin servicios disponibles</div>`;
+    return;
+  }
+
+  const haircut = list.filter(s => !s.name.toLowerCase().includes('uña') && !s.name.toLowerCase().includes('esmalt'));
+  const other   = list.filter(s => s.name.toLowerCase().includes('uña') || s.name.toLowerCase().includes('esmalt'));
 
   let html = '';
 
-  if (barberia.length) {
-    html += `<div class="section-title">Barbería</div>
-    <div class="services-list">`;
-    barberia.forEach(s => { html += serviceItemHTML(s); });
+  if (haircut.length) {
+    html += `<div class="section-label">Barbería y estilismo</div><div class="services-list">`;
+    haircut.forEach(s => { html += serviceItemHTML(s); });
+    html += `</div>`;
+  }
+  if (other.length) {
+    html += `<div class="section-label" style="margin-top:20px;">Otros servicios</div><div class="services-list">`;
+    other.forEach(s => { html += serviceItemHTML(s); });
     html += `</div>`;
   }
 
-  if (otros.length) {
-    html += `<div class="section-title" style="margin-top:20px;">Otros servicios</div>
-    <div class="services-list">`;
-    otros.forEach(s => { html += serviceItemHTML(s); });
-    html += `</div>`;
-  }
-
-  document.getElementById('servicesSection').innerHTML = html || `<div class="loading">Sin servicios disponibles</div>`;
-}
-
-function isManicure(name) {
-  const n = name.toLowerCase();
-  return n.includes('uña') || n.includes('esmalt') || n.includes('kapping') || n.includes('softgel') || n.includes('polygel') || n.includes('retiro');
+  document.getElementById('servicesSection').innerHTML = html;
 }
 
 function serviceItemHTML(s) {
-  const icon = isManicure(s.name) ? '💅' : '✂️';
-  const deposit = s.deposit_clp > 0 ? `· seña ${formatCLP(s.deposit_clp)}` : '';
+  const deposit = s.deposit_clp > 0
+    ? `<span class="service-deposit">Seña ${formatCLP(s.deposit_clp)}</span>` : '';
   return `<div class="service-item">
-    <div class="service-item-icon">${icon}</div>
-    <div class="service-item-info">
-      <div class="service-item-name">${s.name}</div>
-      <div class="service-item-meta">
-        <span>${s.duration_min} min</span>
-        ${deposit ? `<span>${deposit}</span>` : ''}
+    <div class="service-icon">${serviceIcon(s.name)}</div>
+    <div class="service-info">
+      <div class="service-name">${s.name}</div>
+      <div class="service-meta">
+        <span>⏱ ${s.duration_min} min</span>
+        ${deposit}
       </div>
     </div>
-    <div class="service-item-price">${formatCLP(s.price_clp)}</div>
-    <button class="btn-reservar" onclick="startBooking('${s.id}')">Reservar</button>
+    <div class="service-price">${formatCLP(s.price_clp)}</div>
+    <button class="btn-book" onclick="startBooking('${s.id}')">Reservar</button>
   </div>`;
 }
 
 // ── WIZARD ────────────────────────────────────────────────────────────────────
 window.startBooking = function(serviceId) {
-  state.wiz = { step: 1, service: state.services.find(s=>s.id===serviceId), staff: null, date: null, time: null, name: '', phone: '' };
+  state.wiz = { step:1, service:state.services.find(s=>s.id===serviceId), staff:null, date:null, time:null, name:'', phone:'' };
   state.calYear  = new Date().getFullYear();
   state.calMonth = new Date().getMonth();
-  openWizard();
+  document.getElementById('wizardOverlay').classList.add('open');
+  renderWizard();
 };
 
-function openWizard()  { document.getElementById('wizardOverlay').classList.add('open'); renderWizard(); }
 function closeWizard() { document.getElementById('wizardOverlay').classList.remove('open'); }
 function back()        { if (state.wiz.step > 1) { state.wiz.step--; renderWizard(); } }
 
 function renderWizard() {
-  const c = document.getElementById('wizardContent');
-  const steps = 4;
-  const pillsHTML = Array.from({length:steps},(_,i)=>{
-    const n=i+1; const cls = n<state.wiz.step?'done':n===state.wiz.step?'active':'';
-    return `<div class="step-pill ${cls}"></div>`;
+  const c     = document.getElementById('wizardContent');
+  const total = 4;
+  const pills = Array.from({length:total},(_,i) => {
+    const n = i+1;
+    return `<div class="step-pill ${n<state.wiz.step?'done':n===state.wiz.step?'active':''}"></div>`;
   }).join('');
 
-  const titleMap = ['','¿Con quién?','¿Qué día?','¿A qué hora?','Tus datos'];
-  const subMap   = ['',
+  const titles = ['','¿Con quién?','¿Qué día?','¿A qué hora?','Confirmar reserva'];
+  const subs   = ['',
     'Elige tu barbero preferido',
-    `Servicio: ${state.wiz.service?.name}`,
+    `${state.wiz.service?.name} · ${state.wiz.service?.duration_min} min`,
     formatDate(state.wiz.date || new Date()),
-    'Para confirmar tu reserva'
+    'Revisa los detalles antes de confirmar'
   ];
 
-  const backBtn = state.wiz.step > 1
+  const svcChip = state.wiz.service ? `
+    <div class="svc-chip">
+      <span style="font-size:18px;">${serviceIcon(state.wiz.service.name)}</span>
+      <div>
+        <div class="svc-chip-name">${state.wiz.service.name}</div>
+        <div class="svc-chip-meta">${state.wiz.service.duration_min} min · ${formatCLP(state.wiz.service.price_clp)}</div>
+      </div>
+    </div>` : '';
+
+  const backBtn = state.wiz.step > 1 && state.wiz.step < 5
     ? `<button class="btn-back" onclick="back()">← Volver</button>` : '';
 
   let body = '';
@@ -425,44 +529,52 @@ function renderWizard() {
   }
 
   c.innerHTML = `
-    <div class="step-pills">${pillsHTML}</div>
+    <div class="step-pills">${pills}</div>
     ${backBtn}
-    <div class="wizard-title">${titleMap[state.wiz.step] || ''}</div>
-    <div class="wizard-sub">${subMap[state.wiz.step] || ''}</div>
+    <div class="wizard-title">${titles[state.wiz.step] || ''}</div>
+    <div class="wizard-sub">${subs[state.wiz.step] || ''}</div>
+    ${state.wiz.step < 5 ? svcChip : ''}
     ${body}`;
 }
 
 function renderWizStaff() {
-  const all = [{ id:'__any__', name:'Sin preferencia', bio:'El primer barbero disponible', photo_url:null }, ...state.staff];
+  const all = [
+    { id:'__any__', name:'Sin preferencia', bio:'El primer barbero disponible', initials:'👥', color:'#6b7280' },
+    ...state.staff
+  ];
   return `<div class="select-list">
     ${all.map(s=>`
       <div class="select-item ${state.wiz.staff?.id===s.id?'selected':''}" onclick="wiz1Select('${s.id}')">
-        <div class="select-item-avatar">
-          ${s.photo_url?`<img src="${s.photo_url}">`:(s.id==='__any__'?'👥':initials(s.name))}
+        <div class="sel-avatar" style="background:${(s.color||'#6b7280')}20;color:${s.color||'#6b7280'};">
+          ${s.photo_url ? `<img src="${s.photo_url}">` : (s.initials || initials(s.name))}
         </div>
-        <div class="select-item-info">
+        <div class="sel-info">
           <h4>${s.name}</h4>
           <p>${s.bio||''}</p>
         </div>
+        ${state.wiz.staff?.id===s.id?'<span style="color:var(--accent);font-size:18px;">✓</span>':''}
       </div>`).join('')}
   </div>`;
 }
 
 window.wiz1Select = function(id) {
-  state.wiz.staff = id==='__any__'?{id:'__any__',name:'Sin preferencia'}:state.staff.find(s=>s.id===id);
-  state.wiz.step = 2; renderWizard();
+  state.wiz.staff = id==='__any__'
+    ? { id:'__any__', name:'Sin preferencia' }
+    : state.staff.find(s=>s.id===id);
+  state.wiz.step = 2;
+  renderWizard();
 };
 
 function renderWizDate() {
-  const today   = new Date(); today.setHours(0,0,0,0);
-  const first   = new Date(state.calYear, state.calMonth, 1);
-  const nDays   = new Date(state.calYear, state.calMonth+1, 0).getDate();
-  const startDow= (first.getDay()+6)%7;
-  const staffSched = state.wiz.staff?.id!=='__any__' ? (state.wiz.staff?.schedule_json||{}) : null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const first = new Date(state.calYear, state.calMonth, 1);
+  const nDays = new Date(state.calYear, state.calMonth+1, 0).getDate();
+  const startDow = (first.getDay()+6) % 7;
+  const staffSched = state.wiz.staff?.id !== '__any__' ? (state.wiz.staff?.schedule_json||{}) : null;
 
   function avail(d) {
-    if (d<today) return false;
-    if (!staffSched) return true;
+    if (d < today) return false;
+    if (!staffSched) return d.getDay() !== 0;
     const k = DAY_KEYS[(d.getDay()+6)%7];
     return !!staffSched[k];
   }
@@ -470,12 +582,14 @@ function renderWizDate() {
   let days = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
   for(let i=0;i<startDow;i++) days+=`<div class="cal-day empty"></div>`;
   for(let d=1;d<=nDays;d++){
-    const dt=new Date(state.calYear,state.calMonth,d);
-    const sel=state.wiz.date?.getTime()===dt.getTime();
-    const ok=avail(dt), past=dt<today;
-    const cls=`cal-day${past?' past':!ok?' disabled':sel?' selected':dt.getTime()===today.getTime()?' today':''}`;
-    const click=ok&&!past?`onclick="wiz2Select(${state.calYear},${state.calMonth},${d})"`:''
-    days+=`<div class="${cls}" ${click}>${d}</div>`;
+    const dt  = new Date(state.calYear, state.calMonth, d);
+    const sel = state.wiz.date?.getTime() === dt.getTime();
+    const ok  = avail(dt);
+    const past = dt < today;
+    const isToday = dt.getTime() === today.getTime();
+    const cls = `cal-day${past||!ok?' past':sel?' selected':isToday?' today':''}`;
+    const click = ok && !past ? `onclick="wiz2Select(${state.calYear},${state.calMonth},${d})"` : '';
+    days += `<div class="${cls}" ${click}>${d}</div>`;
   }
 
   return `<div class="cal-header">
@@ -491,168 +605,181 @@ function renderWizDate() {
 window.wiz2Select = async function(y,m,d) {
   state.wiz.date = new Date(y,m,d);
   state.wiz.time = null;
-  await loadTaken();
-  state.wiz.step=3; renderWizard();
+  if (!state.isDemo) await loadTaken();
+  else state.takenSlots = [600, 660]; // demo: 10:00 y 11:00 tomados
+  state.wiz.step = 3;
+  renderWizard();
 };
-window.calPrev=function(){ if(--state.calMonth<0){state.calMonth=11;state.calYear--;} renderWizard(); };
-window.calNext=function(){ if(++state.calMonth>11){state.calMonth=0;state.calYear++;} renderWizard(); };
+window.calPrev = function(){ if(--state.calMonth<0){state.calMonth=11;state.calYear--;} renderWizard(); };
+window.calNext = function(){ if(++state.calMonth>11){state.calMonth=0;state.calYear++;} renderWizard(); };
 
 async function loadTaken() {
-  const ds=new Date(state.wiz.date); ds.setHours(0,0,0,0);
-  const de=new Date(state.wiz.date); de.setHours(23,59,59,999);
-  let q=sb.from('biz_appointments').select('starts_at')
-    .eq('tenant_id',state.tenant.id)
-    .gte('starts_at',ds.toISOString()).lte('starts_at',de.toISOString())
+  const ds = new Date(state.wiz.date); ds.setHours(0,0,0,0);
+  const de = new Date(state.wiz.date); de.setHours(23,59,59,999);
+  let q = sb.from('biz_appointments').select('starts_at')
+    .eq('tenant_id', state.tenant.id)
+    .gte('starts_at', ds.toISOString()).lte('starts_at', de.toISOString())
     .neq('status','cancelled');
-  if(state.wiz.staff?.id!=='__any__') q=q.eq('staff_id',state.wiz.staff.id);
-  const {data}=await q;
-  state.takenSlots=(data||[]).map(a=>{ const t=new Date(a.starts_at); return t.getHours()*60+t.getMinutes(); });
+  if (state.wiz.staff?.id !== '__any__') q = q.eq('staff_id', state.wiz.staff.id);
+  const { data } = await q;
+  state.takenSlots = (data||[]).map(a=>{ const t=new Date(a.starts_at); return t.getHours()*60+t.getMinutes(); });
 }
 
 function renderWizTime() {
-  const sched = state.wiz.staff?.id!=='__any__' && state.wiz.staff?.schedule_json
+  const sched = state.wiz.staff?.id !== '__any__' && state.wiz.staff?.schedule_json
     ? state.wiz.staff.schedule_json
-    : { mon:{start:'10:00',end:'20:00'}, tue:{start:'10:00',end:'20:00'}, wed:{start:'10:00',end:'20:00'}, thu:{start:'10:00',end:'20:00'}, fri:{start:'10:00',end:'20:00'}, sat:{start:'10:00',end:'18:00'} };
-  const key=DAY_KEYS[(state.wiz.date.getDay()+6)%7];
-  const dc=sched[key]||{start:'10:00',end:'19:00'};
-  const [sh,sm]=(dc.start||'10:00').split(':').map(Number);
-  const [eh,em]=(dc.end||'20:00').split(':').map(Number);
-  const dur=state.wiz.service?.duration_min||30;
-  const now=new Date(); const isToday=state.wiz.date.toDateString()===now.toDateString();
+    : { mon:{start:'09:00',end:'20:00'}, tue:{start:'09:00',end:'20:00'}, wed:{start:'09:00',end:'20:00'}, thu:{start:'09:00',end:'20:00'}, fri:{start:'09:00',end:'20:00'}, sat:{start:'10:00',end:'18:00'} };
+  const key = DAY_KEYS[(state.wiz.date.getDay()+6)%7];
+  const dc  = sched[key] || { start:'09:00', end:'19:00' };
+  const [sh,sm] = (dc.start||'09:00').split(':').map(Number);
+  const [eh,em] = (dc.end||'20:00').split(':').map(Number);
+  const dur = state.wiz.service?.duration_min || 30;
+  const now = new Date();
+  const isToday = state.wiz.date.toDateString() === now.toDateString();
 
-  const slots=[]; let cur=sh*60+sm;
-  while(cur+dur<=eh*60+em){ slots.push(cur); cur+=dur; }
+  const slots = []; let cur = sh*60+sm;
+  while(cur+dur <= eh*60+em) { slots.push(cur); cur += dur; }
 
-  if(!slots.length) return `<div class="loading">Sin horarios disponibles este día</div>`;
+  if (!slots.length) return `<div class="loading">Sin horarios disponibles este día</div>`;
 
   return `<div class="times-grid">
-    ${slots.map(min=>{
-      const h=Math.floor(min/60), m=min%60;
-      const lbl=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-      const taken=state.takenSlots.includes(min);
-      const past=isToday&&(h<now.getHours()||(h===now.getHours()&&m<=now.getMinutes()));
-      const sel=state.wiz.time===min;
-      return `<div class="time-chip${taken||past?' taken':sel?' selected':''}" ${!taken&&!past?`onclick="wiz3Select(${min})"`:''}>
-        ${lbl}
-      </div>`;
+    ${slots.map(min => {
+      const h = Math.floor(min/60), m = min%60;
+      const lbl = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const taken = state.takenSlots.includes(min);
+      const past  = isToday && (h < now.getHours() || (h===now.getHours() && m<=now.getMinutes()));
+      const sel   = state.wiz.time === min;
+      return `<div class="time-chip${taken||past?' taken':sel?' selected':''}"
+        ${!taken&&!past ? `onclick="wiz3Select(${min})"` : ''}>${lbl}</div>`;
     }).join('')}
   </div>`;
 }
 
-window.wiz3Select=function(min){ state.wiz.time=min; state.wiz.step=4; renderWizard(); };
+window.wiz3Select = function(min) { state.wiz.time = min; state.wiz.step = 4; renderWizard(); };
 
 function renderWizClient() {
-  const h=Math.floor(state.wiz.time/60), m=state.wiz.time%60;
-  const ts=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const h = Math.floor(state.wiz.time/60), m = state.wiz.time%60;
+  const ts = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const staffName = state.wiz.staff?.id==='__any__' ? 'Sin preferencia' : state.wiz.staff?.name;
   return `
     <div class="summary-box">
       <div class="summary-row"><span>Servicio</span><span>${state.wiz.service.name}</span></div>
-      <div class="summary-row"><span>Barbero</span><span>${state.wiz.staff?.id==='__any__'?'Sin preferencia':state.wiz.staff?.name}</span></div>
+      <div class="summary-row"><span>Barbero</span><span>${staffName}</span></div>
       <div class="summary-row"><span>Fecha</span><span>${formatDate(state.wiz.date)}</span></div>
       <div class="summary-row"><span>Hora</span><span>${ts}</span></div>
-      <div class="summary-row"><span>Precio</span><span style="color:var(--accent)">${formatCLP(state.wiz.service.price_clp)}</span></div>
-      ${state.wiz.service.deposit_clp>0?`<div class="summary-row"><span>Seña ahora</span><span style="color:var(--accent);font-weight:800">${formatCLP(state.wiz.service.deposit_clp)}</span></div>`:''}
+      <div class="summary-row"><span>Precio</span><span style="color:var(--accent);font-size:15px;">${formatCLP(state.wiz.service.price_clp)}</span></div>
+      ${state.wiz.service.deposit_clp>0?`<div class="summary-row"><span>Seña ahora</span><span style="color:var(--gold);font-weight:800;">${formatCLP(state.wiz.service.deposit_clp)}</span></div>`:''}
     </div>
     <div class="form-group">
-      <label class="form-label">Tu nombre</label>
-      <input class="form-input" id="wizName" type="text" placeholder="Juan Pérez" value="${state.wiz.name}">
+      <label class="form-label">Tu nombre completo</label>
+      <input class="form-input" id="wizName" type="text" placeholder="Juan Pérez" value="${state.wiz.name}" autocomplete="name">
     </div>
     <div class="form-group">
       <label class="form-label">Tu WhatsApp</label>
-      <input class="form-input" id="wizPhone" type="tel" placeholder="+56912345678" value="${state.wiz.phone}">
+      <input class="form-input" id="wizPhone" type="tel" placeholder="+56912345678" value="${state.wiz.phone}" autocomplete="tel">
     </div>
-    ${state.wiz.service.deposit_clp>0?`<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px;">Se cobrará una seña de ${formatCLP(state.wiz.service.deposit_clp)} vía MercadoPago para confirmar.</div>`:''}
+    ${state.wiz.service.deposit_clp>0
+      ? `<p style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px;line-height:1.5;">Se cobrará una seña de ${formatCLP(state.wiz.service.deposit_clp)} vía MercadoPago para confirmar tu reserva.</p>`
+      : ''}
     <button class="btn-primary" id="btnConfirm" onclick="wizConfirm()">
-      ${state.wiz.service.deposit_clp>0?`Confirmar y pagar seña`:'Confirmar reserva'}
+      ${state.wiz.service.deposit_clp>0 ? 'Confirmar y pagar seña →' : 'Confirmar reserva →'}
     </button>`;
 }
 
 window.wizConfirm = async function() {
   const name  = document.getElementById('wizName')?.value?.trim();
   const phone = document.getElementById('wizPhone')?.value?.trim();
-  if (!name||!phone) { alert('Completa tu nombre y teléfono'); return; }
-  state.wiz.name=name; state.wiz.phone=phone;
+  if (!name || !phone) { alert('Por favor completa tu nombre y teléfono'); return; }
+  state.wiz.name = name; state.wiz.phone = phone;
 
-  const btn=document.getElementById('btnConfirm');
-  if(btn){ btn.disabled=true; btn.textContent='Confirmando...'; }
+  const btn = document.getElementById('btnConfirm');
+  if (btn) { btn.disabled = true; btn.textContent = 'Confirmando...'; }
+
+  if (state.isDemo) { state.wiz.step = 5; renderWizard(); return; }
 
   try {
-    await sb.from('biz_clients')
-      .upsert({tenant_id:state.tenant.id,name,phone},{onConflict:'tenant_id,phone'});
+    await sb.from('biz_clients').upsert(
+      { tenant_id: state.tenant.id, name, phone },
+      { onConflict: 'tenant_id,phone' }
+    );
+    const starts = new Date(state.wiz.date);
+    starts.setHours(Math.floor(state.wiz.time/60), state.wiz.time%60, 0, 0);
+    const ends = new Date(starts.getTime() + state.wiz.service.duration_min * 60000);
+    let staffId = state.wiz.staff?.id;
+    if (staffId === '__any__') staffId = state.staff[0]?.id || null;
 
-    const starts=new Date(state.wiz.date);
-    starts.setHours(Math.floor(state.wiz.time/60),state.wiz.time%60,0,0);
-    const ends=new Date(starts.getTime()+state.wiz.service.duration_min*60000);
-
-    let staffId=state.wiz.staff?.id;
-    if(staffId==='__any__') staffId=state.staff[0]?.id||null;
-
-    const {error}=await sb.from('biz_appointments').insert({
-      tenant_id:state.tenant.id, staff_id:staffId,
-      service_id:state.wiz.service.id,
-      client_name:name, client_phone:phone,
-      starts_at:starts.toISOString(), ends_at:ends.toISOString(),
-      status:'confirmed', deposit_paid:0
+    const { error } = await sb.from('biz_appointments').insert({
+      tenant_id: state.tenant.id, staff_id: staffId,
+      service_id: state.wiz.service.id,
+      client_name: name, client_phone: phone,
+      starts_at: starts.toISOString(), ends_at: ends.toISOString(),
+      status: 'confirmed', deposit_paid: 0
     });
-    if(error) throw error;
-
-    state.wiz.step=5; renderWizard();
+    if (error) throw error;
+    state.wiz.step = 5; renderWizard();
   } catch(e) {
-    if(btn){ btn.disabled=false; btn.textContent='Confirmar reserva'; }
-    alert('Error: '+e.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Confirmar reserva →'; }
+    alert('Error al confirmar: ' + e.message);
   }
 };
 
 function renderWizConfirm() {
-  const h=Math.floor(state.wiz.time/60), m=state.wiz.time%60;
-  const ts=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-  const waMsg=encodeURIComponent(`Hola! Acabo de reservar un turno:\n✂ ${state.wiz.service.name}\n📅 ${formatDate(state.wiz.date)} a las ${ts}\n👤 ${state.wiz.name}`);
-  const waUrl=state.tenant.phone?`https://wa.me/${state.tenant.phone.replace(/\D/g,'')}?text=${waMsg}`:'#';
+  const h  = Math.floor(state.wiz.time/60), m = state.wiz.time%60;
+  const ts = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const staffName = state.wiz.staff?.id==='__any__' ? (state.staff[0]?.name||'—') : state.wiz.staff?.name;
+  const waMsg = encodeURIComponent(`Hola! Reservé un turno:\n✂ ${state.wiz.service.name}\n📅 ${formatDate(state.wiz.date)} a las ${ts}\n👤 ${state.wiz.name}`);
+  const waUrl = state.tenant.phone
+    ? `https://wa.me/${state.tenant.phone.replace(/\D/g,'')}?text=${waMsg}` : '#';
   return `<div class="confirm-screen">
-    <div class="confirm-icon">✅</div>
+    <div class="confirm-icon">🎉</div>
     <div class="confirm-title">¡Turno confirmado!</div>
-    <div class="confirm-sub">Recibirás un recordatorio por WhatsApp el día antes.</div>
-    <div class="summary-box">
+    <div class="confirm-sub">Te esperamos el <strong>${formatDate(state.wiz.date)}</strong> a las <strong>${ts}</strong>.<br>Recibirás un recordatorio por WhatsApp el día antes.</div>
+    <div class="summary-box" style="text-align:left;">
       <div class="summary-row"><span>Servicio</span><span>${state.wiz.service.name}</span></div>
-      <div class="summary-row"><span>Fecha</span><span>${formatDate(state.wiz.date)} ${ts}</span></div>
-      <div class="summary-row"><span>Barbero</span><span>${state.wiz.staff?.id==='__any__'?state.staff[0]?.name||'—':state.wiz.staff?.name}</span></div>
+      <div class="summary-row"><span>Con</span><span>${staffName}</span></div>
+      <div class="summary-row"><span>Fecha y hora</span><span>${formatDate(state.wiz.date)}, ${ts}</span></div>
     </div>
     <a class="wa-btn" href="${waUrl}" target="_blank">💬 Contactar por WhatsApp</a>
-    <button class="btn-primary" style="margin-top:10px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);" onclick="closeWizard()">
-      Volver al inicio
-    </button>
+    <button class="btn-secondary" onclick="closeWizard()">Volver al inicio</button>
   </div>`;
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init() {
   const params = new URLSearchParams(window.location.search);
-  const slug   = params.get('t') || params.get('slug');
+  const slug   = params.get('t') || params.get('slug') || 'binks';
 
-  if(!slug){
-    document.getElementById('servicesSection').innerHTML=`<div class="loading">⚠️ Link inválido. Contacta al negocio.</div>`;
+  if (slug === DEMO_SLUG) {
+    state.isDemo   = true;
+    state.tenant   = DEMO_TENANT;
+    state.staff    = DEMO_STAFF;
+    state.services = DEMO_SERVICES;
+    renderBizInfo(DEMO_TENANT);
+    renderReviews();
+    renderStaffBubbles();
+    renderServices();
     return;
   }
 
-  let { data: tenant } = await sb.from('tenants').select('id,name,slug,phone,address,type')
-    .eq('slug',slug).maybeSingle();
+  let { data: tenant } = await sb.from('tenants')
+    .select('id,name,slug,phone,address,type').eq('slug', slug).maybeSingle();
 
-  if(!tenant){
-    document.getElementById('servicesSection').innerHTML=`<div class="loading">😕 Negocio no encontrado.</div>`;
+  if (!tenant) {
+    document.getElementById('servicesSection').innerHTML = `<div class="loading">😕 Negocio no encontrado. Verifica el link.</div>`;
     return;
   }
 
-  state.tenant=tenant;
+  state.tenant = tenant;
   renderBizInfo(tenant);
+  renderReviews();
 
-  const [{data:staff},{data:services}]=await Promise.all([
+  const [{ data: staff }, { data: services }] = await Promise.all([
     sb.from('biz_staff').select('id,name,bio,photo_url,schedule_json').eq('tenant_id',tenant.id).eq('active',true).order('created_at'),
     sb.from('biz_services').select('id,name,duration_min,price_clp,deposit_clp').eq('tenant_id',tenant.id).eq('active',true).order('created_at')
   ]);
 
   state.staff    = staff    || [];
   state.services = services || [];
-
   renderStaffBubbles();
   renderServices();
 }
