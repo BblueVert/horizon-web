@@ -40,44 +40,57 @@
 
     /* ── Hero ── */
     .biz-hero { position: relative; }
+    /* ── Banner ── */
     .biz-cover {
-      width: 100%; height: 220px; position: relative; overflow: hidden;
+      width: 100%; height: 260px; position: relative; overflow: hidden;
       background:
-        radial-gradient(ellipse at 20% 50%, rgba(59,130,246,.18) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 30%, rgba(99,102,241,.14) 0%, transparent 50%),
-        linear-gradient(135deg, #080e1a 0%, #0f2040 40%, #0a1a30 70%, #06111e 100%);
+        radial-gradient(ellipse at 25% 60%, rgba(59,130,246,.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 30%, rgba(99,102,241,.16) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(16,185,129,.08) 0%, transparent 40%),
+        linear-gradient(150deg, #060d1a 0%, #0e2240 45%, #091830 75%, #050e1c 100%);
     }
     .biz-cover::before {
-      content: '';
-      position: absolute; inset: 0;
+      content: ''; position: absolute; inset: 0;
       background-image:
-        repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 28px),
-        repeating-linear-gradient(-45deg, rgba(255,255,255,.015) 0px, rgba(255,255,255,.015) 1px, transparent 1px, transparent 28px);
+        repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0px, rgba(255,255,255,.018) 1px, transparent 1px, transparent 32px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,.012) 0px, rgba(255,255,255,.012) 1px, transparent 1px, transparent 32px);
     }
     .biz-cover::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,.1) 0%, rgba(0,0,0,.45) 100%);
+      background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.35) 100%);
     }
+    .biz-cover > img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; z-index: 1; }
     .biz-cover-words {
-      position: relative; z-index: 1; text-align: center; user-select: none;
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      position: relative; z-index: 2; text-align: center; user-select: none;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
     }
     .biz-cover-title {
-      font-size: 13px; font-weight: 800; letter-spacing: .35em; text-transform: uppercase;
-      color: rgba(255,255,255,.22); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px; font-weight: 800; letter-spacing: .4em; text-transform: uppercase;
+      color: rgba(255,255,255,.2); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     .biz-cover-line {
-      width: 48px; height: 2px; border-radius: 2px;
-      background: linear-gradient(90deg, transparent, rgba(59,130,246,.5), transparent);
+      width: 40px; height: 1px; border-radius: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,.45), transparent);
     }
-    .biz-cover img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-    .biz-info-row { max-width: 820px; margin: 0 auto; padding: 0 20px 20px; display: flex; gap: 16px; align-items: flex-start; }
-    .biz-logo { width: 76px; height: 76px; border-radius: 14px; border: 3px solid var(--surface); margin-top: -38px; background: var(--surface2); overflow: hidden; box-shadow: var(--shadow-lg); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .biz-logo-text { font-size: 26px; font-weight: 900; color: var(--accent); }
+
+    /* ── Perfil del negocio ── */
+    .biz-profile { background: var(--surface); border-bottom: 1px solid var(--border); }
+    .biz-info-row {
+      max-width: 820px; margin: 0 auto;
+      padding: 20px 20px 22px;
+      display: flex; gap: 18px; align-items: center;
+    }
+    .biz-logo {
+      width: 72px; height: 72px; border-radius: 14px;
+      border: 2px solid var(--border); background: var(--surface2);
+      overflow: hidden; box-shadow: var(--shadow-md); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .biz-logo-text { font-size: 24px; font-weight: 900; color: var(--accent); }
     .biz-logo img { width: 100%; height: 100%; object-fit: cover; }
-    .biz-details { flex: 1; padding-top: 10px; }
-    .biz-name { font-size: 22px; font-weight: 800; color: var(--text); line-height: 1.2; }
-    .biz-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .biz-details { flex: 1; }
+    .biz-name { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .biz-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
     .biz-badge { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; }
     .biz-badge a { color: var(--accent); text-decoration: none; }
     .rating-badge { background: var(--gold-dim); border-color: rgba(245,158,11,.3); color: var(--gold); font-weight: 600; }
@@ -222,9 +235,9 @@
     .powered a { color: var(--accent); text-decoration: none; font-weight: 600; }
 
     @media(max-width:600px) {
-      .biz-info-row { flex-direction: column; gap: 0; }
-      .biz-logo { width: 64px; height: 64px; margin-top: -32px; }
-      .biz-name { font-size: 18px; }
+      .biz-info-row { flex-direction: row; gap: 12px; }
+      .biz-logo { width: 56px; height: 56px; border-radius: 10px; }
+      .biz-name { font-size: 17px; }
       .service-item { flex-wrap: wrap; gap: 8px; }
       .btn-book { width: 100%; text-align: center; }
       .times-grid { grid-template-columns: repeat(3, 1fr); }
@@ -242,15 +255,17 @@
   <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙 Oscuro</button>
 </div>
 
-<!-- Hero -->
-<div class="biz-hero">
-  <div class="biz-cover" id="bizCover">
-    <div class="biz-cover-words">
-      <div class="biz-cover-line"></div>
-      <div class="biz-cover-title">Reserva tu turno</div>
-      <div class="biz-cover-line"></div>
-    </div>
+<!-- Banner -->
+<div class="biz-cover" id="bizCover">
+  <div class="biz-cover-words">
+    <div class="biz-cover-line"></div>
+    <div class="biz-cover-title">Reserva tu turno</div>
+    <div class="biz-cover-line"></div>
   </div>
+</div>
+
+<!-- Perfil del negocio -->
+<div class="biz-profile">
   <div class="biz-info-row">
     <div class="biz-logo" id="bizLogo">
       <span class="biz-logo-text" id="bizLogoText">B</span>
