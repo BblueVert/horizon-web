@@ -376,6 +376,43 @@ async function renderCalendar() {
     end  =new Date(start);  end.setDate(start.getDate()+6); end.setHours(23,59,59,999);
   }
 
+  if (window._DEMO_MODE) {
+    const base = new Date(start); base.setHours(0,0,0,0);
+    let appts = [
+      _mkAppt(base, 9, 0, 45, 0, 'Corte + Barba',   'Juan Pérez',    'completed'),
+      _mkAppt(base,10, 0, 30, 0, 'Corte de pelo',   'Diego Morales', 'confirmed'),
+      _mkAppt(base,10,30, 20, 1, 'Barba',            'Carlos Ruiz',   'confirmed'),
+      _mkAppt(base,11,30, 45, 0, 'Corte + Barba',   'Matías Torres', 'pending'),
+      _mkAppt(base,12, 0, 60, 2, 'Tinte',            'Sofía Castro',  'confirmed'),
+      _mkAppt(base,14, 0, 30, 1, 'Corte de pelo',   'Pablo Vera',    'pending'),
+      _mkAppt(base,15, 0, 90, 2, 'Keratina',         'Valentina Ríos','confirmed'),
+      _mkAppt(base,16, 0, 45, 0, 'Corte + Barba',   'Rodrigo Muñoz', 'confirmed'),
+    ];
+    if (_filterStaffId) appts = appts.filter(a => a.biz_staff?.id === _filterStaffId);
+    if (statusFilter)   appts = appts.filter(a => a.status === statusFilter);
+    const byStaff={};
+    appts.forEach(a=>{ if(a.biz_staff?.id){ byStaff[a.biz_staff.id]=(byStaff[a.biz_staff.id]||0)+1; } });
+    renderProList(byStaff);
+    if (_view==='day') renderDay(start, appts);
+    else {
+      const weekAppts = [];
+      for (let d=0; d<7; d++) {
+        const dayBase = new Date(start); dayBase.setDate(start.getDate()+d); dayBase.setHours(0,0,0,0);
+        const shifted = [
+          _mkAppt(dayBase, 9, 0, 45, d%3===0?0:d%3===1?1:2, 'Corte + Barba',   'Cliente A', 'confirmed'),
+          _mkAppt(dayBase,11, 0, 30, d%3===0?1:d%3===1?2:0, 'Corte de pelo',   'Cliente B', 'pending'),
+          _mkAppt(dayBase,14, 0, 60, d%3===0?2:d%3===1?0:1, 'Tinte',            'Cliente C', 'confirmed'),
+        ];
+        weekAppts.push(...shifted);
+      }
+      let filtered = weekAppts;
+      if (_filterStaffId) filtered = filtered.filter(a=>a.biz_staff?.id===_filterStaffId);
+      if (statusFilter)   filtered = filtered.filter(a=>a.status===statusFilter);
+      renderWeek(start, filtered);
+    }
+    return;
+  }
+
   let q=sb.from('biz_appointments')
     .select('*, biz_staff(id,name,color,icon), biz_services(name,duration_min), biz_clients(id,name,notes)')
     .eq('tenant_id',_tid)
@@ -637,12 +674,48 @@ window.saveNuevo=async function(e){
   finally{ btn.disabled=false; btn.textContent='Crear turno'; }
 };
 
+// ── Demo appointments ─────────────────────────────────────────────────────────
+function _mkAppt(dayBase, h, m, durMin, staffIdx, svcName, clientName, status) {
+  const starts = new Date(dayBase); starts.setHours(h, m, 0, 0);
+  const ends   = new Date(starts.getTime() + durMin * 60000);
+  return {
+    id: `demo-${h}${m}-${staffIdx}`,
+    client_name: clientName, client_phone: '+56912345678',
+    starts_at: starts.toISOString(), ends_at: ends.toISOString(),
+    status, deposit_paid: 0, notes: '', biz_clients: null,
+    biz_staff: _staff[staffIdx],
+    biz_services: { name: svcName, duration_min: durMin },
+  };
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 (async()=>{
   const user=await requireAuth(['owner','staff','super_admin']);
   if(!user) return;
   _tid=user.tenant_id;
   await renderNav('Agenda');
+
+  if (window._DEMO_MODE) {
+    _staff = [
+      { id:'ds1', name:'Andrés', color:'#60a5fa', icon:'✂️', schedule_json:{ mon:{start:'09:00',end:'18:00'}, tue:{start:'09:00',end:'18:00'}, wed:{start:'09:00',end:'18:00'}, thu:{start:'09:00',end:'18:00'}, fri:{start:'09:00',end:'18:00'}, sat:{start:'10:00',end:'15:00'}, sun:null } },
+      { id:'ds2', name:'Felipe', color:'#34d399', icon:'💈', schedule_json:{ mon:{start:'10:00',end:'19:00'}, tue:{start:'10:00',end:'19:00'}, wed:null, thu:{start:'10:00',end:'19:00'}, fri:{start:'10:00',end:'19:00'}, sat:{start:'09:00',end:'14:00'}, sun:null } },
+      { id:'ds3', name:'Camila', color:'#f472b6', icon:'🪒', schedule_json:{ mon:null, tue:{start:'11:00',end:'20:00'}, wed:{start:'11:00',end:'20:00'}, thu:{start:'11:00',end:'20:00'}, fri:{start:'11:00',end:'20:00'}, sat:{start:'10:00',end:'16:00'}, sun:null } },
+    ];
+    _services = [
+      { id:'dv1', name:'Corte de pelo',   duration_min:30, price_clp:7000 },
+      { id:'dv2', name:'Barba',           duration_min:20, price_clp:5000 },
+      { id:'dv3', name:'Corte + Barba',   duration_min:45, price_clp:11000 },
+      { id:'dv4', name:'Tinte',           duration_min:60, price_clp:15000 },
+      { id:'dv5', name:'Keratina',        duration_min:90, price_clp:25000 },
+    ];
+    const _domain = SAAS_CONFIG.bookingDomain || window.location.origin;
+    document.getElementById('shareLink').textContent = `${_domain}/reservas/binks`;
+    updateToolbar();
+    renderMiniCal();
+    renderProList();
+    renderCalendar();
+    return;
+  }
 
   const [{data:staff=[]},{data:services=[]},{data:tenant}]=await Promise.all([
     sb.from('biz_staff').select('id,name,color,icon,schedule_json').eq('tenant_id',_tid).eq('active',true).order('created_at'),

@@ -103,10 +103,6 @@
   </style>
 </head>
 <body>
-<div id="demoBanner" class="demo-banner" style="display:none;">
-  MODO DEMO — los datos no se guardan
-  <a href="login.html">Iniciar sesión para el sistema real →</a>
-</div>
 <div class="saas-layout">
   <nav id="saas-nav"></nav>
   <main class="saas-main">
@@ -321,7 +317,6 @@ function fCLP(n) { return '$' + Number(n || 0).toLocaleString('es-CL'); }
 async function init() {
   if (DEMO_MODE) {
     currentUser = window._DEMO_USER_OBJ;
-    document.getElementById('demoBanner').style.display = 'block';
     try { renderNav('Ventas'); } catch(e) {}
     document.getElementById('dateStr').textContent = new Date().toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' });
     staffList = _DEMO_STAFF;

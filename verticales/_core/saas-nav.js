@@ -32,14 +32,9 @@ async function renderNav(activeSection) {
   document.documentElement.setAttribute('data-theme', savedTheme);
   const themeLabel = savedTheme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
 
-  const demoBadge = window._DEMO_MODE
-    ? `<span style="display:inline-block;font-size:9px;font-weight:700;background:rgba(139,92,246,.25);color:#a78bfa;padding:2px 7px;border-radius:10px;letter-spacing:.06em;margin-top:4px;">DEMO</span>`
-    : '';
-
   nav.innerHTML = `
     <div class="nav-brand">
       <span class="nav-tenant">${user.tenant?.name || 'HORIZON SaaS'}</span>
-      ${demoBadge}
       <span class="nav-plan">${user.tenant?.plan || ''}</span>
     </div>
     <ul class="nav-links">
@@ -53,7 +48,7 @@ async function renderNav(activeSection) {
         style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text2);padding:7px 12px;font-size:11px;cursor:pointer;text-align:left;margin-bottom:8px;">
         ${themeLabel}
       </button>
-      <button onclick="logout()" class="nav-logout">${window._DEMO_MODE ? 'Salir del demo' : 'Cerrar sesión'}</button>
+      <button onclick="logout()" class="nav-logout">Cerrar sesión</button>
     </div>
   `;
 }

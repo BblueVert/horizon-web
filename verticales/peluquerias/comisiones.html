@@ -190,6 +190,20 @@ async function init() {
 }
 
 async function loadStaffAndRules() {
+  if (window._DEMO_MODE) {
+    staffList = [
+      { id:'ds1', name:'Andrés Mejías', color:'#60a5fa', icon:'✂️' },
+      { id:'ds2', name:'Felipe Reyes',  color:'#34d399', icon:'💈' },
+      { id:'ds3', name:'Camila Lagos',  color:'#f472b6', icon:'🪒' },
+    ];
+    rules = {
+      'ds1': { commission_pct: 55, intermediary_pct: 0 },
+      'ds2': { commission_pct: 60, intermediary_pct: 0 },
+      'ds3': { commission_pct: 50, intermediary_pct: 3.49 },
+    };
+    renderRulesGrid();
+    return;
+  }
   const [{ data: staff }, { data: rulesData }] = await Promise.all([
     sb.from('biz_staff').select('id,name,color,icon').eq('active', true).order('name'),
     sb.from('biz_commission_rules').select('*'),

@@ -212,7 +212,7 @@ function closeModal() { document.getElementById('modalOverlay').classList.remove
       { id:'dv5', name:'Diseño de barba', description:'Diseño personalizado de barba y bigote.',  price_clp:6000,  duration_min:25, deposit_clp:0,    active:true },
       { id:'dv6', name:'Keratina',        description:'Tratamiento alisador de larga duración.',  price_clp:25000, duration_min:90, deposit_clp:8000, active:true },
     ];
-    document.getElementById('serviceGrid').innerHTML = demoSvc.map(renderServiceCard).join('');
+    document.getElementById('servicesGrid').innerHTML = demoSvc.map(renderServiceCard).join('');
     return;
   }
   await loadServices();
