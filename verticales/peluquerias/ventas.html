@@ -627,15 +627,19 @@ function showTransferModal(sale, total) {
   document.getElementById('txMarkPaidBtn').textContent = '✓ Marcar pagado';
 
   const detailsEl = document.getElementById('txBankDetails');
-  if (bank.account) {
-    const rows = [['Titular', bank.holder], ['Banco', bank.name], ['RUT', bank.rut], ['N° Cuenta', bank.account], ['Tipo', bank.type || 'Cta. Corriente']];
-    detailsEl.innerHTML = rows.filter(r => r[1]).map(r => `<div class="tx-row"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
-    const qrText = `${currentUser?.tenant?.name || 'Pago'}\nTitular: ${bank.holder}\nBanco: ${bank.name}\nRUT: ${bank.rut}\nCuenta: ${bank.account}\nMonto: ${fCLP(total)}`;
-    QRCode.toCanvas(document.getElementById('txQR'), qrText, { width: 160, margin: 2, color: { dark: '#0b1630', light: '#ffffff' } });
-    document.getElementById('txQRWrap').style.display = 'flex';
-  } else {
-    detailsEl.innerHTML = `<div style="text-align:center;color:var(--text3);font-size:12px;padding:16px 0;">Sin datos bancarios configurados.<br><a href="configuracion.html" style="color:var(--accent);font-weight:600;">Configurar cuenta →</a></div>`;
-    document.getElementById('txQRWrap').style.display = 'none';
+  const rows = [
+    ['Titular',    bank.holder  || currentUser?.tenant?.name || 'Barbería'],
+    ['Banco',      bank.name    || 'Banco Estado'],
+    ['RUT',        bank.rut     || '—'],
+    ['N° Cuenta',  bank.account || '0000000'],
+    ['Tipo',       bank.type    || 'Cuenta Corriente'],
+  ];
+  detailsEl.innerHTML = rows.map(r => `<div class="tx-row"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
+  const qrText = `${currentUser?.tenant?.name || 'Pago'}\nTitular: ${rows[0][1]}\nBanco: ${rows[1][1]}\nRUT: ${rows[2][1]}\nCuenta: ${rows[3][1]}\nMonto: ${fCLP(total)}`;
+  QRCode.toCanvas(document.getElementById('txQR'), qrText, { width: 160, margin: 2, color: { dark: '#0b1630', light: '#ffffff' } });
+  document.getElementById('txQRWrap').style.display = 'flex';
+  if (!bank.account) {
+    detailsEl.innerHTML += `<div style="font-size:10px;color:var(--warning);margin-top:6px;text-align:center;">Datos de ejemplo — <a href="configuracion.html" style="color:var(--accent);">configura tu cuenta →</a></div>`;
   }
   document.getElementById('transferModal').classList.add('open');
 }
