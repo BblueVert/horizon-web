@@ -79,6 +79,10 @@
     .pay-transferencia { background: rgba(37,99,235,.15); color: #60a5fa; }
     .pay-mercadopago { background: rgba(139,92,246,.15); color: #a78bfa; }
 
+    /* Demo banner */
+    .demo-banner { background: linear-gradient(135deg,#1e3a8a,#5b21b6); color: #fff; text-align: center; padding: 10px 16px; font-size: 12px; font-weight: 600; letter-spacing: .03em; }
+    .demo-banner a { color: #93c5fd; text-decoration: underline; margin-left: 8px; }
+
     /* Modal cliente */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: .2s; }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
@@ -99,6 +103,10 @@
   </style>
 </head>
 <body>
+<div id="demoBanner" class="demo-banner" style="display:none;">
+  MODO DEMO — los datos no se guardan
+  <a href="login.html">Iniciar sesión para el sistema real →</a>
+</div>
 <div class="saas-layout">
   <nav id="saas-nav"></nav>
   <main class="saas-main">
@@ -262,6 +270,42 @@
 <script>
 const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 
+const DEMO_MODE = new URLSearchParams(window.location.search).has('demo');
+
+const _DEMO_USER = {
+  id: 'demo', email: 'demo@horizonweb.cl', role: 'owner',
+  tenant_id: 'demo-tenant',
+  tenant: {
+    name: 'Barbería Demo', slug: 'demo', plan: 'pro', status: 'active',
+    mp_access_token: null, wa_token: null, wa_phone_number_id: null,
+    config_json: { bank: { holder: 'Juan Pérez', name: 'Banco Estado', rut: '12.345.678-9', account: '00123456789', type: 'Cuenta Corriente' } }
+  }
+};
+const _DEMO_STAFF = [
+  { id: 'ds1', name: 'Carlos', color: '#60a5fa', icon: '✂️' },
+  { id: 'ds2', name: 'Diego',  color: '#34d399', icon: '💈' },
+  { id: 'ds3', name: 'Matías', color: '#f472b6', icon: '🪒' },
+];
+const _DEMO_SERVICES = [
+  { id: 'dv1', name: 'Corte de pelo',   price: 7000,  price_clp: 7000,  duration_min: 30, active: true },
+  { id: 'dv2', name: 'Barba',           price: 5000,  price_clp: 5000,  duration_min: 20, active: true },
+  { id: 'dv3', name: 'Corte + Barba',   price: 11000, price_clp: 11000, duration_min: 45, active: true },
+  { id: 'dv4', name: 'Tinte',           price: 15000, price_clp: 15000, duration_min: 60, active: true },
+  { id: 'dv5', name: 'Diseño de barba', price: 6000,  price_clp: 6000,  duration_min: 25, active: true },
+  { id: 'dv6', name: 'Keratina',        price: 25000, price_clp: 25000, duration_min: 90, active: true },
+];
+const _DEMO_PRODUCTS = [
+  { id: 'dp1', name: 'Pomada fijadora',     price: 8500, stock: 12, track_stock: true, active: true },
+  { id: 'dp2', name: 'Shampoo profesional', price: 6000, stock: 8,  track_stock: true, active: true },
+  { id: 'dp3', name: 'Cera capilar',        price: 5500, stock: 5,  track_stock: true, active: true },
+];
+function _demoTime(h, m) { const d = new Date(); d.setHours(h, m, 0, 0); return d.toISOString(); }
+const _DEMO_SALES = [
+  { id: 'ds-1', total: 11000, payment_method: 'efectivo',      payment_status: 'paid', created_at: _demoTime(9,30),  biz_staff: _DEMO_STAFF[0], biz_sale_items: [{ name: 'Corte + Barba', qty: 1 }] },
+  { id: 'ds-2', total: 7000,  payment_method: 'transferencia', payment_status: 'paid', created_at: _demoTime(10,15), biz_staff: _DEMO_STAFF[1], biz_sale_items: [{ name: 'Corte de pelo', qty: 1 }] },
+  { id: 'ds-3', total: 14000, payment_method: 'mercadopago',   payment_status: 'paid', created_at: _demoTime(11,0),  biz_staff: _DEMO_STAFF[0], biz_sale_items: [{ name: 'Barba', qty: 1 }, { name: 'Pomada fijadora', qty: 1 }] },
+];
+
 let currentUser = null;
 let cart = [];
 let services = [];
@@ -284,6 +328,20 @@ function fCLP(n) { return '$' + Number(n || 0).toLocaleString('es-CL'); }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
+  if (DEMO_MODE) {
+    currentUser = _DEMO_USER;
+    document.getElementById('demoBanner').style.display = 'block';
+    try { renderNav('Ventas'); } catch(e) {}
+    document.getElementById('dateStr').textContent = new Date().toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' });
+    staffList = _DEMO_STAFF;
+    renderStaffSelector();
+    services = _DEMO_SERVICES;
+    products = [..._DEMO_PRODUCTS];
+    renderCatalog();
+    loadTodayHistory();
+    return;
+  }
+
   currentUser = await requireAuth(['owner', 'staff', 'super_admin']);
   if (!currentUser) return;
   renderNav('Ventas');
@@ -474,6 +532,24 @@ async function confirmSale() {
   const discount = parseInt(document.getElementById('discountInput').value || 0);
   const total = Math.max(0, subtotal - discount);
 
+  if (DEMO_MODE) {
+    const fakeSale = { id: 'demo-' + Date.now() };
+    _DEMO_SALES.unshift({
+      id: fakeSale.id, total, payment_method: selectedPayMethod, payment_status: 'paid',
+      created_at: new Date().toISOString(),
+      biz_staff: staffList.find(s => s.id === selectedStaffId) || null,
+      biz_sale_items: cart.map(c => ({ name: c.name, qty: c.qty }))
+    });
+    clearCart();
+    document.getElementById('discountInput').value = '';
+    btn.disabled = false;
+    btn.textContent = 'Confirmar venta';
+    loadTodayHistory();
+    if (selectedPayMethod === 'transferencia') { showTransferModal(fakeSale, total); return; }
+    showToast(`[Demo] Venta de ${fCLP(total)} registrada`);
+    return;
+  }
+
   const isMp = selectedPayMethod === 'mercadopago' && tenantMpToken;
 
   const salePayload = {
@@ -558,6 +634,20 @@ function toggleHistory() {
 }
 
 async function loadTodayHistory() {
+  if (DEMO_MODE) {
+    const sales = _DEMO_SALES;
+    const totalHoy = sales.reduce((s, x) => s + (x.total || 0), 0);
+    document.getElementById('todaySummary').textContent = `${sales.length} venta${sales.length !== 1 ? 's' : ''} · ${fCLP(totalHoy)}`;
+    const el = document.getElementById('historyList');
+    el.innerHTML = sales.map(s => {
+      const hour = new Date(s.created_at).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+      const staffName = s.biz_staff ? `${s.biz_staff.icon || ''} ${s.biz_staff.name}` : 'Sin asignar';
+      const items = (s.biz_sale_items || []).map(i => `${i.name}${i.qty > 1 ? ' x' + i.qty : ''}`).join(', ');
+      return `<div class="sale-row"><div class="sale-time">${hour}</div><div class="sale-info"><div class="sale-info-name">${items || '—'}</div><div class="sale-info-detail">${staffName} · <span class="pay-badge pay-${s.payment_method}">${s.payment_method}</span></div></div><div class="sale-amount">${fCLP(s.total)}</div></div>`;
+    }).join('');
+    return;
+  }
+
   const now = new Date();
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   const endOfDay   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
@@ -598,6 +688,25 @@ function closeProductModal() { document.getElementById('productModal').classList
 
 async function saveProduct(e) {
   e.preventDefault();
+  if (DEMO_MODE) {
+    const np = {
+      id: 'demo-p-' + Date.now(),
+      name: document.getElementById('pName').value.trim(),
+      price: parseInt(document.getElementById('pPrice').value),
+      stock: parseInt(document.getElementById('pStock').value || 0),
+      track_stock: parseInt(document.getElementById('pStock').value) > 0,
+      active: true,
+    };
+    _DEMO_PRODUCTS.push(np);
+    products = [..._DEMO_PRODUCTS];
+    showToast('[Demo] Producto agregado');
+    closeProductModal();
+    if (currentTab === 'products') renderCatalog();
+    document.getElementById('pName').value = '';
+    document.getElementById('pPrice').value = '';
+    document.getElementById('pStock').value = '0';
+    return;
+  }
   const payload = {
     tenant_id: currentUser.tenant_id,
     name: document.getElementById('pName').value.trim(),
@@ -661,6 +770,12 @@ function sendTransferWhatsApp() {
 }
 
 async function markTransferPaid() {
+  if (DEMO_MODE) {
+    showToast('[Demo] Venta marcada como pagada');
+    closeTransferModal();
+    loadTodayHistory();
+    return;
+  }
   const saleId = document.getElementById('txSaleId').value;
   const btn = document.getElementById('txMarkPaidBtn');
   btn.disabled = true; btn.textContent = 'Guardando...';
