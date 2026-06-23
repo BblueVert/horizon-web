@@ -203,6 +203,18 @@ function closeModal() { document.getElementById('modalOverlay').classList.remove
   if (!user) return;
   _tenantId = user.tenant_id;
   await renderNav('Servicios');
+  if (window._DEMO_MODE) {
+    const demoSvc = [
+      { id:'dv1', name:'Corte de pelo',   description:'Corte clásico o moderno con lavado.',     price_clp:7000,  duration_min:30, deposit_clp:0,    active:true },
+      { id:'dv2', name:'Barba',           description:'Perfilado y arreglo de barba completo.',   price_clp:5000,  duration_min:20, deposit_clp:0,    active:true },
+      { id:'dv3', name:'Corte + Barba',   description:'Pack completo corte y barba.',             price_clp:11000, duration_min:45, deposit_clp:3000, active:true },
+      { id:'dv4', name:'Tinte',           description:'Coloración completa con tinte profesional.',price_clp:15000, duration_min:60, deposit_clp:5000, active:true },
+      { id:'dv5', name:'Diseño de barba', description:'Diseño personalizado de barba y bigote.',  price_clp:6000,  duration_min:25, deposit_clp:0,    active:true },
+      { id:'dv6', name:'Keratina',        description:'Tratamiento alisador de larga duración.',  price_clp:25000, duration_min:90, deposit_clp:8000, active:true },
+    ];
+    document.getElementById('serviceGrid').innerHTML = demoSvc.map(renderServiceCard).join('');
+    return;
+  }
   await loadServices();
 })();
 </script>

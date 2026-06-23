@@ -1,12 +1,35 @@
 const { createClient } = supabase;
 const _sb = createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 
+// ── Demo mode ─────────────────────────────────────────────────────────────────
+window._DEMO_MODE = new URLSearchParams(window.location.search).has('demo') ||
+                    sessionStorage.getItem('horizon_demo') === '1';
+if (new URLSearchParams(window.location.search).has('demo')) {
+  sessionStorage.setItem('horizon_demo', '1');
+}
+
+window._DEMO_TENANT = {
+  name: 'Barbería Binks', slug: 'binks', plan: 'pro', status: 'active',
+  mp_access_token: null, wa_token: null, wa_phone_number_id: null,
+  config_json: {
+    bank: { holder: 'Barbería Binks', name: 'Banco Estado', rut: '12.345.678-9', account: '00123456789', type: 'Cuenta Corriente' }
+  }
+};
+
+window._DEMO_USER_OBJ = {
+  id: 'demo', email: 'demo@horizonweb.cl', role: 'owner',
+  tenant_id: 'demo-tenant', tenant: window._DEMO_TENANT
+};
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
 async function getSession() {
   const { data: { session } } = await _sb.auth.getSession();
   return session;
 }
 
 async function getCurrentUser() {
+  if (window._DEMO_MODE) return window._DEMO_USER_OBJ;
+
   const session = await getSession();
   if (!session) return null;
 
@@ -17,13 +40,11 @@ async function getCurrentUser() {
     .maybeSingle();
 
   if (profile?.is_super_admin) {
-    // super_admin puede impersonar un tenant via ?t= en la URL
     const urlTenant = new URLSearchParams(window.location.search).get('t') ||
                       new URLSearchParams(window.location.search).get('tenant');
     let tenantId = urlTenant || null;
     let tenant   = null;
 
-    // Si no hay parámetro, usar el primer tenant activo como fallback de prueba
     if (!tenantId) {
       const { data: first } = await _sb.from('tenants').select('id, name, slug, plan, status, mp_access_token, wa_token, wa_phone_number_id')
         .order('created_at').limit(1).maybeSingle();
@@ -54,6 +75,7 @@ async function getCurrentUser() {
 }
 
 async function requireAuth(allowedRoles = []) {
+  if (window._DEMO_MODE) return window._DEMO_USER_OBJ;
   const user = await getCurrentUser();
   if (!user) {
     window.location.href = SAAS_CONFIG.routes.login;
@@ -84,6 +106,11 @@ async function login(email, password) {
 }
 
 async function logout() {
+  if (window._DEMO_MODE) {
+    sessionStorage.removeItem('horizon_demo');
+    window.location.href = SAAS_CONFIG.routes.login;
+    return;
+  }
   await _sb.auth.signOut();
   window.location.href = SAAS_CONFIG.routes.login;
 }

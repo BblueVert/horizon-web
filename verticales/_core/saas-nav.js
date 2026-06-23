@@ -3,39 +3,43 @@ async function renderNav(activeSection) {
   if (!user) return;
 
   const isOwner = user.role === 'owner' || user.role === 'super_admin';
+  const qs = window._DEMO_MODE ? '?demo=true' : '';
 
   const ownerLinks = [
-    { href: '/verticales/peluquerias/dashboard.html',     icon: '▦', label: 'Inicio' },
-    { href: '/verticales/peluquerias/agenda.html',        icon: '◷', label: 'Agenda' },
-    { href: '/verticales/peluquerias/staff.html',         icon: '✦', label: 'Staff' },
-    { href: '/verticales/peluquerias/servicios.html',     icon: '✧', label: 'Servicios' },
-    { href: '/verticales/peluquerias/ventas.html',        icon: '⊕', label: 'Ventas' },
-    { href: '/verticales/peluquerias/comisiones.html',    icon: '◈', label: 'Comisiones' },
-    { href: '/verticales/peluquerias/mi-billetera.html',  icon: '◎', label: 'Billeteras' },
-    { href: '/verticales/peluquerias/whatsapp.html',      icon: '✉', label: 'WhatsApp' },
-    { href: '/verticales/peluquerias/clientes.html',      icon: '◉', label: 'Clientes' },
-    { href: '/verticales/peluquerias/reportes.html',      icon: '▲', label: 'Reportes' },
-    { href: '/verticales/peluquerias/configuracion.html', icon: '⚙', label: 'Config' },
+    { href: '/verticales/peluquerias/dashboard.html'    + qs, icon: '▦', label: 'Inicio' },
+    { href: '/verticales/peluquerias/agenda.html'       + qs, icon: '◷', label: 'Agenda' },
+    { href: '/verticales/peluquerias/staff.html'        + qs, icon: '✦', label: 'Staff' },
+    { href: '/verticales/peluquerias/servicios.html'    + qs, icon: '✧', label: 'Servicios' },
+    { href: '/verticales/peluquerias/ventas.html'       + qs, icon: '⊕', label: 'Ventas' },
+    { href: '/verticales/peluquerias/comisiones.html'   + qs, icon: '◈', label: 'Comisiones' },
+    { href: '/verticales/peluquerias/mi-billetera.html' + qs, icon: '◎', label: 'Billeteras' },
+    { href: '/verticales/peluquerias/whatsapp.html'     + qs, icon: '✉', label: 'WhatsApp' },
+    { href: '/verticales/peluquerias/clientes.html'     + qs, icon: '◉', label: 'Clientes' },
+    { href: '/verticales/peluquerias/reportes.html'     + qs, icon: '▲', label: 'Reportes' },
+    { href: '/verticales/peluquerias/configuracion.html'+ qs, icon: '⚙', label: 'Config' },
   ];
 
   const staffLinks = [
-    { href: '/verticales/peluquerias/agenda.html',       icon: '◷', label: 'Mi agenda' },
-    { href: '/verticales/peluquerias/mi-billetera.html', icon: '◎', label: 'Mi billetera' },
+    { href: '/verticales/peluquerias/agenda.html'       + qs, icon: '◷', label: 'Mi agenda' },
+    { href: '/verticales/peluquerias/mi-billetera.html' + qs, icon: '◎', label: 'Mi billetera' },
   ];
 
   const links = isOwner ? ownerLinks : staffLinks;
   const nav   = document.getElementById('saas-nav');
   if (!nav) return;
 
-  // Aplicar tema guardado
   const savedTheme = localStorage.getItem('admin-theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
-
   const themeLabel = savedTheme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
+
+  const demoBadge = window._DEMO_MODE
+    ? `<span style="display:inline-block;font-size:9px;font-weight:700;background:rgba(139,92,246,.25);color:#a78bfa;padding:2px 7px;border-radius:10px;letter-spacing:.06em;margin-top:4px;">DEMO</span>`
+    : '';
 
   nav.innerHTML = `
     <div class="nav-brand">
       <span class="nav-tenant">${user.tenant?.name || 'HORIZON SaaS'}</span>
+      ${demoBadge}
       <span class="nav-plan">${user.tenant?.plan || ''}</span>
     </div>
     <ul class="nav-links">
@@ -49,7 +53,7 @@ async function renderNav(activeSection) {
         style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text2);padding:7px 12px;font-size:11px;cursor:pointer;text-align:left;margin-bottom:8px;">
         ${themeLabel}
       </button>
-      <button onclick="logout()" class="nav-logout">Cerrar sesión</button>
+      <button onclick="logout()" class="nav-logout">${window._DEMO_MODE ? 'Salir del demo' : 'Cerrar sesión'}</button>
     </div>
   `;
 }

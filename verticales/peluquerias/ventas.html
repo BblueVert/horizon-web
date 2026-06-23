@@ -270,21 +270,12 @@
 <script>
 const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 
-const DEMO_MODE = new URLSearchParams(window.location.search).has('demo');
+const DEMO_MODE = window._DEMO_MODE;
 
-const _DEMO_USER = {
-  id: 'demo', email: 'demo@horizonweb.cl', role: 'owner',
-  tenant_id: 'demo-tenant',
-  tenant: {
-    name: 'Barbería Demo', slug: 'demo', plan: 'pro', status: 'active',
-    mp_access_token: null, wa_token: null, wa_phone_number_id: null,
-    config_json: { bank: { holder: 'Juan Pérez', name: 'Banco Estado', rut: '12.345.678-9', account: '00123456789', type: 'Cuenta Corriente' } }
-  }
-};
 const _DEMO_STAFF = [
-  { id: 'ds1', name: 'Carlos', color: '#60a5fa', icon: '✂️' },
-  { id: 'ds2', name: 'Diego',  color: '#34d399', icon: '💈' },
-  { id: 'ds3', name: 'Matías', color: '#f472b6', icon: '🪒' },
+  { id: 'ds1', name: 'Andrés',  color: '#60a5fa', icon: '✂️' },
+  { id: 'ds2', name: 'Felipe',  color: '#34d399', icon: '💈' },
+  { id: 'ds3', name: 'Camila',  color: '#f472b6', icon: '🪒' },
 ];
 const _DEMO_SERVICES = [
   { id: 'dv1', name: 'Corte de pelo',   price: 7000,  price_clp: 7000,  duration_min: 30, active: true },
@@ -329,7 +320,7 @@ function fCLP(n) { return '$' + Number(n || 0).toLocaleString('es-CL'); }
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
   if (DEMO_MODE) {
-    currentUser = _DEMO_USER;
+    currentUser = window._DEMO_USER_OBJ;
     document.getElementById('demoBanner').style.display = 'block';
     try { renderNav('Ventas'); } catch(e) {}
     document.getElementById('dateStr').textContent = new Date().toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' });
