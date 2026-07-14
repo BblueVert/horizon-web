@@ -294,9 +294,10 @@ async function init() {
 async function loadAllStaff() {
   if (window._DEMO_MODE) {
     staffList = [
-      { id:'ds1', name:'Andrés Mejías', color:'#60a5fa', icon:'✂️', slug:'andres' },
-      { id:'ds2', name:'Felipe Reyes',  color:'#34d399', icon:'💈', slug:'felipe' },
-      { id:'ds3', name:'Camila Lagos',  color:'#f472b6', icon:'🪒', slug:'camila' },
+      { id:'ds1', name:'Jeremy Hernández', color:'#60a5fa', icon:'✂️', slug:'jeremy' },
+      { id:'ds2', name:'Diego Lira',       color:'#34d399', icon:'💈', slug:'diego' },
+      { id:'ds3', name:'Felipe Pinto',     color:'#fbbf24', icon:'🪒', slug:'felipe' },
+      { id:'ds4', name:'Esteban Andrade', color:'#a78bfa', icon:'💇', slug:'esteban' },
     ];
     document.getElementById('staffSelectorWrap').style.display = 'block';
     renderStaffSelector();
@@ -374,22 +375,27 @@ async function loadWalletData() {
       'ds1': { balance_clp: 47500, total_earned_clp: 312000, total_withdrawn_clp: 264500, payout_preference: 'manual' },
       'ds2': { balance_clp: 18000, total_earned_clp: 198000, total_withdrawn_clp: 180000, payout_preference: 'manual' },
       'ds3': { balance_clp: 62000, total_earned_clp: 145000, total_withdrawn_clp: 83000,  payout_preference: 'manual' },
+      'ds4': { balance_clp: 25000, total_earned_clp: 121000, total_withdrawn_clp: 96000,  payout_preference: 'manual' },
     };
     const now = new Date();
     const demoTx = {
       'ds1': [
-        { id:'t1', type:'credit',     amount_clp:7700,  status:'completed', note:'Corte de pelo',   created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),10,15).toISOString() },
-        { id:'t2', type:'credit',     amount_clp:6050,  status:'completed', note:'Barba',           created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),11,0).toISOString() },
+        { id:'t1', type:'credit',     amount_clp:18000, status:'completed', note:'Corte de cabello',   created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),10,15).toISOString() },
+        { id:'t2', type:'credit',     amount_clp:10000, status:'completed', note:'Perfilado de barba',  created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),11,0).toISOString() },
         { id:'t3', type:'withdrawal', amount_clp:20000, status:'completed', note:'Retiro solicitado', created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate()-1,18,0).toISOString() },
-        { id:'t4', type:'credit',     amount_clp:12650, status:'completed', note:'Corte + Barba',   created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate()-2,9,30).toISOString() },
+        { id:'t4', type:'credit',     amount_clp:25000, status:'completed', note:'Corte de cabello + barba', created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate()-2,9,30).toISOString() },
       ],
       'ds2': [
-        { id:'t5', type:'credit',     amount_clp:8400,  status:'completed', note:'Corte de pelo',   created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),9,0).toISOString() },
+        { id:'t5', type:'credit',     amount_clp:18000, status:'completed', note:'Corte de cabello',   created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),9,0).toISOString() },
         { id:'t6', type:'withdrawal', amount_clp:15000, status:'pending',   note:'Retiro solicitado', created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),8,0).toISOString() },
       ],
       'ds3': [
-        { id:'t7', type:'credit',     amount_clp:12500, status:'completed', note:'Tinte',           created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,0).toISOString() },
-        { id:'t8', type:'credit',     amount_clp:29000, status:'completed', note:'Keratina',        created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate()-1,11,0).toISOString() },
+        { id:'t7', type:'credit',     amount_clp:20000, status:'completed', note:'Baño de color',       created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,0).toISOString() },
+        { id:'t8', type:'credit',     amount_clp:70000, status:'completed', note:'Ondulado permanente', created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate()-1,11,0).toISOString() },
+      ],
+      'ds4': [
+        { id:'t9', type:'credit',     amount_clp:25000, status:'completed', note:'Corte de precisión masculino', created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate(),13,0).toISOString() },
+        { id:'t10', type:'credit',    amount_clp:10000, status:'completed', note:'Perfilado de barba',            created_at: new Date(now.getFullYear(),now.getMonth(),now.getDate()-1,15,30).toISOString() },
       ],
     };
     wallet = demoWallets[activeStaff.id] || { balance_clp:0, total_earned_clp:0, total_withdrawn_clp:0, payout_preference:'manual' };

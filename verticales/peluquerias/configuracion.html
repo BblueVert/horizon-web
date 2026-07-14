@@ -272,6 +272,11 @@ async function loadConfig() {
   if (!user) return;
   _tenantId = user.tenant_id;
   await renderNav('Config');
+  if (window._DEMO_MODE) {
+    _tenant = { id: _tenantId, ...window._DEMO_TENANT };
+    renderConfig(_tenant);
+    return;
+  }
   await loadConfig();
 })();
 </script>

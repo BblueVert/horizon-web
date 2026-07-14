@@ -110,53 +110,53 @@
         document.getElementById('stats').innerHTML = `
           <div class="stat-card"><div class="stat-label">Reservas hoy</div><div class="stat-value">6</div><div class="stat-sub">1 no-show</div></div>
           <div class="stat-card"><div class="stat-label">Ingresos este mes</div><div class="stat-value">$847.000</div><div class="stat-sub">reservas + caja POS</div></div>
-          <div class="stat-card"><div class="stat-label">Barberos activos</div><div class="stat-value">3</div></div>
+          <div class="stat-card"><div class="stat-label">Barberos activos</div><div class="stat-value">4</div></div>
           <div class="stat-card"><div class="stat-label">Clientes totales</div><div class="stat-value">41</div></div>
           <div class="stat-card"><div class="stat-label">Retiros pendientes</div><div class="stat-value">1</div><div class="stat-sub">Ver en Comisiones →</div></div>
         `;
         document.getElementById('today-appointments').innerHTML = `
           <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="color:var(--text3);font-size:12px;min-width:42px;">10:00</span>
-            <div style="flex:1;"><div style="font-size:13px;color:var(--text);">Juan Pérez</div><div style="font-size:11px;color:var(--text3);">Corte + Barba · Andrés</div></div>
+            <div style="flex:1;"><div style="font-size:13px;color:var(--text);">Juan Pérez</div><div style="font-size:11px;color:var(--text3);">Corte de cabello + barba · Jeremy</div></div>
             <span class="badge badge-green">Confirmada</span>
           </div>
           <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="color:var(--text3);font-size:12px;min-width:42px;">11:30</span>
-            <div style="flex:1;"><div style="font-size:13px;color:var(--text);">Diego Morales</div><div style="font-size:11px;color:var(--text3);">Corte de pelo · Felipe</div></div>
+            <div style="flex:1;"><div style="font-size:13px;color:var(--text);">Diego Morales</div><div style="font-size:11px;color:var(--text3);">Corte de cabello · Diego</div></div>
             <span class="badge badge-yellow">Pendiente</span>
           </div>
           <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="color:var(--text3);font-size:12px;min-width:42px;">13:00</span>
-            <div style="flex:1;"><div style="font-size:13px;color:var(--text);">Sofía Castro</div><div style="font-size:11px;color:var(--text3);">Tinte · Camila</div></div>
+            <div style="flex:1;"><div style="font-size:13px;color:var(--text);">Sofía Castro</div><div style="font-size:11px;color:var(--text3);">Baño de color · Esteban</div></div>
             <span class="badge badge-green">Confirmada</span>
           </div>
         `;
         document.getElementById('recent-activity').innerHTML = `
-          <div style="font-size:12px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border2);">✂️ Andrés completó Corte + Barba — <span style="color:var(--success);">+$11.000</span></div>
-          <div style="font-size:12px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border2);">💈 Felipe completó Corte de pelo — <span style="color:var(--success);">+$7.000</span></div>
-          <div style="font-size:12px;color:var(--text2);padding:8px 0;">🪒 Camila solicitó retiro <span style="color:#f59e0b;">$25.000</span></div>
+          <div style="font-size:12px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border2);">✂️ Jeremy completó Corte de cabello + barba — <span style="color:var(--success);">+$25.000</span></div>
+          <div style="font-size:12px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border2);">💈 Diego completó Corte de cabello — <span style="color:var(--success);">+$18.000</span></div>
+          <div style="font-size:12px;color:var(--text2);padding:8px 0;">🪒 Felipe solicitó retiro <span style="color:#f59e0b;">$25.000</span></div>
         `;
         document.getElementById('dashWithdrawals').innerHTML = `
           <div style="display:flex;align-items:center;gap:10px;padding:9px 0;">
-            <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;background:#f472b622;color:#f472b6;">🪒</div>
-            <div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text);">Camila</div><div style="font-size:11px;color:var(--text3);">Solicitado 09:45</div></div>
+            <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;background:#fbbf2422;color:#fbbf24;">🪒</div>
+            <div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text);">Felipe</div><div style="font-size:11px;color:var(--text3);">Solicitado 09:45</div></div>
             <div style="font-size:13px;font-weight:700;color:var(--text);margin-right:6px;">$25.000</div>
             <div style="display:flex;gap:4px;">
               <button onclick="showToast('[Demo] Pago registrado')" style="padding:4px 10px;font-size:11px;background:var(--success);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Pagar</button>
             </div>
           </div>
         `;
-        document.getElementById('todayTotalBadge').textContent = '$32.000';
+        document.getElementById('todayTotalBadge').textContent = '$43.000';
         document.getElementById('dashCredits').innerHTML = `
           <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2);">
             <div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:#60a5fa22;color:#60a5fa;">✂️</div>
-            <div style="flex:1;"><div style="font-size:12px;color:var(--text);">Corte + Barba</div><div style="font-size:11px;color:var(--text3);">Andrés · 09:30</div></div>
-            <div style="font-size:13px;font-weight:600;color:var(--success);">+$11.000</div>
+            <div style="flex:1;"><div style="font-size:12px;color:var(--text);">Corte de cabello + barba</div><div style="font-size:11px;color:var(--text3);">Jeremy · 09:30</div></div>
+            <div style="font-size:13px;font-weight:600;color:var(--success);">+$25.000</div>
           </div>
           <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
             <div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:#34d39922;color:#34d399;">💈</div>
-            <div style="flex:1;"><div style="font-size:12px;color:var(--text);">Corte de pelo</div><div style="font-size:11px;color:var(--text3);">Felipe · 10:15</div></div>
-            <div style="font-size:13px;font-weight:600;color:var(--success);">+$7.000</div>
+            <div style="flex:1;"><div style="font-size:12px;color:var(--text);">Corte de cabello</div><div style="font-size:11px;color:var(--text3);">Diego · 10:15</div></div>
+            <div style="font-size:13px;font-weight:600;color:var(--success);">+$18.000</div>
           </div>
         `;
         return;

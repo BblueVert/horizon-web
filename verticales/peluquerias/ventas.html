@@ -270,17 +270,21 @@ const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.
 const DEMO_MODE = window._DEMO_MODE;
 
 const _DEMO_STAFF = [
-  { id: 'ds1', name: 'Andrés',  color: '#60a5fa', icon: '✂️' },
-  { id: 'ds2', name: 'Felipe',  color: '#34d399', icon: '💈' },
-  { id: 'ds3', name: 'Camila',  color: '#f472b6', icon: '🪒' },
+  { id: 'ds1', name: 'Jeremy',  color: '#60a5fa', icon: '✂️' },
+  { id: 'ds2', name: 'Diego',   color: '#34d399', icon: '💈' },
+  { id: 'ds3', name: 'Felipe',  color: '#fbbf24', icon: '🪒' },
+  { id: 'ds4', name: 'Esteban', color: '#a78bfa', icon: '💇' },
 ];
 const _DEMO_SERVICES = [
-  { id: 'dv1', name: 'Corte de pelo',   price: 7000,  price_clp: 7000,  duration_min: 30, active: true },
-  { id: 'dv2', name: 'Barba',           price: 5000,  price_clp: 5000,  duration_min: 20, active: true },
-  { id: 'dv3', name: 'Corte + Barba',   price: 11000, price_clp: 11000, duration_min: 45, active: true },
-  { id: 'dv4', name: 'Tinte',           price: 15000, price_clp: 15000, duration_min: 60, active: true },
-  { id: 'dv5', name: 'Diseño de barba', price: 6000,  price_clp: 6000,  duration_min: 25, active: true },
-  { id: 'dv6', name: 'Keratina',        price: 25000, price_clp: 25000, duration_min: 90, active: true },
+  { id: 'dv1', name: 'Corte de cabello + barba',            price: 25000, price_clp: 25000, duration_min: 60,  active: true },
+  { id: 'dv2', name: 'Corte de cabello',                    price: 18000, price_clp: 18000, duration_min: 60,  active: true },
+  { id: 'dv3', name: 'Perfilado de barba',                  price: 10000, price_clp: 10000, duration_min: 30,  active: true },
+  { id: 'dv4', name: 'Visos',                                price: 70000, price_clp: 70000, duration_min: 120, active: true },
+  { id: 'dv5', name: 'Bloque de color',                     price: 40000, price_clp: 40000, duration_min: 120, active: true },
+  { id: 'dv6', name: 'Baño de color',                       price: 20000, price_clp: 20000, duration_min: 30,  active: true },
+  { id: 'dv7', name: 'Ondulado permanente',                 price: 70000, price_clp: 70000, duration_min: 180, active: true },
+  { id: 'dv8', name: 'Corte de precisión masculino',        price: 25000, price_clp: 25000, duration_min: 60,  active: true },
+  { id: 'dv9', name: 'Corte de cabello precisión femenino', price: 30000, price_clp: 30000, duration_min: 60,  active: true },
 ];
 const _DEMO_PRODUCTS = [
   { id: 'dp1', name: 'Pomada fijadora',     price: 8500, stock: 12, track_stock: true, active: true },
@@ -289,9 +293,9 @@ const _DEMO_PRODUCTS = [
 ];
 function _demoTime(h, m) { const d = new Date(); d.setHours(h, m, 0, 0); return d.toISOString(); }
 const _DEMO_SALES = [
-  { id: 'ds-1', total: 11000, payment_method: 'efectivo',      payment_status: 'paid', created_at: _demoTime(9,30),  biz_staff: _DEMO_STAFF[0], biz_sale_items: [{ name: 'Corte + Barba', qty: 1 }] },
-  { id: 'ds-2', total: 7000,  payment_method: 'transferencia', payment_status: 'paid', created_at: _demoTime(10,15), biz_staff: _DEMO_STAFF[1], biz_sale_items: [{ name: 'Corte de pelo', qty: 1 }] },
-  { id: 'ds-3', total: 14000, payment_method: 'mercadopago',   payment_status: 'paid', created_at: _demoTime(11,0),  biz_staff: _DEMO_STAFF[0], biz_sale_items: [{ name: 'Barba', qty: 1 }, { name: 'Pomada fijadora', qty: 1 }] },
+  { id: 'ds-1', total: 25000, payment_method: 'efectivo',      payment_status: 'paid', created_at: _demoTime(9,30),  biz_staff: _DEMO_STAFF[0], biz_sale_items: [{ name: 'Corte de cabello + barba', qty: 1 }] },
+  { id: 'ds-2', total: 18000, payment_method: 'transferencia', payment_status: 'paid', created_at: _demoTime(10,15), biz_staff: _DEMO_STAFF[1], biz_sale_items: [{ name: 'Corte de cabello', qty: 1 }] },
+  { id: 'ds-3', total: 18500, payment_method: 'mercadopago',   payment_status: 'paid', created_at: _demoTime(11,0),  biz_staff: _DEMO_STAFF[2], biz_sale_items: [{ name: 'Perfilado de barba', qty: 1 }, { name: 'Pomada fijadora', qty: 1 }] },
 ];
 
 let currentUser = null;
