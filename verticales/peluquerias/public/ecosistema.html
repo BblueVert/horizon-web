@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binks Barber — Ecosistema Horizon Agenda</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+  :root{
+    --bg:#f4f7ff; --surface:#fff; --surface2:#edf1fb; --surface3:#dce3f5;
+    --border:#dce3f5; --border2:#c8d3ee;
+    --text:#0b1630; --text2:#364972; --text3:#8496c0;
+    --accent:#2f5fe0; --accent-light:#4a75f5; --accent-dim:rgba(47,95,224,.09);
+    --navy:#0d2560; --navy-light:#1a3fa8;
+    --wa:#22c55e; --wa-dim:rgba(34,197,94,.1); --wa-dark:#075e54; --wa-panel:#e5ddcf; --wa-bubble-out:#d9fdd3; --wa-bubble-in:#ffffff;
+    --ig-grad:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);
+    --gold:#b45309;
+    --shadow:0 1px 3px rgba(16,40,122,.06),0 1px 2px rgba(16,40,122,.04);
+    --shadow-md:0 4px 18px rgba(16,40,122,.1);
+    --shadow-lg:0 20px 44px -20px rgba(16,40,122,.3);
+  }
+  [data-theme="dark"]{
+    --bg:#060e24; --surface:#0b1735; --surface2:#101f45; --surface3:#172a55;
+    --border:#172a55; --border2:#1f3668;
+    --text:#e2eaff; --text2:#6d8cc8; --text3:#344f82;
+    --accent:#2f8dff; --accent-light:#5eb1ff; --accent-dim:rgba(47,141,255,.12);
+    --navy:#1e3a8a; --navy-light:#2952c8;
+    --wa:#34d399; --wa-dim:rgba(52,211,153,.12); --wa-dark:#0b3d36; --wa-panel:#0b141a; --wa-bubble-out:#144d34; --wa-bubble-in:#1f2c34;
+    --gold:#fbbf24;
+    --shadow:0 1px 3px rgba(0,0,0,.35); --shadow-md:0 4px 20px rgba(0,0,0,.45); --shadow-lg:0 20px 44px -20px rgba(0,0,0,.6);
+  }
+
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;text-wrap:balance;}
+  button{font:inherit;cursor:pointer;}
+  a{text-decoration:none;}
+
+  /* ── Top nav ── */
+  .topnav{position:sticky;top:0;z-index:90;background:var(--navy);border-bottom:1px solid var(--navy-light);}
+  .topnav-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:6px;padding:10px 18px;overflow-x:auto;}
+  .brand{display:flex;align-items:center;gap:8px;color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:15px;margin-right:10px;flex-shrink:0;}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-light);}
+  .nav-btn{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:100px;border:none;background:transparent;color:rgba(255,255,255,.65);font-size:13px;font-weight:600;transition:.15s;}
+  .nav-btn:hover{color:#fff;}
+  .nav-btn.active{background:rgba(255,255,255,.14);color:#fff;}
+  .nav-btn .ic{font-size:14px;}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ══════════ ECOSISTEMA ══════════ */
+  .eco-wrap{max-width:920px;margin:0 auto;padding:48px 22px 80px;}
+  .eco-head{text-align:center;}
+  .eyebrow{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--accent);background:var(--accent-dim);padding:5px 12px;border-radius:100px;}
+  .eco-title{font-size:clamp(30px,4.5vw,46px);font-weight:700;color:var(--navy);line-height:1.02;margin-top:16px;}
+  [data-theme="dark"] .eco-title{color:var(--text);}
+  .eco-sub{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15.5px;color:var(--text2);max-width:56ch;margin:14px auto 0;line-height:1.6;}
+
+  .stages{margin-top:44px;display:flex;flex-direction:column;}
+  .stage{position:relative;}
+  .stage-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);}
+  .stage-top{display:flex;align-items:baseline;gap:12px;}
+  .stage-n{font-family:'Fraunces',serif;font-size:26px;color:var(--gold);flex-shrink:0;}
+  .stage-t{font-size:20px;font-weight:700;color:var(--navy);}
+  [data-theme="dark"] .stage-t{color:var(--text);}
+  .stage-s{font-size:13px;color:var(--text3);margin-top:2px;}
+  .stage-nodes{margin-top:14px;display:flex;flex-wrap:wrap;gap:9px;}
+  .node{display:flex;align-items:center;gap:9px;border:1px solid var(--border);background:var(--surface2);border-radius:11px;padding:8px 12px;transition:.15s;}
+  .node:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .node-ic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:#fff;}
+  .node-lbl{font-size:13.5px;font-weight:600;color:var(--text);}
+  .node-badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:5px;background:var(--wa-dim);color:var(--wa);}
+  .node-badge.blue{background:var(--accent-dim);color:var(--accent);}
+  .node-go{font-size:12px;color:var(--text3);}
+  .connector{display:flex;justify-content:center;padding:2px 0;}
+  .connector span{width:2px;height:18px;background:var(--border2);}
+
+  .eco-highlights{margin-top:46px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media(max-width:700px){.eco-highlights{grid-template-columns:1fr;}}
+  .hl-card{background:var(--navy);border-radius:16px;padding:18px;color:#fff;}
+  .hl-k{font-family:'Fraunces',serif;font-size:19px;color:#8fb0ff;}
+  .hl-v{font-size:13px;color:rgba(255,255,255,.85);margin-top:5px;line-height:1.5;}
+
+  /* ══════════ GOOGLE ══════════ */
+  .g-wrap{background:var(--surface);min-height:60vh;}
+  .g-searchbar{border-bottom:1px solid var(--border);}
+  .g-searchbar-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:16px 20px;}
+  .g-logo{font-family:'Fraunces',serif;font-size:24px;letter-spacing:.5px;flex-shrink:0;}
+  .g-box{flex:1;display:flex;align-items:center;gap:10px;border:1px solid var(--border2);border-radius:100px;padding:9px 16px;color:var(--text2);font-size:14px;}
+  .g-tabs{max-width:820px;margin:0 auto;display:flex;gap:20px;padding:0 20px;}
+  .g-tab{padding-bottom:9px;border-bottom:2px solid transparent;font-size:13.5px;color:var(--text3);}
+  .g-tab.active{border-color:var(--accent);color:var(--accent);font-weight:600;}
+  .g-body{max-width:820px;margin:0 auto;padding:22px 20px 60px;display:grid;grid-template-columns:1fr 300px;gap:32px;}
+  @media(max-width:700px){.g-body{grid-template-columns:1fr;}}
+  .g-count{font-size:12.5px;color:var(--text3);margin-bottom:14px;}
+  .g-result{display:block;width:100%;text-align:left;background:none;border:none;margin-bottom:20px;}
+  .g-r-url{display:flex;align-items:center;gap:8px;}
+  .g-r-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;flex-shrink:0;}
+  .g-r-url span{font-size:12.5px;color:var(--text2);}
+  .g-r-title{font-size:17px;color:#1a0dab;margin-top:3px;}
+  [data-theme="dark"] .g-r-title{color:#8ab4f8;}
+  .g-r-desc{font-size:13.5px;color:var(--text2);line-height:1.5;margin-top:2px;}
+
+  .g-panel{border:1px solid var(--border);border-radius:14px;padding:16px;height:fit-content;background:var(--surface2);}
+  .g-panel-cover{height:90px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Fraunces',serif;font-size:20px;font-weight:700;}
+  .g-panel-name{font-size:19px;font-weight:600;color:var(--text);margin-top:12px;}
+  .g-panel-sub{font-size:12.5px;color:var(--text3);}
+  .g-rating{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;color:var(--text2);}
+  .g-open{font-size:13px;color:#1e8e3e;margin-top:4px;}
+  .g-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px;}
+  .g-action{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:9px;border:1px solid var(--border2);background:var(--surface);}
+  .g-action .ic{font-size:15px;}
+  .g-action span{font-size:10px;color:var(--accent);font-weight:600;}
+  .g-info{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+  .g-info-row{display:flex;gap:9px;font-size:12.5px;color:var(--text2);align-items:flex-start;}
+
+  .g-reviews{margin-top:16px;border-top:1px solid var(--border);padding-top:12px;}
+  .g-review{margin-bottom:10px;}
+  .g-review-h{display:flex;align-items:center;gap:8px;}
+  .g-review-av{width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .g-review-n{font-size:12.5px;font-weight:600;color:var(--text);}
+  .g-review-t{font-size:12.5px;color:var(--text2);margin-top:3px;line-height:1.45;}
+  .stars{color:var(--gold);font-size:11px;letter-spacing:1px;}
+
+  /* ══════════ INSTAGRAM ══════════ */
+  .stage-wrap{padding:44px 20px 70px;background:var(--surface2);min-height:70vh;}
+  .phone{width:350px;margin:0 auto;border-radius:40px;background:#0b0b0b;padding:12px;box-shadow:var(--shadow-lg);}
+  .phone-screen{border-radius:30px;overflow:hidden;background:var(--surface);height:650px;display:flex;flex-direction:column;position:relative;}
+  .caption{max-width:380px;margin:18px auto 0;text-align:center;font-size:13.5px;color:var(--text2);line-height:1.55;}
+
+  .ig-top{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 6px;flex-shrink:0;}
+  .ig-handle{font-weight:700;font-size:15px;}
+  .ig-scroll{flex:1;overflow-y:auto;padding:0 14px 16px;}
+  .ig-profile-row{display:flex;align-items:center;gap:16px;margin-top:8px;}
+  .ig-ring{width:74px;height:74px;border-radius:50%;padding:3px;background:var(--ig-grad);flex-shrink:0;}
+  .ig-ring .inner{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--accent));display:flex;align-items:center;justify-content:center;font-size:28px;}
+  .ig-stats{display:flex;gap:18px;}
+  .ig-stat b{display:block;font-size:15px;}
+  .ig-stat span{font-size:11px;color:var(--text3);}
+  .ig-bio{margin-top:10px;}
+  .ig-bio .n{font-size:13px;font-weight:700;}
+  .ig-bio .t{font-size:12px;color:var(--text3);}
+  .ig-bio .b{font-size:12.5px;color:var(--text2);margin-top:5px;line-height:1.5;}
+  .ig-btns{display:flex;gap:8px;margin-top:10px;}
+  .ig-btns button{flex:1;padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;border:1px solid var(--border);background:var(--surface);color:var(--text);}
+  .ig-btns button.primary{background:var(--wa-dark);color:#fff;border-color:var(--wa-dark);}
+  .ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:14px;}
+  .ig-tile{aspect-ratio:1;background:linear-gradient(135deg,var(--surface2),var(--border));display:flex;align-items:center;justify-content:center;font-size:24px;}
+
+  /* IG DM */
+  .ig-dm-head{display:flex;align-items:center;gap:10px;padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .ig-dm-thread{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
+  .ig-bubble{max-width:78%;padding:8px 12px;border-radius:16px;font-size:13px;line-height:1.4;}
+  .ig-bubble.in{background:var(--surface2);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px;}
+  .ig-bubble.out{background:linear-gradient(135deg,#8134af,#515bd4);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .ig-quick{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0;}
+  .ig-quick button{border:1px solid #c13584;color:#c13584;background:none;border-radius:100px;padding:6px 12px;font-size:12px;}
+  .ig-cta{display:flex;flex-direction:column;gap:8px;padding:0 14px 10px;}
+  .ig-cta a,.ig-cta button{display:block;text-align:center;padding:9px;border-radius:10px;font-size:12.5px;font-weight:700;}
+  .ig-cta .go-wa{background:var(--wa-dark);color:#fff;}
+  .ig-cta .go-portal{background:var(--accent);color:#fff;}
+
+  /* ══════════ WHATSAPP ══════════ */
+  .wa-phone-screen{background:var(--wa-panel);}
+  .wa-head{background:var(--wa-dark);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .wa-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--accent));display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .wa-name{font-size:14.5px;font-weight:600;}
+  .wa-status{font-size:11px;opacity:.85;}
+  .wa-thread{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:4px;}
+  .wa-row{display:flex;}
+  .wa-row.in{justify-content:flex-start;}
+  .wa-row.out{justify-content:flex-end;margin-top:5px;}
+  .wa-bubble{max-width:78%;padding:7px 10px 8px;border-radius:8px;font-size:13.5px;line-height:1.42;white-space:pre-line;box-shadow:0 1px .5px rgba(0,0,0,.13);}
+  .wa-row.in .wa-bubble{background:var(--wa-bubble-in);color:#1a1a1a;border-top-left-radius:2px;}
+  [data-theme="dark"] .wa-row.in .wa-bubble{color:#e9edef;}
+  .wa-row.out .wa-bubble{background:var(--wa-bubble-out);color:#0b3d0f;border-top-right-radius:2px;}
+  [data-theme="dark"] .wa-row.out .wa-bubble{color:#d9fdd3;}
+  .wa-actions{padding:10px 12px;background:var(--surface2);flex-shrink:0;display:flex;flex-direction:column;gap:8px;}
+  .wa-opts{display:flex;flex-wrap:wrap;gap:7px;}
+  .wa-opts button{border:1px solid var(--wa);color:var(--wa-dark);background:var(--surface);border-radius:100px;padding:7px 13px;font-size:12.5px;font-weight:600;}
+  [data-theme="dark"] .wa-opts button{color:var(--wa);}
+  .wa-input-row{display:flex;gap:8px;}
+  .wa-input-row input{flex:1;border:none;border-radius:20px;padding:9px 14px;font-size:13px;background:var(--surface);color:var(--text);}
+  .wa-input-row button{width:36px;height:36px;border-radius:50%;background:var(--wa-dark);color:#fff;border:none;flex-shrink:0;}
+  .wa-final{display:flex;flex-direction:column;gap:8px;}
+  .wa-final a,.wa-final button{display:block;text-align:center;padding:10px;border-radius:10px;font-size:13px;font-weight:700;border:none;}
+  .wa-final .real{background:var(--wa);color:#fff;}
+  .wa-final .panel{background:var(--navy);color:#fff;}
+  .wa-final .repeat{background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+
+  .summary-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;}
+  .summary-row{display:flex;justify-content:space-between;padding:3px 0;color:var(--text2);}
+  .summary-row b{color:var(--text);font-weight:600;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <span class="brand"><span class="dot"></span>Binks Barber</span>
+    <button class="nav-btn" data-go="eco"><span class="ic">🕸️</span>Ecosistema</button>
+    <button class="nav-btn" data-go="google"><span class="ic">🔍</span>Google</button>
+    <button class="nav-btn" data-go="ig"><span class="ic">📷</span>Instagram</button>
+    <button class="nav-btn" data-go="wa"><span class="ic">💬</span>WhatsApp</button>
+  </div>
+</nav>
+
+<!-- ══════════ 1. ECOSISTEMA ══════════ -->
+<section class="view" id="view-eco">
+  <div class="eco-wrap">
+    <div class="eco-head">
+      <span class="eyebrow">Propuesta Horizon · Sistema completo</span>
+      <h1 class="eco-title">Un solo negocio,<br>todas las puertas de entrada</h1>
+      <p class="eco-sub">Cada punto de contacto de Binks Barber conectado a un mismo cerebro. Toca cualquier canal para recorrerlo como lo haría un cliente real.</p>
+    </div>
+
+    <div class="stages" id="stages"></div>
+
+    <div class="eco-highlights">
+      <div class="hl-card"><div class="hl-k">Cero choques de horario</div><div class="hl-v">El sistema bloquea automáticamente cualquier cruce, sin importar por dónde entró el cliente.</div></div>
+      <div class="hl-card"><div class="hl-k">Un solo panel</div><div class="hl-v">Todas las citas caen en la misma agenda — WhatsApp, portal o presencial.</div></div>
+      <div class="hl-card"><div class="hl-k">Agenda solo</div><div class="hl-v">Clau atiende y confirma mientras tú sigues cortando pelo.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 2. GOOGLE ══════════ -->
+<section class="view" id="view-google">
+  <div class="g-wrap">
+    <div class="g-searchbar">
+      <div class="g-searchbar-inner">
+        <span class="g-logo"><span style="color:#4285F4;">G</span><span style="color:#EA4335;">o</span><span style="color:#FBBC05;">o</span><span style="color:#4285F4;">g</span><span style="color:#34A853;">l</span><span style="color:#EA4335;">e</span></span>
+        <div class="g-box">🔍 binks barber rancagua</div>
+      </div>
+      <div class="g-tabs">
+        <span class="g-tab active">Todo</span>
+        <span class="g-tab">Maps</span>
+        <span class="g-tab">Imágenes</span>
+      </div>
+    </div>
+    <div class="g-body">
+      <div>
+        <div class="g-count">Cerca de Rancagua · Aproximadamente 1.860 resultados</div>
+
+        <button class="g-result" data-go-out="booking">
+          <div class="g-r-url"><span class="g-r-icon" style="background:var(--navy);">🌐</span><span>horizonweb.cl › binksbarber › booking</span></div>
+          <div class="g-r-title">Binks Barber — Agenda tu hora online</div>
+          <div class="g-r-desc">Corte, barba y diseño con Matías, Renato, Ignacio y Cristóbal. Elige día y hora con disponibilidad real, sin llamar.</div>
+        </button>
+
+        <button class="g-result" data-go="ig">
+          <div class="g-r-url"><span class="g-r-icon" style="background:#C13584;">📷</span><span>instagram.com › binksbarber</span></div>
+          <div class="g-r-title">Binks Barber (@binksbarber) · Instagram</div>
+          <div class="g-r-desc">4.180 seguidores. Los mejores fades de Rancagua. Escríbenos por DM para agendar.</div>
+        </button>
+
+        <button class="g-result" data-go="wa">
+          <div class="g-r-url"><span class="g-r-icon" style="background:var(--wa);">💬</span><span>wa.me › binksbarber</span></div>
+          <div class="g-r-title">Binks Barber — Agenda por WhatsApp</div>
+          <div class="g-r-desc">Escríbele a Clau y agenda tu hora conversando, como si fuera una persona real.</div>
+        </button>
+
+        <button class="g-result" data-go-out="booking-servicios">
+          <div class="g-r-url"><span class="g-r-icon" style="background:var(--gold);">✂️</span><span>horizonweb.cl › servicios</span></div>
+          <div class="g-r-title">Servicios y precios — Binks Barber</div>
+          <div class="g-r-desc">Corte $18.000 · Corte + barba $25.000 · Perfilado de barba $10.000. Catálogo completo actualizado.</div>
+        </button>
+      </div>
+
+      <div class="g-panel">
+        <div class="g-panel-cover">BB</div>
+        <div class="g-panel-name">Binks Barber</div>
+        <div class="g-panel-sub">Barbería · Cuidado personal</div>
+        <div class="g-rating"><span class="stars">★★★★★</span> 5,0 (43 reseñas)</div>
+        <div class="g-open">Abierto · cierra 20:00</div>
+        <div class="g-actions">
+          <button class="g-action" data-go-out="booking"><span class="ic">🗓️</span><span>Agendar</span></button>
+          <button class="g-action" data-go="wa"><span class="ic">💬</span><span>WhatsApp</span></button>
+          <button class="g-action" data-go="ig"><span class="ic">📷</span><span>Instagram</span></button>
+        </div>
+        <div class="g-info">
+          <div class="g-info-row">📍 Estado 52, Local 2, Rancagua</div>
+          <div class="g-info-row">🕐 Lun a sáb, 09:00–20:00</div>
+        </div>
+        <div class="g-reviews">
+          <div class="g-review">
+            <div class="g-review-h"><span class="g-review-av">J</span><span class="g-review-n">Jorge P.</span></div>
+            <div class="stars">★★★★★</div>
+            <div class="g-review-t">"El corte + barba con Matías quedó perfecto."</div>
+          </div>
+          <div class="g-review">
+            <div class="g-review-h"><span class="g-review-av">C</span><span class="g-review-n">Camilo R.</span></div>
+            <div class="stars">★★★★★</div>
+            <div class="g-review-t">"Agendé por WhatsApp en un minuto, cero espera."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 3. INSTAGRAM ══════════ -->
+<section class="view" id="view-ig">
+  <div class="stage-wrap">
+    <div class="phone">
+      <div class="phone-screen" id="igScreen"></div>
+    </div>
+    <p class="caption">La vitrina emocional: genera el antojo del corte y deriva a agendar. El DM responde solo, 24/7.</p>
+  </div>
+</section>
+
+<!-- ══════════ 4. WHATSAPP ══════════ -->
+<section class="view" id="view-wa">
+  <div class="stage-wrap">
+    <div class="phone">
+      <div class="phone-screen wa-phone-screen">
+        <div class="wa-head">
+          <div class="wa-avatar">💈</div>
+          <div>
+            <div class="wa-name">Binks Barber</div>
+            <div class="wa-status" id="waStatus">en línea</div>
+          </div>
+        </div>
+        <div class="wa-thread" id="waThread"></div>
+        <div class="wa-actions" id="waActions"></div>
+      </div>
+    </div>
+    <p class="caption">Toca las opciones como lo haría el cliente. Es la misma lógica que corre en producción — disponibilidad real y captura del nombre antes de confirmar.</p>
+  </div>
+</section>
+
+<script>
+/* ═══════════════ Datos reales del negocio ═══════════════ */
+const REAL_WA = 'https://wa.me/56946513068?text=Hola%2C%20quiero%20agendar%20una%20hora';
+const BOOKING_URL = 'booking.html';
+const BOOKING_SERVICES_URL = 'booking.html#servicesSection';
+const DASHBOARD_URL = '../dashboard.html';
+
+const SERVICES = [
+  { n: 'Corte + barba', p: '$25.000' },
+  { n: 'Corte de cabello', p: '$18.000' },
+  { n: 'Perfilado de barba', p: '$10.000' },
+];
+const STAFF = ['Matías', 'Renato', 'Ignacio', 'Cristóbal'];
+
+/* ═══════════════ Router ═══════════════ */
+function goView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.go === name));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (name === 'ig' && !igBuilt) buildIgProfile();
+  if (name === 'wa' && !waBuilt) waReset();
+}
+document.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => goView(el.dataset.go)));
+document.querySelectorAll('[data-go-out]').forEach(el => el.addEventListener('click', () => {
+  const target = el.dataset.goOut === 'booking-servicios' ? BOOKING_SERVICES_URL : BOOKING_URL;
+  window.open(target, '_blank');
+}));
+
+/* ═══════════════ ECOSISTEMA ═══════════════ */
+const STAGES = [
+  {
+    t: 'Descubrimiento', s: 'El cliente siente que necesita un corte',
+    nodes: [
+      { l: 'Instagram', ic: '📷', c: '#C13584', go: 'ig' },
+      { l: 'Google', ic: '🔍', c: '#4285F4', go: 'google' },
+      { l: 'Pasa por el local', ic: '🚶', c: '#8496c0', badge: 'presencial' },
+    ]
+  },
+  {
+    t: 'Interés', s: 'Resuelve dudas, ve trabajos y precios',
+    nodes: [
+      { l: 'DM Instagram', ic: '📷', c: '#C13584', go: 'ig', badge: 'catálogo' },
+      { l: 'Google Maps / reseñas', ic: '⭐', c: '#4285F4', go: 'google' },
+      { l: 'Servicios y precios', ic: '✂️', c: '#b45309', out: 'booking-servicios' },
+    ]
+  },
+  {
+    t: 'Decisión', s: 'Agenda por donde prefiera, sin fricción',
+    nodes: [
+      { l: 'WhatsApp — Clau agenda', ic: '💬', c: '#22c55e', go: 'wa', badge: 'disp. real' },
+      { l: 'Portal online', ic: '🗓️', c: '#2f5fe0', out: 'booking', badge: 'disp. real' },
+      { l: 'DM Instagram', ic: '📷', c: '#C13584', go: 'ig' },
+    ]
+  },
+  {
+    t: 'Llegada', s: 'Se presenta en el local, o llega en frío',
+    nodes: [
+      { l: 'QR presencial', ic: '⌗', c: '#0d2560', out: 'booking', badge: 'en vivo' },
+      { l: 'Recordatorio WhatsApp', ic: '⏰', c: '#22c55e', go: 'wa' },
+    ]
+  },
+  {
+    t: 'Post-venta', s: 'Fideliza, mide y vuelve',
+    nodes: [
+      { l: 'Reseña por el portal', ic: '⭐', c: '#b45309', out: 'booking' },
+      { l: 'Panel del dueño', ic: '📊', c: '#0d2560', outraw: DASHBOARD_URL, badge: 'todo en 1' },
+    ]
+  },
+];
+
+function renderStages() {
+  const el = document.getElementById('stages');
+  el.innerHTML = STAGES.map((s, i) => `
+    <div class="stage">
+      <div class="stage-card">
+        <div class="stage-top">
+          <span class="stage-n">0${i + 1}</span>
+          <div><div class="stage-t">${s.t}</div><div class="stage-s">${s.s}</div></div>
+        </div>
+        <div class="stage-nodes">
+          ${s.nodes.map(n => `
+            <button class="node" data-node-go="${n.go || ''}" data-node-out="${n.out || ''}" data-node-outraw="${n.outraw || ''}">
+              <span class="node-ic" style="background:${n.c};">${n.ic}</span>
+              <span class="node-lbl">${n.l}</span>
+              ${n.badge ? `<span class="node-badge${n.c === '#2f5fe0' || n.c === '#0d2560' ? ' blue' : ''}">${n.badge}</span>` : ''}
+              ${n.go || n.out || n.outraw ? '<span class="node-go">→</span>' : ''}
+            </button>`).join('')}
+        </div>
+      </div>
+      ${i < STAGES.length - 1 ? '<div class="connector"><span></span></div>' : ''}
+    </div>`).join('');
+
+  el.querySelectorAll('.node').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const go = btn.dataset.nodeGo, out = btn.dataset.nodeOut, outraw = btn.dataset.nodeOutraw;
+      if (go) goView(go);
+      else if (out) window.open(out === 'booking-servicios' ? BOOKING_SERVICES_URL : BOOKING_URL, '_blank');
+      else if (outraw) window.open(outraw, '_blank');
+    });
+  });
+}
+renderStages();
+
+/* ═══════════════ INSTAGRAM ═══════════════ */
+let igBuilt = false;
+function buildIgProfile() {
+  igBuilt = true;
+  const screen = document.getElementById('igScreen');
+  screen.innerHTML = `
+    <div class="ig-top"><span class="ig-handle">binksbarber ▾</span><span>☰</span></div>
+    <div class="ig-scroll">
+      <div class="ig-profile-row">
+        <div class="ig-ring"><div class="inner">💈</div></div>
+        <div class="ig-stats">
+          <div class="ig-stat"><b>312</b><span>publicaciones</span></div>
+          <div class="ig-stat"><b>4.180</b><span>seguidores</span></div>
+          <div class="ig-stat"><b>96</b><span>siguiendo</span></div>
+        </div>
+      </div>
+      <div class="ig-bio">
+        <div class="n">Binks Barber</div>
+        <div class="t">Barbería · Cuidado personal</div>
+        <div class="b">Cortes, barba y diseño. Agenda directo desde el link 👇</div>
+      </div>
+      <div class="ig-btns">
+        <button class="primary" id="igMsgBtn">Enviar mensaje</button>
+        <button id="igWebBtn">Ver web</button>
+      </div>
+      <div class="ig-grid">
+        <div class="ig-tile">✂️</div><div class="ig-tile">💈</div><div class="ig-tile">🪒</div>
+        <div class="ig-tile">💇</div><div class="ig-tile">✂️</div><div class="ig-tile">🧔</div>
+      </div>
+    </div>`;
+  document.getElementById('igMsgBtn').addEventListener('click', buildIgDm);
+  document.getElementById('igWebBtn').addEventListener('click', () => window.open(BOOKING_URL, '_blank'));
+}
+
+function buildIgDm() {
+  const screen = document.getElementById('igScreen');
+  screen.innerHTML = `
+    <div class="ig-dm-head"><span style="cursor:pointer;" id="igBack">←</span><div class="ig-ring" style="width:32px;height:32px;padding:2px;"><div class="inner" style="font-size:14px;">💈</div></div><span style="font-weight:700;font-size:13px;">binksbarber</span></div>
+    <div class="ig-dm-thread" id="igThread">
+      <div class="ig-bubble in">¡Hola! 👋 Soy el asistente de Binks Barber. ¿En qué te ayudo?</div>
+    </div>
+    <div class="ig-quick" id="igQuick"></div>`;
+  document.getElementById('igBack').addEventListener('click', buildIgProfile);
+  igQuick(['¿Hacen barba también?', '¿Cuánto vale un corte?', 'Quiero agendar']);
+}
+
+function igQuick(opts) {
+  const box = document.getElementById('igQuick');
+  box.innerHTML = opts.map(o => `<button>${o}</button>`).join('');
+  box.querySelectorAll('button').forEach((b, i) => b.addEventListener('click', () => igChoose(opts[i])));
+}
+
+function igChoose(opt) {
+  const thread = document.getElementById('igThread');
+  thread.insertAdjacentHTML('beforeend', `<div class="ig-bubble out">${opt}</div>`);
+  document.getElementById('igQuick').innerHTML = '';
+  let reply = '', next = null;
+  if (opt === '¿Hacen barba también?') { reply = '¡Sí! Perfilado de barba $10.000, o corte + barba junto por $25.000 ✂️'; next = ['Quiero agendar']; }
+  else if (opt === '¿Cuánto vale un corte?') { reply = 'El corte de cabello está $18.000, y corte + barba $25.000. Todo el catálogo lo ves en el portal 👇'; next = ['Quiero agendar']; }
+  else if (opt === 'Quiero agendar') { reply = '¡Dale! Te dejo dos formas rápidas de agendar 👇'; }
+  setTimeout(() => {
+    thread.insertAdjacentHTML('beforeend', `<div class="ig-bubble in">${reply}</div>`);
+    thread.scrollTop = thread.scrollHeight;
+    if (opt === 'Quiero agendar') {
+      thread.insertAdjacentHTML('afterend', `<div class="ig-cta"><a class="go-wa" href="${REAL_WA}" target="_blank">💬 Agendar por WhatsApp</a><button class="go-portal" onclick="window.open('${BOOKING_URL}','_blank')">🗓️ Agendar en el portal</button></div>`);
+    } else if (next) igQuick(next);
+  }, 700);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+/* ═══════════════ WHATSAPP (interactivo, click a click) ═══════════════ */
+let waBuilt = false;
+let waCtx = {};
+
+function waReset() {
+  waBuilt = true;
+  waCtx = { service: null, staff: null, slot: null, name: '' };
+  document.getElementById('waThread').innerHTML = '';
+  document.getElementById('waStatus').textContent = 'en línea';
+  waBot('¡Hola! 👋', () => waBot('Soy Clau, de Binks Barber. ¿Qué te gustaría hacerte hoy?', () => waOpts(SERVICES.map(s => `${s.n} · ${s.p}`), waPickService)));
+}
+
+function waBot(text, after, ms) {
+  const status = document.getElementById('waStatus');
+  status.textContent = 'escribiendo…';
+  setTimeout(() => {
+    status.textContent = 'en línea';
+    const thread = document.getElementById('waThread');
+    thread.insertAdjacentHTML('beforeend', `<div class="wa-row in"><div class="wa-bubble">${text}</div></div>`);
+    thread.scrollTop = thread.scrollHeight;
+    after && after();
+  }, ms || 650);
+}
+function waMe(text) {
+  const thread = document.getElementById('waThread');
+  thread.insertAdjacentHTML('beforeend', `<div class="wa-row out"><div class="wa-bubble">${text}</div></div>`);
+  thread.scrollTop = thread.scrollHeight;
+}
+function waOpts(opts, handler) {
+  document.getElementById('waActions').innerHTML = `<div class="wa-opts">${opts.map((o, i) => `<button data-i="${i}">${o}</button>`).join('')}</div>`;
+  document.querySelectorAll('#waActions .wa-opts button').forEach((b, i) => b.addEventListener('click', () => { waMe(opts[i]); handler(opts[i]); }));
+}
+function waInput(placeholder, handler) {
+  document.getElementById('waActions').innerHTML = `<div class="wa-input-row"><input id="waFreeInput" placeholder="${placeholder}"><button id="waSendBtn">➤</button></div>`;
+  const go = () => { const v = document.getElementById('waFreeInput').value.trim(); if (!v) return; waMe(v); handler(v); };
+  document.getElementById('waSendBtn').addEventListener('click', go);
+  document.getElementById('waFreeInput').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+}
+
+function waPickService(opt) {
+  waCtx.service = opt.split(' · ')[0];
+  waBot(`${waCtx.service}, dale 💈`, () => waBot('¿Con quién te gustaría?', () => waOpts([...STAFF, 'Sin preferencia'], waPickStaff)));
+}
+function waPickStaff(opt) {
+  waCtx.staff = opt;
+  waBot(`${opt === 'Sin preferencia' ? 'El primero disponible' : opt} tiene estos horarios libres hoy:`, () =>
+    waBot('🕓 16:30\n🕕 18:00', () => waOpts(['16:30', '18:00'], waPickSlot)));
+}
+function waPickSlot(opt) {
+  waCtx.slot = opt;
+  waBot('¿Cómo te llamas para dejar la hora a tu nombre?', () => waInput('Tu nombre…', waPickName));
+}
+function waPickName(name) {
+  waCtx.name = name;
+  const staffName = waCtx.staff === 'Sin preferencia' ? STAFF[0] : waCtx.staff;
+  waBot(`Listo ${name.split(' ')[0]}, quedaría así:`, () => {
+    const thread = document.getElementById('waThread');
+    thread.insertAdjacentHTML('beforeend', `<div class="wa-row in"><div class="wa-bubble"><div class="summary-box">
+      <div class="summary-row"><span>Servicio</span><b>${waCtx.service}</b></div>
+      <div class="summary-row"><span>Barbero</span><b>${staffName}</b></div>
+      <div class="summary-row"><span>Hora</span><b>Hoy ${waCtx.slot}</b></div>
+    </div></div></div>`);
+    thread.scrollTop = thread.scrollHeight;
+    waBot('¿Confirmamos? ✅', () => waOpts(['Sí, confirmar'], waConfirm));
+  });
+}
+function waConfirm() {
+  waBot(`¡Perfecto ${waCtx.name.split(' ')[0]}! Tu hora quedó agendada 💈 Nos vemos hoy a las ${waCtx.slot}`, () => {
+    document.getElementById('waActions').innerHTML = `<div class="wa-final">
+      <a class="real" href="${REAL_WA}" target="_blank">💬 Abrir la conversación real con Clau</a>
+      <a class="panel" href="${DASHBOARD_URL}" target="_blank">📊 Ver esta cita en el panel</a>
+      <button class="repeat" id="waRepeatBtn">↻ Repetir demo</button>
+    </div>`;
+    document.getElementById('waRepeatBtn').addEventListener('click', waReset);
+  });
+}
+
+goView('eco');
+</script>
+</body>
+</html>
