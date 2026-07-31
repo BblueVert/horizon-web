@@ -328,7 +328,7 @@
   </div>
 
   <!-- Reseñas -->
-  <div>
+  <div id="reviewsSection">
     <div class="reviews-head">
       <div class="card-title" style="margin:0;">Reseñas recientes</div>
       <button class="btn-review" id="btnToggleReview" onclick="toggleReviewForm()">✍️ Dejar una reseña</button>
@@ -917,6 +917,7 @@ async function init() {
     renderStaffBubbles();
     renderServices();
     renderWalkinQr();
+    maybeDeepLink(params);
     return;
   }
 
@@ -950,6 +951,19 @@ async function init() {
   renderStaffBubbles();
   renderServices();
   renderWalkinQr();
+  maybeDeepLink(params);
+}
+
+// ── Deep-links desde el portal de links (?review=1, #servicesSection, etc.) ──
+function maybeDeepLink(params) {
+  if (params.get('review') === '1') {
+    document.getElementById('reviewForm').classList.add('open');
+    state.reviewStars = 5; renderReviewStarsPick();
+  }
+  if (window.location.hash) {
+    const el = document.querySelector(window.location.hash);
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+  }
 }
 
 init();

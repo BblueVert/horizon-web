@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binks Barber — todos los links</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f7ff; --surface: #fff; --surface2: #edf1fb;
+      --border: #dce3f5; --border2: #c8d3ee;
+      --text: #0b1630; --text2: #364972; --text3: #8496c0;
+      --accent: #2f5fe0; --accent-light: #4a75f5; --accent-dim: rgba(47,95,224,.09);
+      --navy: #0d2560; --navy-light: #1a3fa8;
+      --wa: #22c55e; --wa-dim: rgba(34,197,94,.1);
+      --gold: #b45309;
+      --shadow: 0 1px 3px rgba(16,40,122,.06), 0 1px 2px rgba(16,40,122,.04);
+      --shadow-md: 0 4px 18px rgba(16,40,122,.1);
+    }
+    [data-theme="dark"] {
+      --bg: #060e24; --surface: #0b1735; --surface2: #101f45;
+      --border: #172a55; --border2: #1f3668;
+      --text: #e2eaff; --text2: #6d8cc8; --text3: #344f82;
+      --accent: #2f8dff; --accent-light: #5eb1ff; --accent-dim: rgba(47,141,255,.12);
+      --navy: #1e3a8a; --navy-light: #2952c8;
+      --wa: #34d399; --wa-dim: rgba(52,211,153,.12);
+      --gold: #fbbf24;
+      --shadow: 0 1px 3px rgba(0,0,0,.3); --shadow-md: 0 4px 20px rgba(0,0,0,.45);
+    }
+
+    body {
+      background: var(--bg); color: var(--text); min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex; justify-content: center;
+    }
+    .wrap { width: 100%; max-width: 440px; padding: 44px 22px 60px; }
+
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 100px; color: var(--text2); padding: 6px 13px; font-size: 12px; cursor: pointer;
+    }
+
+    .head { text-align: center; }
+    .avatar {
+      width: 84px; height: 84px; margin: 0 auto; border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), var(--accent));
+      display: flex; align-items: center; justify-content: center; font-size: 34px;
+      box-shadow: var(--shadow-md);
+    }
+    .name { font-family: 'Fraunces', Georgia, serif; font-size: 21px; font-weight: 700; margin-top: 14px; }
+    .handle { font-size: 13px; color: var(--text3); margin-top: 2px; }
+    .bio { font-size: 13px; color: var(--text2); margin-top: 10px; line-height: 1.55; max-width: 34ch; margin-left: auto; margin-right: auto; }
+
+    .links { display: flex; flex-direction: column; gap: 11px; margin-top: 30px; }
+    .link {
+      display: flex; align-items: center; gap: 13px; padding: 14px 16px; border-radius: 13px;
+      background: var(--surface); border: 1px solid var(--border); text-decoration: none; color: var(--text);
+      box-shadow: var(--shadow); transition: transform .12s ease, border-color .12s ease;
+    }
+    .link:hover { transform: translateY(-1px); border-color: var(--border2); }
+    .link.primary { background: var(--wa); border-color: var(--wa); color: #fff; }
+    .link.primary .lbl { color: #fff; } .link.primary .sub { color: rgba(255,255,255,.85); }
+    .link .ic { font-size: 19px; width: 26px; text-align: center; flex-shrink: 0; }
+    .link .txt { flex: 1; min-width: 0; }
+    .link .lbl { font-size: 14px; font-weight: 700; }
+    .link .sub { font-size: 11.5px; color: var(--text3); margin-top: 1px; }
+    .link .go { font-size: 13px; color: var(--text3); flex-shrink: 0; }
+    .link.primary .go { color: rgba(255,255,255,.85); }
+
+    .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #fff; margin-right: 5px; animation: pulse 1.6s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+    .foot { text-align: center; margin-top: 34px; }
+    .foot a.admin {
+      font-size: 11.5px; color: var(--text3); text-decoration: none; border: 1px solid var(--border);
+      border-radius: 100px; padding: 5px 13px; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .foot a.admin:hover { color: var(--accent); border-color: var(--accent); }
+    .foot .powered { font-size: 10.5px; color: var(--text3); margin-top: 14px; }
+    .foot .powered a { color: var(--text3); }
+  </style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙 Oscuro</button>
+
+<div class="wrap">
+  <div class="head">
+    <div class="avatar">💈</div>
+    <div class="name">Binks Barber</div>
+    <div class="handle">@binksbarber</div>
+    <div class="bio">Cortes, barba y diseño. Todos nuestros canales, en un solo lugar.</div>
+  </div>
+
+  <div class="links">
+    <a class="link primary" href="https://wa.me/56946513068?text=Hola%2C%20quiero%20agendar%20una%20hora" target="_blank" rel="noopener">
+      <span class="ic">💬</span>
+      <span class="txt">
+        <span class="lbl"><span class="live-dot"></span>Agendar por WhatsApp</span>
+        <span class="sub">Responde Clau al instante</span>
+      </span>
+      <span class="go">↗</span>
+    </a>
+
+    <a class="link" href="booking.html">
+      <span class="ic">🗓️</span>
+      <span class="txt"><span class="lbl">Agendar online</span><span class="sub">Elige barbero, día y hora</span></span>
+      <span class="go">→</span>
+    </a>
+
+    <a class="link" href="booking.html#servicesSection">
+      <span class="ic">✂️</span>
+      <span class="txt"><span class="lbl">Servicios y precios</span><span class="sub">Catálogo completo</span></span>
+      <span class="go">→</span>
+    </a>
+
+    <a class="link" href="booking.html#contextSection">
+      <span class="ic">📍</span>
+      <span class="txt"><span class="lbl">Ubicación</span><span class="sub">Cómo llegar</span></span>
+      <span class="go">→</span>
+    </a>
+
+    <a class="link" href="booking.html?review=1#reviewsSection">
+      <span class="ic">⭐</span>
+      <span class="txt"><span class="lbl">Dejar una reseña</span><span class="sub">Cuéntanos cómo te fue</span></span>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <div class="foot">
+    <a class="admin" href="../login.html">🔐 Panel del negocio</a>
+    <div class="powered">Portal gestionado por <a href="https://www.horizonweb.cl" target="_blank">HORIZON</a></div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('bk-theme', next);
+    document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
+  }
+  (function () {
+    const t = localStorage.getItem('bk-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
+  })();
+</script>
+
+</body>
+</html>
