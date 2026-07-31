@@ -32,6 +32,25 @@
     .client-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
     .badge-vip { background: #fef3c7; color: #92400e; }
     .badge-new { background: #d1fae5; color: #065f46; }
+
+    @media (max-width: 640px) {
+      .page-header { flex-wrap: wrap; gap: 10px; }
+      .page-header input#searchInput { width: 100% !important; }
+      .client-head { display: none; }
+      .client-row {
+        grid-template-columns: 1fr auto;
+        grid-template-areas: "name total" "visits last";
+        row-gap: 6px; column-gap: 10px;
+        padding: 12px 14px;
+      }
+      .client-row > div:nth-child(1) { grid-area: name; min-width: 0; }
+      .client-row > div:nth-child(2) { grid-area: visits; font-size: 11px !important; color: var(--text3) !important; font-weight: 500 !important; }
+      .client-row > div:nth-child(2)::before { content: 'Visitas: '; }
+      .client-row > div:nth-child(3) { grid-area: last; font-size: 11px !important; color: var(--text3) !important; justify-self: end; }
+      .client-row > div:nth-child(3)::before { content: 'Última: '; }
+      .client-row > div:nth-child(4) { grid-area: total; justify-self: end; font-size: 13px !important; }
+      .client-name { white-space: normal; }
+    }
   </style>
 </head>
 <body>
@@ -100,7 +119,7 @@ const DEMO_CLIENTS = [
       {starts_at:'2026-05-21T09:30:00', biz_services:{name:'Corte de cabello + barba'},  deposit_paid:3000},
       {starts_at:'2026-05-07T10:00:00', biz_services:{name:'Corte de cabello'},  deposit_paid:0},
     ]},
-  { id:'dc2',  name:'Diego Morales',    phone:'+56 9 8765 4321', notes:'Prefiere atención con Jeremy. Barba corta.',
+  { id:'dc2',  name:'Diego Morales',    phone:'+56 9 8765 4321', notes:'Prefiere atención con Matías. Barba corta.',
     visit_count:9,  total_spent:99000,  last_visit:'2026-06-22T10:00:00',
     visits:[
       {starts_at:'2026-06-22T10:00:00', biz_services:{name:'Corte de cabello + barba'},  deposit_paid:3000},

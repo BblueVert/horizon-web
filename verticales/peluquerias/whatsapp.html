@@ -363,6 +363,7 @@ async function init() {
 
 // ── Credenciales ──────────────────────────────────────────────────────────────
 async function loadCredentials() {
+  if (window._DEMO_MODE) return;
   const { data } = await sb.from('tenants')
     .select('wa_token, wa_phone_number_id')
     .eq('id', currentUser.tenant_id)
@@ -394,6 +395,7 @@ async function saveCredentials() {
 
 // ── Plantillas ────────────────────────────────────────────────────────────────
 async function loadTemplates() {
+  if (window._DEMO_MODE) { allTemplates = []; return; }
   const { data } = await sb.from('biz_message_templates')
     .select('*')
     .eq('tenant_id', currentUser.tenant_id);
@@ -527,6 +529,14 @@ function resetTemplate(key) {
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
 async function loadStats() {
+  if (window._DEMO_MODE) {
+    document.getElementById('statSent').textContent = 86;
+    document.getElementById('statPending').textContent = 4;
+    document.getElementById('statFailed').textContent = 1;
+    document.getElementById('statTemplates').textContent = Object.keys(TRIGGER_META).length;
+    return;
+  }
+
   const startMonth = new Date(); startMonth.setDate(1); startMonth.setHours(0,0,0,0);
   const today = new Date(); today.setHours(0,0,0,0);
 
@@ -548,6 +558,19 @@ async function loadStats() {
 
 // ── Clientes + Blast ──────────────────────────────────────────────────────────
 async function loadClients() {
+  if (window._DEMO_MODE) {
+    allClients = [
+      { id:'dc1', name:'Juan Pérez',     phone:'+56912345671', created_at:'2026-01-15' },
+      { id:'dc2', name:'Diego Morales',  phone:'+56912345672', created_at:'2026-02-03' },
+      { id:'dc3', name:'Carlos Ruiz',    phone:'+56912345673', created_at:'2026-02-20' },
+      { id:'dc4', name:'Sofía Castro',   phone:'+56912345674', created_at:'2026-03-11' },
+      { id:'dc5', name:'Matías Torres',  phone:'+56912345675', created_at:'2026-04-02' },
+      { id:'dc6', name:'Pablo Vera',     phone:'+56912345676', created_at:'2026-05-18' },
+      { id:'dc7', name:'Valentina Ríos', phone:'+56912345677', created_at:'2026-06-09' },
+      { id:'dc8', name:'Rodrigo Muñoz',  phone:'+56912345678', created_at:'2026-06-25' },
+    ];
+    return;
+  }
   const { data } = await sb.from('biz_clients').select('id,name,phone,created_at').not('phone', 'is', null);
   allClients = data || [];
 }
@@ -634,6 +657,18 @@ async function confirmBlast() {
 
 // ── Historial ─────────────────────────────────────────────────────────────────
 async function loadLog() {
+  if (window._DEMO_MODE) {
+    const now = new Date();
+    const mk = (mins, trig, name, phone, status, msg) => ({ id:`dl${mins}`, trigger_key:trig, phone, message:msg, status, created_at:new Date(now-mins*60000).toISOString(), biz_clients:{name} });
+    renderLog([
+      mk(30,  'booking_confirmed', 'Juan Pérez',    '+56912345671', 'sent',    'Hola Juan ✂️ Tu reserva en Binks Barber está confirmada para hoy a las 10:00 con Matías. ¡Te esperamos!'),
+      mk(90,  'reminder_24h',      'Diego Morales', '+56912345672', 'sent',    '⏰ Recordatorio: mañana tienes tu cita en Binks Barber a las 11:30 con Renato.'),
+      mk(150, 'review_request',    'Sofía Castro',  '+56912345674', 'sent',    '¡Gracias por visitarnos, Sofía! Cuéntanos qué te pareció 😊'),
+      mk(200, 'reminder_2h',       'Pablo Vera',    '+56912345676', 'pending', '🕐 Tu cita es en 2 horas en Binks Barber con Ignacio.'),
+      mk(260, 'win_back_30d',      'Rodrigo Muñoz', '+56912345678', 'failed',  '🎯 Te extrañamos, Rodrigo. Vuelve con 15% de descuento en tu próximo corte.'),
+    ]);
+    return;
+  }
   const query = sb.from('biz_whatsapp_log')
     .select('id,trigger_key,phone,message,status,sent_at,created_at,biz_clients(name)')
     .eq('tenant_id', currentUser.tenant_id)

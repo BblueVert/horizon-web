@@ -325,15 +325,15 @@ const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.
 // ── Demo data ──────────────────────────────────────────────────────────────────
 const DEMO_SLUG = 'pillars';
 const DEMO_TENANT = {
-  id: 'demo', name: 'Pillars Private Studio', slug: 'pillars',
+  id: 'demo', name: 'Binks Barber', slug: 'pillars',
   phone: '+56987654321', address: 'Estado 52, Local 2, Rancagua, Región de O\'Higgins',
-  description: 'En Pillars Private Studio combinamos técnica clásica y estilo contemporáneo. Nuestro equipo certificado garantiza un servicio premium en un ambiente exclusivo para hombres.'
+  description: 'En Binks Barber combinamos técnica clásica y estilo contemporáneo. Nuestro equipo certificado garantiza un servicio premium en un ambiente exclusivo para hombres.'
 };
 const DEMO_STAFF = [
-  { id:'ds1', name:'Jeremy Hernández', bio:'Especialista en cortes modernos y degradados de precisión.', schedule_json:{ mon:{start:'09:00',end:'18:00'}, tue:{start:'09:00',end:'18:00'}, wed:{start:'09:00',end:'18:00'}, thu:{start:'09:00',end:'18:00'}, fri:{start:'09:00',end:'18:00'}, sat:{start:'10:00',end:'15:00'} }, color:'#3b82f6', initials:'JH' },
-  { id:'ds2', name:'Diego Lira',      bio:'Experto en color y tratamientos capilares de larga duración.', schedule_json:{ mon:{start:'10:00',end:'19:00'}, tue:{start:'10:00',end:'19:00'}, thu:{start:'10:00',end:'19:00'}, fri:{start:'10:00',end:'19:00'}, sat:{start:'09:00',end:'14:00'} }, color:'#10b981', initials:'DL' },
-  { id:'ds3', name:'Felipe Pinto',    bio:'Más de 8 años de experiencia en cortes clásicos y perfilado de barba.', schedule_json:{ tue:{start:'11:00',end:'20:00'}, wed:{start:'11:00',end:'20:00'}, thu:{start:'11:00',end:'20:00'}, fri:{start:'11:00',end:'20:00'}, sat:{start:'10:00',end:'16:00'} }, color:'#f59e0b', initials:'FP' },
-  { id:'ds4', name:'Esteban Andrade', bio:'Con dedicación, técnica y una visión fresca de la peluquería, ha demostrado un crecimiento constante en poco tiempo.', schedule_json:{ mon:{start:'09:00',end:'19:00'}, tue:{start:'09:00',end:'19:00'}, wed:{start:'09:00',end:'19:00'}, thu:{start:'09:00',end:'19:00'}, fri:{start:'09:00',end:'19:00'}, sat:{start:'10:00',end:'17:00'} }, color:'#a78bfa', initials:'EA' },
+  { id:'ds1', name:'Matías Ortega',   bio:'Especialista en cortes modernos y degradados de precisión.', schedule_json:{ mon:{start:'09:00',end:'18:00'}, tue:{start:'09:00',end:'18:00'}, wed:{start:'09:00',end:'18:00'}, thu:{start:'09:00',end:'18:00'}, fri:{start:'09:00',end:'18:00'}, sat:{start:'10:00',end:'15:00'} }, color:'#3b82f6', initials:'MO' },
+  { id:'ds2', name:'Renato Salgado',  bio:'Experto en color y tratamientos capilares de larga duración.', schedule_json:{ mon:{start:'10:00',end:'19:00'}, tue:{start:'10:00',end:'19:00'}, thu:{start:'10:00',end:'19:00'}, fri:{start:'10:00',end:'19:00'}, sat:{start:'09:00',end:'14:00'} }, color:'#10b981', initials:'RS' },
+  { id:'ds3', name:'Ignacio Bravo',   bio:'Más de 8 años de experiencia en cortes clásicos y perfilado de barba.', schedule_json:{ tue:{start:'11:00',end:'20:00'}, wed:{start:'11:00',end:'20:00'}, thu:{start:'11:00',end:'20:00'}, fri:{start:'11:00',end:'20:00'}, sat:{start:'10:00',end:'16:00'} }, color:'#f59e0b', initials:'IB' },
+  { id:'ds4', name:'Cristóbal Reyes', bio:'Con dedicación, técnica y una visión fresca de la peluquería, ha demostrado un crecimiento constante en poco tiempo.', schedule_json:{ mon:{start:'09:00',end:'19:00'}, tue:{start:'09:00',end:'19:00'}, wed:{start:'09:00',end:'19:00'}, thu:{start:'09:00',end:'19:00'}, fri:{start:'09:00',end:'19:00'}, sat:{start:'10:00',end:'17:00'} }, color:'#a78bfa', initials:'CR' },
 ];
 const DEMO_SERVICES = [
   { id:'dv1', name:'Corte de cabello + barba',            duration_min:60,  price_clp:25000, deposit_clp:0, description:'Pack completo de corte y barba.' },
@@ -347,9 +347,9 @@ const DEMO_SERVICES = [
   { id:'dv9', name:'Corte de cabello precisión femenino', duration_min:60,  price_clp:30000, deposit_clp:0, description:'Corte de precisión para mujer.' },
 ];
 const DEMO_REVIEWS = [
-  { name:'Jorge P.',    initial:'J', color:'#3b82f6', stars:'★★★★★', text:'"El corte + barba con Jeremy quedó perfecto. Muy profesional y el ambiente es increíble."', time:'hace 2 días' },
-  { name:'Camilo R.',   initial:'C', color:'#10b981', stars:'★★★★★', text:'"Super buena experiencia. Felipe me atendió genial, sabe exactamente qué pedir."', time:'hace 1 semana' },
-  { name:'Valentina S.',initial:'V', color:'#a78bfa', stars:'★★★★★', text:'"Esteban hizo un trabajo excelente con mi corte. Salí contentísima, volveré seguro."', time:'hace 1 semana' },
+  { name:'Jorge P.',    initial:'J', color:'#3b82f6', stars:'★★★★★', text:'"El corte + barba con Matías quedó perfecto. Muy profesional y el ambiente es increíble."', time:'hace 2 días' },
+  { name:'Camilo R.',   initial:'C', color:'#10b981', stars:'★★★★★', text:'"Super buena experiencia. Ignacio me atendió genial, sabe exactamente qué pedir."', time:'hace 1 semana' },
+  { name:'Valentina S.',initial:'V', color:'#a78bfa', stars:'★★★★★', text:'"Cristóbal hizo un trabajo excelente con mi corte. Salí contentísima, volveré seguro."', time:'hace 1 semana' },
   { name:'Nicolás V.',  initial:'N', color:'#f59e0b', stars:'★★★★☆', text:'"Buen ambiente, buen corte. A veces hay espera pero vale totalmente la pena."', time:'hace 2 semanas' },
 ];
 

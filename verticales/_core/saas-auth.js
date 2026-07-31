@@ -5,10 +5,10 @@ const _sb = createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey)
 window._DEMO_MODE = true;
 
 window._DEMO_TENANT = {
-  name: 'Pillars Private Studio', slug: 'pillars', plan: 'pro', status: 'active',
+  name: 'Binks Barber', slug: 'pillars', plan: 'pro', status: 'active',
   mp_access_token: null, wa_token: null, wa_phone_number_id: null,
   config_json: {
-    bank: { holder: 'Pillars Private Studio', name: 'Banco Estado', rut: '12.345.678-9', account: '00123456789', type: 'Cuenta Corriente' }
+    bank: { holder: 'Binks Barber', name: 'Banco Estado', rut: '12.345.678-9', account: '00123456789', type: 'Cuenta Corriente' }
   }
 };
 

@@ -248,7 +248,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.js"></script>
 <script>
 const sb = supabase.createClient(SAAS_CONFIG.supabase.url, SAAS_CONFIG.supabase.anonKey);
 
@@ -294,10 +294,10 @@ async function init() {
 async function loadAllStaff() {
   if (window._DEMO_MODE) {
     staffList = [
-      { id:'ds1', name:'Jeremy Hernández', color:'#60a5fa', icon:'✂️', slug:'jeremy' },
-      { id:'ds2', name:'Diego Lira',       color:'#34d399', icon:'💈', slug:'diego' },
-      { id:'ds3', name:'Felipe Pinto',     color:'#fbbf24', icon:'🪒', slug:'felipe' },
-      { id:'ds4', name:'Esteban Andrade', color:'#a78bfa', icon:'💇', slug:'esteban' },
+      { id:'ds1', name:'Matías Ortega',   color:'#60a5fa', icon:'✂️', slug:'matias' },
+      { id:'ds2', name:'Renato Salgado',  color:'#34d399', icon:'💈', slug:'renato' },
+      { id:'ds3', name:'Ignacio Bravo',   color:'#fbbf24', icon:'🪒', slug:'ignacio' },
+      { id:'ds4', name:'Cristóbal Reyes', color:'#a78bfa', icon:'💇', slug:'cristobal' },
     ];
     document.getElementById('staffSelectorWrap').style.display = 'block';
     renderStaffSelector();
