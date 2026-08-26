@@ -21,7 +21,7 @@ La tentación es pensar "necesito cerrar 10 proyectos grandes en diciembre". Es 
 | Capa | Qué es | Por qué importa |
 |---|---|---|
 | **Setups nuevos del mes** | Clientes Nivel 01 que cierran ESE mes ($990.000 c/u) | Es la única capa que hay que "cazar" cada mes — las otras tres se acumulan solas si se venden bien desde antes |
-| **Mantención acumulada** | $79.900/mes de cada cliente Nivel 01 ya instalado en meses anteriores | Crece sola con cada cliente nuevo — por eso hay que empezar en septiembre, no en noviembre |
+| **Mantención acumulada** | $190.000/mes de cada cliente Nivel 01 ya instalado en meses anteriores | Crece sola con cada cliente nuevo — por eso hay que empezar en septiembre, no en noviembre |
 | **Contenido + Ads (Nivel 02)** | Upsell a clientes que ya confían en HORIZON | Ticket más alto que la mantención ($600.000/mes) — la conversación de upsell es tan importante como la puerta nueva |
 | **SaaS (Binks Barber + tenants Mesa Cero-lite)** | Suscripciones de bajo ticket, alto volumen | El único ingreso que no depende de las horas de Benjamín instalando en persona |
 
@@ -29,12 +29,12 @@ La tentación es pensar "necesito cerrar 10 proyectos grandes en diciembre". Es 
 
 | Mes | Setups nuevos | Mantención acum. | Contenido mensual acum. | SaaS acum. | Otros (auditoría/identidad/ads) | **Total facturado** |
 |---|---|---|---|---|---|---|
-| Sep 2026 | 2 × $990.000 = $1.980.000 | $79.900 (1 cliente) | — | $160.000 (2 tenants) | $450.000 (1 auditoría) | **≈ $2.670.000** |
-| Oct 2026 | 3 × $990.000 = $2.970.000 | $239.700 (3 clientes) | $600.000 (1 cliente) | $240.000 (3 tenants) | $450.000 (1 auditoría) | **≈ $4.500.000** |
-| Nov 2026 | 3 × $990.000 = $2.970.000 | $479.400 (6 clientes) | $1.200.000 (2 clientes) | $400.000 (5 tenants) | $450.000 (1 auditoría) | **≈ $5.500.000** |
-| **Dic 2026 (meta)** | 5 × $990.000 = $4.950.000 | $719.100 (9 clientes) | $2.400.000 (4 clientes) | $960.000 (12 tenants) | $1.150.000 (identidad ×2 + ads ×2) | **≈ $10.180.000** |
+| Sep 2026 | 2 × $990.000 = $1.980.000 | $190.000 (1 cliente) | — | $160.000 (2 tenants) | $450.000 (1 auditoría) | **≈ $2.780.000** |
+| Oct 2026 | 3 × $990.000 = $2.970.000 | $570.000 (3 clientes) | $600.000 (1 cliente) | $240.000 (3 tenants) | $450.000 (1 auditoría) | **≈ $4.830.000** |
+| Nov 2026 | 3 × $990.000 = $2.970.000 | $1.140.000 (6 clientes) | $1.200.000 (2 clientes) | $400.000 (5 tenants) | $450.000 (1 auditoría) | **≈ $6.160.000** |
+| **Dic 2026 (meta)** | 5 × $990.000 = $4.950.000 | $1.710.000 (9 clientes) | $2.400.000 (4 clientes) | $960.000 (12 tenants) | $1.150.000 (identidad ×2 + ads ×2) | **≈ $11.170.000** |
 
-**Lectura de esta tabla, no solo los números:** en diciembre, los setups nuevos son menos de la mitad del total facturado (~49%). El resto es la base recurrente que se construyó los tres meses anteriores. **Si en septiembre y octubre solo se persigue el cierre grande y se descuida vender Nivel 02 o SaaS, en diciembre falta la otra mitad del ingreso aunque se cierren los 5 setups nuevos.**
+**Lectura de esta tabla, no solo los números:** subir la mantención de $79.900 a $190.000 CLP/mes le da al plan un colchón real sobre la meta (~$1.170.000 de margen en diciembre) sin depender de cerrar un sexto setup nuevo. Aun así, en diciembre los setups nuevos siguen siendo menos de la mitad del total facturado (~44%) — el resto es la base recurrente construida los tres meses anteriores. **Si en septiembre y octubre solo se persigue el cierre grande y se descuida vender Nivel 02 o SaaS, en diciembre falta buena parte del ingreso aunque se cierren los 5 setups nuevos.**
 
 **Costos operativos estimados a descontar para el "limpio":** hosting (Vercel), Supabase, dominio, WhatsApp Business API, uso de Claude API, herramientas de automatización — del orden de $100.000–$250.000 CLP/mes a esta escala. No se resta explícitamente arriba porque el objetivo bruto ya deja margen amplio sobre eso; si al llegar a diciembre el margen es más ajustado, restar este rango de la meta bruta para confirmar el "limpio" real.
 
@@ -66,13 +66,13 @@ Semanas de lunes a domingo. Hoy es miércoles 26 de agosto de 2026 (dentro de la
 
 | Semana | Fechas | Puertas | Diagnósticos | Cierres | Foco adicional de la semana |
 |---|---|---|---|---|---|
-| **S0** (actual) | 24–30 ago | — | — | — | **No es semana de venta plena.** Sincronizar pricing en CRM y páginas de servicios (en curso). Instrumentar el pipeline para registrar puertas/diagnósticos/cierres semana a semana. Escribir el guion de apertura y cierre con el pricing nuevo ($990.000 + $79.900). Agendar las primeras puertas de S1. |
+| **S0** (actual) | 24–30 ago | — | — | — | **No es semana de venta plena.** Sincronizar pricing en CRM y páginas de servicios (en curso). Instrumentar el pipeline para registrar puertas/diagnósticos/cierres semana a semana. Escribir el guion de apertura y cierre con el pricing nuevo ($990.000 + $190.000). Agendar las primeras puertas de S1. |
 | **S1** | 31 ago–6 sep | 10 | 2 | 0–1 | Primera semana de campo con el pricing nuevo. Grabar nota de voz post-diagnóstico (Componente 5, `SISTEMA-DE-CIERRE.md`) desde el primer diagnóstico agendado. |
 | **S2** | 7–13 sep | 10 | 2 | 1 | Primer cierre del período. Iniciar instalación en persona apenas se firme — no dejarla en cola. |
 | **S3** | 14–20 sep | 12 | 2 | 0–1 | Publicar el primer contenido de Instagram basado en una objeción real recogida en S1-S2. |
 | **S4** | 21–27 sep | 12 | 3 | 1 | Cerrar el mes con 2 clientes Nivel 01 firmados. Ofrecer Auditoría (Nivel 02) al primer cliente ya instalado. |
 
-**Cierre de mes 1 (fin septiembre):** 2 clientes Nivel 01 activos, 1 auditoría vendida, primeros 2 tenants SaaS (Binks Barber o piloto Mesa Cero). Facturado del mes ≈ $2.670.000.
+**Cierre de mes 1 (fin septiembre):** 2 clientes Nivel 01 activos, 1 auditoría vendida, primeros 2 tenants SaaS (Binks Barber o piloto Mesa Cero). Facturado del mes ≈ $2.780.000.
 
 ### Octubre — subir el ritmo
 
@@ -84,7 +84,7 @@ Semanas de lunes a domingo. Hoy es miércoles 26 de agosto de 2026 (dentro de la
 | **S8** | 19–25 oct | 15 | 3 | 0–1 | Checkpoint de mitad de camino: comparar cierres reales de sep-oct contra la tabla de la sección 1. Si va por debajo, ver sección 6 (protocolo de ajuste). |
 | **S9** | 26 oct–1 nov | 15 | 3 | 1 | Cerrar el mes. Confirmar que la mantención de los clientes de septiembre ya está facturando sin fricción. |
 
-**Cierre de mes 2 (fin octubre):** +3 Nivel 01 (acumulado 5), +2 SaaS (acumulado 3), primer cliente en Contenido Mensual. Facturado del mes ≈ $4.500.000.
+**Cierre de mes 2 (fin octubre):** +3 Nivel 01 (acumulado 5), +2 SaaS (acumulado 3), primer cliente en Contenido Mensual. Facturado del mes ≈ $4.830.000.
 
 ### Noviembre — construir la base antes del sprint final
 
@@ -95,7 +95,7 @@ Semanas de lunes a domingo. Hoy es miércoles 26 de agosto de 2026 (dentro de la
 | **S12** | 16–22 nov | 18 | 4 | 1 | Revisar el pipeline completo: ¿cuántos diagnósticos de meses anteriores siguen sin cerrar? Retomarlos antes de sumar puertas nuevas. |
 | **S13** | 23–29 nov | 18 | 4 | 0–1 | Última semana antes del sprint de diciembre — dejar el pipeline de diciembre "cargado" (diagnósticos agendados para la primera semana de dic). |
 
-**Cierre de mes 3 (fin noviembre):** +3 Nivel 01 (acumulado 8), +2 SaaS (acumulado 5), +1 Contenido Mensual (acumulado 2), 1 auditoría más. Facturado del mes ≈ $5.500.000.
+**Cierre de mes 3 (fin noviembre):** +3 Nivel 01 (acumulado 8), +2 SaaS (acumulado 5), +1 Contenido Mensual (acumulado 2), 1 auditoría más. Facturado del mes ≈ $6.160.000.
 
 ### Diciembre — el mes de la meta
 
@@ -107,7 +107,7 @@ Semanas de lunes a domingo. Hoy es miércoles 26 de agosto de 2026 (dentro de la
 | **S17** | 21–27 dic | — | — | 1 | No se prospecta nueva puerta esta semana. Foco 100% en cerrar lo que ya está conversado. |
 | **S18** | 28–31 dic | — | — | — | Cierre administrativo: facturación del mes, actualizar el dashboard de OPS con los números reales de todo el trimestre, y dejar listo el arranque de enero. |
 
-**Cierre de mes 4 / meta de diciembre:** +5 Nivel 01 (acumulado 13), +7 SaaS (acumulado 12), +2 Contenido Mensual (acumulado 4), +2 Identidad Visual, +2 Gestión de Ads. **Facturado del mes ≈ $10.180.000.**
+**Cierre de mes 4 / meta de diciembre:** +5 Nivel 01 (acumulado 13), +7 SaaS (acumulado 12), +2 Contenido Mensual (acumulado 4), +2 Identidad Visual, +2 Gestión de Ads. **Facturado del mes ≈ $11.170.000 — supera la meta de $10.000.000 con margen, sin necesitar un sexto setup nuevo en diciembre.**
 
 ---
 
@@ -118,7 +118,7 @@ A partir de aquí el plan deja de ser semanal — a 6 y 12 meses fingir precisi�
 **Contexto:** llegar a $10M/mes en diciembre no es el final — es la validación de que el modelo funciona. El riesgo real de esta etapa es que, sin ajustar nada, Benjamín se queda atrapado sosteniendo $10M/mes a costa de 100% de su tiempo, sin margen para crecer ni para terminar sus estudios.
 
 **Objetivos de la etapa (dic 2026 → feb 2027):**
-1. **Sostener ≥ $10M/mes** sin que la facturación dependa de cerrar la misma cantidad de setups nuevos cada mes — subir el peso de mantención + contenido + SaaS sobre el total (meta: que la base recurrente sea ≥ 45–50% del total, hoy en diciembre está en ~49%, hay que no perder ese balance).
+1. **Sostener ≥ $10M/mes** sin que la facturación dependa de cerrar la misma cantidad de setups nuevos cada mes — subir el peso de mantención + contenido + SaaS sobre el total (meta: que la base recurrente sea ≥ 55% del total, hoy en diciembre ya está en ~56% gracias al ajuste de mantención a $190.000, hay que no perder ese balance).
 2. **Documentar el proceso de instalación** de "El Sistema" lo suficiente como para que una parte (no todo) se pueda delegar — es el primer paso real hacia dejar de ser el cuello de botella (mismo diagnóstico que HORIZON le hace a sus clientes, aplicado a HORIZON mismo).
 3. **Cerrar el hueco de seguimiento proactivo a leads fríos** (Componente 4, `SISTEMA-DE-CIERRE.md`) — para que el pipeline no dependa 100% de la memoria de Benjamín.
 4. **Meta de facturación de la etapa:** $12–14M CLP/mes hacia fines de febrero 2027.
