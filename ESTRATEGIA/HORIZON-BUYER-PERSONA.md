@@ -35,7 +35,7 @@ Tratar a los tres como "un dueño de PyME genérico" pierde la información que 
 
 **Dónde está / cómo se lo encuentra:** Puerta a puerta (visita presencial, ver `GUION-VENTA-PUERTA-A-PUERTA-v3.md`), contenido de Instagram (@horizon.webs) mostrando casos reales, referidos de otros clientes ya instalados.
 
-**Qué compra:** Nivel 01 "El Sistema" ($990.000 setup + $79.900/mes). Candidato natural a subir a Nivel 02 (Auditoría + Contenido) una vez que ve que el sistema funciona y confía en que HORIZON también le puede llevar las redes.
+**Qué compra:** Nivel 01 "El Sistema" ($990.000 setup + $190.000/mes). Candidato natural a subir a Nivel 02 (Auditoría + Contenido) una vez que ve que el sistema funciona y confía en que HORIZON también le puede llevar las redes.
 
 ---
 
@@ -57,7 +57,7 @@ Tratar a los tres como "un dueño de PyME genérico" pierde la información que 
 
 **Dónde está:** Puerta a puerta con apertura específica de rubro (Paso 0 con el mesón/recepción, ver v3 del guion), contenido de Instagram mostrando el ecosistema de pedidos.
 
-**Qué compra:** Mismo pricing que Nivel 01 ($990.000 setup + $79.900/mes mantención), vendido con el pitch y la demo de Mesa Cero en vez del genérico. Candidato a Nivel 02 "Gestión de Ads" si ya usa Instagram para vender.
+**Qué compra:** Mismo pricing que Nivel 01 ($990.000 setup + $190.000/mes mantención), vendido con el pitch y la demo de Mesa Cero en vez del genérico. Candidato a Nivel 02 "Gestión de Ads" si ya usa Instagram para vender.
 
 ---
 

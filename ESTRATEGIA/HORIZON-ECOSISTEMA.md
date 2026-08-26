@@ -25,7 +25,7 @@
                                                              ver nota)
 ```
 
-**Nota sobre Mesa Cero:** aparece en las dos capas porque el producto **pivoteó** (agosto 2026, documentado en `MESA-CERO-VISION-Y-POSICIONAMIENTO.md` del repo `mesa-cero`). Nació como SaaS liviano tipo Binks Barber ($29.900–$149.900/mes sin setup grande). El research de mercado mostró que estaba muy por debajo de su valor real, así que se pivoteó a venderse como El Sistema (Agencia): setup $990.000 + mantención $79.900/mes, con la demo y el pitch de restaurante (Tía Julia) en vez del genérico. Hoy vive como **una vertical de Agencia**, no de SaaS — este documento lo trata así.
+**Nota sobre Mesa Cero:** aparece en las dos capas porque el producto **pivoteó** (agosto 2026, documentado en `MESA-CERO-VISION-Y-POSICIONAMIENTO.md` del repo `mesa-cero`). Nació como SaaS liviano tipo Binks Barber ($29.900–$149.900/mes sin setup grande). El research de mercado mostró que estaba muy por debajo de su valor real, así que se pivoteó a venderse como El Sistema (Agencia): setup $990.000 + mantención $190.000/mes, con la demo y el pitch de restaurante (Tía Julia) en vez del genérico. Hoy vive como **una vertical de Agencia**, no de SaaS — este documento lo trata así.
 
 ---
 
@@ -37,7 +37,7 @@ El producto principal, vendido a cualquier PyME de servicio (ver `HORIZON-BUYER-
 | Nivel | Ítem | Precio | Frecuencia |
 |---|---|---|---|
 | 01 · Principal | Setup: landing + sistema | $990.000 CLP | Único, 1-2 cuotas |
-| 01 · Principal | Mantención | $79.900 CLP | Mensual, siempre |
+| 01 · Principal | Mantención | $190.000 CLP | Mensual, siempre |
 | 02 · Opcional | Auditoría + estrategia de contenido | $450.000 CLP | Único |
 | 02 · Opcional | Contenido mensual | $600.000 CLP mínimo | Mensual, si continúa |
 | 02 · Extra | Gestión de Ads | 15% del spend | Mensual, solo si aplica |
