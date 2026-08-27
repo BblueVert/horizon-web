@@ -57,7 +57,7 @@ Tratar a los tres como "un dueño de PyME genérico" pierde la información que 
 
 **Dónde está:** Puerta a puerta con apertura específica de rubro (Paso 0 con el mesón/recepción, ver v3 del guion), contenido de Instagram mostrando el ecosistema de pedidos.
 
-**Qué compra:** Mismo pricing que Nivel 01 ($990.000 setup + $190.000/mes mantención), vendido con el pitch y la demo de Mesa Cero en vez del genérico. Candidato a Nivel 02 "Gestión de Ads" si ya usa Instagram para vender.
+**Qué compra:** El pricing propio de Mesa Cero — $900.000 setup + desde $250.000/mes de mantención (incluye el agente de WhatsApp, consumo de API aparte, mínimo 3 meses) — no el de "El Sistema" genérico (ver `HORIZON-ECOSISTEMA.md`). Candidato a "Gestión de Ads" (15% del spend) si ya usa Instagram para vender.
 
 ---
 
