@@ -47,8 +47,11 @@
       </a>`;
     }).join('');
 
-    const initials = user?.email ? user.email[0].toUpperCase() : 'B';
+    // Nombre: user_metadata.nombre (se define en Supabase) o, si no hay, la parte antes de la @
     const emailDisplay = user?.email || '';
+    const rawName = (user?.user_metadata?.nombre || emailDisplay.split('@')[0] || 'Equipo').trim();
+    const displayName = opsEsc(rawName.charAt(0).toUpperCase() + rawName.slice(1));
+    const initials = opsEsc(rawName.charAt(0).toUpperCase());
 
     return `
 <aside class="ops-sidebar">
@@ -63,8 +66,8 @@
     <div class="ops-user-info">
       <div class="ops-user-avatar">${initials}</div>
       <div>
-        <div class="ops-user-name">Benja</div>
-        <div class="ops-user-email">${emailDisplay}</div>
+        <div class="ops-user-name">${displayName}</div>
+        <div class="ops-user-email">${opsEsc(emailDisplay)}</div>
       </div>
     </div>
     <a href="/" class="ops-nav-item ops-nav-item--subtle">
