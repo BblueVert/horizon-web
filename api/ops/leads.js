@@ -1,6 +1,6 @@
 'use strict';
 
-const { httpsRequest, sanitize, rateLimit, getIp, verifyOpsAuth } = require('../shared');
+const { httpsRequest, sanitize, rateLimit, getIp, opsAuth } = require('../shared');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://horizonweb.cl');
@@ -10,13 +10,12 @@ module.exports = async function handler(req, res) {
 
   const ip = getIp(req);
   if (rateLimit(ip, 60_000, 60)) return res.status(429).json({ error: 'Demasiadas solicitudes' });
-  if (!await verifyOpsAuth(req)) return res.status(401).json({ error: 'No autorizado' });
+  const ctx = await opsAuth(req);
+  if (!ctx) return res.status(401).json({ error: 'No autorizado' });
 
-  const SB_URL = process.env.SUPABASE_URL;
-  const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-  if (!SB_URL || !SB_KEY) return res.status(503).json({ error: 'Config incompleta' });
+  const SB_URL = ctx.sbUrl;
 
-  const auth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+  const auth    = ctx.headers;
   const headers = { ...auth, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
 
   if (req.method === 'GET') {

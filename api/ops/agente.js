@@ -3,7 +3,7 @@
 const https = require('https');
 const { sanitize, rateLimit, getIp, verifyOpsAuth } = require('../shared');
 
-const MODEL = 'claude-sonnet-4-6';
+const MODEL = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
 const MAX_TOKENS = 1024;
 
 const SYSTEM_PROMPTS = {
@@ -21,18 +21,34 @@ Respondés en español, tuteo chileno. Directo al punto — nada de intro genér
 Si detectás un riesgo o bloqueante, decilo primero. No suavices los problemas.`,
 };
 
-function callClaude(apiKey, systemPrompt, messages) {
+function callDeepSeek(apiKey, systemPrompt, messages) {
   return new Promise((resolve, reject) => {
-    const payload = JSON.stringify({ model: MODEL, max_tokens: MAX_TOKENS, system: systemPrompt, messages });
+    const payload = JSON.stringify({
+      model: MODEL, max_tokens: MAX_TOKENS,
+      messages: [{ role: 'system', content: systemPrompt }, ...messages],
+    });
     const req = https.request({
-      hostname: 'api.anthropic.com', path: '/v1/messages', method: 'POST', timeout: 30_000,
-      headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01',
+      hostname: 'api.deepseek.com', path: '/chat/completions', method: 'POST', timeout: 30_000,
+      headers: { 'Authorization': 'Bearer ' + apiKey,
         'content-type': 'application/json', 'content-length': Buffer.byteLength(payload) },
     }, (res) => { let d=''; res.on('data',c=>(d+=c)); res.on('end',()=>resolve({status:res.statusCode,body:d})); });
     req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
     req.on('error', reject);
     req.write(payload); req.end();
   });
+}
+
+// El contexto viaja a un proveedor externo: se quitan datos personales de contacto
+// (Ley 21.719). El agente no los necesita para razonar sobre el negocio.
+const PII_KEYS = new Set(['email','telefono','phone','rut','direccion','portal_token','cal_link']);
+function stripPII(v) {
+  if (Array.isArray(v)) return v.map(stripPII);
+  if (v && typeof v === 'object') {
+    const out = {};
+    for (const [k, val] of Object.entries(v)) if (!PII_KEYS.has(k.toLowerCase())) out[k] = stripPII(val);
+    return out;
+  }
+  return v;
 }
 
 module.exports = async function handler(req, res) {
@@ -46,13 +62,13 @@ module.exports = async function handler(req, res) {
   if (rateLimit(ip, 60_000, 10)) return res.status(429).json({ error: 'Máximo 10 consultas por minuto.' });
   if (!await verifyOpsAuth(req)) return res.status(401).json({ error: 'No autorizado' });
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(503).json({ error: 'Agente no configurado. Falta ANTHROPIC_API_KEY.' });
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) return res.status(503).json({ error: 'Agente no configurado. Falta DEEPSEEK_API_KEY.' });
 
   const b = req.body || {};
   const modo      = ['socio','tecnico'].includes(b.modo) ? b.modo : 'socio';
   const mensaje   = sanitize(b.mensaje || '', 2000);
-  const contexto  = b.contexto || null;
+  const contexto  = b.contexto ? stripPII(b.contexto) : null;
   const historial = Array.isArray(b.historial) ? b.historial.slice(-10) : [];
   if (!mensaje.trim()) return res.status(400).json({ error: 'Mensaje vacío.' });
 
@@ -65,10 +81,10 @@ module.exports = async function handler(req, res) {
   ];
 
   try {
-    const r    = await callClaude(apiKey, systemPrompt, messages);
+    const r    = await callDeepSeek(apiKey, systemPrompt, messages);
     const data = JSON.parse(r.body);
     if (r.status !== 200) return res.status(502).json({ error: data?.error?.message || 'Error del modelo.' });
-    return res.json({ ok: true, respuesta: data.content?.[0]?.text || '' });
+    return res.json({ ok: true, respuesta: data.choices?.[0]?.message?.content || '' });
   } catch (err) {
     console.error('[ops/agente]', err.message);
     return res.status(503).json({ error: 'Error al conectar con el Agente.' });

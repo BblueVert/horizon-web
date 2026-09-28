@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>HORIZON · Portal de diagnóstico</title>
+<title>HORIZON · Portal del cliente</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="HORIZON · Portal de diagnóstico">
 <meta property="og:description" content="Completá tu brief antes de la sesión para que aprovechemos mejor el tiempo.">
@@ -109,6 +109,25 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 .ic-reunion{background:rgba(16,185,129,.12);}
 .ic-propuesta{background:rgba(255,140,66,.12);}
 .ic-nota{background:rgba(74,71,96,.2);}
+/* ROADMAP */
+.proj-name{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:1.5px;line-height:1.1;margin-bottom:6px;}
+.proj-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:18px;}
+.ms{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.ms:last-child{border-bottom:none;padding-bottom:0;}
+.ms-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;margin-top:3px;
+  border:2px solid var(--text3);display:flex;align-items:center;justify-content:center;font-size:10px;}
+.ms-dot.done{background:var(--green);border-color:var(--green);color:var(--void);}
+.ms-dot.in_progress{border-color:var(--h1);box-shadow:0 0 0 4px rgba(255,107,53,.12);}
+.ms-body{flex:1;}
+.ms-name{font-size:14px;font-weight:600;color:var(--text);}
+.ms-name.done{color:var(--text2);}
+.ms-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-top:2px;}
+.ms-meta{display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;}
+.ms-tag{font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;background:var(--card3);color:var(--text3);}
+.ms-tag.done{background:rgba(16,185,129,.1);color:var(--green);}
+.ms-tag.in_progress{background:rgba(255,107,53,.1);color:var(--h1);}
+.ms-date{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:.5px;}
 
 @media(max-width:600px){
   .wrap{padding:20px 14px 60px;}
@@ -122,7 +141,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 <div class="hdr">
   <div class="hdr-logo"><img src="../../Identidad/Logo-Vertical-png.png" alt="HORIZON"></div>
   <span class="hdr-sep">·</span>
-  <span class="hdr-tag">Portal de diagnóstico</span>
+  <span class="hdr-tag" id="hdr-tag">Portal del cliente</span>
 </div>
 
 <div class="wrap">
@@ -143,10 +162,23 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
       <div class="w-label">Portal privado · HORIZON</div>
       <div class="w-name" id="w-name">Hola!</div>
       <div class="w-badge" id="w-badge">📅 Sesión confirmada</div>
-      <p class="w-desc">Este es tu espacio privado para preparar el diagnóstico. Completá el brief abajo — con eso llego preparado y aprovechamos mejor cada minuto de la sesión.</p>
+      <p class="w-desc" id="w-desc">Este es tu espacio privado para preparar el diagnóstico. Completá el brief abajo — con eso llego preparado y aprovechamos mejor cada minuto de la sesión.</p>
     </div>
 
-    <div class="sec">
+    <div class="sec" id="sec-roadmap" style="display:none;">
+      <div class="sec-hdr">
+        <span class="sec-title">Roadmap del proyecto</span>
+        <span class="plabel" id="rm-label"></span>
+      </div>
+      <div class="proj-name" id="proj-name"></div>
+      <p class="proj-desc" id="proj-desc"></p>
+      <div class="progress">
+        <div class="pbar"><div class="pfill" id="rm-fill"></div></div>
+      </div>
+      <div id="ms-list"></div>
+    </div>
+
+    <div class="sec" id="sec-brief">
       <div class="sec-hdr">
         <span class="sec-title">Brief pre-diagnóstico</span>
         <span class="save-st" id="save-st"></span>
@@ -189,7 +221,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 
 <script>
 (function(){
-  const API = 'https://dkitbnrpwmwrfnmztdfc.supabase.co/functions/v1/portal-api';
+  const API = '/api/portal';
   const _rawToken = (window.location.pathname.match(/\/c\/([^/?#]+)/)||[])[1];
   const _uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const token = (_rawToken && _uuidRe.test(_rawToken)) ? _rawToken : null;
@@ -215,8 +247,8 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
     nota:     {ic:'📌',bg:'ic-nota',     label:'Nota'},
   };
 
-  function renderTL(lead, events){
-    const all = [{ tipo:'booking', contenido:null, created_at: lead.created_at }, ...(events||[])];
+  function renderTL(lead, events, withBooking=true){
+    const all = [...(withBooking ? [{ tipo:'booking', contenido:null, created_at: lead.created_at }] : []), ...(events||[])];
     all.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
     $('tl').innerHTML = all.map(ev=>{
       const m = EV[ev.tipo]||EV.nota;
@@ -229,6 +261,35 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
         </div>
       </div>`;
     }).join('') || '<div class="tl-empty">Sin eventos aún.</div>';
+  }
+
+  const MS_LABEL = {done:'Listo', in_progress:'En curso', pending:'Próximo'};
+  const normEstado = e => (e==='done'||e==='hecho') ? 'done' : (e==='in_progress'||e==='en_progreso') ? 'in_progress' : 'pending';
+
+  function renderRoadmap(project, milestones){
+    const ms = milestones||[];
+    $('proj-name').textContent = project.nombre||'Tu proyecto';
+    $('proj-desc').textContent = project.descripcion||'';
+    if(!project.descripcion) hide('proj-desc');
+    const done = ms.filter(m=>normEstado(m.estado)==='done').length;
+    $('rm-fill').style.width = ms.length ? (done/ms.length*100)+'%' : '0%';
+    $('rm-label').textContent = done+' / '+ms.length+' hitos';
+    $('ms-list').innerHTML = ms.map(m=>{
+      const st = normEstado(m.estado);
+      const fecha = m.fecha_target ? fmt(m.fecha_target+'T12:00:00',{day:'numeric',month:'short',year:'numeric'}) : '';
+      return `<div class="ms">
+        <div class="ms-dot ${st}">${st==='done'?'✓':''}</div>
+        <div class="ms-body">
+          <div class="ms-name ${st==='done'?'done':''}">${esc(m.nombre)}</div>
+          ${m.descripcion?`<div class="ms-desc">${esc(m.descripcion)}</div>`:''}
+          <div class="ms-meta">
+            <span class="ms-tag ${st}">${MS_LABEL[st]}</span>
+            ${fecha?`<span class="ms-date">${esc(fecha)}</span>`:''}
+          </div>
+        </div>
+      </div>`;
+    }).join('') || '<div class="tl-empty">Estamos armando el roadmap.</div>';
+    show('sec-roadmap');
   }
 
   function updateProgress(){
@@ -274,11 +335,24 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
     try{
       const res = await fetch(API + '?token=' + encodeURIComponent(token));
       if(!res.ok) throw new Error();
-      const {lead,events} = await res.json();
+      const {lead,events,project,milestones} = await res.json();
+      const enProyecto = !!project;
 
       const firstName = (lead.nombre||'').split(' ')[0]||'Bienvenido/a';
       $('w-name').textContent = 'Hola, '+firstName+'!';
       document.title = 'HORIZON · Portal de '+firstName;
+
+      if(enProyecto){
+        $('hdr-tag').textContent = 'Portal del proyecto';
+        $('w-badge').textContent = '● Proyecto en curso';
+        $('w-desc').textContent = 'Acá ves en tiempo real cómo avanza tu proyecto: qué está listo, qué estamos construyendo y qué viene. Se actualiza solo cada vez que cerramos un hito.';
+        hide('sec-brief');
+        renderRoadmap(project, milestones);
+        renderTL(lead, events, false);
+        hide('loading');
+        show('main');
+        return;
+      }
 
       const fecha = fmtFecha(lead.reunion_fecha);
       $('w-badge').textContent = fecha ? '📅 '+fecha : '📅 Sesión confirmada';

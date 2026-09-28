@@ -99,22 +99,31 @@ function uid() {
   return crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
 }
 
-async function verifyOpsAuth(req) {
-  const auth = req.headers['authorization'] || '';
-  const token = auth.replace(/^Bearer\s+/i, '').trim();
-  if (!token) return false;
+// ── OPS auth ─────────────────────────────────────────────────────────────────
+// Solo entra quien tenga sesión de Supabase Auth Y esté en la tabla ops_admins
+// (ver supabase/migrations/008_ops_lockdown.sql). Las consultas se hacen con el
+// token del propio usuario, así que las políticas RLS se aplican también en el API:
+// OPS no usa la service_role key.
+//
+// Devuelve { sbUrl, headers } listo para PostgREST, o null si no autoriza.
+async function opsAuth(req) {
+  const token = String(req.headers['authorization'] || '').replace(/^Bearer\s+/i, '').trim();
   const sbUrl = process.env.SUPABASE_URL;
-  const sbKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!sbUrl || !sbKey) return false;
+  const anon  = process.env.SUPABASE_ANON_KEY;
+  if (!token || !sbUrl || !anon) return null;
+  const headers = { apikey: anon, Authorization: 'Bearer ' + token };
   try {
-    const r = await httpsRequest('GET', `${sbUrl}/auth/v1/user`, {
-      'apikey': sbKey,
-      'Authorization': 'Bearer ' + token,
-    });
-    return r.status === 200;
+    const r = await httpsRequest('POST', `${sbUrl}/rest/v1/rpc/is_ops_admin`,
+      { ...headers, 'Content-Type': 'application/json' }, {});
+    if (r.status !== 200 || r.body.trim() !== 'true') return null;
+    return { sbUrl, headers };
   } catch {
-    return false;
+    return null;
   }
 }
 
-module.exports = { sanitize, sanitizeEmail, rateLimit, getIp, httpsPost, httpsRequest, verifyHmac, uid, verifyOpsAuth };
+async function verifyOpsAuth(req) {
+  return !!(await opsAuth(req));
+}
+
+module.exports = { sanitize, sanitizeEmail, rateLimit, getIp, httpsPost, httpsRequest, verifyHmac, uid, opsAuth, verifyOpsAuth };

@@ -10,11 +10,11 @@
     { "source": "/plan-04", "destination": "/Pages/plan-04.html" },
     { "source": "/plan-05", "destination": "/Pages/plan-05.html" },
     { "source": "/servicios", "destination": "/Pages/servicios.html" },
-    { "source": "/crm-legacy", "destination": "/Pages/CRM/pipeline.html" },
     { "source": "/reunion", "destination": "/Pages/reunion/index.html" },
     { "source": "/agendar", "destination": "/Pages/agendar/index.html" },
     { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" },
     { "source": "/c/:token", "destination": "/Pages/portal/index.html" },
+    { "source": "/api/ops/tasks/:id", "destination": "/api/ops/tasks?id=:id" },
     { "source": "/ops", "destination": "/OPS/index.html" },
     { "source": "/ops/login", "destination": "/OPS/login.html" },
     { "source": "/ops/pipeline", "destination": "/OPS/pipeline.html" },
@@ -39,7 +39,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://api.mercadopago.com https://graph.facebook.com https://api.anthropic.com; frame-src 'none'; frame-ancestors 'none';" }
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://api.mercadopago.com https://graph.facebook.com; frame-src 'none'; frame-ancestors 'none';" }
       ]
     }
   ]

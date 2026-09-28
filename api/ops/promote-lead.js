@@ -1,6 +1,6 @@
 'use strict';
 
-const { sanitize, httpsRequest, rateLimit, getIp, uid, verifyOpsAuth } = require('../shared');
+const { sanitize, httpsRequest, rateLimit, getIp, uid, opsAuth } = require('../shared');
 
 const MILESTONES_BASE = {
   plan01: ['Diagnóstico y diseño','Desarrollo y contenido','Deploy y entrega'],
@@ -19,17 +19,16 @@ module.exports = async function handler(req, res) {
 
   const ip = getIp(req);
   if (rateLimit(ip, 60_000, 10)) return res.status(429).json({ error: 'Demasiadas solicitudes' });
-  if (!await verifyOpsAuth(req)) return res.status(401).json({ error: 'No autorizado' });
+  const ctx = await opsAuth(req);
+  if (!ctx) return res.status(401).json({ error: 'No autorizado' });
 
-  const SB_URL = process.env.SUPABASE_URL;
-  const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-  if (!SB_URL || !SB_KEY) return res.status(503).json({ error: 'Config incompleta' });
+  const SB_URL = ctx.sbUrl;
 
   const b = req.body || {};
   const leadId = sanitize(b.lead_id || '', 60);
   if (!leadId) return res.status(400).json({ error: 'lead_id requerido' });
 
-  const auth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+  const auth    = ctx.headers;
   const headers = { ...auth, 'Content-Type': 'application/json', Prefer: 'return=representation' };
 
   try {

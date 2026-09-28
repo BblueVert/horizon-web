@@ -179,8 +179,8 @@ async function loadMilestones() {
       <button class="ms-status-btn ${isDone?'done':isIP?'in_progress':''}"
         onclick="toggleMilestone('${m.id}','${m.estado}')"></button>
       <div>
-        <div class="ms-name">${m.nombre}</div>
-        ${m.descripcion ? `<div style="font-size:11px;color:var(--text2);margin-top:2px;">${m.descripcion}</div>` : ''}
+        <div class="ms-name">${opsEsc(m.nombre)}</div>
+        ${m.descripcion ? `<div style="font-size:11px;color:var(--text2);margin-top:2px;">${opsEsc(m.descripcion)}</div>` : ''}
         ${m.fecha_target ? `<div class="ms-date">🗓 ${fmtTime(m.fecha_target)}</div>` : ''}
       </div>
     </div>`;
@@ -209,7 +209,7 @@ function renderTasks(tasks) {
     const done = t.estado === 'hecho';
     return `<div class="task-item" id="task-${t.id}">
       <div class="task-check ${done?'done':''}" onclick="toggleTask('${t.id}','${t.estado}')"></div>
-      <span class="task-titulo ${done?'done-txt':''}">${t.titulo}</span>
+      <span class="task-titulo ${done?'done-txt':''}">${opsEsc(t.titulo)}</span>
       <span class="badge badge-${t.prioridad==='alta'?'red':t.prioridad==='baja'?'gray':'yellow'}" style="flex-shrink:0;">${t.prioridad}</span>
       <button class="task-del" onclick="deleteTask('${t.id}')">×</button>
     </div>`;
@@ -259,8 +259,8 @@ async function loadTimeline() {
       <div class="ev-icon" style="background:${icon.bg}">${icon.ic}</div>
       <div class="ev-body">
         <div class="ev-title">${ev.tipo.charAt(0).toUpperCase()+ev.tipo.slice(1)}</div>
-        ${ev.contenido ? `<div class="ev-desc">${ev.contenido}</div>` : ''}
-        <div class="ev-time">${fmtTime(ev.created_at)} · ${ev.autor}</div>
+        ${ev.contenido ? `<div class="ev-desc">${opsEsc(ev.contenido)}</div>` : ''}
+        <div class="ev-time">${fmtTime(ev.created_at)} · ${opsEsc(ev.autor)}</div>
       </div>
     </div>`;
   }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Sin eventos aún</div></div>';
