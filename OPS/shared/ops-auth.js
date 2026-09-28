@@ -57,7 +57,8 @@ async function opsGetUser() {
 function opsToast(msg, type = 'success', ms = 2800) {
   const t = document.createElement('div');
   t.className = 'ops-toast ' + type;
-  t.textContent = msg;
+  if (window.hzIcon) t.innerHTML = window.hzIcon(type === 'error' ? 'alert' : 'check-circle');
+  t.appendChild(document.createTextNode(msg));
   document.body.appendChild(t);
   setTimeout(() => t.remove(), ms);
 }

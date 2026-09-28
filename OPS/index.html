@@ -19,22 +19,22 @@
 @media(max-width:900px){.ops-stats{grid-template-columns:repeat(2,1fr);}}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;}
 .stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--h1),var(--h2));opacity:.35;}
-.stat-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-.stat-badge{font-family:var(--fm);font-size:7px;background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);border-radius:3px;padding:1px 5px;letter-spacing:.5px;}
+.stat-label{font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.stat-badge{font-family:var(--fm);font-size:11px;background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);border-radius:3px;padding:1px 5px;letter-spacing:.5px;}
 .stat-badge.orange{background:rgba(255,107,53,.1);color:var(--h2);border-color:rgba(255,107,53,.2);}
 .stat-value{font-family:var(--fd);font-size:30px;letter-spacing:1px;color:var(--text);line-height:1;}
 .stat-value.green{color:var(--green);}
 .stat-value.orange{color:var(--h1);}
 .stat-value.indigo{color:var(--indigo2);}
-.stat-sub{font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:5px;}
+.stat-sub{font-family:var(--fm);font-size:12px;color:var(--text3);margin-top:5px;}
 
 /* ── Sección de cupos ── */
 .cupos-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
 .cupo-item{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px;}
-.cupo-plan{font-family:var(--fm);font-size:7px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.cupo-plan{font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
 .cupo-nums{display:flex;align-items:baseline;gap:3px;margin-bottom:6px;}
 .cupo-taken{font-family:var(--fd);font-size:20px;color:var(--h1);}
-.cupo-total{font-family:var(--fm);font-size:9px;color:var(--text3);}
+.cupo-total{font-family:var(--fm);font-size:12px;color:var(--text3);}
 .cupo-bar{height:2px;background:var(--card3);border-radius:2px;overflow:hidden;}
 .cupo-fill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));}
 
@@ -46,10 +46,10 @@
   border-radius:8px;padding:8px;text-align:center;min-width:44px;flex-shrink:0;
 }
 .sesion-day{font-family:var(--fd);font-size:18px;color:#fff;line-height:1;}
-.sesion-mon{font-family:var(--fm);font-size:7px;color:rgba(255,255,255,.7);letter-spacing:.5px;}
+.sesion-mon{font-family:var(--fm);font-size:11px;color:rgba(255,255,255,.7);letter-spacing:.5px;}
 .sesion-info{flex:1;min-width:0;}
 .sesion-nombre{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sesion-meta{font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:2px;}
+.sesion-meta{font-family:var(--fm);font-size:12px;color:var(--text3);margin-top:2px;}
 
 /* ── Actividad ── */
 .act-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
@@ -57,7 +57,7 @@
 .act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
 .act-text{font-size:12px;color:var(--text2);line-height:1.4;}
 .act-text strong{color:var(--text);font-size:13px;}
-.act-time{font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:2px;}
+.act-time{font-family:var(--fm);font-size:11px;color:var(--text3);margin-top:2px;}
 
 /* ── Acciones rápidas ── */
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
@@ -69,7 +69,7 @@
 }
 .qa-btn:hover{background:var(--card3);border-color:var(--border3);color:var(--text);}
 .qa-icon{font-size:18px;}
-.qa-label{font-family:var(--fm);font-size:8px;letter-spacing:.8px;text-transform:uppercase;text-align:center;}
+.qa-label{font-family:var(--fm);font-size:11px;letter-spacing:.8px;text-transform:uppercase;text-align:center;}
 
 /* ── Prioridades ── */
 .pri-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
@@ -79,7 +79,7 @@
   flex-shrink:0;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;
 }
 .pri-check.done{background:var(--green);border-color:var(--green);}
-.pri-check.done::after{content:'✓';color:#fff;font-size:9px;}
+.pri-check.done::after{content:'';width:9px;height:9px;background:#fff;-webkit-mask:var(--hz-check) center/contain no-repeat;mask:var(--hz-check) center/contain no-repeat;}
 .pri-titulo{flex:1;font-size:13px;color:var(--text);cursor:pointer;}
 .pri-titulo.done-txt{text-decoration:line-through;color:var(--text3);}
 .pri-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;border-radius:3px;transition:.15s;line-height:1;}
@@ -89,12 +89,12 @@
 .mcal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .mcal-btn{background:none;border:none;cursor:pointer;color:var(--text2);font-size:14px;padding:2px 6px;border-radius:4px;transition:.15s;}
 .mcal-btn:hover{background:var(--card3);color:var(--text);}
-.mcal-month{font-family:var(--fd);font-size:18px;letter-spacing:1.5px;color:var(--text);}
+.mcal-month{font-family:var(--fd);font-size:18px;letter-spacing:.4px;color:var(--text);}
 .mcal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;}
-.mcal-dow{height:22px;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:7px;color:var(--text3);letter-spacing:.5px;}
+.mcal-dow{height:22px;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:11px;color:var(--text3);letter-spacing:.5px;}
 .mcal-day{
   height:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-family:var(--fm);font-size:10px;color:var(--text2);border-radius:6px;
+  font-family:var(--fm);font-size:12.5px;color:var(--text2);border-radius:6px;
   cursor:default;position:relative;gap:2px;
 }
 .mcal-day.today{background:rgba(255,107,53,.15);color:var(--h1);font-weight:600;}
@@ -102,6 +102,7 @@
 .mcal-day.today.has-event::after{background:var(--h1);}
 .mcal-day.other-month{opacity:.2;}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -148,12 +149,12 @@
         <!-- Widget SaaS MRR -->
         <div class="ops-card" style="margin-bottom:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;" id="saasWidget">
           <div style="display:flex;align-items:center;gap:14px;">
-            <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 10px;font-size:18px;">🏪</div>
+            <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 10px;font-size:18px;"><i class="hz-i" data-i="store"></i></div>
             <div>
-              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">SaaS — Clientes Activos</div>
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">SaaS — Clientes Activos</div>
               <div style="display:flex;align-items:baseline;gap:10px;">
                 <span style="font-family:var(--fd);font-size:24px;color:var(--green);" id="saasMrr">$0</span>
-                <span style="font-family:var(--fm);font-size:9px;color:var(--text3);" id="saasCount">0 activos · 0 trials</span>
+                <span style="font-family:var(--fm);font-size:12px;color:var(--text3);" id="saasCount">0 activos · 0 trials</span>
               </div>
             </div>
           </div>
@@ -162,7 +163,7 @@
 
         <!-- Cupos -->
         <div class="ops-card" style="margin-bottom:16px;">
-          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Cupos Fundadores</div>
+          <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Cupos Fundadores</div>
           <div class="cupos-grid" id="cuposGrid"></div>
         </div>
 
@@ -172,12 +173,12 @@
           <div>
             <!-- Prioridades -->
             <div class="ops-card" style="margin-bottom:14px;" id="priCard">
-              <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
                 Prioridades
-                <a href="/ops/tareas" style="color:var(--h1);text-decoration:none;font-size:8px;">ver todas →</a>
+                <a href="/ops/tareas" style="color:var(--h1);text-decoration:none;font-size:11px;">ver todas →</a>
               </div>
               <div style="display:flex;gap:8px;margin-bottom:10px;">
-                <input id="priInput" class="ops-input" type="text" placeholder="Nueva tarea o nota rápida…" maxlength="200"
+  <input id="priInput" class="ops-input" type="text" placeholder="Nueva tarea o nota rápida…" maxlength="200"
                   onkeydown="if(event.key==='Enter')addPrioridad()" style="flex:1;padding:7px 10px;font-size:12px;">
                 <button class="btn btn-primary btn-sm" onclick="addPrioridad()">+</button>
               </div>
@@ -188,23 +189,23 @@
 
             <!-- Próximas sesiones -->
             <div class="ops-card" style="margin-bottom:14px;">
-              <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
                 Agenda Próxima
-                <a href="/ops/pipeline" style="color:var(--h1);text-decoration:none;font-size:8px;">ver todo →</a>
+                <a href="/ops/pipeline" style="color:var(--h1);text-decoration:none;font-size:11px;">ver todo →</a>
               </div>
               <div id="sesionesLista">
-                <div class="ops-empty"><div class="ops-empty-icon">📅</div><div class="ops-empty-text">Sin sesiones próximas</div></div>
+                <div class="ops-empty"><div class="ops-empty-icon"><i class="hz-i" data-i="calendar"></i></div><div class="ops-empty-text">Sin sesiones próximas</div></div>
               </div>
             </div>
 
             <!-- Actividad reciente -->
             <div class="ops-card">
-              <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
                 Pipeline Reciente
-                <a href="/ops/pipeline" style="color:var(--h1);text-decoration:none;font-size:8px;">ver pipeline →</a>
+                <a href="/ops/pipeline" style="color:var(--h1);text-decoration:none;font-size:11px;">ver pipeline →</a>
               </div>
               <div id="actividadLista">
-                <div class="ops-empty"><div class="ops-empty-icon">⚡</div><div class="ops-empty-text">Sin actividad</div></div>
+                <div class="ops-empty"><div class="ops-empty-icon"><i class="hz-i" data-i="bolt"></i></div><div class="ops-empty-text">Sin actividad</div></div>
               </div>
             </div>
           </div>
@@ -224,22 +225,22 @@
 
             <!-- Acciones rápidas -->
             <div class="ops-card">
-              <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Acciones Rápidas</div>
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Acciones Rápidas</div>
               <div class="qa-grid">
                 <a href="/agendar" target="_blank" class="qa-btn">
-                  <span class="qa-icon">📅</span>
+                  <span class="qa-icon"><i class="hz-i" data-i="calendar"></i></span>
                   <span class="qa-label">Nueva Sesión</span>
                 </a>
                 <a href="/ops/pipeline" class="qa-btn">
-                  <span class="qa-icon">🔀</span>
+                  <span class="qa-icon"><i class="hz-i" data-i="flow"></i></span>
                   <span class="qa-label">Pipeline</span>
                 </a>
                 <a href="/ops/proyectos" class="qa-btn">
-                  <span class="qa-icon">🚀</span>
+                  <span class="qa-icon"><i class="hz-i" data-i="launch"></i></span>
                   <span class="qa-label">Proyectos</span>
                 </a>
                 <a href="/ops/agente" class="qa-btn">
-                  <span class="qa-icon">🤖</span>
+                  <span class="qa-icon"><i class="hz-i" data-i="agent"></i></span>
                   <span class="qa-label">Agente IA</span>
                 </a>
               </div>
@@ -322,7 +323,7 @@ async function loadDashboard(){
     data = await r.json();
   }catch(e){
     document.getElementById('dashLoading').innerHTML =
-      `<span style="color:var(--red);font-family:var(--fm);font-size:10px;">Error: ${e.message}</span>`;
+      `<span style="color:var(--red);font-family:var(--fm);font-size:12.5px;">Error: ${e.message}</span>`;
     return;
   }
 
@@ -398,7 +399,7 @@ function sbPri(){ if(!_sb_pri) _sb_pri=getSB(); return _sb_pri; }
 function renderPrioridades(items){
   const el = document.getElementById('priLista');
   if(!items.length){
-    el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">✅</div><div class="ops-empty-text">¡Todo listo!</div></div>`;
+    el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon"><i class="hz-i" data-i="check-circle"></i></div><div class="ops-empty-text">¡Todo listo!</div></div>`;
     return;
   }
   el.innerHTML = items.map(p=>`<div class="pri-item" id="pri-${p.id}">

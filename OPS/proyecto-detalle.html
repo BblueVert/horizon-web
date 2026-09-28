@@ -5,127 +5,224 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>HORIZON OPS · Proyecto</title>
-<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="/OPS/shared/ops.css">
+<script src="/shared/hz-icons.js"></script>
 <style>
-.tab-content{display:none;}
-.tab-content.active{display:block;}
+[hidden]{display:none!important;}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);text-decoration:none;margin-bottom:4px;}
+.back:hover{color:var(--text);}
+.head-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.brand-dot{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);object-fit:contain;background:#fff;}
+.panel{display:none;}
+.panel.active{display:block;}
+.ops-tabs{flex-wrap:wrap;}
+.ops-tab{display:inline-flex;align-items:center;gap:7px;}
+.ops-tab .hz-i{font-size:16px;}
+.ops-tab .n{background:var(--h1);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;line-height:18px;}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.muted{color:var(--text3);font-size:13px;}
+.sec-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.sec-title .hz-i{font-size:18px;color:var(--text2);}
+.grid2{display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:1100px){.grid2{grid-template-columns:1.25fr 1fr;align-items:start;}}
 
-/* Roadmap */
-.milestone-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
-.milestone-item:last-child{border-bottom:none;}
-.ms-status-btn{
-  width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);
-  cursor:pointer;flex-shrink:0;margin-top:2px;transition:.15s;background:none;
-  display:flex;align-items:center;justify-content:center;
-}
-.ms-status-btn.done{background:var(--green);border-color:var(--green);}
-.ms-status-btn.in_progress{background:var(--h1);border-color:var(--h1);}
-.ms-status-btn.done::after,.ms-status-btn.in_progress::after{content:'✓';color:#fff;font-size:9px;}
-.ms-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
-.ms-date{font-family:var(--fm);font-size:9px;color:var(--text3);}
+/* Etapas */
+.stages{display:grid;gap:8px;}
+.stage{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:auto 1fr auto;gap:12px;padding:12px 14px;align-items:start;}
+.stage.dragging{box-shadow:var(--shadow);transform:scale(1.005);position:relative;z-index:3;}
+.drag{border:0;background:none;color:var(--text3);font-size:18px;padding:6px 2px;cursor:grab;touch-action:none;border-radius:6px;}
+.drag:hover{color:var(--text);background:var(--hover);}
+.st-name{width:100%;border:1px solid transparent;border-radius:8px;padding:6px 8px;font-size:14.5px;font-weight:600;background:none;outline:none;}
+.st-desc{width:100%;border:1px solid transparent;border-radius:8px;padding:4px 8px;font-size:13px;color:var(--text2);background:none;outline:none;resize:none;min-height:30px;font-family:inherit;line-height:1.45;}
+.st-name:hover,.st-desc:hover{border-color:var(--border);}
+.st-name:focus,.st-desc:focus{border-color:var(--h1);background:#fff;}
+.st-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:4px 8px 0;}
+.st-row label{font-size:12px;color:var(--text3);display:inline-flex;align-items:center;gap:6px;}
+.st-row input[type=date]{border:1px solid var(--border2);border-radius:8px;padding:5px 8px;font-size:12.5px;font-family:inherit;background:#fff;color:var(--text);}
+.seg{display:inline-flex;background:var(--card2);border-radius:9px;padding:3px;gap:2px;}
+.seg button{border:0;background:none;border-radius:7px;padding:5px 10px;font-size:12.5px;font-weight:600;color:var(--text3);cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;}
+.seg button .hz-i{font-size:14px;}
+.seg button.on[data-v="done"]{background:#fff;color:var(--green);box-shadow:var(--shadow-sm);}
+.seg button.on[data-v="in_progress"]{background:#fff;color:var(--h1-ink);box-shadow:var(--shadow-sm);}
+.seg button.on[data-v="pending"]{background:#fff;color:var(--text);box-shadow:var(--shadow-sm);}
+.icon-btn{border:0;background:none;color:var(--text3);width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;}
+.icon-btn:hover{background:var(--hover);color:var(--text);}
+.icon-btn.danger:hover{color:var(--red);background:rgba(220,38,38,.07);}
+.cm-count{font-size:12px;color:var(--text3);display:inline-flex;align-items:center;gap:4px;}
+.notify{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);margin:10px 0 14px;}
 
-/* Backlog */
-.task-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;background:var(--card);border:1px solid var(--border);
-  border-radius:8px;margin-bottom:6px;
-}
-.task-check{
-  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
-  flex-shrink:0;cursor:pointer;transition:.15s;
-  display:flex;align-items:center;justify-content:center;
-}
-.task-check.done{background:var(--green);border-color:var(--green);}
-.task-check.done::after{content:'✓';color:#fff;font-size:9px;}
-.task-titulo{flex:1;font-size:13px;color:var(--text);}
-.task-titulo.done-txt{text-decoration:line-through;color:var(--text3);}
-.task-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;transition:.15s;}
-.task-del:hover{color:var(--red);background:rgba(239,68,68,.08);}
+/* Feed */
+.feed-item{display:grid;grid-template-columns:34px 1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.feed-item:last-child{border-bottom:0;}
+.fi-ic{width:34px;height:34px;border-radius:10px;background:var(--card2);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.fi-ic.github{background:var(--text);color:#fff;}
+.fi-ic.cliente{background:var(--h1-soft);color:var(--h1-ink);}
+.fi-t{font-size:13.5px;font-weight:600;}
+.fi-t small{font-weight:500;color:var(--text3);margin-left:6px;}
+.fi-d{font-size:13.5px;color:var(--text2);white-space:pre-line;margin-top:2px;overflow-wrap:anywhere;}
+.fi-time{font-size:12px;color:var(--text3);margin-top:3px;}
+.composer{display:grid;gap:10px;}
+.composer .row > *{flex:1;min-width:160px;}
 
-/* Timeline */
-.ev-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
-.ev-item:last-child{border-bottom:none;}
-.ev-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.ev-body{flex:1;}
-.ev-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
-.ev-desc{font-size:11px;color:var(--text2);line-height:1.5;}
-.ev-time{font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:3px;}
+/* Conversación */
+.conv-group{margin-bottom:18px;}
+.conv-h{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.bubble{display:grid;grid-template-columns:30px 1fr;gap:10px;margin-bottom:10px;}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--h1-soft);color:var(--h1-ink);}
+.av.horizon{background:var(--text);color:#fff;}
+.bubble .who{font-size:12.5px;font-weight:600;}
+.bubble .who time{font-weight:400;color:var(--text3);margin-left:6px;}
+.bubble .txt{font-size:14px;color:var(--text2);white-space:pre-wrap;overflow-wrap:anywhere;}
 
-/* Docs */
-.doc-field{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
-.doc-field:last-of-type{border-bottom:none;}
-.doc-label{font-family:var(--fm);font-size:9px;color:var(--text3);width:120px;flex-shrink:0;}
-.doc-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--fm);font-size:11px;padding:7px 10px;outline:none;transition:.15s;}
-.doc-input:focus{border-color:var(--h1);}
-.doc-link{font-family:var(--fm);font-size:11px;color:var(--indigo2);text-decoration:none;}
-.doc-link:hover{text-decoration:underline;}
+/* Fichas */
+.pt{width:100%;border-collapse:collapse;font-size:13px;}
+.pt th{text-align:left;font-size:12px;font-weight:600;color:var(--text3);padding:8px 10px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;}
+.pt td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.pt img,.pt .ph{width:36px;height:36px;border-radius:8px;object-fit:cover;background:var(--card2);display:flex;align-items:center;justify-content:center;color:var(--text3);}
+.pt .num{font-variant-numeric:tabular-nums;color:var(--text2);white-space:nowrap;}
+.table-wrap{max-height:62vh;overflow:auto;border:1px solid var(--border);border-radius:12px;background:#fff;}
+
+/* Ajustes */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.color-in{display:flex;align-items:center;gap:8px;}
+.color-in input[type=color]{width:42px;height:38px;border:1px solid var(--border2);border-radius:9px;padding:3px;background:#fff;cursor:pointer;}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:500;}
+.switch input{width:38px;height:22px;appearance:none;background:var(--card3);border-radius:99px;position:relative;cursor:pointer;transition:.2s;}
+.switch input::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:.2s;}
+.switch input:checked{background:var(--green);}
+.switch input:checked::after{left:19px;}
 </style>
 </head>
 <body>
 <div class="ops-layout">
   <main class="ops-main">
     <div class="ops-header">
-      <div>
-        <a href="/ops/proyectos" style="font-family:var(--fm);font-size:9px;color:var(--text3);text-decoration:none;display:block;margin-bottom:4px;">← Proyectos</a>
+      <div style="min-width:0">
+        <a href="/ops/proyectos" class="back"><i class="hz-i" data-i="arrow-up" style="transform:rotate(-90deg)"></i>Proyectos</a>
         <div class="ops-page-title" id="pageTitle">Cargando…</div>
-        <div class="ops-page-sub" id="pageSub"></div>
+        <div class="head-meta"><img class="brand-dot" id="brandDot" alt="" hidden onerror="this.hidden=true"><span class="ops-page-sub" id="pageSub" style="margin:0"></span></div>
       </div>
       <div class="ops-header-actions">
-        <a id="btnPortal" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none;">Portal del cliente ↗</a>
+        <button class="btn btn-ghost btn-sm" id="btnCopy" hidden><i class="hz-i" data-i="link"></i>Copiar link del portal</button>
+        <a id="btnPortal" href="#" target="_blank" rel="noopener" class="btn btn-primary btn-sm" hidden><i class="hz-i" data-i="eye"></i>Ver como cliente</a>
       </div>
     </div>
     <div class="ops-content">
-      <div id="detalleLoading" class="ops-loading"><div class="ops-spinner"></div>Cargando workspace…</div>
-      <div id="detalleContent" style="display:none;">
-
-        <!-- Tabs -->
-        <div class="ops-tabs">
-          <button class="ops-tab active" onclick="switchTab('roadmap')">Roadmap</button>
-          <button class="ops-tab" onclick="switchTab('backlog')">Backlog</button>
-          <button class="ops-tab" onclick="switchTab('timeline')">Timeline</button>
-          <button class="ops-tab" onclick="switchTab('docs')">Docs</button>
+      <div id="loading" class="ops-loading"><div class="ops-spinner"></div>Cargando proyecto…</div>
+      <div id="content" hidden>
+        <div class="ops-tabs" role="tablist">
+          <button class="ops-tab active" data-tab="etapas"><i class="hz-i" data-i="layers"></i>Etapas</button>
+          <button class="ops-tab" data-tab="avances"><i class="hz-i" data-i="spark"></i>Avances</button>
+          <button class="ops-tab" data-tab="conversacion"><i class="hz-i" data-i="message"></i>Conversación <span class="n" id="convN" hidden></span></button>
+          <button class="ops-tab" data-tab="fichas" id="tabFichas"><i class="hz-i" data-i="bag"></i>Fichas</button>
+          <button class="ops-tab" data-tab="backlog"><i class="hz-i" data-i="clipboard"></i>Backlog</button>
+          <button class="ops-tab" data-tab="ajustes"><i class="hz-i" data-i="gear"></i>Ajustes</button>
         </div>
 
-        <!-- TAB: Roadmap -->
-        <div class="tab-content active ops-card" id="tab-roadmap">
-          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
-            Hitos del proyecto
-            <div id="msProgress" style="font-size:9px;color:var(--text2);"></div>
+        <!-- Etapas -->
+        <section class="panel active" id="p-etapas">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+            <div class="sec-title" style="margin:0"><i class="hz-i" data-i="layers"></i>Línea de tiempo del proyecto <span class="muted" id="stProgress"></span></div>
+            <button class="btn btn-primary btn-sm" id="addStage"><i class="hz-i" data-i="plus"></i>Nueva etapa</button>
           </div>
-          <div id="milestonesList"></div>
-        </div>
+          <label class="notify"><input type="checkbox" id="notifyDone" checked> Al marcar una etapa como lista, avisar en el portal del cliente</label>
+          <div class="stages" id="stages"></div>
+          <p class="muted" style="margin-top:12px;">Arrastra para ordenar. Todo se guarda solo y el cliente lo ve en su portal al instante.</p>
+        </section>
 
-        <!-- TAB: Backlog -->
-        <div class="tab-content ops-card" id="tab-backlog">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-            <input class="ops-input" type="text" id="newTaskInput" placeholder="Nueva tarea…" style="flex:1;" onkeydown="if(event.key==='Enter')addTask()">
-            <button class="btn btn-primary btn-sm" onclick="addTask()">Agregar</button>
+        <!-- Avances -->
+        <section class="panel" id="p-avances">
+          <div class="grid2">
+            <div class="ops-card">
+              <div class="sec-title"><i class="hz-i" data-i="send"></i>Publicar en el portal</div>
+              <form class="composer" id="postForm">
+                <textarea class="ops-input" id="postText" rows="3" maxlength="2000" placeholder="Qué avanzó, en palabras simples para el cliente" required></textarea>
+                <div class="row">
+                  <select class="ops-input" id="postTipo"><option value="avance">Avance</option><option value="mensaje">Mensaje</option><option value="nota">Novedad</option></select>
+                  <select class="ops-input" id="postStage"><option value="">Sin etapa</option></select>
+                </div>
+                <input class="ops-input" id="postUrl" type="url" placeholder="Link opcional (https://…)">
+                <div><button class="btn btn-primary" type="submit"><i class="hz-i" data-i="send"></i>Publicar</button></div>
+              </form>
+            </div>
+            <div class="ops-card">
+              <div class="sec-title"><i class="hz-i" data-i="clock"></i>Lo que ve el cliente</div>
+              <div id="feed"></div>
+            </div>
           </div>
-          <div id="tasksList"></div>
-        </div>
+        </section>
 
-        <!-- TAB: Timeline -->
-        <div class="tab-content ops-card" id="tab-timeline">
-          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;">Historial de actividad</div>
-          <div id="timelineList"></div>
-        </div>
-
-        <!-- TAB: Docs -->
-        <div class="tab-content ops-card" id="tab-docs">
-          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:16px;">Referencias y documentos</div>
-          <div id="docFields"></div>
-          <div style="margin-top:16px;">
-            <button class="btn btn-primary btn-sm" onclick="saveDocs()">Guardar cambios</button>
+        <!-- Conversación -->
+        <section class="panel" id="p-conversacion">
+          <div class="grid2">
+            <div class="ops-card"><div id="conv"></div></div>
+            <div class="ops-card">
+              <div class="sec-title"><i class="hz-i" data-i="message"></i>Responder</div>
+              <form class="composer" id="replyForm">
+                <select class="ops-input" id="replyStage"><option value="">Mensaje general</option></select>
+                <textarea class="ops-input" id="replyText" rows="4" maxlength="2000" placeholder="Escribe la respuesta al cliente" required></textarea>
+                <div><button class="btn btn-primary" type="submit"><i class="hz-i" data-i="send"></i>Enviar</button></div>
+              </form>
+            </div>
           </div>
-          <hr class="ops-divider">
-          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Notas de sesión</div>
-          <textarea class="ops-input" id="sessionNotas" rows="4" placeholder="Notas internas de la reunión, pendientes, contexto…"></textarea>
-          <button class="btn btn-ghost btn-sm" onclick="saveNotas()" style="margin-top:8px;">Guardar notas</button>
-        </div>
+        </section>
 
+        <!-- Fichas -->
+        <section class="panel" id="p-fichas">
+          <div class="row" style="justify-content:space-between;margin-bottom:14px;">
+            <div class="sec-title" style="margin:0"><i class="hz-i" data-i="bag"></i>Fichas de producto <span class="muted" id="fichasN"></span></div>
+            <div class="row">
+              <select class="ops-input" id="fFilter" style="width:auto"><option value="todos">Todas</option><option value="listo">Listas</option><option value="borrador">Empezadas</option><option value="vacia">Sin datos</option></select>
+              <button class="btn btn-ghost btn-sm" id="exportCsv"><i class="hz-i" data-i="doc"></i>Exportar CSV</button>
+            </div>
+          </div>
+          <div class="table-wrap"><table class="pt"><thead><tr><th></th><th>Producto</th><th>Estado</th><th>Alto × ancho × fondo</th><th>Asa / correa</th><th>Cierre</th><th>Herrajes</th><th>Notas</th></tr></thead><tbody id="fichasBody"></tbody></table></div>
+          <p class="muted" style="margin-top:10px;" id="fichasOff" hidden>Las fichas están desactivadas para este proyecto. Actívalas en Ajustes.</p>
+        </section>
+
+        <!-- Backlog -->
+        <section class="panel" id="p-backlog">
+          <div class="ops-card">
+            <div class="row" style="margin-bottom:14px;">
+              <input class="ops-input" type="text" id="newTask" placeholder="Nueva tarea interna…" style="flex:1;">
+              <button class="btn btn-primary btn-sm" id="addTask"><i class="hz-i" data-i="plus"></i>Agregar</button>
+            </div>
+            <div id="tasks"></div>
+            <p class="muted" style="margin-top:10px;">El backlog es interno: el cliente no lo ve.</p>
+          </div>
+        </section>
+
+        <!-- Ajustes -->
+        <section class="panel" id="p-ajustes">
+          <div class="grid2">
+            <div class="ops-card">
+              <div class="sec-title"><i class="hz-i" data-i="palette"></i>Portal del cliente</div>
+              <div class="form-grid">
+                <div class="ops-field"><label class="ops-label" for="bNombre">Nombre visible</label><input class="ops-input" id="bNombre"></div>
+                <div class="ops-field"><label class="ops-label" for="bFuente">Tipografía de títulos (Google Fonts)</label><input class="ops-input" id="bFuente" placeholder="Ej: Inria Serif"></div>
+                <div class="ops-field"><label class="ops-label">Color principal</label><div class="color-in"><input type="color" id="bColor"><input class="ops-input" id="bColorTxt" maxlength="7"></div></div>
+                <div class="ops-field"><label class="ops-label">Color suave</label><div class="color-in"><input type="color" id="bSoft"><input class="ops-input" id="bSoftTxt" maxlength="7"></div></div>
+                <div class="ops-field" style="grid-column:1/-1"><label class="ops-label" for="bLogo">Logo (URL https)</label><input class="ops-input" id="bLogo" placeholder="https://…"></div>
+                <div class="ops-field" style="grid-column:1/-1"><label class="ops-label" for="pDesc">Descripción del proyecto (la ve el cliente)</label><textarea class="ops-input" id="pDesc" rows="2"></textarea></div>
+              </div>
+              <label class="switch" style="margin:4px 0 14px;"><input type="checkbox" id="catOn"> Mostrar pestaña de fichas de producto</label>
+              <div class="ops-field"><label class="ops-label" for="ghRepo">Repositorio de GitHub (avances automáticos)</label><input class="ops-input" id="ghRepo" placeholder="Owner/Repo"></div>
+              <button class="btn btn-primary" id="saveBrand"><i class="hz-i" data-i="check"></i>Guardar</button>
+            </div>
+            <div class="ops-card">
+              <div class="sec-title"><i class="hz-i" data-i="link"></i>Documentos</div>
+              <div id="docs"></div>
+              <button class="btn btn-ghost btn-sm" id="saveDocs" style="margin-top:6px;">Guardar documentos</button>
+              <hr class="ops-divider">
+              <div class="sec-title"><i class="hz-i" data-i="note"></i>Notas internas</div>
+              <textarea class="ops-input" id="notas" rows="4" placeholder="Contexto, acuerdos, pendientes…"></textarea>
+              <button class="btn btn-ghost btn-sm" id="saveNotas" style="margin-top:8px;">Guardar notas</button>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </main>
@@ -134,221 +231,312 @@
 <script src="/OPS/shared/ops-auth.js"></script>
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
-let projectId = null;
-let leadId    = null;
-let projectData = null;
+const $ = id => document.getElementById(id);
+const esc = opsEsc;
+const ic = n => `<i class="hz-i" data-i="${n}"></i>`;
+const norm = e => (e === 'done' || e === 'hecho') ? 'done' : (e === 'in_progress' || e === 'en_progreso') ? 'in_progress' : 'pending';
+const fmt = iso => iso ? new Date(String(iso).length === 10 ? iso + 'T12:00:00' : iso).toLocaleString('es-CL', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
+let sb, P = null, lead = null, stages = [], events = [], comments = [], catalog = [], details = {};
 
-const EV_ICONS = {
-  booking:{ic:'📅',bg:'rgba(59,130,246,.12)'},
-  brief:{ic:'✏️',bg:'rgba(168,85,247,.12)'},
-  mensaje:{ic:'💬',bg:'rgba(255,107,53,.12)'},
-  reunion:{ic:'🎯',bg:'rgba(16,185,129,.12)'},
-  propuesta:{ic:'📄',bg:'rgba(255,140,66,.12)'},
-  nota:{ic:'📌',bg:'rgba(74,71,96,.2)'},
-};
-
-function switchTab(name) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.ops-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  document.querySelectorAll('.ops-tab').forEach(t => {
-    if(t.textContent.toLowerCase().startsWith(name.slice(0,4))) t.classList.add('active');
-  });
+/* ── Tabs ── */
+function setTab(t){
+  document.querySelectorAll('.ops-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'p-' + t));
+  history.replaceState(null, '', location.pathname + location.search + '#' + t);
 }
+document.querySelectorAll('.ops-tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
-function fmtTime(iso) {
-  if(!iso) return '';
-  try { return new Date(iso).toLocaleString('es-CL',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-  catch { return iso; }
+/* ── Etapas ── */
+async function loadStages(){
+  const { data } = await sb.from('project_milestones').select('*').eq('project_id', P.id)
+    .order('orden').order('fecha_target', { nullsFirst:false }).order('created_at');
+  stages = data || []; renderStages(); fillStageSelects();
 }
-
-/* ─── Roadmap ─── */
-async function loadMilestones() {
-  const sb = getSB();
-  const { data: ms } = await sb.from('project_milestones')
-    .select('*').eq('project_id', projectId).order('created_at');
-
-  const done  = (ms||[]).filter(m=>m.estado==='done'||m.estado==='hecho').length;
-  const total = (ms||[]).length;
-  document.getElementById('msProgress').textContent = `${done}/${total} completados`;
-
-  document.getElementById('milestonesList').innerHTML = (ms||[]).map(m => {
-    const isDone = m.estado==='done'||m.estado==='hecho';
-    const isIP   = m.estado==='in_progress';
-    return `<div class="milestone-item">
-      <button class="ms-status-btn ${isDone?'done':isIP?'in_progress':''}"
-        onclick="toggleMilestone('${m.id}','${m.estado}')"></button>
-      <div>
-        <div class="ms-name">${opsEsc(m.nombre)}</div>
-        ${m.descripcion ? `<div style="font-size:11px;color:var(--text2);margin-top:2px;">${opsEsc(m.descripcion)}</div>` : ''}
-        ${m.fecha_target ? `<div class="ms-date">🗓 ${fmtTime(m.fecha_target)}</div>` : ''}
+function renderStages(){
+  const done = stages.filter(s => norm(s.estado) === 'done').length;
+  $('stProgress').textContent = stages.length ? `· ${done} de ${stages.length} listas` : '';
+  $('stages').innerHTML = stages.map(s => {
+    const st = norm(s.estado), n = comments.filter(c => c.milestone_id === s.id).length;
+    return `<div class="stage" data-id="${s.id}">
+      <button class="drag" aria-label="Arrastrar">${ic('grip')}</button>
+      <div style="min-width:0">
+        <input class="st-name" data-f="nombre" value="${esc(s.nombre)}" aria-label="Nombre de la etapa">
+        <textarea class="st-desc" data-f="descripcion" rows="1" placeholder="Descripción para el cliente (opcional)">${esc(s.descripcion || '')}</textarea>
+        <div class="st-row">
+          <div class="seg" role="group" aria-label="Estado">
+            ${[['pending','circle','Próximo'],['in_progress','progress','En curso'],['done','check','Listo']].map(([v,i,l]) => `<button type="button" data-v="${v}" class="${st === v ? 'on' : ''}">${ic(i)}${l}</button>`).join('')}
+          </div>
+          <label>Inicio <input type="date" data-f="fecha_inicio" value="${s.fecha_inicio || ''}"></label>
+          <label>Entrega <input type="date" data-f="fecha_target" value="${s.fecha_target || ''}"></label>
+          ${n ? `<span class="cm-count">${ic('message')}${n}</span>` : ''}
+        </div>
       </div>
+      <button class="icon-btn danger" data-del aria-label="Eliminar etapa">${ic('trash')}</button>
     </div>`;
-  }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Sin hitos</div></div>';
+  }).join('') || '<div class="ops-empty"><div class="ops-empty-icon">' + ic('layers') + '</div><div class="ops-empty-text">Sin etapas todavía</div></div>';
+  document.querySelectorAll('.st-desc').forEach(autosize);
 }
-
-async function toggleMilestone(id, currentEstado) {
-  const next = (currentEstado==='pending'||currentEstado==='pendiente') ? 'in_progress'
-             : (currentEstado==='in_progress') ? 'done'
-             : 'pending';
-  const sb = getSB();
-  await sb.from('project_milestones').update({ estado: next }).eq('id', id);
-  await loadMilestones();
+function autosize(t){ t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
+async function patchStage(id, patch){
+  const { error } = await sb.from('project_milestones').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', id);
+  if (error) { opsToast('No se pudo guardar', 'error'); return false; }
+  Object.assign(stages.find(s => s.id === id) || {}, patch); return true;
 }
-
-/* ─── Backlog ─── */
-async function loadTasks() {
-  const headers = await opsAuthHeaders();
-  const r = await fetch(`/api/ops/tasks?project_id=${projectId}`, { headers });
-  const tasks = await r.json();
-  renderTasks(tasks);
-}
-
-function renderTasks(tasks) {
-  document.getElementById('tasksList').innerHTML = (tasks||[]).map(t => {
-    const done = t.estado === 'hecho';
-    return `<div class="task-item" id="task-${t.id}">
-      <div class="task-check ${done?'done':''}" onclick="toggleTask('${t.id}','${t.estado}')"></div>
-      <span class="task-titulo ${done?'done-txt':''}">${opsEsc(t.titulo)}</span>
-      <span class="badge badge-${t.prioridad==='alta'?'red':t.prioridad==='baja'?'gray':'yellow'}" style="flex-shrink:0;">${t.prioridad}</span>
-      <button class="task-del" onclick="deleteTask('${t.id}')">×</button>
-    </div>`;
-  }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Backlog vacío</div></div>';
-}
-
-async function addTask() {
-  const input = document.getElementById('newTaskInput');
-  const titulo = input.value.trim();
-  if (!titulo) return;
-  const headers = await opsAuthHeaders();
-  await fetch('/api/ops/tasks', {
-    method:'POST', headers,
-    body: JSON.stringify({ project_id: projectId, titulo }),
-  });
-  input.value = '';
-  await loadTasks();
-}
-
-async function toggleTask(id, estado) {
-  const next = estado==='hecho' ? 'pendiente' : 'hecho';
-  const headers = await opsAuthHeaders();
-  await fetch(`/api/ops/tasks/${id}`, {
-    method:'PATCH', headers,
-    body: JSON.stringify({ estado: next }),
-  });
-  await loadTasks();
-}
-
-async function deleteTask(id) {
-  const headers = await opsAuthHeaders();
-  await fetch(`/api/ops/tasks/${id}`, { method:'DELETE', headers });
-  await loadTasks();
-}
-
-/* ─── Timeline ─── */
-async function loadTimeline() {
-  const sb = getSB();
-  const { data: events } = await sb.from('portal_events')
-    .select('*').eq('lead_id', leadId)
-    .order('created_at', { ascending: false });
-
-  const m = EV_ICONS;
-  document.getElementById('timelineList').innerHTML = (events||[]).map(ev => {
-    const icon = (m[ev.tipo]||m.nota);
-    return `<div class="ev-item">
-      <div class="ev-icon" style="background:${icon.bg}">${icon.ic}</div>
-      <div class="ev-body">
-        <div class="ev-title">${ev.tipo.charAt(0).toUpperCase()+ev.tipo.slice(1)}</div>
-        ${ev.contenido ? `<div class="ev-desc">${opsEsc(ev.contenido)}</div>` : ''}
-        <div class="ev-time">${fmtTime(ev.created_at)} · ${opsEsc(ev.autor)}</div>
-      </div>
-    </div>`;
-  }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Sin eventos aún</div></div>';
-}
-
-/* ─── Docs ─── */
-const DOC_FIELDS = [
-  { key:'propuesta_url', label:'Propuesta' },
-  { key:'contrato_url',  label:'Contrato' },
-  { key:'github_url',    label:'Repositorio' },
-  { key:'notion_url',    label:'Notion' },
-];
-
-function renderDocs(lead) {
-  document.getElementById('docFields').innerHTML = DOC_FIELDS.map(f => {
-    const val = lead[f.key] || '';
-    return `<div class="doc-field">
-      <span class="doc-label">${f.label}</span>
-      <input class="doc-input" type="url" id="doc-${f.key}" value="${val}" placeholder="https://…">
-      ${val ? `<a href="${val}" target="_blank" class="doc-link" rel="noopener">↗</a>` : ''}
-    </div>`;
-  }).join('');
-  if (lead.session_notas) document.getElementById('sessionNotas').value = lead.session_notas;
-
-  // Brief completado?
-  const brief = lead.brief || {};
-  const briefDone = Object.values(brief).some(v => v?.trim?.()?.length > 0);
-  if (briefDone) {
-    document.getElementById('docFields').insertAdjacentHTML('afterend',
-      `<div style="margin-top:12px;" class="badge badge-green">✓ Brief completado por el cliente</div>`);
+$('stages').addEventListener('input', e => { if (e.target.matches('.st-desc')) autosize(e.target); });
+$('stages').addEventListener('change', async e => {
+  const f = e.target.dataset.f, id = e.target.closest('.stage')?.dataset.id; if (!f || !id) return;
+  const v = e.target.value.trim();
+  if (f === 'nombre' && !v) { e.target.value = stages.find(s => s.id === id).nombre; return; }
+  if (await patchStage(id, { [f]: v || null })) opsToast('Guardado');
+});
+$('stages').addEventListener('click', async e => {
+  const stage = e.target.closest('.stage'); if (!stage) return;
+  const id = stage.dataset.id, s = stages.find(x => x.id === id);
+  const b = e.target.closest('.seg button');
+  if (b) {
+    const v = b.dataset.v; if (norm(s.estado) === v) return;
+    const patch = { estado: v };
+    const today = new Date().toISOString().slice(0, 10);
+    if (v === 'in_progress' && !s.fecha_inicio) patch.fecha_inicio = today;
+    if (v === 'done' && !s.fecha_target) patch.fecha_target = today;
+    if (await patchStage(id, patch)) {
+      if (v === 'done' && $('notifyDone').checked) {
+        await sb.from('portal_events').insert({ lead_id: lead.id, tipo:'avance', autor:'horizon', fuente:'ops', milestone_id:id, contenido:`Etapa completada: ${s.nombre}` });
+        loadFeed();
+      }
+      renderStages(); opsToast(v === 'done' ? 'Etapa lista' : 'Estado actualizado');
+    }
   }
+  if (e.target.closest('[data-del]')) {
+    if (!confirm(`¿Eliminar la etapa "${s.nombre}"? También se borran sus comentarios.`)) return;
+    const { error } = await sb.from('project_milestones').delete().eq('id', id);
+    if (error) return opsToast('No se pudo eliminar', 'error');
+    stages = stages.filter(x => x.id !== id); renderStages(); fillStageSelects(); opsToast('Etapa eliminada');
+  }
+});
+$('addStage').addEventListener('click', async () => {
+  const orden = Math.max(0, ...stages.map(s => s.orden || 0)) + 1;
+  const { data, error } = await sb.from('project_milestones').insert({ project_id: P.id, nombre:'Nueva etapa', estado:'pending', orden }).select().single();
+  if (error) return opsToast('No se pudo crear', 'error');
+  stages.push(data); renderStages(); fillStageSelects();
+  const inp = document.querySelector(`.stage[data-id="${data.id}"] .st-name`); inp.focus(); inp.select();
+});
+// Arrastrar para ordenar
+$('stages').addEventListener('pointerdown', e => {
+  const h = e.target.closest('.drag'); if (!h) return;
+  e.preventDefault();
+  const card = h.closest('.stage'), list = $('stages'), start = [...list.children].map(c => c.dataset.id).join();
+  card.classList.add('dragging');
+  const move = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    const after = [...list.children].filter(c => c !== card).find(c => ev.clientY < c.getBoundingClientRect().top + c.offsetHeight / 2);
+    if (after) { if (card.nextElementSibling !== after) list.insertBefore(card, after); }
+    else if (list.lastElementChild !== card) list.appendChild(card);
+  };
+  const up = async ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+    card.classList.remove('dragging');
+    const ids = [...list.children].map(c => c.dataset.id);
+    if (ids.join() === start) return;
+    const res = await Promise.all(ids.map((id, i) => sb.from('project_milestones').update({ orden: i + 1 }).eq('id', id)));
+    if (res.some(r => r.error)) { opsToast('No se pudo guardar el orden', 'error'); return loadStages(); }
+    const map = new Map(stages.map(s => [s.id, s])); stages = ids.map((id, i) => ({ ...map.get(id), orden: i + 1 }));
+    opsToast('Orden guardado');
+  };
+  addEventListener('pointermove', move); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+});
+function fillStageSelects(){
+  const opts = stages.map(s => `<option value="${s.id}">${esc(s.nombre)}</option>`).join('');
+  $('postStage').innerHTML = '<option value="">Sin etapa</option>' + opts;
+  $('replyStage').innerHTML = '<option value="">Mensaje general</option>' + opts;
 }
 
-async function saveDocs() {
-  const patch = {};
-  DOC_FIELDS.forEach(f => { patch[f.key] = document.getElementById('doc-'+f.key).value.trim(); });
-  const headers = await opsAuthHeaders();
-  await fetch(`/api/ops/leads?id=${leadId}`, {
-    method:'PATCH', headers, body: JSON.stringify(patch),
-  });
-  opsToast('Docs guardados');
+/* ── Avances ── */
+const EVT = { avance:['spark','Avance'], mensaje:['message','Mensaje'], nota:['pin','Novedad'], reunion:['users','Sesión'], propuesta:['doc','Propuesta'], brief:['pencil','Brief'], prioridad:['list','Prioridades del cliente'], booking:['calendar','Agendamiento'] };
+async function loadFeed(){
+  const { data } = await sb.from('portal_events').select('*').eq('lead_id', lead.id).order('created_at', { ascending:false }).limit(200);
+  events = data || [];
+  $('feed').innerHTML = events.map(e => {
+    const kind = e.fuente === 'github' ? 'github' : e.autor === 'cliente' ? 'cliente' : '';
+    const [i, t] = e.fuente === 'github' ? ['deploy','Publicado en el sitio'] : (EVT[e.tipo] || EVT.nota);
+    const st = e.milestone_id && stages.find(s => s.id === e.milestone_id);
+    return `<div class="feed-item"><div class="fi-ic ${kind}">${ic(i)}</div><div style="min-width:0">
+      <div class="fi-t">${t}${st ? `<small>${esc(st.nombre)}</small>` : ''}${e.autor === 'cliente' ? '<small>por el cliente</small>' : ''}</div>
+      ${e.contenido ? `<div class="fi-d">${esc(e.contenido)}</div>` : ''}<div class="fi-time">${fmt(e.created_at)}${e.url ? ` · <a href="${esc(e.url)}" target="_blank" rel="noopener">ver</a>` : ''}</div></div>
+      ${e.autor !== 'cliente' ? `<button class="icon-btn danger" data-del-ev="${e.id}" aria-label="Quitar del portal">${ic('trash')}</button>` : '<span></span>'}</div>`;
+  }).join('') || '<div class="ops-empty"><div class="ops-empty-text">Todavía no hay publicaciones</div></div>';
 }
+$('postForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const url = $('postUrl').value.trim();
+  if (url && !/^https:\/\//.test(url)) return opsToast('El link debe empezar con https://', 'error');
+  const { error } = await sb.from('portal_events').insert({ lead_id: lead.id, tipo: $('postTipo').value, autor:'horizon', fuente:'ops',
+    contenido: $('postText').value.trim(), milestone_id: $('postStage').value || null, url: url || null });
+  if (error) return opsToast('No se pudo publicar', 'error');
+  e.target.reset(); await loadFeed(); opsToast('Publicado en el portal');
+});
+$('feed').addEventListener('click', async e => {
+  const b = e.target.closest('[data-del-ev]'); if (!b || !confirm('¿Quitar esta publicación del portal?')) return;
+  const { error } = await sb.from('portal_events').delete().eq('id', b.dataset.delEv);
+  if (error) return opsToast('No se pudo quitar', 'error');
+  loadFeed(); opsToast('Quitado del portal');
+});
 
-async function saveNotas() {
-  const notas = document.getElementById('sessionNotas').value;
-  const headers = await opsAuthHeaders();
-  await fetch(`/api/ops/leads?id=${leadId}`, {
-    method:'PATCH', headers, body: JSON.stringify({ session_notas: notas }),
-  });
-  opsToast('Notas guardadas');
+/* ── Conversación ── */
+async function loadConv(){
+  const { data } = await sb.from('portal_comments').select('*').eq('project_id', P.id).order('created_at');
+  comments = data || [];
+  const groups = [{ id:null, nombre:'Mensajes generales' }, ...stages].map(g => ({ g, cs: comments.filter(c => (c.milestone_id || null) === g.id) })).filter(x => x.cs.length);
+  $('conv').innerHTML = groups.map(({ g, cs }) => `<div class="conv-group"><div class="conv-h">${ic(g.id ? 'flag' : 'message')}${esc(g.nombre)}</div>
+    ${cs.map(c => `<div class="bubble"><div class="av ${c.autor}">${c.autor === 'horizon' ? 'H' : esc((c.nombre || 'C')[0])}</div><div>
+      <div class="who">${c.autor === 'horizon' ? 'HORIZON' : esc(c.nombre || 'Cliente')}<time>${fmt(c.created_at)}</time></div><div class="txt">${esc(c.contenido)}</div></div></div>`).join('')}</div>`).join('')
+    || '<div class="ops-empty"><div class="ops-empty-icon">' + ic('message') + '</div><div class="ops-empty-text">El cliente aún no ha comentado</div></div>';
+  // pendientes de respuesta: último comentario de cada hilo es del cliente
+  const pend = groups.filter(x => x.cs[x.cs.length - 1].autor === 'cliente').length;
+  $('convN').textContent = pend; $('convN').hidden = !pend;
+  renderStages();
 }
+$('replyForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const { error } = await sb.from('portal_comments').insert({ project_id: P.id, milestone_id: $('replyStage').value || null, autor:'horizon', nombre:'HORIZON', contenido: $('replyText').value.trim() });
+  if (error) return opsToast('No se pudo enviar', 'error');
+  $('replyText').value = ''; await loadConv(); opsToast('Respuesta enviada');
+});
 
-/* ─── Init ─── */
+/* ── Fichas ── */
+const L = { iman:'Imán', cremallera:'Cremallera', broche:'Broche', solapa:'Solapa', hebilla:'Hebilla', abierto:'Abierto', otro:'Otro', dorado:'Dorado', plateado:'Plateado', bronce:'Bronce', negro:'Negro', sin_herrajes:'Sin herrajes', si:'regulable', no:'fija', no_aplica:'sin correa' };
+async function loadFichas(){
+  $('fichasOff').hidden = !!P.catalog_enabled;
+  const [{ data: items }, { data: dets }] = await Promise.all([
+    sb.from('catalog_items').select('*').eq('project_id', P.id).order('orden'),
+    sb.from('product_details').select('*').eq('project_id', P.id),
+  ]);
+  catalog = items || []; details = Object.fromEntries((dets || []).map(d => [d.product_id, d]));
+  $('tabFichas').hidden = !catalog.length;
+  renderFichas();
+}
+function renderFichas(){
+  const f = $('fFilter').value;
+  const rank = p => ({ listo:0, borrador:1 })[details[p.id]?.estado] ?? 2;   // primero lo que el cliente ya llenó
+  const rows = catalog.filter(p => { const d = details[p.id]; return f === 'todos' || (f === 'vacia' ? !d : d?.estado === f); })
+    .sort((a, b) => rank(a) - rank(b));
+  const listos = catalog.filter(p => details[p.id]?.estado === 'listo').length;
+  $('fichasN').textContent = `· ${listos} de ${catalog.length} listas`;
+  const n = v => v == null ? '–' : String(v).replace('.', ',');
+  $('fichasBody').innerHTML = rows.map(p => {
+    const d = details[p.id], v = d?.data || {};
+    return `<tr><td>${p.imagen_url ? `<img src="${esc(p.imagen_url)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=&quot;ph&quot;><i class=&quot;hz-i&quot; data-i=&quot;bag&quot;></i></span>'">` : `<span class="ph">${ic('bag')}</span>`}</td>
+      <td><strong>${esc(p.nombre)}</strong><div class="muted" style="font-size:12px">${esc([p.id, p.marca].filter(Boolean).join(' · '))}</div></td>
+      <td>${d ? (d.estado === 'listo' ? '<span class="badge badge-green">Lista</span>' : '<span class="badge badge-yellow">Empezada</span>') : '<span class="badge badge-gray">Sin datos</span>'}</td>
+      <td class="num">${d ? `${n(v.alto_cm)} × ${n(v.ancho_cm)} × ${n(v.fondo_cm)} cm` : ''}</td>
+      <td class="num">${d ? `${n(v.asa_cm)} / ${n(v.correa_cm)} cm${v.correa_regulable ? ' · ' + (L[v.correa_regulable] || '') : ''}` : ''}</td>
+      <td>${esc(L[v.cierre] || '')}</td><td>${esc(L[v.herrajes] || '')}</td>
+      <td style="max-width:260px;color:var(--text2)">${esc([v.compartimentos, v.forro, v.notas].filter(Boolean).join(' · '))}</td></tr>`;
+  }).join('') || '<tr><td colspan="8"><div class="ops-empty"><div class="ops-empty-text">No hay productos con ese filtro</div></div></td></tr>';
+}
+$('fFilter').addEventListener('change', renderFichas);
+$('exportCsv').addEventListener('click', () => {
+  const cols = ['id','nombre','marca','categoria','estado','alto_cm','ancho_cm','fondo_cm','asa_cm','correa_cm','correa_regulable','peso_g','cierre','herrajes','compartimentos','forro','notas','actualizado'];
+  const q = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const lines = [cols.join(',')].concat(catalog.map(p => { const d = details[p.id] || {}, v = d.data || {};
+    return [p.id, p.nombre, p.marca, p.categoria, d.estado || '', v.alto_cm, v.ancho_cm, v.fondo_cm, v.asa_cm, v.correa_cm, v.correa_regulable, v.peso_g, v.cierre, v.herrajes, v.compartimentos, v.forro, v.notas, d.updated_at || ''].map(q).join(','); }));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type:'text/csv;charset=utf-8' }));
+  a.download = `fichas-${(P.brand?.nombre || P.nombre).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.csv`; a.click();
+});
+
+/* ── Backlog ── */
+async function loadTasks(){
+  const r = await fetch(`/api/ops/tasks?project_id=${P.id}`, { headers: await opsAuthHeaders() });
+  const tasks = r.ok ? await r.json() : [];
+  $('tasks').innerHTML = (tasks || []).map(t => { const done = t.estado === 'hecho';
+    return `<div class="feed-item" style="grid-template-columns:auto 1fr auto auto;align-items:center">
+      <button class="icon-btn" data-toggle-task="${t.id}" data-estado="${t.estado}" aria-label="${done ? 'Reabrir' : 'Marcar hecha'}" style="color:${done ? 'var(--green)' : 'var(--text3)'}">${ic(done ? 'check-circle' : 'circle')}</button>
+      <span style="${done ? 'text-decoration:line-through;color:var(--text3)' : ''}">${esc(t.titulo)}</span>
+      <span class="badge badge-${t.prioridad === 'alta' ? 'red' : t.prioridad === 'baja' ? 'gray' : 'yellow'}">${esc(t.prioridad)}</span>
+      <button class="icon-btn danger" data-del-task="${t.id}" aria-label="Eliminar">${ic('trash')}</button></div>`; }).join('')
+    || '<div class="ops-empty"><div class="ops-empty-text">Backlog vacío</div></div>';
+}
+async function addTask(){
+  const titulo = $('newTask').value.trim(); if (!titulo) return;
+  await fetch('/api/ops/tasks', { method:'POST', headers: await opsAuthHeaders(), body: JSON.stringify({ project_id: P.id, titulo }) });
+  $('newTask').value = ''; loadTasks();
+}
+$('addTask').addEventListener('click', addTask);
+$('newTask').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+$('tasks').addEventListener('click', async e => {
+  const t = e.target.closest('[data-toggle-task]'), d = e.target.closest('[data-del-task]'), h = await opsAuthHeaders();
+  if (t) await fetch(`/api/ops/tasks/${t.dataset.toggleTask}`, { method:'PATCH', headers:h, body: JSON.stringify({ estado: t.dataset.estado === 'hecho' ? 'pendiente' : 'hecho' }) });
+  if (d) await fetch(`/api/ops/tasks/${d.dataset.delTask}`, { method:'DELETE', headers:h });
+  if (t || d) loadTasks();
+});
+
+/* ── Ajustes ── */
+const DOCS = [['propuesta_url','Propuesta'],['contrato_url','Contrato'],['github_url','Repositorio'],['notion_url','Notion']];
+function fillSettings(){
+  const b = P.brand || {};
+  $('bNombre').value = b.nombre || ''; $('bFuente').value = b.fuente || ''; $('bLogo').value = b.logo_url || '';
+  $('bColor').value = $('bColorTxt').value = b.color || '#1c1a17';
+  $('bSoft').value = $('bSoftTxt').value = b.color_suave || '#ebe5dc';
+  $('pDesc').value = P.descripcion || ''; $('catOn').checked = !!P.catalog_enabled; $('ghRepo').value = P.github_repo || '';
+  $('docs').innerHTML = DOCS.map(([k, l]) => `<div class="ops-field"><label class="ops-label" for="doc-${k}">${l}</label><div class="row" style="flex-wrap:nowrap"><input class="ops-input" type="url" id="doc-${k}" value="${esc(lead[k] || '')}" placeholder="https://…">${lead[k] ? `<a class="icon-btn" href="${esc(lead[k])}" target="_blank" rel="noopener" aria-label="Abrir">${ic('external')}</a>` : ''}</div></div>`).join('');
+  $('notas').value = lead.session_notas || '';
+}
+[['bColor','bColorTxt'],['bSoft','bSoftTxt']].forEach(([c, t]) => {
+  $(c).addEventListener('input', () => $(t).value = $(c).value);
+  $(t).addEventListener('input', () => { if (/^#[0-9a-f]{6}$/i.test($(t).value)) $(c).value = $(t).value; });
+});
+$('saveBrand').addEventListener('click', async () => {
+  const hex = v => /^#[0-9a-f]{6}$/i.test(v) ? v : null, logo = $('bLogo').value.trim(), repo = $('ghRepo').value.trim();
+  if (logo && !/^https:\/\//.test(logo)) return opsToast('El logo debe ser una URL https', 'error');
+  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) return opsToast('Repositorio: formato Owner/Repo', 'error');
+  const brand = { nombre: $('bNombre').value.trim() || null, fuente: $('bFuente').value.trim() || null, logo_url: logo || null, color: hex($('bColorTxt').value), color_suave: hex($('bSoftTxt').value) };
+  const patch = { brand, descripcion: $('pDesc').value.trim() || null, catalog_enabled: $('catOn').checked, github_repo: repo || null };
+  const { error } = await sb.from('projects').update(patch).eq('id', P.id);
+  if (error) return opsToast(error.code === '23505' ? 'Ese repositorio ya está en otro proyecto' : 'No se pudo guardar', 'error');
+  Object.assign(P, patch); renderHeader(); loadFichas(); opsToast('Ajustes guardados');
+});
+$('saveDocs').addEventListener('click', async () => {
+  const patch = Object.fromEntries(DOCS.map(([k]) => [k, $('doc-' + k).value.trim()]));
+  if (Object.values(patch).some(v => v && !/^https:\/\//.test(v))) return opsToast('Los links deben empezar con https://', 'error');
+  const r = await fetch(`/api/ops/leads?id=${encodeURIComponent(lead.id)}`, { method:'PATCH', headers: await opsAuthHeaders(), body: JSON.stringify(patch) });
+  if (!r.ok) return opsToast('No se pudo guardar', 'error');
+  Object.assign(lead, patch); fillSettings(); opsToast('Documentos guardados');
+});
+$('saveNotas').addEventListener('click', async () => {
+  const r = await fetch(`/api/ops/leads?id=${encodeURIComponent(lead.id)}`, { method:'PATCH', headers: await opsAuthHeaders(), body: JSON.stringify({ session_notas: $('notas').value }) });
+  opsToast(r.ok ? 'Notas guardadas' : 'No se pudo guardar', r.ok ? 'success' : 'error');
+});
+
+/* ── Init ── */
+function renderHeader(){
+  const b = P.brand || {};
+  $('pageTitle').textContent = P.nombre;
+  $('pageSub').textContent = [b.nombre || lead.empresa, lead.nombre, P.plan].filter(Boolean).join(' · ');
+  if (b.logo_url) { $('brandDot').src = b.logo_url; $('brandDot').hidden = false; } else $('brandDot').hidden = true;
+  document.title = `HORIZON OPS · ${P.nombre}`;
+}
 (async function(){
-  const session = await opsRequireAuth();
-  if (!session) return;
+  const session = await opsRequireAuth(); if (!session) return;
   await opsInitNav();
-
-  projectId = new URLSearchParams(window.location.search).get('id');
-  if (!projectId) { window.location.href = '/ops/proyectos'; return; }
-
-  const sb = getSB();
-  const { data: p } = await sb.from('projects')
-    .select(`*, lead:leads(*)`)
-    .eq('id', projectId)
-    .single();
-
-  if (!p) { window.location.href = '/ops/proyectos'; return; }
-
-  projectData = p;
-  leadId = p.lead_id;
-  const lead = p.lead || {};
-
-  document.getElementById('pageTitle').textContent = lead.nombre || p.nombre;
-  document.getElementById('pageSub').textContent = `${lead.empresa||''} · ${p.plan||''} · ${p.estado}`;
-  document.title = `HORIZON OPS · ${lead.nombre||p.nombre}`;
-
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) { location.href = '/ops/proyectos'; return; }
+  sb = getSB();
+  const { data: p } = await sb.from('projects').select('*, lead:leads(*)').eq('id', id).single();
+  if (!p) { location.href = '/ops/proyectos'; return; }
+  P = p; lead = p.lead || {};
+  renderHeader();
   if (lead.portal_token) {
-    const btn = document.getElementById('btnPortal');
-    btn.href = `/c/${lead.portal_token}`;
-    btn.style.display = 'inline-flex';
+    const url = `${location.origin}/c/${lead.portal_token}`;
+    $('btnPortal').href = url; $('btnPortal').hidden = false; $('btnCopy').hidden = false;
+    $('btnCopy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(url); opsToast('Link copiado'); } catch { prompt('Copia el link:', url); } });
   }
-
-  document.getElementById('detalleLoading').style.display = 'none';
-  document.getElementById('detalleContent').style.display = 'block';
-
-  renderDocs(lead);
-  await Promise.all([loadMilestones(), loadTasks(), loadTimeline()]);
+  fillSettings();
+  $('loading').hidden = true; $('content').hidden = false;
+  await loadStages();
+  await Promise.all([loadFeed(), loadConv(), loadFichas(), loadTasks()]);
+  const h = location.hash.slice(1); if (document.querySelector(`.ops-tab[data-tab="${h}"]`)) setTab(h);
 })();
 </script>
 </body>

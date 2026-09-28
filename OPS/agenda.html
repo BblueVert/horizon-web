@@ -15,9 +15,9 @@
 .big-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .big-cal-btn{background:var(--card2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.15s;}
 .big-cal-btn:hover{background:var(--card3);color:var(--text);}
-.big-cal-month{font-family:var(--fd);font-size:24px;letter-spacing:2px;color:var(--text);}
+.big-cal-month{font-family:var(--fd);font-size:24px;letter-spacing:.4px;color:var(--text);}
 .big-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.big-cal-dow{height:28px;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;}
+.big-cal-dow{height:28px;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:11px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;}
 .big-cal-day{min-height:44px;border-radius:8px;padding:4px;cursor:pointer;transition:.15s;position:relative;border:1px solid transparent;}
 .big-cal-day:hover{background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.15);}
 .big-cal-day.today{background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.3);}
@@ -31,8 +31,9 @@
 .evt-time{font-family:var(--fd);font-size:20px;color:var(--h1);min-width:52px;}
 .evt-info{flex:1;}
 .evt-nombre{font-size:14px;font-weight:600;color:var(--text);}
-.evt-meta{font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:3px;}
+.evt-meta{font-family:var(--fm);font-size:12px;color:var(--text3);margin-top:3px;}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -57,12 +58,12 @@
         <!-- Eventos del día seleccionado -->
         <div>
           <div class="ops-card-sm" style="margin-bottom:14px;">
-            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Sesiones seleccionadas</div>
+            <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Sesiones seleccionadas</div>
             <div style="font-family:var(--fd);font-size:20px;letter-spacing:1px;color:var(--text);" id="selectedDate">—</div>
           </div>
-          <div id="dayEvents"><div class="ops-empty"><div class="ops-empty-icon">📅</div><div class="ops-empty-text">Seleccioná un día con sesión</div></div></div>
+          <div id="dayEvents"><div class="ops-empty"><div class="ops-empty-icon"><i class="hz-i" data-i="calendar"></i></div><div class="ops-empty-text">Seleccioná un día con sesión</div></div></div>
           <hr class="ops-divider">
-          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Próximas 10 sesiones</div>
+          <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Próximas 10 sesiones</div>
           <div id="upcomingList"><div class="ops-loading"><div class="ops-spinner"></div></div></div>
         </div>
       </div>

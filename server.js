@@ -12,6 +12,7 @@ const opsLeads    = require('./api/ops/leads');
 const promoteLead = require('./api/ops/promote-lead');
 const tasks       = require('./api/ops/tasks');
 const agente      = require('./api/ops/agente');
+const ingest      = require('./api/ops/ingest');
 const waHandler   = require('./api/saas/whatsapp');
 const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
@@ -176,6 +177,7 @@ app.post('/api/ops/tasks',        tasks);
 app.patch('/api/ops/tasks/:id',   tasks);
 app.delete('/api/ops/tasks/:id',  tasks);
 app.post('/api/ops/agente',       agente);
+app.post('/api/ops/ingest',       ingest);
 
 // ── 404 fallback ──────────────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).sendFile(path.join(__dirname, 'Pages/HORIZON_Landing_2026.html')));

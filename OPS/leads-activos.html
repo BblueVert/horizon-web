@@ -34,7 +34,7 @@
 
 /* MRR stepper — estilo HORIZON */
 .mrr-stepper{display:flex;align-items:center;gap:0;flex-shrink:0;}
-.mrr-stepper-label{font-family:var(--fm);font-size:7px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.mrr-stepper-label{font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
 .mrr-stepper-wrap{display:flex;align-items:center;background:var(--card2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;}
 .mrr-btn{
   background:none;border:none;color:var(--text2);cursor:pointer;
@@ -56,7 +56,7 @@
 .lead-body.open{display:block;}
 .lead-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px;}
 .lead-field{display:flex;flex-direction:column;gap:4px;}
-.lead-field-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
+.lead-field-label{font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;}
 .lead-field-val{font-size:13px;color:var(--text2);}
 .lead-actions-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
 
@@ -72,6 +72,7 @@
 .retainer-icon{font-size:16px;}
 .retainer-text{font-size:12px;color:var(--text2);line-height:1.5;}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -121,7 +122,7 @@ async function load(){
   document.getElementById('laContent').style.display='block';
 
   if(!leads.length){
-    document.getElementById('laContent').innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">👥</div><div class="ops-empty-text">Sin leads activos. Promové uno desde el Pipeline.</div><a href="/ops/pipeline" class="btn btn-primary" style="margin-top:12px;">Ir al Pipeline →</a></div>`;
+    document.getElementById('laContent').innerHTML=`<div class="ops-empty"><div class="ops-empty-icon"><i class="hz-i" data-i="users"></i></div><div class="ops-empty-text">Sin leads activos. Promové uno desde el Pipeline.</div><a href="/ops/pipeline" class="btn btn-primary" style="margin-top:12px;">Ir al Pipeline →</a></div>`;
     return;
   }
 
@@ -142,7 +143,7 @@ function renderCard(l){
         <div class="lead-badges">
           <span class="badge ${isActivo?'badge-green s-activo':'badge-orange s-arranque'}">${isActivo?'Activo':'Arranque'}</span>
           <span class="badge badge-gray">${plan.label}</span>
-          ${l.telefono?`<span style="font-family:var(--fm);font-size:9px;color:var(--text3);">${l.telefono}</span>`:''}
+          ${l.telefono?`<span style="font-family:var(--fm);font-size:12px;color:var(--text3);">${l.telefono}</span>`:''}
         </div>
       </div>
       <div style="flex-shrink:0;text-align:right;">
@@ -161,7 +162,7 @@ function renderCard(l){
         <div class="lead-field"><div class="lead-field-label">Prioridad</div><div class="lead-field-val">${l.prioridad||'Media'}</div></div>
       </div>
       ${l.nota?`<div style="margin-top:12px;font-size:12px;color:var(--text2);background:var(--card2);border-radius:7px;padding:10px 12px;border-left:2px solid var(--h1);">${l.nota}</div>`:''}
-      ${mrr>0?`<div class="retainer-info"><div class="retainer-icon">💰</div><div class="retainer-text">Retainer activo: <strong>$${mrr.toLocaleString('es-CL')} CLP/mes</strong><br>Anualizado: <strong>$${(mrr*12).toLocaleString('es-CL')} CLP/año</strong></div></div>`:''}
+      ${mrr>0?`<div class="retainer-info"><div class="retainer-icon"><i class="hz-i" data-i="coin"></i></div><div class="retainer-text">Retainer activo: <strong>$${mrr.toLocaleString('es-CL')} CLP/mes</strong><br>Anualizado: <strong>$${(mrr*12).toLocaleString('es-CL')} CLP/año</strong></div></div>`:''}
       <div class="lead-actions-row">
         ${l.portal_token?`<a href="/c/${l.portal_token}" target="_blank" class="btn btn-ghost btn-sm">Portal del cliente ↗</a>`:''}
         <a href="/ops/pipeline" class="btn btn-ghost btn-sm">Ver en CRM →</a>
@@ -192,7 +193,7 @@ async function stepMrr(id, dir){
     // Update stats
     const total=leads.filter(l=>l.status==='activo').reduce((s,l)=>s+(l.mrr||0),0);
     document.getElementById('stMrr').textContent='$'+total.toLocaleString('es-CL');
-    opsToast('MRR actualizado');
+ opsToast('MRR actualizado');
   },800);
 }
 
@@ -201,8 +202,8 @@ async function activarProyecto(leadId){
   const headers=await opsAuthHeaders();
   const r=await fetch('/api/ops/promote-lead',{method:'POST',headers,body:JSON.stringify({lead_id:leadId})});
   const d=await r.json();
-  if(!r.ok){opsToast(d.error||'Error','error');return;}
-  opsToast('Proyecto activado ✓');
+ if(!r.ok){opsToast(d.error||'Error','error');return;}
+ opsToast('Proyecto activado');
   setTimeout(()=>window.location.href='/ops/proyectos',1200);
 }
 

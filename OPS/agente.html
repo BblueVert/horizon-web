@@ -21,12 +21,12 @@ html,body{height:100%;overflow:hidden;}
 }
 .chats-top{padding:16px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .chats-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.chats-title{font-family:var(--fd);font-size:18px;letter-spacing:1.5px;color:var(--text);}
+.chats-title{font-family:var(--fd);font-size:18px;letter-spacing:.4px;color:var(--text);}
 .chats-new{background:linear-gradient(135deg,var(--h1),var(--h2));border:none;border-radius:6px;
   color:#fff;width:28px;height:28px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s;}
 .chats-new:hover{filter:brightness(1.1);}
 .chats-search{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;
-  color:var(--text);font-family:var(--fm);font-size:10px;padding:6px 10px;outline:none;}
+  color:var(--text);font-family:var(--fm);font-size:12.5px;padding:6px 10px;outline:none;}
 .chats-search:focus{border-color:var(--h1);}
 
 .chats-list{flex:1;overflow-y:auto;padding:8px 8px;scrollbar-width:thin;scrollbar-color:var(--card3) transparent;}
@@ -40,14 +40,14 @@ html,body{height:100%;overflow:hidden;}
 .chat-item:hover{background:var(--card2);border-color:var(--border);}
 .chat-item.active{background:rgba(255,107,53,.08);border-color:rgba(255,107,53,.2);}
 .chat-item-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:20px;}
-.chat-item-preview{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-family:var(--fm);}
-.chat-item-date{font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:3px;}
+.chat-item-preview{font-size:12.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-family:var(--fm);}
+.chat-item-date{font-family:var(--fm);font-size:11px;color:var(--text3);margin-top:3px;}
 .chat-item-del{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;
   color:var(--text3);cursor:pointer;font-size:13px;opacity:0;transition:.15s;}
 .chat-item:hover .chat-item-del{opacity:1;}
 .chat-item-del:hover{color:var(--red);}
 
-.chat-tipo{display:inline-flex;align-items:center;gap:3px;font-family:var(--fm);font-size:7px;
+.chat-tipo{display:inline-flex;align-items:center;gap:3px;font-family:var(--fm);font-size:11px;
   letter-spacing:.5px;border-radius:3px;padding:1px 5px;margin-top:3px;}
 .tipo-libre{background:var(--card3);color:var(--text3);}
 .tipo-proyecto{background:rgba(99,102,241,.1);color:var(--indigo2);}
@@ -56,7 +56,7 @@ html,body{height:100%;overflow:hidden;}
 .chats-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
   flex:1;gap:10px;padding:24px;text-align:center;}
 .chats-empty-icon{font-size:28px;opacity:.25;}
-.chats-empty-text{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:.5px;}
+.chats-empty-text{font-family:var(--fm);font-size:12px;color:var(--text3);letter-spacing:.5px;}
 
 /* ── Chat área ── */
 .chat-area{display:flex;flex-direction:column;overflow:hidden;background:var(--void);}
@@ -70,7 +70,7 @@ html,body{height:100%;overflow:hidden;}
 .chat-area-title{font-size:13px;font-weight:600;color:var(--text);flex:1;cursor:text;}
 .chat-area-title[contenteditable]:focus{outline:none;border-bottom:1px solid var(--h1);}
 .mode-toggle{display:flex;gap:2px;background:var(--card2);border-radius:7px;padding:3px;}
-.mode-btn{padding:5px 14px;border-radius:5px;border:none;font-family:var(--fm);font-size:9px;
+.mode-btn{padding:5px 14px;border-radius:5px;border:none;font-family:var(--fm);font-size:12px;
   letter-spacing:.5px;cursor:pointer;transition:.15s;color:var(--text3);background:none;}
 .mode-btn.active{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3);}
 .mode-btn.active.socio{color:var(--h1);}
@@ -97,7 +97,7 @@ html,body{height:100%;overflow:hidden;}
 .msg-bubble code{font-family:var(--fm);font-size:11px;background:var(--card2);padding:1px 5px;border-radius:3px;}
 .msg-bubble pre{background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:10px;overflow-x:auto;margin:8px 0;}
 .msg-bubble pre code{background:none;padding:0;}
-.msg-time{font-family:var(--fm);font-size:7px;color:var(--text3);margin-top:4px;display:block;}
+.msg-time{font-family:var(--fm);font-size:11px;color:var(--text3);margin-top:4px;display:block;}
 
 /* Typing */
 .typing-dots{display:inline-flex;gap:4px;align-items:center;}
@@ -109,7 +109,7 @@ html,body{height:100%;overflow:hidden;}
 /* Empty state */
 .chat-welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;}
 .chat-welcome-icon{font-size:48px;opacity:.2;}
-.chat-welcome-title{font-family:var(--fd);font-size:32px;letter-spacing:2px;color:var(--text2);}
+.chat-welcome-title{font-family:var(--fd);font-size:32px;letter-spacing:.4px;color:var(--text2);}
 .chat-hints{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:500px;width:100%;}
 .chat-hint{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 14px;
   font-size:12px;color:var(--text2);cursor:pointer;transition:.15s;text-align:left;line-height:1.4;}
@@ -130,18 +130,19 @@ html,body{height:100%;overflow:hidden;}
 .chat-send:hover:not(:disabled){filter:brightness(1.1);}
 .chat-send:disabled{opacity:.4;cursor:not-allowed;}
 .chat-send svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.chat-meta{display:flex;justify-content:space-between;margin-top:7px;font-family:var(--fm);font-size:8px;color:var(--text3);}
+.chat-meta{display:flex;justify-content:space-between;margin-top:7px;font-family:var(--fm);font-size:11px;color:var(--text3);}
 
 /* No chat selected */
 .no-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:.4;}
-.no-chat-text{font-family:var(--fm);font-size:10px;color:var(--text3);letter-spacing:1px;}
+.no-chat-text{font-family:var(--fm);font-size:12.5px;color:var(--text3);letter-spacing:1px;}
 
 /* Modal nuevo chat */
 .new-chat-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;}
 .new-chat-modal.open{display:flex;}
 .new-chat-box{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:28px;width:360px;}
-.new-chat-box h3{font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;color:var(--text);}
+.new-chat-box h3{font-family:var(--fd);font-size:22px;letter-spacing:.4px;margin-bottom:20px;color:var(--text);}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="agente-root">
@@ -151,17 +152,17 @@ html,body{height:100%;overflow:hidden;}
     <div class="chats-top">
       <a href="/ops" style="display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:14px;opacity:.85;transition:.15s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.85'">
         <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON" style="height:22px;width:auto;">
-        <span style="font-family:var(--fm);font-size:8px;letter-spacing:2px;background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">OPS</span>
+        <span style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">OPS</span>
       </a>
       <div class="chats-top-row">
         <span class="chats-title">CHATS</span>
         <button class="chats-new" onclick="openNewChat()" title="Nuevo chat">+</button>
       </div>
-      <input class="chats-search" id="chatSearch" placeholder="Buscar chat…" oninput="filterChats()">
+ <input class="chats-search" id="chatSearch" placeholder="Buscar chat…" oninput="filterChats()">
     </div>
     <div class="chats-list" id="chatsList">
       <div class="chats-empty">
-        <div class="chats-empty-icon">💬</div>
+        <div class="chats-empty-icon"><i class="hz-i" data-i="message"></i></div>
         <div class="chats-empty-text">Cargando chats…</div>
       </div>
     </div>
@@ -170,7 +171,7 @@ html,body{height:100%;overflow:hidden;}
   <!-- Área de chat -->
   <div class="chat-area" id="chatArea">
     <div class="no-chat" id="noChatMsg">
-      <div style="font-size:40px;">🤖</div>
+      <div style="font-size:40px;"><i class="hz-i" data-i="agent"></i></div>
       <div class="no-chat-text">Seleccioná un chat o creá uno nuevo</div>
     </div>
   </div>
@@ -182,14 +183,14 @@ html,body{height:100%;overflow:hidden;}
     <h3>Nuevo chat</h3>
     <div class="ops-field">
       <label class="ops-label">Nombre</label>
-      <input class="ops-input" id="newChatNombre" placeholder="Ej: Estrategia Q3, Análisis Floremané…" maxlength="100">
+ <input class="ops-input" id="newChatNombre" placeholder="Ej: Estrategia Q3, Análisis Floremané…" maxlength="100">
     </div>
     <div class="ops-field">
       <label class="ops-label">Tipo</label>
       <select class="ops-input" id="newChatTipo">
-        <option value="libre">🟤 Libre — consulta general</option>
-        <option value="proyecto">🟣 Proyecto — contexto de un proyecto</option>
-        <option value="lead">🟠 Lead — contexto de un cliente</option>
+ <option value="libre">Libre — consulta general</option>
+ <option value="proyecto">Proyecto — contexto de un proyecto</option>
+ <option value="lead">Lead — contexto de un cliente</option>
       </select>
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;">
@@ -230,7 +231,7 @@ async function loadChats(){
 function renderChatList(chats){
   const el=document.getElementById('chatsList');
   if(!chats.length){
-    el.innerHTML=`<div class="chats-empty"><div class="chats-empty-icon">💬</div><div class="chats-empty-text">Sin chats aún</div></div>`;
+    el.innerHTML=`<div class="chats-empty"><div class="chats-empty-icon"><i class="hz-i" data-i="message"></i></div><div class="chats-empty-text">Sin chats aún</div></div>`;
     return;
   }
   el.innerHTML=chats.map(c=>{
@@ -267,10 +268,10 @@ async function deleteChat(id){
   if(activeChat?.id===id){activeChat=null;document.getElementById('chatArea').innerHTML=noChatHTML();}
   allChats=allChats.filter(c=>c.id!==id);
   renderChatList(allChats);
-  opsToast('Chat eliminado');
+ opsToast('Chat eliminado');
 }
 
-function noChatHTML(){return `<div class="no-chat" id="noChatMsg"><div style="font-size:40px;">🤖</div><div class="no-chat-text">Seleccioná un chat o creá uno nuevo</div></div>`;}
+function noChatHTML(){return `<div class="no-chat" id="noChatMsg"><div style="font-size:40px;"><i class="hz-i" data-i="agent"></i></div><div class="no-chat-text">Seleccioná un chat o creá uno nuevo</div></div>`;}
 
 /* ─── Área de chat ─── */
 function renderChatArea(){
@@ -279,14 +280,14 @@ function renderChatArea(){
     <div class="mode-bar">
       <div contenteditable="true" class="chat-area-title" id="chatTitle" onblur="saveTitle(this.textContent)">${activeChat.nombre}</div>
       <div class="mode-toggle">
-        <button class="mode-btn active socio" id="btnSocio" onclick="setModo('socio')">💼 Socio</button>
-        <button class="mode-btn tecnico" id="btnTecnico" onclick="setModo('tecnico')">⚙️ Técnico</button>
+        <button class="mode-btn active socio" id="btnSocio" onclick="setModo('socio')"><i class="hz-i" data-i="briefcase"></i> Socio</button>
+        <button class="mode-btn tecnico" id="btnTecnico" onclick="setModo('tecnico')"><i class="hz-i" data-i="gear"></i> Técnico</button>
       </div>
     </div>
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input-area">
       <div class="chat-input-wrap">
-        <textarea class="chat-input" id="chatInput" placeholder="Escribí tu consulta…" rows="1"
+ <textarea class="chat-input" id="chatInput" placeholder="Escribí tu consulta…" rows="1"
           onkeydown="onKey(event)" oninput="autoH(this)"></textarea>
         <button class="chat-send" id="btnSend" onclick="send()">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -294,7 +295,7 @@ function renderChatArea(){
       </div>
       <div class="chat-meta">
         <span id="chatMetaInfo">Modo ${modo} · ${(Array.isArray(activeChat.messages)?activeChat.messages.length:0)} mensajes</span>
-        <button onclick="clearMessages()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-family:var(--fm);font-size:8px;letter-spacing:.5px;">✕ Limpiar</button>
+        <button onclick="clearMessages()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-family:var(--fm);font-size:11px;letter-spacing:.5px;"><i class="hz-i" data-i="x"></i> Limpiar</button>
       </div>
     </div>`;
 
@@ -306,7 +307,7 @@ function renderChatArea(){
 function renderWelcome(){
   const el=document.getElementById('chatMessages');
   el.innerHTML=`<div class="chat-welcome">
-    <div class="chat-welcome-icon">🤖</div>
+    <div class="chat-welcome-icon"><i class="hz-i" data-i="agent"></i></div>
     <div class="chat-welcome-title">Agente HORIZON</div>
     <div class="chat-hints">${HINTS[modo].map(h=>`<button class="chat-hint" onclick="sendDirect('${h.d.replace(/'/g,"\\'")}')"><strong>${h.t}</strong>${h.d}</button>`).join('')}</div>
   </div>`;
@@ -316,7 +317,7 @@ function renderMessages(msgs){
   const el=document.getElementById('chatMessages');
   el.innerHTML=msgs.map(m=>{
     const isUser=m.role==='user';
-    const av=isUser?'👤':'🤖';
+    const av=isUser?'<i class="hz-i" data-i="user"></i>':'<i class="hz-i" data-i="agent"></i>';
     const fmt=isUser?escHtml(m.content):mdToHtml(m.content);
     const ts=m.ts?new Date(m.ts).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}):'';
     return `<div class="msg ${isUser?'user':'agente'}">
@@ -366,7 +367,7 @@ async function send(){
   // Typing indicator
   const tid='typing-'+Date.now();
   const el=document.getElementById('chatMessages');
-  el.insertAdjacentHTML('beforeend',`<div id="${tid}" class="msg agente"><div class="msg-avatar">🤖</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`);
+  el.insertAdjacentHTML('beforeend',`<div id="${tid}" class="msg agente"><div class="msg-avatar"><i class="hz-i" data-i="agent"></i></div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`);
   el.scrollTop=el.scrollHeight;
 
   try{
@@ -405,7 +406,7 @@ async function clearMessages(){
   const sb=getSB();
   await sb.from('chats').update({messages:[]}).eq('id',activeChat.id);
   renderWelcome();
-  opsToast('Historial limpiado');
+ opsToast('Historial limpiado');
 }
 
 async function saveTitle(t){
@@ -431,7 +432,7 @@ async function createChat(){
   allChats.unshift(data);
   renderChatList(allChats);
   await openChat(data.id);
-  opsToast('Chat creado');
+ opsToast('Chat creado');
 }
 
 (async function(){
