@@ -209,6 +209,7 @@
                 <div class="ops-field" style="grid-column:1/-1"><label class="ops-label" for="pDesc">Descripción del proyecto (la ve el cliente)</label><textarea class="ops-input" id="pDesc" rows="2"></textarea></div>
               </div>
               <label class="switch" style="margin:4px 0 14px;"><input type="checkbox" id="catOn"> Mostrar pestaña de fichas de producto</label>
+              <div class="ops-field"><label class="ops-label" for="cliEmail">Correo del cliente (entra con código a su portal)</label><input class="ops-input" id="cliEmail" type="email" placeholder="cliente@correo.com"></div>
               <div class="ops-field"><label class="ops-label" for="ghRepo">Repositorio de GitHub (avances automáticos)</label><input class="ops-input" id="ghRepo" placeholder="Owner/Repo"></div>
               <button class="btn btn-primary" id="saveBrand"><i class="hz-i" data-i="check"></i>Guardar</button>
             </div>
@@ -480,6 +481,7 @@ function fillSettings(){
   $('bColor').value = $('bColorTxt').value = b.color || '#1c1a17';
   $('bSoft').value = $('bSoftTxt').value = b.color_suave || '#ebe5dc';
   $('pDesc').value = P.descripcion || ''; $('catOn').checked = !!P.catalog_enabled; $('ghRepo').value = P.github_repo || '';
+  $('cliEmail').value = lead.email || '';
   $('docs').innerHTML = DOCS.map(([k, l]) => `<div class="ops-field"><label class="ops-label" for="doc-${k}">${l}</label><div class="row" style="flex-wrap:nowrap"><input class="ops-input" type="url" id="doc-${k}" value="${esc(lead[k] || '')}" placeholder="https://…">${lead[k] ? `<a class="icon-btn" href="${esc(lead[k])}" target="_blank" rel="noopener" aria-label="Abrir">${ic('external')}</a>` : ''}</div></div>`).join('');
   $('notas').value = lead.session_notas || '';
 }
@@ -493,8 +495,15 @@ $('saveBrand').addEventListener('click', async () => {
   if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) return opsToast('Repositorio: formato Owner/Repo', 'error');
   const brand = { nombre: $('bNombre').value.trim() || null, fuente: $('bFuente').value.trim() || null, logo_url: logo || null, color: hex($('bColorTxt').value), color_suave: hex($('bSoftTxt').value) };
   const patch = { brand, descripcion: $('pDesc').value.trim() || null, catalog_enabled: $('catOn').checked, github_repo: repo || null };
+  const cli = $('cliEmail').value.trim().toLowerCase();
+  if (cli && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cli)) return opsToast('Correo del cliente no válido', 'error');
   const { error } = await sb.from('projects').update(patch).eq('id', P.id);
   if (error) return opsToast(error.code === '23505' ? 'Ese repositorio ya está en otro proyecto' : 'No se pudo guardar', 'error');
+  if (cli !== (lead.email || '')) {
+    const r = await fetch(`/api/ops/leads?id=${encodeURIComponent(lead.id)}`, { method:'PATCH', headers: await opsAuthHeaders(), body: JSON.stringify({ email: cli }) });
+    if (!r.ok) return opsToast('Se guardó la marca, pero no el correo (¿ya lo usa otro cliente?)', 'error');
+    lead.email = cli;
+  }
   Object.assign(P, patch); renderHeader(); loadFichas(); opsToast('Ajustes guardados');
 });
 $('saveDocs').addEventListener('click', async () => {

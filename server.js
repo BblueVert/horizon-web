@@ -136,6 +136,7 @@ app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 const opsPages = {
   '/ops':            'OPS/index.html',
   '/ops/login':      'OPS/login.html',
+  '/entrar':         'OPS/login.html',
   '/ops/pipeline':   'OPS/pipeline.html',
   '/ops/proyectos':  'OPS/proyectos.html',
   '/ops/proyecto':   'OPS/proyecto-detalle.html',

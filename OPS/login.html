@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>HORIZON OPS · Acceso</title>
+<title>HORIZON · Entrar</title>
 <link rel="icon" type="image/png" href="/Identidad/Logo ISO.png">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -41,13 +41,12 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;
   <div class="login-card">
     <div class="login-logo">
       <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON">
-      <span class="login-logo-badge">OPS</span>
     </div>
 
     <!-- Paso 1: correo -->
     <form id="stepEmail" novalidate>
       <div class="login-title">Entrar</div>
-      <p class="login-sub">Escribe tu correo del equipo. Te enviamos un código para entrar, sin contraseña.</p>
+      <p class="login-sub">Escribe tu correo y te enviamos un código para entrar, sin contraseña.</p>
       <div class="ops-field">
         <label class="ops-label" for="email">Correo</label>
         <input class="ops-input" type="email" id="email" placeholder="tu@correo.com" required autocomplete="email" inputmode="email" autofocus>
@@ -81,20 +80,23 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;
   const show = (text, kind = 'err') => { $('msg').innerHTML = text ? `<div class="msg ${kind}"><i class="hz-i" data-i="${kind === 'ok' ? 'check-circle' : 'alert'}"></i><span>${opsEsc(text)}</span></div>` : ''; };
   const busy = (btn, on, label) => { btn.disabled = on; btn.querySelector('span').textContent = label; };
 
-  // Entra solo si la cuenta está en ops_admins; si no, cierra la sesión (evita un bucle login ↔ /ops)
-  async function enterIfAdmin(){
+  // Cada quien a su lugar: equipo HORIZON (ops_admins) → OPS · cliente (leads.email) → su portal.
+  // Si no es ninguno, cierra la sesión y se queda acá (evita un bucle login ↔ /ops).
+  async function enterByRole(){
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return false;
     const { data: isAdmin } = await sb.rpc('is_ops_admin');
     if (isAdmin === true) { location.replace('/ops'); return true; }
+    const { data: portal } = await sb.rpc('my_portal_token');
+    if (portal) { location.replace('/c/' + portal); return true; }
     await sb.auth.signOut();
-    show('Este correo no tiene acceso a HORIZON OPS.');
+    show('Este correo no tiene acceso. Si crees que es un error, escríbenos.');
     return false;
   }
 
   // También cubre la vuelta desde el link del correo (la sesión llega en la URL)
-  if (await enterIfAdmin()) return;
-  if (new URLSearchParams(location.search).get('e') === 'forbidden') show('Este correo no tiene acceso a HORIZON OPS.');
+  if (await enterByRole()) return;
+  if (new URLSearchParams(location.search).get('e') === 'forbidden') show('Este correo no tiene acceso. Si crees que es un error, escríbenos.');
 
   let email = '', cooldown = 0, timer;
   function startCooldown(){
@@ -109,11 +111,11 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;
   async function sendCode(){
     const { error } = await sb.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: false, emailRedirectTo: location.origin + '/ops/login' },
+      options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname },
     });
     if (!error) return true;
     const m = (error.message || '').toLowerCase();
-    if (m.includes('signup') || m.includes('not found') || m.includes('not allowed')) show('Este correo no tiene acceso a HORIZON OPS.');
+    if (m.includes('signup') || m.includes('not found') || m.includes('not allowed')) show('Este correo no tiene acceso. Si crees que es un error, escríbenos.');
     else if (error.status === 429 || m.includes('rate') || m.includes('seconds')) show('Pediste varios códigos seguidos. Espera un minuto y vuelve a intentar.');
     else show('No pudimos enviar el código. Intenta de nuevo en un momento.');
     return false;
@@ -148,7 +150,7 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;
       $('code').select();
       return show(/expired/i.test(error.message || '') ? 'El código venció. Pide uno nuevo.' : 'El código no es correcto. Revisa el correo más reciente.');
     }
-    if (!(await enterIfAdmin())) { busy($('btnVerify'), false, 'Entrar'); $('stepCode').hidden = true; $('stepEmail').hidden = false; }
+    if (!(await enterByRole())) { busy($('btnVerify'), false, 'Entrar'); $('stepCode').hidden = true; $('stepEmail').hidden = false; }
   });
 
   $('btnResend').addEventListener('click', async () => {

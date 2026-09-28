@@ -21,6 +21,9 @@ async function opsRequireAuth() {
   // Sesión válida no basta: tiene que estar en ops_admins (migración 008)
   const { data: isAdmin, error } = await sb.rpc('is_ops_admin');
   if (error || isAdmin !== true) {
+    // un cliente con sesión va a su portal; cualquier otra cuenta queda fuera
+    const { data: portal } = await sb.rpc('my_portal_token');
+    if (portal) { window.location.href = '/c/' + portal; return null; }
     await sb.auth.signOut();
     window.location.href = '/ops/login?e=forbidden';
     return null;
