@@ -1,6 +1,6 @@
 'use strict';
 
-const { sanitize, httpsRequest, rateLimit, getIp, uid, verifyOpsAuth } = require('../shared');
+const { sanitize, httpsRequest, rateLimit, getIp, uid, opsAuth } = require('../shared');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://horizonweb.cl');
@@ -10,13 +10,12 @@ module.exports = async function handler(req, res) {
 
   const ip = getIp(req);
   if (rateLimit(ip, 60_000, 60)) return res.status(429).json({ error: 'Demasiadas solicitudes' });
-  if (!await verifyOpsAuth(req)) return res.status(401).json({ error: 'No autorizado' });
+  const ctx = await opsAuth(req);
+  if (!ctx) return res.status(401).json({ error: 'No autorizado' });
 
-  const SB_URL = process.env.SUPABASE_URL;
-  const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-  if (!SB_URL || !SB_KEY) return res.status(503).json({ error: 'Config incompleta' });
+  const SB_URL = ctx.sbUrl;
 
-  const auth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+  const auth    = ctx.headers;
   const headers = { ...auth, 'Content-Type': 'application/json', Prefer: 'return=representation' };
 
   if (req.method === 'GET') {
@@ -43,7 +42,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'PATCH') {
-    const id = sanitize(req.query?.id||'',40);
+    const id = sanitize(req.params?.id || req.query?.id || '', 40);
     if (!id) return res.status(400).json({ error: 'id requerido' });
     const b = req.body||{}, patch={};
     if (b.titulo!==undefined) patch.titulo=sanitize(b.titulo,200);
@@ -58,7 +57,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
-    const id = sanitize(req.query?.id||'',40);
+    const id = sanitize(req.params?.id || req.query?.id || '', 40);
     if (!id) return res.status(400).json({ error: 'id requerido' });
     const r = await httpsRequest('DELETE',
       `${SB_URL}/rest/v1/tasks?id=eq.${encodeURIComponent(id)}`,

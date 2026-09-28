@@ -18,6 +18,13 @@ async function opsRequireAuth() {
     window.location.href = '/ops/login';
     return null;
   }
+  // Sesión válida no basta: tiene que estar en ops_admins (migración 008)
+  const { data: isAdmin, error } = await sb.rpc('is_ops_admin');
+  if (error || isAdmin !== true) {
+    await sb.auth.signOut();
+    window.location.href = '/ops/login?e=forbidden';
+    return null;
+  }
   return session;
 }
 
@@ -53,4 +60,10 @@ function opsToast(msg, type = 'success', ms = 2800) {
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), ms);
+}
+
+// Escapa texto antes de meterlo en innerHTML.
+function opsEsc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }

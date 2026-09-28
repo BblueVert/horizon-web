@@ -62,6 +62,12 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;
   const { data: { session } } = await sb.auth.getSession();
   if (session) { window.location.href = '/ops'; return; }
 
+  if (new URLSearchParams(location.search).get('e') === 'forbidden') {
+    const err = document.getElementById('loginError');
+    err.textContent = 'Esta cuenta no tiene acceso a HORIZON OPS.';
+    err.classList.add('show');
+  }
+
   document.getElementById('loginForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const btn    = document.getElementById('btnLogin');

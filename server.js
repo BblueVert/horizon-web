@@ -14,6 +14,7 @@ const tasks       = require('./api/ops/tasks');
 const agente      = require('./api/ops/agente');
 const waHandler   = require('./api/saas/whatsapp');
 const mpHandler   = require('./api/saas/mercadopago');
+const portal      = require('./api/portal');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -127,6 +128,8 @@ app.get('/crm', (_req, res) => res.redirect(301, '/ops/pipeline'));
 
 // Portal con token dinámico
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
+app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
+app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
 const opsPages = {
