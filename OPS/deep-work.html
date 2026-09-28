@@ -19,14 +19,14 @@
 .ring-track{fill:none;stroke:var(--card3);stroke-width:8;}
 .ring-fill{fill:none;stroke:url(#ringGrad);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .5s ease;}
 .ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);text-align:center;}
-.ring-time{font-family:var(--fd);font-size:52px;letter-spacing:3px;color:var(--text);line-height:1;}
-.ring-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-top:4px;}
+.ring-time{font-family:var(--fd);font-size:52px;letter-spacing:.4px;color:var(--text);line-height:1;}
+.ring-label{font-family:var(--fm);font-size:12px;letter-spacing:.4px;color:var(--text3);margin-top:4px;}
 
 /* Mode pills */
 .mode-pills{display:flex;gap:6px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
 .mode-pill{
   padding:6px 16px;border-radius:20px;border:1px solid var(--border2);
-  background:var(--card2);font-family:var(--fm);font-size:9px;letter-spacing:.5px;
+  background:var(--card2);font-family:var(--fm);font-size:12px;letter-spacing:.5px;
   color:var(--text3);cursor:pointer;transition:.15s;
 }
 .mode-pill:hover{border-color:var(--border3);color:var(--text);}
@@ -37,7 +37,7 @@
 
 /* Focus task */
 .focus-task-wrap{margin-bottom:20px;}
-.focus-task-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.focus-task-label{font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
 .focus-task-input{
   width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:8px;
   color:var(--text);font-family:var(--fb);font-size:14px;padding:11px 14px;outline:none;transition:.15s;
@@ -48,7 +48,7 @@
 .dw-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
 .dw-stat{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;}
 .dw-stat-val{font-family:var(--fd);font-size:22px;color:var(--h1);}
-.dw-stat-lbl{font-family:var(--fm);font-size:7px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+.dw-stat-lbl{font-family:var(--fm);font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
 
 /* Session log */
 .session-log{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;
@@ -62,7 +62,7 @@
 .sess-icon{font-size:16px;flex-shrink:0;}
 .sess-body{flex:1;min-width:0;}
 .sess-task{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sess-meta{font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:2px;}
+.sess-meta{font-family:var(--fm);font-size:12px;color:var(--text3);margin-top:2px;}
 .sess-dur{font-family:var(--fd);font-size:16px;color:var(--h1);flex-shrink:0;}
 
 /* Done overlay */
@@ -74,9 +74,10 @@
 .done-overlay.show{display:flex;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 .done-icon{font-size:64px;}
-.done-title{font-family:var(--fd);font-size:48px;letter-spacing:3px;color:var(--text);}
+.done-title{font-family:var(--fd);font-size:48px;letter-spacing:.4px;color:var(--text);}
 .done-sub{font-family:var(--fm);font-size:12px;color:var(--text2);letter-spacing:.5px;}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -89,11 +90,11 @@
         <!-- Timer -->
         <div class="ops-card">
           <div class="mode-pills" id="modePills">
-            <button class="mode-pill active" onclick="setMode('pomodoro',25,'Pomodoro')" data-key="pomodoro">🍅 Pomodoro 25'</button>
-            <button class="mode-pill" onclick="setMode('deep',50,'Deep Work')" data-key="deep">🧠 Deep Work 50'</button>
-            <button class="mode-pill" onclick="setMode('flow',90,'Flow State')" data-key="flow">🌊 Flow State 90'</button>
-            <button class="mode-pill" onclick="setMode('short',5,'Descanso corto')" data-key="short">☕ Descanso 5'</button>
-            <button class="mode-pill" onclick="setMode('long',15,'Descanso largo')" data-key="long">🛋️ Descanso 15'</button>
+            <button class="mode-pill active" onclick="setMode('pomodoro',25,'Pomodoro')" data-key="pomodoro"><i class="hz-i" data-i="timer"></i> Pomodoro 25'</button>
+            <button class="mode-pill" onclick="setMode('deep',50,'Deep Work')" data-key="deep"><i class="hz-i" data-i="focus"></i> Deep Work 50'</button>
+            <button class="mode-pill" onclick="setMode('flow',90,'Flow State')" data-key="flow"><i class="hz-i" data-i="wave"></i> Flow State 90'</button>
+            <button class="mode-pill" onclick="setMode('short',5,'Descanso corto')" data-key="short"><i class="hz-i" data-i="coffee"></i> Descanso 5'</button>
+            <button class="mode-pill" onclick="setMode('long',15,'Descanso largo')" data-key="long"><i class="hz-i" data-i="rest"></i> Descanso 15'</button>
           </div>
 
           <div class="ring-wrap">
@@ -121,11 +122,11 @@
 
           <div class="focus-task-wrap">
             <div class="focus-task-label">¿En qué estás trabajando?</div>
-            <input id="focusTask" class="focus-task-input" type="text" placeholder="Describe la tarea principal de esta sesión…" maxlength="200">
+  <input id="focusTask" class="focus-task-input" type="text" placeholder="Describe la tarea principal de esta sesión…" maxlength="200">
           </div>
 
           <button class="btn btn-primary" onclick="saveSession()" style="width:100%;justify-content:center;">
-            ✓ Guardar sesión completada
+            <i class="hz-i" data-i="check"></i> Guardar sesión completada
           </button>
         </div>
 
@@ -133,7 +134,7 @@
         <div style="display:flex;flex-direction:column;gap:14px;">
           <!-- Stats hoy -->
           <div class="ops-card">
-            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Hoy</div>
+            <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Hoy</div>
             <div class="dw-stats">
               <div class="dw-stat"><div class="dw-stat-val" id="statSesiones">0</div><div class="dw-stat-lbl">Sesiones</div></div>
               <div class="dw-stat"><div class="dw-stat-val" id="statMinutos">0</div><div class="dw-stat-lbl">Minutos</div></div>
@@ -143,7 +144,7 @@
 
           <!-- Historial sesiones -->
           <div class="ops-card" style="flex:1;">
-            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Sesiones recientes</div>
+            <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Sesiones recientes</div>
             <div class="session-log" id="sessionLog">
               <div class="ops-loading"><div class="ops-spinner"></div></div>
             </div>
@@ -156,7 +157,7 @@
 
 <!-- Done overlay -->
 <div class="done-overlay" id="doneOverlay" onclick="this.classList.remove('show')">
-  <div class="done-icon">🎯</div>
+  <div class="done-icon"><i class="hz-i" data-i="target"></i></div>
   <div class="done-title">¡SESIÓN COMPLETADA!</div>
   <div class="done-sub" id="doneMessage">Excelente trabajo. Hacé clic para cerrar.</div>
 </div>
@@ -253,13 +254,13 @@ async function autoSaveSession(task, mins){
 
 async function saveSession(){
   const task=document.getElementById('focusTask').value.trim();
-  if(!task){opsToast('Escribí en qué trabajaste','error');return;}
+ if(!task){opsToast('Escribí en qué trabajaste','error');return;}
   const mins=Math.round((totalSec-remaining)/60)||Math.round(totalSec/60);
   const sb=getSB();
   await sb.from('notas').insert({titulo:`Deep Work: ${task}`,contenido:`${mins} min · ${currentModeName} · ${new Date().toLocaleDateString('es-CL')}`,color:'deepwork'});
   document.getElementById('focusTask').value='';
   loadSessions();
-  opsToast('Sesión guardada ✓');
+ opsToast('Sesión guardada');
 }
 
 async function loadSessions(){
@@ -290,7 +291,7 @@ async function loadSessions(){
     const task=s.titulo.replace('Deep Work: ','');
     const meta=s.contenido||'';
     const mins=meta.match(/(\d+) min/)?.[1]||'?';
-    const icon=meta.includes('Flow')? '🌊':meta.includes('Deep')? '🧠':meta.includes('Descanso')? '☕':'🍅';
+    const icon=meta.includes('Flow')? '<i class="hz-i" data-i="wave"></i>':meta.includes('Deep')? '<i class="hz-i" data-i="focus"></i>':meta.includes('Descanso')? '<i class="hz-i" data-i="coffee"></i>':'<i class="hz-i" data-i="timer"></i>';
     return `<div class="sess-item">
       <div class="sess-icon">${icon}</div>
       <div class="sess-body"><div class="sess-task">${task}</div><div class="sess-meta">${meta}</div></div>

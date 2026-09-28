@@ -21,8 +21,8 @@
 }
 .col-title-row{display:flex;align-items:center;gap:8px;}
 .col-dot{width:8px;height:8px;border-radius:50%;}
-.col-title{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);}
-.col-count{font-family:var(--fm);font-size:9px;background:var(--card3);border-radius:10px;padding:1px 7px;color:var(--text3);}
+.col-title{font-family:var(--fm);font-size:12px;letter-spacing:.4px;text-transform:uppercase;color:var(--text);}
+.col-count{font-family:var(--fm);font-size:12px;background:var(--card3);border-radius:10px;padding:1px 7px;color:var(--text3);}
 .col-add{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;transition:.15s;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;}
 .col-add:hover{background:rgba(255,107,53,.1);color:var(--h1);}
 
@@ -39,12 +39,12 @@
 .task-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.4;}
 .task-card-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
 .task-card-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
-.task-pri{font-family:var(--fm);font-size:7px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;text-transform:uppercase;}
+.task-pri{font-family:var(--fm);font-size:11px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;text-transform:uppercase;}
 .pri-alta{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .pri-media{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
 .pri-baja{background:var(--card3);color:var(--text3);border:1px solid var(--border);}
-.task-label{font-family:var(--fm);font-size:7px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;background:rgba(99,102,241,.1);color:var(--indigo2);border:1px solid rgba(99,102,241,.2);}
-.task-date{font-family:var(--fm);font-size:8px;color:var(--text3);display:flex;align-items:center;gap:3px;}
+.task-label{font-family:var(--fm);font-size:11px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;background:rgba(99,102,241,.1);color:var(--indigo2);border:1px solid rgba(99,102,241,.2);}
+.task-date{font-family:var(--fm);font-size:11px;color:var(--text3);display:flex;align-items:center;gap:3px;}
 .task-date.overdue{color:var(--red);}
 .task-card-actions{display:flex;gap:4px;margin-top:8px;opacity:0;transition:.15s;}
 .task-card:hover .task-card-actions{opacity:1;}
@@ -63,7 +63,7 @@
 /* Filter bar */
 .filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
 .label-filter{padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--card2);
-  font-family:var(--fm);font-size:8px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
+  font-family:var(--fm);font-size:11px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
 .label-filter:hover{color:var(--text);}
 .label-filter.active{background:rgba(99,102,241,.1);border-color:var(--indigo2);color:var(--indigo2);}
 
@@ -72,6 +72,7 @@
 .task-modal-bg.open{display:flex;}
 .task-modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -84,13 +85,13 @@
     </div>
     <div class="ops-content">
       <div class="filter-bar" id="labelFilters">
-        <span style="font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:1px;">ETIQUETA:</span>
+        <span style="font-family:var(--fm);font-size:11px;color:var(--text3);letter-spacing:1px;">ETIQUETA:</span>
         <button class="label-filter active" onclick="setLabelFilter('',this)">Todas</button>
-        <button class="label-filter" onclick="setLabelFilter('diseño',this)">🎨 Diseño</button>
-        <button class="label-filter" onclick="setLabelFilter('dev',this)">💻 Dev</button>
-        <button class="label-filter" onclick="setLabelFilter('negocio',this)">💼 Negocio</button>
-        <button class="label-filter" onclick="setLabelFilter('personal',this)">🧑 Personal</button>
-        <button class="label-filter" onclick="setLabelFilter('urgente',this)">🔥 Urgente</button>
+        <button class="label-filter" onclick="setLabelFilter('diseño',this)"><i class="hz-i" data-i="palette"></i> Diseño</button>
+        <button class="label-filter" onclick="setLabelFilter('dev',this)"><i class="hz-i" data-i="code"></i> Dev</button>
+        <button class="label-filter" onclick="setLabelFilter('negocio',this)"><i class="hz-i" data-i="briefcase"></i> Negocio</button>
+        <button class="label-filter" onclick="setLabelFilter('personal',this)"><i class="hz-i" data-i="user"></i> Personal</button>
+        <button class="label-filter" onclick="setLabelFilter('urgente',this)"><i class="hz-i" data-i="flame"></i> Urgente</button>
       </div>
 
       <div id="tareasLoading" class="ops-loading"><div class="ops-spinner"></div></div>
@@ -104,25 +105,25 @@
 <!-- Modal tarea -->
 <div class="task-modal-bg" id="taskModal">
   <div class="task-modal">
-    <div style="font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;" id="taskModalTitle">Nueva Tarea</div>
-    <div class="ops-field"><label class="ops-label">Título</label><input class="ops-input" id="taskTitulo" placeholder="¿Qué hay que hacer?" maxlength="200"></div>
-    <div class="ops-field"><label class="ops-label">Descripción <span style="color:var(--text3)">(opcional)</span></label><textarea class="ops-input" id="taskDesc" rows="3" placeholder="Más detalle, criterios de aceptación…"></textarea></div>
+    <div style="font-family:var(--fd);font-size:22px;letter-spacing:.4px;margin-bottom:20px;" id="taskModalTitle">Nueva Tarea</div>
+  <div class="ops-field"><label class="ops-label">Título</label><input class="ops-input" id="taskTitulo" placeholder="¿Qué hay que hacer?" maxlength="200"></div>
+  <div class="ops-field"><label class="ops-label">Descripción <span style="color:var(--text3)">(opcional)</span></label><textarea class="ops-input" id="taskDesc" rows="3" placeholder="Más detalle, criterios de aceptación…"></textarea></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div class="ops-field">
         <label class="ops-label">Etapa</label>
         <select class="ops-input" id="taskEtapa">
-          <option value="backlog">📋 Backlog</option>
-          <option value="en_foco">🎯 En Foco</option>
-          <option value="revision">🔍 Revisión</option>
-          <option value="hecho">✅ Hecho</option>
+     <option value="backlog">Backlog</option>
+     <option value="en_foco">En Foco</option>
+     <option value="revision">Revisión</option>
+     <option value="hecho">Hecho</option>
         </select>
       </div>
       <div class="ops-field">
         <label class="ops-label">Prioridad</label>
         <select class="ops-input" id="taskPri">
-          <option value="alta">🔴 Alta</option>
-          <option value="media" selected>🟡 Media</option>
-          <option value="baja">⚫ Baja</option>
+     <option value="alta">Alta</option>
+     <option value="media" selected>Media</option>
+     <option value="baja">Baja</option>
         </select>
       </div>
     </div>
@@ -130,12 +131,12 @@
       <div class="ops-field">
         <label class="ops-label">Etiqueta</label>
         <select class="ops-input" id="taskLabel">
-          <option value="">Sin etiqueta</option>
-          <option value="diseño">🎨 Diseño</option>
-          <option value="dev">💻 Dev</option>
-          <option value="negocio">💼 Negocio</option>
-          <option value="personal">🧑 Personal</option>
-          <option value="urgente">🔥 Urgente</option>
+     <option value="">Sin etiqueta</option>
+     <option value="diseño">Diseño</option>
+     <option value="dev">Dev</option>
+     <option value="negocio">Negocio</option>
+     <option value="personal">Personal</option>
+     <option value="urgente">Urgente</option>
         </select>
       </div>
       <div class="ops-field"><label class="ops-label">Fecha límite</label><input class="ops-input" type="date" id="taskFecha"></div>
@@ -206,7 +207,7 @@ function renderCard(t){
   const today=new Date().toISOString().slice(0,10);
   const isOverdue=t.fecha_limite&&t.fecha_limite<today&&t.etapa!=='hecho';
   const priClass={alta:'pri-alta',media:'pri-media',baja:'pri-baja'}[t.prioridad]||'pri-media';
-  const labelIcons={diseño:'🎨',dev:'💻',negocio:'💼',personal:'🧑',urgente:'🔥'};
+  const labelIcons={diseño:'<i class="hz-i" data-i="palette"></i>',dev:'<i class="hz-i" data-i="code"></i>',negocio:'<i class="hz-i" data-i="briefcase"></i>',personal:'<i class="hz-i" data-i="user"></i>',urgente:'<i class="hz-i" data-i="flame"></i>'};
   return `<div class="task-card" id="tc-${t.id}" draggable="true"
     ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd(event)">
     <div class="task-card-title">${t.titulo}</div>
@@ -214,11 +215,11 @@ function renderCard(t){
     <div class="task-card-meta">
       <span class="task-pri ${priClass}">${t.prioridad}</span>
       ${t.etiqueta?`<span class="task-label">${labelIcons[t.etiqueta]||''} ${t.etiqueta}</span>`:''}
-      ${t.fecha_limite?`<span class="task-date ${isOverdue?'overdue':''}">📅 ${t.fecha_limite}</span>`:''}
+      ${t.fecha_limite?`<span class="task-date ${isOverdue?'overdue':''}"><i class="hz-i" data-i="calendar"></i> ${t.fecha_limite}</span>`:''}
     </div>
     <div class="task-card-actions">
-      <button class="task-action" onclick="editTask('${t.id}')">✏️ Editar</button>
-      <button class="task-action" onclick="deleteTask('${t.id}')">🗑</button>
+      <button class="task-action" onclick="editTask('${t.id}')"><i class="hz-i" data-i="pencil"></i> Editar</button>
+      <button class="task-action" onclick="deleteTask('${t.id}')"><i class="hz-i" data-i="trash"></i></button>
     </div>
   </div>`;
 }
@@ -276,7 +277,7 @@ async function saveTask(){
     const {data:n}=await sb.from('tareas').insert(data).select().single();
     allTasks.unshift(n);
   }
-  closeTaskModal(); renderKanban(); opsToast(editTaskId?'Tarea actualizada':'Tarea creada');
+ closeTaskModal(); renderKanban(); opsToast(editTaskId?'Tarea actualizada':'Tarea creada');
 }
 async function deleteTask(id){
   if(!confirm('¿Eliminar tarea?'))return;

@@ -19,9 +19,9 @@
 .tenant-row:last-child{border-bottom:none;}
 .tenant-row:hover{background:var(--card2);}
 .tenant-name{font-size:13px;font-weight:600;color:var(--text);}
-.tenant-slug{font-family:var(--fm);font-size:10px;color:var(--text3);margin-top:2px;}
+.tenant-slug{font-family:var(--fm);font-size:12.5px;color:var(--text3);margin-top:2px;}
 .tenant-head{display:grid;grid-template-columns:1fr 110px 90px 100px 120px 100px;gap:12px;padding:8px 16px;border-bottom:1px solid var(--border);}
-.tenant-head span{font-family:var(--fm);font-size:8px;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;}
+.tenant-head span{font-family:var(--fm);font-size:11px;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;}
 
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:.2s;}
@@ -29,14 +29,15 @@
 .modal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 32px;width:100%;max-width:440px;transform:translateY(10px);transition:.2s;}
 .modal-overlay.open .modal{transform:translateY(0);}
 .modal-title{font-family:var(--fd);font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;}
-.modal-sub{font-family:var(--fm);font-size:10px;color:var(--text3);margin-bottom:22px;}
+.modal-sub{font-family:var(--fm);font-size:12.5px;color:var(--text3);margin-bottom:22px;}
 .form-group{margin-bottom:14px;}
-.form-label{display:block;font-family:var(--fm);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:5px;}
+.form-label{display:block;font-family:var(--fm);font-size:12px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:5px;}
 .form-input{width:100%;padding:9px 12px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;transition:.12s;font-family:inherit;}
 .form-input:focus{border-color:var(--h1);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -82,8 +83,8 @@
         <!-- Tabla de tenants -->
         <div class="ops-card" style="padding:0;overflow:hidden;">
           <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
-            <span style="font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;flex:1;">Tenants</span>
-            <input id="searchInput" class="ops-input" type="text" placeholder="Buscar por nombre…" style="width:200px;padding:6px 10px;font-size:12px;" oninput="filterTenants(this.value)">
+            <span style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;flex:1;">Tenants</span>
+      <input id="searchInput" class="ops-input" type="text" placeholder="Buscar por nombre…" style="width:200px;padding:6px 10px;font-size:12px;" oninput="filterTenants(this.value)">
           </div>
           <div class="tenant-head">
             <span>Negocio</span>
@@ -110,37 +111,37 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Nombre del negocio</label>
-          <input class="form-input" id="fName" placeholder="Barbería El Corte" required>
+     <input class="form-input" id="fName" placeholder="Barbería El Corte" required>
         </div>
         <div class="form-group">
           <label class="form-label">Slug (URL)</label>
-          <input class="form-input" id="fSlug" placeholder="el-corte" required pattern="[a-z0-9\-]+">
+     <input class="form-input" id="fSlug" placeholder="el-corte" required pattern="[a-z0-9\-]+">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Nicho</label>
           <select class="form-input" id="fType">
-            <option value="barbershop">Peluquería / Barbería</option>
-            <option value="restaurant">Restaurante</option>
+      <option value="barbershop">Peluquería / Barbería</option>
+      <option value="restaurant">Restaurante</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Plan</label>
           <select class="form-input" id="fPlan">
-            <option value="starter">Starter — $29.900</option>
-            <option value="pro" selected>Pro — $79.900</option>
-            <option value="studio">Studio — $149.900</option>
+      <option value="starter">Starter — $29.900</option>
+      <option value="pro" selected>Pro — $79.900</option>
+      <option value="studio">Studio — $149.900</option>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Email del dueño</label>
-        <input class="form-input" id="fEmail" type="email" placeholder="dueño@barberia.cl" required>
+    <input class="form-input" id="fEmail" type="email" placeholder="dueño@barberia.cl" required>
       </div>
       <div class="form-group">
         <label class="form-label">Teléfono (WhatsApp)</label>
-        <input class="form-input" id="fPhone" placeholder="+56912345678">
+    <input class="form-input" id="fPhone" placeholder="+56912345678">
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal()">Cancelar</button>
@@ -174,7 +175,7 @@ function fmt$(n){ return n ? '$' + Number(n).toLocaleString('es-CL') : '$0'; }
 function renderTenants(list) {
   const el = document.getElementById('tenantsList');
   if (!list.length) {
-    el.innerHTML = `<div class="ops-empty" style="padding:32px;"><div class="ops-empty-icon">🏪</div><div class="ops-empty-text">Sin clientes SaaS aún</div></div>`;
+    el.innerHTML = `<div class="ops-empty" style="padding:32px;"><div class="ops-empty-icon"><i class="hz-i" data-i="store"></i></div><div class="ops-empty-text">Sin clientes SaaS aún</div></div>`;
     return;
   }
   el.innerHTML = list.map(t => {
@@ -190,7 +191,7 @@ function renderTenants(list) {
       </div>
       <div style="font-size:12px;color:var(--text2);">${TYPE_LABELS[t.type] || t.type}</div>
       <div><span style="font-family:var(--fm);font-size:11px;color:var(--text2);">${PLAN_LABELS[t.plan] || t.plan}</span></div>
-      <div><span class="badge ${cfg.cls}">${cfg.label}</span>${t.status==='trial'?`<div style="font-family:var(--fm);font-size:8px;color:var(--text3);margin-top:3px;">vence ${trialEnd}</div>`:''}</div>
+      <div><span class="badge ${cfg.cls}">${cfg.label}</span>${t.status==='trial'?`<div style="font-family:var(--fm);font-size:11px;color:var(--text3);margin-top:3px;">vence ${trialEnd}</div>`:''}</div>
       <div style="font-family:var(--fd);font-size:16px;color:${mrr?'var(--green)':'var(--text3)'};">${mrr ? fmt$(mrr) : '—'}</div>
       <div style="display:flex;gap:6px;">
         <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="impersonate('${t.id}','${t.slug}')">Ver</button>
@@ -275,9 +276,9 @@ async function createTenant(e) {
     closeModal();
     document.getElementById('tenantForm').reset();
     await loadTenants();
-    opsToast(`✓ Tenant "${name}" creado — invitación enviada a ${email}`);
+  opsToast(`Tenant "${name}" creado — invitación enviada a ${email}`);
   } catch (err) {
-    opsToast('Error: ' + err.message, true);
+  opsToast('Error: ' + err.message, true);
   } finally {
     btn.disabled = false;
     btn.textContent = 'Crear cliente';
@@ -287,9 +288,9 @@ async function createTenant(e) {
 async function toggleStatus(id, currentStatus) {
   const newStatus = currentStatus === 'active' ? 'paused' : 'active';
   const { error } = await sbSaas.from('tenants').update({ status: newStatus }).eq('id', id);
-  if (error) { opsToast('Error: ' + error.message, true); return; }
+ if (error) { opsToast('Error: ' + error.message, true); return; }
   await loadTenants();
-  opsToast(`Estado actualizado a "${newStatus}"`);
+ opsToast(`Estado actualizado a "${newStatus}"`);
 }
 
 function impersonate(tenantId, slug) {

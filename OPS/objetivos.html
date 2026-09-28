@@ -12,7 +12,7 @@
 /* Filter tabs periodo */
 .periodo-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
 .periodo-tab{padding:6px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--card2);
-  font-family:var(--fm);font-size:9px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
+  font-family:var(--fm);font-size:12px;letter-spacing:.5px;color:var(--text3);cursor:pointer;transition:.15s;}
 .periodo-tab:hover{color:var(--text);}
 .periodo-tab.active{background:rgba(255,107,53,.1);border-color:var(--h1);color:var(--h1);}
 
@@ -24,15 +24,15 @@
 .okr-titulo{font-family:var(--fd);font-size:20px;letter-spacing:1px;color:var(--text);flex:1;}
 .okr-desc{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5;}
 .okr-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;}
-.okr-periodo{font-family:var(--fm);font-size:8px;letter-spacing:.5px;}
+.okr-periodo{font-family:var(--fm);font-size:11px;letter-spacing:.5px;}
 
 /* KRs */
-.krs-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.krs-label{font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
 .kr-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
 .kr-item:last-child{border-bottom:none;padding-bottom:0;}
 .kr-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
 .kr-check.done{background:var(--green);border-color:var(--green);}
-.kr-check.done::after{content:'✓';color:#fff;font-size:9px;}
+.kr-check.done::after{content:'';width:9px;height:9px;background:#fff;-webkit-mask:var(--hz-check) center/contain no-repeat;mask:var(--hz-check) center/contain no-repeat;}
 .kr-text{flex:1;font-size:12px;color:var(--text);}
 .kr-text.done-txt{color:var(--text3);text-decoration:line-through;}
 .kr-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;transition:.15s;}
@@ -58,6 +58,7 @@
 .ops-modal-bg.open{display:flex;}
 .ops-modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -71,13 +72,13 @@
     </div>
     <div class="ops-content">
       <div class="periodo-tabs">
-        <button class="periodo-tab active" onclick="setFilter('activo',this)" data-f="activo">🎯 Todos activos</button>
-        <button class="periodo-tab" onclick="setFilter('semana',this)" data-f="semana">📅 Esta semana</button>
-        <button class="periodo-tab" onclick="setFilter('mes',this)" data-f="mes">🗓 Este mes</button>
-        <button class="periodo-tab" onclick="setFilter('trimestre',this)" data-f="trimestre">📊 Q3 2026</button>
-        <button class="periodo-tab" onclick="setFilter('año',this)" data-f="año">🏆 Este año</button>
-        <button class="periodo-tab" onclick="setFilter('personal',this)" data-f="personal">🧑 Personal</button>
-        <button class="periodo-tab" onclick="setFilter('proyecto',this)" data-f="proyecto">🚀 Proyectos</button>
+        <button class="periodo-tab active" onclick="setFilter('activo',this)" data-f="activo"><i class="hz-i" data-i="target"></i> Todos activos</button>
+        <button class="periodo-tab" onclick="setFilter('semana',this)" data-f="semana"><i class="hz-i" data-i="calendar"></i> Esta semana</button>
+        <button class="periodo-tab" onclick="setFilter('mes',this)" data-f="mes"><i class="hz-i" data-i="calendar"></i> Este mes</button>
+        <button class="periodo-tab" onclick="setFilter('trimestre',this)" data-f="trimestre"><i class="hz-i" data-i="chart"></i> Q3 2026</button>
+        <button class="periodo-tab" onclick="setFilter('año',this)" data-f="año"><i class="hz-i" data-i="trophy"></i> Este año</button>
+        <button class="periodo-tab" onclick="setFilter('personal',this)" data-f="personal"><i class="hz-i" data-i="user"></i> Personal</button>
+        <button class="periodo-tab" onclick="setFilter('proyecto',this)" data-f="proyecto"><i class="hz-i" data-i="launch"></i> Proyectos</button>
       </div>
       <div id="objLoading" class="ops-loading"><div class="ops-spinner"></div></div>
       <div id="objContent" style="display:none;"></div>
@@ -87,34 +88,34 @@
 
 <div class="ops-modal-bg" id="objModal">
   <div class="ops-modal">
-    <div style="font-family:var(--fd);font-size:22px;letter-spacing:1.5px;margin-bottom:20px;" id="objModalTitle">Nuevo Objetivo</div>
-    <div class="ops-field"><label class="ops-label">Objetivo</label><input class="ops-input" id="objTitulo" placeholder="¿Qué querés lograr?" maxlength="200"></div>
-    <div class="ops-field"><label class="ops-label">Descripción</label><textarea class="ops-input" id="objDesc" rows="2" placeholder="Más contexto o motivación…"></textarea></div>
+    <div style="font-family:var(--fd);font-size:22px;letter-spacing:.4px;margin-bottom:20px;" id="objModalTitle">Nuevo Objetivo</div>
+ <div class="ops-field"><label class="ops-label">Objetivo</label><input class="ops-input" id="objTitulo" placeholder="¿Qué querés lograr?" maxlength="200"></div>
+ <div class="ops-field"><label class="ops-label">Descripción</label><textarea class="ops-input" id="objDesc" rows="2" placeholder="Más contexto o motivación…"></textarea></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div class="ops-field">
         <label class="ops-label">Categoría</label>
         <select class="ops-input" id="objCat">
-          <option value="negocio">💼 Negocio</option>
-          <option value="personal">🧑 Personal</option>
-          <option value="proyecto">🚀 Proyecto</option>
+  <option value="negocio">Negocio</option>
+  <option value="personal">Personal</option>
+  <option value="proyecto">Proyecto</option>
         </select>
       </div>
       <div class="ops-field">
         <label class="ops-label">Período</label>
         <select class="ops-input" id="objPeriodo">
-          <option value="semana">Esta semana</option>
-          <option value="mes">Este mes</option>
-          <option value="trimestre">Q3 2026</option>
-          <option value="año">Este año</option>
-          <option value="libre">Sin período</option>
+  <option value="semana">Esta semana</option>
+  <option value="mes">Este mes</option>
+  <option value="trimestre">Q3 2026</option>
+  <option value="año">Este año</option>
+  <option value="libre">Sin período</option>
         </select>
       </div>
     </div>
     <div class="ops-field"><label class="ops-label">Fecha límite <span style="color:var(--text3)">(opcional)</span></label><input class="ops-input" type="date" id="objFecha"></div>
-    <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;margin-top:4px;">Resultados Clave (KRs)</div>
+    <div style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;margin-top:4px;">Resultados Clave (KRs)</div>
     <div id="newKrsList"></div>
     <div style="display:flex;gap:6px;margin-bottom:16px;">
-      <input class="ops-input" id="newKrInput" placeholder="Ej: Cerrar 3 leads nuevos…" maxlength="200" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addNewKr();}">
+ <input class="ops-input" id="newKrInput" placeholder="Ej: Cerrar 3 leads nuevos…" maxlength="200" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addNewKr();}">
       <button class="btn btn-ghost btn-sm" onclick="addNewKr()">+ KR</button>
     </div>
     <div style="display:flex;gap:8px;">
@@ -128,7 +129,7 @@
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
 const CAT_COLORS={negocio:'var(--h1)',personal:'var(--indigo2)',proyecto:'var(--green)'};
-const CAT_ICONS={negocio:'💼',personal:'🧑',proyecto:'🚀'};
+const CAT_ICONS={negocio:'<i class="hz-i" data-i="briefcase"></i>',personal:'<i class="hz-i" data-i="user"></i>',proyecto:'<i class="hz-i" data-i="launch"></i>'};
 const PERIODO_LABELS={semana:'Esta semana',mes:'Este mes',trimestre:'Q3 2026',año:'Este año',libre:'Sin período'};
 let allObjs=[], currentFilter='activo', editId=null, newKrs=[];
 
@@ -169,7 +170,7 @@ function render(){
   document.getElementById('objSub').textContent=`${filtered.length} objetivo${filtered.length!==1?'s':''} · ${currentFilter}`;
 
   if(!filtered.length){
-    el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">⭐</div><div class="ops-empty-text">Sin objetivos en esta categoría</div><button class="btn btn-primary" onclick="openNew()" style="margin-top:12px;">+ Crear objetivo</button></div>`;
+    el.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon"><i class="hz-i" data-i="star"></i></div><div class="ops-empty-text">Sin objetivos en esta categoría</div><button class="btn btn-primary" onclick="openNew()" style="margin-top:12px;">+ Crear objetivo</button></div>`;
     return;
   }
 
@@ -181,7 +182,7 @@ function renderOKR(o){
   const done=krs.filter(k=>k.done).length;
   const pct=krs.length?Math.round(done/krs.length*100):0;
   const color=CAT_COLORS[o.categoria]||'var(--text3)';
-  const icon=CAT_ICONS[o.categoria]||'🎯';
+  const icon=CAT_ICONS[o.categoria]||'<i class="hz-i" data-i="target"></i>';
   const pLabel=PERIODO_LABELS[o.descripcion?.split('|')[1]||'']||'';
 
   return `<div class="okr-card">
@@ -193,12 +194,12 @@ function renderOKR(o){
         <div class="okr-meta">
           <span class="badge" style="background:${color}18;color:${color};border:1px solid ${color}33;">${icon} ${o.categoria}</span>
           ${pLabel?`<span class="badge badge-gray">${pLabel}</span>`:''}
-          ${o.fecha_limite?`<span class="badge badge-yellow">📅 ${o.fecha_limite}</span>`:''}
+          ${o.fecha_limite?`<span class="badge badge-yellow"><i class="hz-i" data-i="calendar"></i> ${o.fecha_limite}</span>`:''}
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0;">
         <div style="font-family:var(--fd);font-size:28px;color:${pct>=100?'var(--green)':'var(--h1)'};">${pct}%</div>
-        <div style="font-family:var(--fm);font-size:8px;color:var(--text3);">${done}/${krs.length} KRs</div>
+        <div style="font-family:var(--fm);font-size:11px;color:var(--text3);">${done}/${krs.length} KRs</div>
       </div>
     </div>
 
@@ -216,15 +217,15 @@ function renderOKR(o){
     </div>`).join('')}</div>`:'<div style="font-size:12px;color:var(--text3);padding:8px 0;">Sin resultados clave aún.</div>'}
 
     <div class="add-kr-wrap">
-      <input class="add-kr-input" placeholder="+ Agregar resultado clave…" maxlength="200"
+ <input class="add-kr-input" placeholder="+ Agregar resultado clave…" maxlength="200"
         onkeydown="if(event.key==='Enter')addKR('${o.id}',this)"
         id="kr-input-${o.id}">
       <button class="btn btn-ghost btn-sm" onclick="addKR('${o.id}',document.getElementById('kr-input-${o.id}'))">+ KR</button>
     </div>
 
     <div class="okr-footer">
-      <button class="btn btn-ghost btn-sm" onclick="editObj('${o.id}')">✏️ Editar</button>
-      ${pct>=100?`<button class="btn btn-primary btn-sm" onclick="completeObj('${o.id}')">🏆 Marcar completado</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="editObj('${o.id}')"><i class="hz-i" data-i="pencil"></i> Editar</button>
+      ${pct>=100?`<button class="btn btn-primary btn-sm" onclick="completeObj('${o.id}')"><i class="hz-i" data-i="trophy"></i> Marcar completado</button>`:''}
       <button class="btn btn-danger btn-sm" onclick="deleteObj('${o.id}')">Eliminar</button>
     </div>
   </div>`;
@@ -256,7 +257,7 @@ async function addKR(objId, inputEl){
 async function completeObj(id){
   const sb=getSB();
   await sb.from('objetivos').update({estado:'completado'}).eq('id',id);
-  allObjs=allObjs.filter(o=>o.id!==id); render(); opsToast('¡Objetivo completado! 🏆');
+ allObjs=allObjs.filter(o=>o.id!==id); render(); opsToast('¡Objetivo completado!');
 }
 async function deleteObj(id){
   if(!confirm('¿Eliminar este objetivo?'))return;
@@ -280,7 +281,7 @@ async function saveObj(){
   const sb=getSB();
   if(editId){ await sb.from('objetivos').update(data).eq('id',editId); const idx=allObjs.findIndex(o=>o.id===editId); if(idx>=0)allObjs[idx]={...allObjs[idx],...data}; }
   else{ const {data:n}=await sb.from('objetivos').insert(data).select().single(); allObjs.unshift(n); }
-  closeModal(); render(); opsToast(editId?'Objetivo actualizado':'Objetivo creado');
+ closeModal(); render(); opsToast(editId?'Objetivo actualizado':'Objetivo creado');
 }
 
 (async function(){ const session=await opsRequireAuth(); if(!session)return; await opsInitNav(); await load(); })();

@@ -39,7 +39,7 @@
 .nota-card-titulo{font-size:14px;font-weight:600;color:rgba(0,0,0,.8);margin-bottom:8px;line-height:1.3;}
 .nota-card-contenido{font-size:12px;color:rgba(0,0,0,.65);line-height:1.6;white-space:pre-wrap;word-break:break-word;}
 .nota-card-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
-.nota-card-date{font-family:var(--fm);font-size:8px;color:rgba(0,0,0,.45);letter-spacing:.5px;}
+.nota-card-date{font-family:var(--fm);font-size:11px;color:rgba(0,0,0,.45);letter-spacing:.5px;}
 .nota-card-actions{display:flex;gap:4px;opacity:0;transition:.15s;}
 .nota-card:hover .nota-card-actions{opacity:1;}
 .na-btn{background:rgba(0,0,0,.12);border:none;border-radius:4px;color:rgba(0,0,0,.6);cursor:pointer;padding:3px 7px;font-size:11px;transition:.15s;}
@@ -73,6 +73,7 @@
 .cp-dot:hover{transform:scale(1.1);}
 .cp-dot.selected{border-color:rgba(0,0,0,.4);transform:scale(1.1);}
 </style>
+<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -85,9 +86,9 @@
     </div>
     <div class="ops-content">
       <div class="notas-toolbar">
-        <input class="notas-search" id="notaSearch" placeholder="🔍 Buscar notas…" oninput="render()">
+ <input class="notas-search" id="notaSearch" placeholder="Buscar notas…" oninput="render()">
         <div class="color-filters" id="colorFilters">
-          <span style="font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:1px;margin-right:2px;">COLOR:</span>
+          <span style="font-family:var(--fm);font-size:11px;color:var(--text3);letter-spacing:1px;margin-right:2px;">COLOR:</span>
           <div class="cf-dot active" style="background:var(--border2);border:1px solid var(--border3);" onclick="setColorFilter('',this)" title="Todas"></div>
           <div class="cf-dot" style="background:#f9e784;" onclick="setColorFilter('amarillo',this)"></div>
           <div class="cf-dot" style="background:#ff8a75;" onclick="setColorFilter('coral',this)"></div>
@@ -99,7 +100,7 @@
         </div>
         <div class="view-toggle">
           <button class="vt-btn active" id="vGrid" onclick="setView('grid',this)" title="Grid">⊞</button>
-          <button class="vt-btn" id="vList" onclick="setView('list',this)" title="Lista">☰</button>
+          <button class="vt-btn" id="vList" onclick="setView('list',this)" title="Lista"><i class="hz-i" data-i="list"></i></button>
         </div>
       </div>
       <div id="notasLoading" class="ops-loading"><div class="ops-spinner"></div></div>
@@ -112,15 +113,15 @@
 <div class="nota-modal-bg" id="notaModal">
   <div class="nota-modal" id="notaModalBox">
     <div class="nota-modal-header" id="notaModalHeader">
-      <input class="nm-titulo" id="nmTitulo" placeholder="Título…" maxlength="200" oninput="schedSave()">
+ <input class="nm-titulo" id="nmTitulo" placeholder="Título…" maxlength="200" oninput="schedSave()">
     </div>
     <div class="nota-modal-body">
-      <textarea class="nm-contenido" id="nmContenido" placeholder="Escribí lo que quieras…" oninput="schedSave()"></textarea>
+ <textarea class="nm-contenido" id="nmContenido" placeholder="Escribí lo que quieras…" oninput="schedSave()"></textarea>
     </div>
     <div class="nota-modal-footer">
       <div class="color-picker-row" id="colorPicker"></div>
       <div style="display:flex;gap:6px;flex-shrink:0;">
-        <button class="btn btn-ghost btn-sm" onclick="deleteNota()">🗑</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteNota()"><i class="hz-i" data-i="trash"></i></button>
         <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cerrar</button>
       </div>
     </div>
@@ -165,7 +166,7 @@ function render(){
   const container=document.getElementById('notasContainer');
 
   if(!filtered.length){
-    container.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon">📝</div><div class="ops-empty-text">${activeColor||document.getElementById('notaSearch').value?'Sin notas con ese filtro':'Sin notas aún'}</div><button class="btn btn-primary" onclick="openNew()" style="margin-top:12px;">+ Crear nota</button></div>`;
+    container.innerHTML=`<div class="ops-empty"><div class="ops-empty-icon"><i class="hz-i" data-i="note"></i></div><div class="ops-empty-text">${activeColor||document.getElementById('notaSearch').value?'Sin notas con ese filtro':'Sin notas aún'}</div><button class="btn btn-primary" onclick="openNew()" style="margin-top:12px;">+ Crear nota</button></div>`;
     return;
   }
 
@@ -185,8 +186,8 @@ function renderCard(n){
       <span class="nota-card-date">${date}</span>
       <div class="nota-card-actions" onclick="event.stopPropagation()">
         <button class="na-btn" onclick="duplicateNota('${n.id}')">⎘</button>
-        <button class="na-btn" onclick="openEdit('${n.id}')">✏️</button>
-        <button class="na-btn" onclick="deleteNotaById('${n.id}')">🗑</button>
+        <button class="na-btn" onclick="openEdit('${n.id}')"><i class="hz-i" data-i="pencil"></i></button>
+        <button class="na-btn" onclick="deleteNotaById('${n.id}')"><i class="hz-i" data-i="trash"></i></button>
       </div>
     </div>
   </div>`;
@@ -265,7 +266,7 @@ async function deleteNota(){
   const sb=getSB();
   await sb.from('notas').delete().eq('id',editId);
   allNotas=allNotas.filter(n=>n.id!==editId);
-  editId=null; closeModal(); render(); opsToast('Nota eliminada');
+ editId=null; closeModal(); render(); opsToast('Nota eliminada');
 }
 
 async function deleteNotaById(id){
@@ -278,7 +279,7 @@ async function duplicateNota(id){
   const n=allNotas.find(x=>x.id===id); if(!n)return;
   const sb=getSB();
   const {data}=await sb.from('notas').insert({titulo:n.titulo+' (copia)',contenido:n.contenido,color:n.color}).select().single();
-  allNotas.unshift(data); render(); opsToast('Nota duplicada');
+ allNotas.unshift(data); render(); opsToast('Nota duplicada');
 }
 
 (async function(){ const session=await opsRequireAuth(); if(!session)return; await opsInitNav(); await load(); })();
