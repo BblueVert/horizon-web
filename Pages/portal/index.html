@@ -178,43 +178,66 @@ button{cursor:pointer;}
 .fstat{display:flex;align-items:center;gap:16px;padding:16px 18px;}
 .fstat-n{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;}
 .fstat-l{font-size:13.5px;color:var(--ink2);}
+.fbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .filters{display:flex;gap:6px;flex-wrap:wrap;}
-.fbtn{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:7px 14px;font-size:13.5px;font-weight:600;color:var(--ink2);}
+.fbtn{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:8px 14px;font-size:13.5px;font-weight:600;color:var(--ink2);display:inline-flex;gap:6px;align-items:center;}
+.fbtn .c{font-size:12px;opacity:.7;font-variant-numeric:tabular-nums;}
 .fbtn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;}
+.fsearch{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:99px;background:var(--surface);padding:0 14px;}
+.fsearch .hz-i{color:var(--ink3);font-size:16px;}
+.fsearch input{border:0;outline:none;background:none;font-size:15px;padding:9px 0;flex:1;min-width:0;}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+@media(min-width:640px){.pgrid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(min-width:900px){.pgrid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-align:left;padding:0;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,22,18,.1);}
+.pimg{aspect-ratio:1;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:30px;position:relative;overflow:hidden;}
+.pimg img{width:100%;height:100%;object-fit:cover;}
+.pimg .nophoto{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;}
+.pimg .nophoto .hz-i{font-size:28px;}
+.pbadge{position:absolute;top:8px;left:8px;font-size:11.5px;font-weight:700;border-radius:99px;padding:3px 9px;background:rgba(255,255,255,.92);color:var(--ink2);}
+.pbadge.listo{background:var(--ok);color:#fff;}
+.pbadge.borrador{background:#fff4e0;color:var(--warn);}
+.pbody{padding:10px 12px 12px;}
+.pc-name{font-weight:600;font-size:14px;line-height:1.3;display:block;}
+.pc-sub{font-size:12px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fempty{grid-column:1/-1;padding:40px 16px;text-align:center;color:var(--ink3);font-size:14.5px;}
+.fempty .hz-i{font-size:30px;display:block;margin:0 auto 8px;}
 
-.picker{position:relative;scroll-margin-top:130px;}
-.pick-btn{width:100%;display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border:1px solid var(--line2);border-radius:14px;background:var(--surface);text-align:left;box-shadow:var(--shadow);}
-.pick-btn > .hz-i{margin-left:auto;font-size:19px;color:var(--ink3);transition:transform .2s;}
-.pick-btn[aria-expanded="true"] > .hz-i{transform:rotate(180deg);}
-.thumb{width:52px;height:52px;border-radius:10px;background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:21px;overflow:hidden;}
-.thumb img{width:100%;height:100%;object-fit:cover;}
-.pick-name{font-weight:600;font-size:15px;line-height:1.25;}
-.pick-sub{font-size:12.5px;color:var(--ink3);}
-.pop{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--surface);border:1px solid var(--line2);border-radius:14px;box-shadow:0 18px 44px rgba(26,22,18,.16);overflow:hidden;}
-.pop-search{display:flex;align-items:center;gap:8px;padding:11px 12px;border-bottom:1px solid var(--line);}
-.pop-search .hz-i{color:var(--ink3);font-size:17px;}
-.pop-search input{flex:1;border:0;outline:none;background:none;font-size:15px;min-width:0;}
-.opts{max-height:min(56vh,440px);overflow-y:auto;overscroll-behavior:contain;}
-.og{position:sticky;top:0;background:var(--surface);padding:10px 14px 6px;font-size:11.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;z-index:1;}
-.opt{display:flex;align-items:center;gap:12px;padding:8px 14px 8px 12px;cursor:pointer;}
-.opt.kb,.opt:hover{background:var(--surface2);}
-.opt[aria-selected="true"]{background:var(--brand-soft);}
-.opt .thumb{width:42px;height:42px;border-radius:8px;font-size:18px;}
-.opt .st{margin-left:auto;font-size:17px;flex-shrink:0;}
-.opt .st.listo{color:var(--ok);}
-.opt .st.borrador{color:var(--warn);}
-
-.ficha{margin-top:14px;padding:18px;}
-.f-head{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:center;margin-bottom:20px;}
-.f-head .thumb{width:92px;height:92px;border-radius:14px;font-size:32px;}
+/* Hoja de la ficha y galería (pantalla completa en móvil, modal en escritorio) */
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(20,18,15,.45);display:flex;align-items:flex-end;justify-content:center;}
+.sheet-in{background:var(--bg);width:100%;max-width:760px;height:100%;display:flex;flex-direction:column;}
+@media(min-width:800px){.sheet{align-items:center;padding:24px;}.sheet-in{height:auto;max-height:92vh;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.25);}}
+.sheet-h{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface);}
+.sheet-h h2{flex:1;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.sheet-h .nav{display:flex;gap:2px;}
+.ibtn{width:40px;height:40px;border:0;background:none;border-radius:10px;color:var(--ink2);display:inline-flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.ibtn:hover{background:var(--surface2);color:var(--ink);}
+.ibtn:disabled{opacity:.3;}
+.sheet-b{overflow-y:auto;padding:16px;flex:1;overscroll-behavior:contain;}
+.sheet-f{padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface);display:flex;gap:10px;}
+.ficha{padding:18px;}
+.f-head{margin-bottom:14px;}
 .f-name{font-family:var(--ff-title);font-size:22px;font-weight:700;line-height:1.2;}
 .f-sub{font-size:13px;color:var(--ink2);margin-top:3px;}
-.f-save{font-size:12.5px;color:var(--ink3);margin-top:7px;display:flex;align-items:center;gap:5px;}
+.f-save{font-size:12.5px;color:var(--ink3);margin-top:6px;display:flex;align-items:center;gap:5px;}
 .f-save.ok{color:var(--ok);}
 .fgroup{border-top:1px solid var(--line);padding-top:18px;margin-top:18px;}
 .fgroup:first-of-type{border-top:0;margin-top:0;padding-top:0;}
 .fg-t{font-size:14.5px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .fg-t .hz-i{font-size:18px;color:var(--ink2);}
+.fg-t small{font-weight:500;color:var(--ink3);font-size:12.5px;margin-left:auto;}
+.chosen{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+.chosen .cph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--surface2);}
+.chosen .cph:first-child{grid-column:span 2;grid-row:span 2;}
+.chosen img{width:100%;height:100%;object-fit:cover;display:block;}
+.chosen .main{position:absolute;left:6px;bottom:6px;background:var(--brand);color:var(--on-brand);font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;}
+.chosen .rm{position:absolute;top:5px;right:5px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.chosen .mk{position:absolute;inset:0;border:0;background:none;}
+.pick-cta{width:100%;border:1.5px dashed var(--line2);background:var(--surface);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14.5px;font-weight:600;color:var(--ink);}
+.pick-cta .hz-i{font-size:19px;}
+.chosen + .pick-cta{margin-top:10px;padding:11px;}
+.hint{font-size:13px;color:var(--ink3);margin-top:8px;}
 .dims{display:grid;gap:14px;}
 .bagfig{display:none;}
 @media(min-width:640px){.dims{grid-template-columns:170px 1fr;align-items:center;}.bagfig{display:block;color:var(--ink3);}}
@@ -233,13 +256,24 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
 .seg{display:flex;gap:6px;flex-wrap:wrap;}
 .seg button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:9px 15px;font-size:14px;font-weight:600;color:var(--ink2);}
 .seg button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand);}
-.f-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:600;border:1px solid transparent;}
 .btn .hz-i{font-size:17px;}
 .btn-main{background:var(--brand);color:var(--on-brand);flex:1;}
 .btn-sec{background:var(--surface);border-color:var(--line2);color:var(--ink);}
 .btn-done{background:var(--ok-soft);color:var(--ok);flex:1;}
-@media(min-width:640px){.btn-main,.btn-done{flex:none;}}
+
+/* Galería de fotos */
+.gal-top{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface);}
+.ggrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+@media(min-width:640px){.ggrid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+.gph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:0;padding:0;background:var(--surface2);}
+.gph img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .15s;}
+.gph .num{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.25);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.gph.sel .num{background:var(--brand);color:var(--on-brand);border-color:#fff;}
+.gph.sel img{opacity:.85;}
+.gph.sel{outline:3px solid var(--brand);outline-offset:-3px;}
+.gph .taken{position:absolute;left:0;right:0;bottom:0;font-size:10.5px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:10px 6px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;}
+.gal-empty{padding:40px 16px;text-align:center;color:var(--ink3);font-size:14.5px;}
 
 /* ── Brief (preventa) ── */
 .brief{padding:20px;}
@@ -334,26 +368,20 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         <div class="card fstat">
           <div class="fstat-n" id="f-n"></div>
           <div style="flex:1;display:grid;gap:8px;">
-            <div class="fstat-l">Completa las medidas y detalles de cada producto. Todo se guarda solo mientras escribes.</div>
+            <div class="fstat-l">Toca un producto para elegir sus fotos y completar medidas y detalles. Todo se guarda solo.</div>
             <div class="meter-bar"><div class="meter-fill" id="f-fill" style="width:0"></div></div>
           </div>
         </div>
-        <div class="filters" role="group" aria-label="Filtrar productos">
-          <button class="fbtn" data-f="pendientes" aria-pressed="true">Pendientes</button>
-          <button class="fbtn" data-f="listos" aria-pressed="false">Listas</button>
-          <button class="fbtn" data-f="todos" aria-pressed="false">Todas</button>
+        <div class="fbar">
+          <div class="filters" role="group" aria-label="Filtrar productos">
+            <button class="fbtn" data-f="pendientes" aria-pressed="true">Pendientes <span class="c" id="c-pendientes"></span></button>
+            <button class="fbtn" data-f="listos" aria-pressed="false">Listas <span class="c" id="c-listos"></span></button>
+            <button class="fbtn" data-f="todos" aria-pressed="false">Todas <span class="c" id="c-todos"></span></button>
+          </div>
+          <label class="fsearch"><i class="hz-i" data-i="search"></i><input id="f-q" placeholder="Buscar producto" autocomplete="off" aria-label="Buscar producto"></label>
         </div>
       </div>
-
-      <div class="picker" id="picker">
-        <button class="pick-btn" id="pick-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="pop"></button>
-        <div class="pop" id="pop" hidden>
-          <div class="pop-search"><i class="hz-i" data-i="search"></i><input id="pick-q" placeholder="Buscar por nombre, marca o color" autocomplete="off" aria-label="Buscar producto"></div>
-          <div class="opts" id="opts" role="listbox" aria-label="Productos"></div>
-        </div>
-      </div>
-
-      <form class="card ficha" id="ficha" autocomplete="off"></form>
+      <div class="pgrid" id="pgrid"></div>
     </section>
 
     <!-- Brief (solo antes de tener proyecto) -->
@@ -368,6 +396,35 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     </section>
   </div>
 </main>
+<!-- Ficha de un producto -->
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sh-title">
+  <div class="sheet-in">
+    <div class="sheet-h">
+      <button class="ibtn" type="button" id="sh-close" aria-label="Volver a la lista"><i class="hz-i" data-i="x"></i></button>
+      <h2 id="sh-title"></h2>
+      <div class="nav">
+        <button class="ibtn" type="button" id="sh-prev" aria-label="Producto anterior"><i class="hz-i" data-i="arrow-up" style="transform:rotate(-90deg)"></i></button>
+        <button class="ibtn" type="button" id="sh-next" aria-label="Producto siguiente"><i class="hz-i" data-i="chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="sheet-b"><form class="card ficha" id="ficha" autocomplete="off"></form></div>
+    <div class="sheet-f" id="sh-actions"></div>
+  </div>
+</div>
+
+<!-- Galería para elegir fotos -->
+<div class="sheet" id="gal" hidden role="dialog" aria-modal="true" aria-labelledby="gal-title">
+  <div class="sheet-in">
+    <div class="sheet-h">
+      <button class="ibtn" type="button" id="gal-close" aria-label="Cancelar"><i class="hz-i" data-i="x"></i></button>
+      <h2 id="gal-title">Elige las fotos</h2>
+      <span style="width:40px"></span>
+    </div>
+    <div class="gal-top"><label class="fsearch" style="border-radius:10px"><i class="hz-i" data-i="search"></i><input id="gal-q" placeholder="Buscar por nombre de archivo" autocomplete="off" aria-label="Buscar foto"></label></div>
+    <div class="sheet-b"><p class="hint" style="margin:0 0 10px">Toca en orden: la primera queda como foto principal.</p><div class="ggrid" id="ggrid"></div></div>
+    <div class="sheet-f"><button class="btn btn-sec" type="button" id="gal-clear">Quitar todas</button><button class="btn btn-main" type="button" id="gal-ok"></button></div>
+  </div>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -637,90 +694,111 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   // ── Fichas de producto ────────────────────────────────────────────────────
   const CIERRE = [['','Selecciona'],['cremallera','Cremallera'],['iman','Imán'],['broche','Broche'],['solapa','Solapa'],['hebilla','Hebilla'],['abierto','Abierto'],['otro','Otro']];
   const HERRAJES = [['','Selecciona'],['dorado','Dorado'],['plateado','Plateado'],['bronce','Bronce'],['negro','Negro'],['sin_herrajes','Sin herrajes'],['otro','Otro']];
-  const CAT_LABEL = { bolsos:'Bolsos', carteras:'Carteras', accesorios:'Accesorios' };
-  const F = { filter:'pendientes', current:null, q:'', saveT:null };
+  const F = { filter:'pendientes', q:'', current:null, fotos:[], saveT:null, galSel:[] };
 
   const detail = id => S.catalog.details[id] || null;
-  const isListo = id => detail(id)?.estado === 'listo';
-  const thumb = p => `<span class="thumb">${p.imagen_url && /^https:\/\//.test(p.imagen_url) ? `<img src="${esc(p.imagen_url)}" alt="" loading="lazy" data-fallback>` : ic('bag')}</span>`;
-  document.addEventListener('error', e => { if (e.target.matches?.('img[data-fallback]')) e.target.outerHTML = ic('bag'); }, true);
+  const estadoOf = id => detail(id)?.estado || null;          // 'listo' | 'borrador' | null
+  const photoById = () => Object.fromEntries((S.catalog.photos || []).map(f => [f.id, f]));
+  const fotosOf = id => { const m = photoById(); return (detail(id)?.data?.fotos || []).filter(x => m[x]); };
+  // Imagen de la tarjeta: la foto que eligió el cliente; si no, la del catálogo del sitio
+  function imgOf(p){
+    const f = fotosOf(p.id)[0]; if (f) return photoById()[f].thumb_url;
+    return p.imagen_url && /^https:\/\//.test(p.imagen_url) ? p.imagen_url : null;
+  }
+  const imgTag = (src, alt = '') => src ? `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" data-fallback>` : '';
+  document.addEventListener('error', e => { if (e.target.matches?.('img[data-fallback]')) e.target.outerHTML = `<span class="nophoto">${ic('image')}Sin foto</span>`; }, true);
 
   function filtered(){
     const q = F.q.trim().toLowerCase();
     return S.catalog.items.filter(p => {
-      if (F.filter === 'pendientes' && isListo(p.id)) return false;
-      if (F.filter === 'listos' && !isListo(p.id)) return false;
+      const st = estadoOf(p.id);
+      if (F.filter === 'pendientes' && st === 'listo') return false;
+      if (F.filter === 'listos' && st !== 'listo') return false;
       return !q || [p.nombre, p.marca, p.color, p.modelo, p.id].join(' ').toLowerCase().includes(q);
     });
   }
   function renderFichasHeader(){
-    const total = S.catalog.items.length, listos = S.catalog.items.filter(p => isListo(p.id)).length;
+    const items = S.catalog.items, total = items.length, listos = items.filter(p => estadoOf(p.id) === 'listo').length;
     $('f-n').textContent = `${listos} / ${total}`;
     $('f-fill').style.width = (total ? listos / total * 100 : 0) + '%';
-    $('fichas-count').textContent = total - listos;
-    $('fichas-count').hidden = !(total - listos);
+    $('fichas-count').textContent = total - listos; $('fichas-count').hidden = !(total - listos);
+    $('c-pendientes').textContent = total - listos; $('c-listos').textContent = listos; $('c-todos').textContent = total;
     document.querySelectorAll('.fbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === F.filter)));
   }
-  function renderPickBtn(){
-    const p = S.catalog.items.find(x => x.id === F.current);
-    $('pick-btn').innerHTML = p
-      ? `${thumb(p)}<span style="min-width:0"><span class="pick-name">${esc(p.nombre)}</span><br><span class="pick-sub">Toca para cambiar de producto</span></span>${ic('chevron-down')}`
-      : `<span class="thumb">${ic('bag')}</span><span><span class="pick-name">Elige un producto</span><br><span class="pick-sub">${S.catalog.items.length} productos</span></span>${ic('chevron-down')}`;
+  const EMPTY = { pendientes:['check-circle','¡Todas las fichas están listas!'], listos:['clipboard','Todavía no hay fichas listas. Cuando marques una, aparece aquí.'], todos:['bag','No hay productos'] };
+  function renderGrid(){
+    renderFichasHeader();
+    const list = filtered();
+    $('pgrid').innerHTML = list.map(p => {
+      const st = estadoOf(p.id), src = imgOf(p);
+      return `<button class="pcard" type="button" data-open="${esc(p.id)}">
+        <span class="pimg">${src ? imgTag(src, p.nombre) : `<span class="nophoto">${ic('image')}Elegir foto</span>`}
+          ${st ? `<span class="pbadge ${st}">${st === 'listo' ? 'Lista' : 'Empezada'}</span>` : ''}</span>
+        <span class="pbody"><span class="pc-name">${esc(p.nombre)}</span><span class="pc-sub" style="display:block">${esc([p.marca, p.color].filter(Boolean).join(' · '))}</span></span>
+      </button>`;
+    }).join('') || `<div class="fempty">${ic(F.q ? 'search' : EMPTY[F.filter][0])}${F.q ? 'Ningún producto coincide con la búsqueda.' : EMPTY[F.filter][1]}</div>`;
   }
-  function renderOpts(){
-    const list = filtered(); let html = '', cat = null;
-    for (const p of list) {
-      if (p.categoria !== cat) { cat = p.categoria; html += `<div class="og">${esc(CAT_LABEL[cat] || cat || 'Otros')}</div>`; }
-      const d = detail(p.id);
-      html += `<div class="opt" role="option" data-id="${esc(p.id)}" aria-selected="${p.id === F.current}">${thumb(p)}
-        <span style="min-width:0"><span class="pick-name" style="font-size:14px">${esc(p.nombre)}</span><br><span class="pick-sub">${esc([p.marca, p.color].filter(Boolean).join(' · '))}</span></span>
-        ${d ? `<span class="st ${d.estado}" title="${d.estado === 'listo' ? 'Lista' : 'Empezada'}">${ic(d.estado === 'listo' ? 'check-circle' : 'pencil')}</span>` : ''}</div>`;
-    }
-    $('opts').innerHTML = html || '<div class="ev-empty">No hay productos con ese filtro.</div>';
-  }
-  function openPop(open){
-    $('pop').hidden = !open; $('pick-btn').setAttribute('aria-expanded', String(open));
-    if (open) { renderOpts(); $('pick-q').value = F.q; setTimeout(() => $('pick-q').focus(), 30);
-      $('opts').querySelector('[aria-selected="true"]')?.scrollIntoView({ block:'nearest' }); }
-  }
-  $('pick-btn').addEventListener('click', () => openPop($('pop').hidden));
-  $('pick-q').addEventListener('input', e => { F.q = e.target.value; renderOpts(); });
-  $('pick-q').addEventListener('keydown', e => {
-    const opts = [...$('opts').querySelectorAll('.opt')];
-    if (e.key === 'Escape') { openPop(false); $('pick-btn').focus(); return; }
-    if (!opts.length) return;
-    let i = opts.findIndex(o => o.classList.contains('kb'));
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault(); if (i >= 0) opts[i].classList.remove('kb');
-      i = e.key === 'ArrowDown' ? Math.min(opts.length - 1, i + 1) : Math.max(0, i - 1);
-      opts[i].classList.add('kb'); opts[i].scrollIntoView({ block:'nearest' });
-    } else if (e.key === 'Enter') { e.preventDefault(); (opts[i] || opts[0]).click(); }
+  document.querySelectorAll('.fbtn').forEach(b => b.addEventListener('click', () => { F.filter = b.dataset.f; renderGrid(); }));
+  $('f-q').addEventListener('input', e => { F.q = e.target.value; renderGrid(); });
+  $('pgrid').addEventListener('click', e => { const c = e.target.closest('[data-open]'); if (c) openFicha(c.dataset.open); });
+
+  // Hoja de la ficha
+  let lastFocus = null;
+  function openSheet(id){ lastFocus = document.activeElement; $(id).hidden = false; document.body.style.overflow = 'hidden'; }
+  function closeSheet(id){ $(id).hidden = true; if ($('sheet').hidden && $('gal').hidden) document.body.style.overflow = ''; lastFocus?.focus?.(); }
+  async function closeFicha(){ if (F.saveT) await saveFicha(); closeSheet('sheet'); F.current = null; renderGrid(); }
+  $('sh-close').addEventListener('click', closeFicha);
+  $('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeFicha(); });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (!$('gal').hidden) closeSheet('gal'); else if (!$('sheet').hidden) closeFicha();
   });
-  $('opts').addEventListener('click', e => { const o = e.target.closest('.opt'); if (o) { selectProduct(o.dataset.id); openPop(false); } });
-  document.addEventListener('click', e => { if (!$('pop').hidden && !e.target.closest('#picker')) openPop(false); });
-  document.querySelectorAll('.fbtn').forEach(b => b.addEventListener('click', () => {
-    F.filter = b.dataset.f; renderFichasHeader();
-    const list = filtered(); if (list.length && !list.some(p => p.id === F.current)) selectProduct(list[0].id);
-    if (!$('pop').hidden) renderOpts();
-  }));
+  function neighbours(){
+    const list = filtered().length ? filtered() : S.catalog.items, i = list.findIndex(p => p.id === F.current);
+    return { list, i, prev: list[i - 1], next: list[i + 1] };
+  }
+  $('sh-prev').addEventListener('click', async () => { const n = neighbours(); if (n.prev) { if (F.saveT) await saveFicha(); openFicha(n.prev.id); } });
+  $('sh-next').addEventListener('click', async () => { const n = neighbours(); if (n.next) { if (F.saveT) await saveFicha(); openFicha(n.next.id); } });
 
   const BAG_SVG = `<svg class="bagfig" viewBox="0 0 170 132" width="170" height="132" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M34 52h84l10 60H24z"/><path d="M118 52l18-12v60l-8 12"/><path d="M34 52l18-12h84"/><path d="M62 52V38a14 14 0 0 1 28 0v14"/>
     <path d="M12 52v60M9 52h6M9 112h6"/><text x="4" y="92" font-size="10" fill="currentColor" stroke="none" transform="rotate(-90 6 88)">alto</text>
     <path d="M24 122h104M24 119v6M128 119v6"/><text x="62" y="131" font-size="10" fill="currentColor" stroke="none">ancho</text>
     <path d="M134 110l16-11"/><text x="140" y="118" font-size="10" fill="currentColor" stroke="none">fondo</text></svg>`;
-  const numField = (k, label, unit, v) => `<div class="fld"><label for="f-${k}">${label}</label><div class="inp"><input class="ctl" id="f-${k}" name="${k}" inputmode="decimal" placeholder="" value="${esc(v ?? '')}"><span class="unit">${unit}</span></div></div>`;
+  const numField = (k, label, unit, v) => `<div class="fld"><label for="f-${k}">${label}</label><div class="inp"><input class="ctl" id="f-${k}" name="${k}" inputmode="decimal" value="${esc(v ?? '')}"><span class="unit">${unit}</span></div></div>`;
   const selectField = (k, label, opts, v) => `<div class="fld"><label for="f-${k}">${label}</label><select class="ctl" id="f-${k}" name="${k}">${opts.map(([val, l]) => `<option value="${val}" ${val === (v || '') ? 'selected' : ''}>${l}</option>`).join('')}</select></div>`;
   const textField = (k, label, ph, max, v, full) => `<div class="fld${full ? ' full' : ''}"><label for="f-${k}">${label}</label><input class="ctl" id="f-${k}" name="${k}" maxlength="${max}" placeholder="${ph}" value="${esc(v || '')}"></div>`;
 
-  function selectProduct(id){
-    F.current = id; renderPickBtn();
-    const p = S.catalog.items.find(x => x.id === id), d = detail(id) || { data:{}, estado:'borrador' }, v = d.data || {};
+  function renderChosen(){
+    const m = photoById(), n = F.fotos.length, total = (S.catalog.photos || []).length;
+    $('f-photos').innerHTML = (n ? `<div class="chosen">${F.fotos.map((id, i) => `<div class="cph">
+        <img src="${esc(m[id].thumb_url)}" alt="${esc(m[id].nombre)}">
+        ${i === 0 ? '<span class="main">Principal</span>' : `<button class="mk" type="button" data-main="${id}" aria-label="Usar como principal"></button>`}
+        <button class="rm" type="button" data-rm="${id}" aria-label="Quitar foto">${ic('x')}</button></div>`).join('')}</div>` : '')
+      + (total ? `<button class="pick-cta" type="button" id="open-gal">${ic('image')}${n ? 'Cambiar fotos' : 'Elegir fotos de la sesión'}</button>`
+               : `<p class="hint">El equipo todavía no sube las fotos de la sesión. Apenas estén, las eliges aquí.</p>`)
+      + (n > 1 ? '<p class="hint">Toca una foto para dejarla como principal.</p>' : '');
+    $('f-photos-n').textContent = n ? `${n} ${n === 1 ? 'foto' : 'fotos'}` : '';
+  }
+  function renderActions(){
+    const st = estadoOf(F.current), n = neighbours();
+    $('sh-actions').innerHTML = (st === 'listo'
+        ? `<button type="button" class="btn btn-done" id="f-reopen">${ic('check-circle')}Lista · volver a editar</button>`
+        : `<button type="button" class="btn btn-main" id="f-done">${ic('check')}Marcar como lista</button>`)
+      + `<button type="button" class="btn btn-sec" id="f-next" ${n.next || F.filter === 'pendientes' ? '' : 'disabled'}>Siguiente${ic('chevron-right')}</button>`;
+    $('sh-prev').disabled = !n.prev; $('sh-next').disabled = !n.next;
+  }
+  function openFicha(id){
+    F.current = id; clearTimeout(F.saveT); F.saveT = null;
+    const p = S.catalog.items.find(x => x.id === id), d = detail(id) || { data:{}, estado:null }, v = d.data || {};
+    F.fotos = fotosOf(id);
     const reg = v.correa_regulable || '';
+    $('sh-title').textContent = p.nombre;
     $('ficha').innerHTML = `
-      <div class="f-head">${thumb(p)}<div style="min-width:0"><div class="f-name">${esc(p.nombre)}</div>
+      <div class="f-head"><div class="f-name">${esc(p.nombre)}</div>
         <div class="f-sub">${esc([p.marca, p.modelo, p.color].filter(Boolean).join(' · '))}</div>
-        <div class="f-save ${d.updated_at ? 'ok' : ''}" id="f-save">${d.updated_at ? ic('check') + 'Guardado ' + ago(d.updated_at) : 'Sin datos todavía'}</div></div></div>
+        <div class="f-save ${d.updated_at ? 'ok' : ''}" id="f-save">${d.updated_at ? ic('check') + 'Guardado ' + ago(d.updated_at) : 'Sin datos todavía'}</div></div>
+      <div class="fgroup"><div class="fg-t">${ic('image')}Fotos<small id="f-photos-n"></small></div><div id="f-photos"></div></div>
       <div class="fgroup"><div class="fg-t">${ic('ruler')}Medidas</div>
         <div class="dims">${BAG_SVG}<div class="grid g3">${numField('alto_cm','Alto','cm',v.alto_cm)}${numField('ancho_cm','Ancho','cm',v.ancho_cm)}${numField('fondo_cm','Fondo','cm',v.fondo_cm)}</div></div></div>
       <div class="fgroup"><div class="fg-t">${ic('bag')}Asa y correa</div>
@@ -732,48 +810,85 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
           ${numField('peso_g','Peso','g',v.peso_g)}${textField('forro','Forro','Ej: algodón beige',200,v.forro)}
           ${textField('compartimentos','Compartimentos interiores','Ej: 1 bolsillo con cierre y 2 para celular',300,v.compartimentos,true)}
           <div class="fld full"><label for="f-notas">Notas</label><textarea class="ctl" id="f-notas" name="notas" maxlength="1000" placeholder="Cualquier detalle que quieras que aparezca en la ficha">${esc(v.notas || '')}</textarea></div>
-        </div></div>
-      <div class="f-actions">
-        ${d.estado === 'listo'
-          ? `<button type="button" class="btn btn-done" id="f-reopen">${ic('check-circle')}Ficha lista · volver a editar</button>`
-          : `<button type="button" class="btn btn-main" id="f-done">${ic('check')}Marcar como lista</button>`}
-        <button type="button" class="btn btn-sec" id="f-next">Siguiente producto${ic('chevron-right')}</button>
-      </div>`;
+        </div></div>`;
+    renderChosen(); renderActions();
+    if ($('sheet').hidden) openSheet('sheet');
+    $('sheet').querySelector('.sheet-b').scrollTop = 0;
   }
   function readForm(){
     const data = {};
     $('ficha').querySelectorAll('[name]').forEach(el => { if (el.value.trim() !== '') data[el.name] = el.value.trim(); });
     const seg = $('ficha').querySelector('[data-seg] [aria-pressed="true"]'); if (seg) data.correa_regulable = seg.dataset.v;
+    data.fotos = F.fotos.slice();
     return data;
   }
   async function saveFicha(estado){
     clearTimeout(F.saveT); F.saveT = null;
     const id = F.current; if (!id) return false;
-    const st = estado || detail(id)?.estado || 'borrador';
+    const st = estado || estadoOf(id) || 'borrador';
     const el = $('f-save'); if (el) { el.className = 'f-save'; el.innerHTML = ic('refresh') + 'Guardando…'; }
     try {
       const r = await post({ action:'product', product_id:id, data: readForm(), estado: st });
       S.catalog.details[id] = { product_id:id, data:r.data, estado:r.estado, updated_at:r.updated_at };
       const e2 = F.current === id && $('f-save'); if (e2) { e2.className = 'f-save ok'; e2.innerHTML = ic('check') + 'Guardado'; }
-      renderFichasHeader(); if (!$('pop').hidden) renderOpts();
+      renderFichasHeader();
       return true;
     } catch { if (el) el.innerHTML = ic('alert') + 'No se pudo guardar. Revisa tu conexión.'; return false; }
   }
-  $('ficha').addEventListener('input', () => { clearTimeout(F.saveT); F.saveT = setTimeout(() => saveFicha(), 900); });
+  const queueSave = (ms = 900) => { clearTimeout(F.saveT); F.saveT = setTimeout(() => saveFicha(), ms); };
+  $('ficha').addEventListener('input', () => queueSave());
   $('ficha').addEventListener('change', e => { if (e.target.matches('select')) saveFicha(); });
   $('ficha').addEventListener('submit', e => e.preventDefault());
-  $('ficha').addEventListener('click', async e => {
+  $('ficha').addEventListener('click', e => {
     const sb = e.target.closest('[data-seg] button');
     if (sb) { sb.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === sb))); saveFicha(); return; }
-    if (e.target.closest('#f-done'))        { if (await saveFicha('listo')) { toast('Ficha lista'); goNext(); } }
-    else if (e.target.closest('#f-reopen')) { if (await saveFicha('borrador')) selectProduct(F.current); }
-    else if (e.target.closest('#f-next'))   { if (F.saveT) await saveFicha(); goNext(); }
+    const rm = e.target.closest('[data-rm]'), mk = e.target.closest('[data-main]');
+    if (rm) { F.fotos = F.fotos.filter(x => x !== rm.dataset.rm); renderChosen(); saveFicha(); }
+    if (mk) { F.fotos = [mk.dataset.main, ...F.fotos.filter(x => x !== mk.dataset.main)]; renderChosen(); saveFicha(); }
+    if (e.target.closest('#open-gal')) openGallery();
   });
-  function goNext(){
+  $('sh-actions').addEventListener('click', async e => {
+    if (e.target.closest('#f-done'))        { if (await saveFicha('listo')) { toast('Ficha lista'); goNext(true); } }
+    else if (e.target.closest('#f-reopen')) { if (await saveFicha('borrador')) renderActions(); }
+    else if (e.target.closest('#f-next'))   { if (F.saveT) await saveFicha(); goNext(false); }
+  });
+  function goNext(afterDone){
     const all = S.catalog.items, i = all.findIndex(p => p.id === F.current);
-    const next = [...all.slice(i + 1), ...all.slice(0, i)].find(p => !isListo(p.id)) || all[(i + 1) % all.length];
-    selectProduct(next.id); $('picker').scrollIntoView({ behavior:'smooth', block:'start' });
+    const pending = [...all.slice(i + 1), ...all.slice(0, i)].find(p => estadoOf(p.id) !== 'listo');
+    const n = neighbours();
+    const target = F.filter === 'pendientes' || afterDone ? pending : n.next;
+    if (target) openFicha(target.id); else { toast('¡Terminaste todas las fichas!'); closeFicha(); }
   }
+
+  // Galería: elegir fotos (orden de toque = orden final)
+  function takenBy(){
+    const m = {};
+    for (const [pid, d] of Object.entries(S.catalog.details)) if (pid !== F.current) (d.data?.fotos || []).forEach(f => { m[f] = m[f] || S.catalog.items.find(p => p.id === pid)?.nombre; });
+    return m;
+  }
+  function renderGallery(){
+    const q = $('gal-q').value.trim().toLowerCase(), taken = takenBy();
+    const list = (S.catalog.photos || []).filter(f => !q || f.nombre.toLowerCase().includes(q));
+    $('ggrid').innerHTML = list.map(f => { const i = F.galSel.indexOf(f.id);
+      return `<button class="gph${i >= 0 ? ' sel' : ''}" type="button" data-ph="${f.id}" aria-pressed="${i >= 0}" aria-label="${esc(f.nombre)}${taken[f.id] ? ', ya usada en ' + esc(taken[f.id]) : ''}">
+        <img src="${esc(f.thumb_url)}" alt="" loading="lazy"><span class="num">${i >= 0 ? i + 1 : ''}</span>
+        ${taken[f.id] ? `<span class="taken">En ${esc(taken[f.id])}</span>` : ''}</button>`; }).join('')
+      || '<div class="gal-empty" style="grid-column:1/-1">Ninguna foto coincide.</div>';
+    const n = F.galSel.length;
+    $('gal-ok').innerHTML = ic('check') + (n ? `Usar ${n} ${n === 1 ? 'foto' : 'fotos'}` : 'Sin fotos');
+  }
+  function openGallery(){ F.galSel = F.fotos.slice(); $('gal-q').value = ''; renderGallery(); openSheet('gal'); $('gal').querySelector('.sheet-b').scrollTop = 0; }
+  $('ggrid').addEventListener('click', e => {
+    const b = e.target.closest('[data-ph]'); if (!b) return;
+    const id = b.dataset.ph, i = F.galSel.indexOf(id);
+    if (i >= 0) F.galSel.splice(i, 1); else if (F.galSel.length < 12) F.galSel.push(id); else return toast('Máximo 12 fotos por producto', 'alert');
+    renderGallery();
+  });
+  $('gal-q').addEventListener('input', renderGallery);
+  $('gal-clear').addEventListener('click', () => { F.galSel = []; renderGallery(); });
+  $('gal-close').addEventListener('click', () => closeSheet('gal'));
+  $('gal').addEventListener('click', e => { if (e.target.id === 'gal') closeSheet('gal'); });
+  $('gal-ok').addEventListener('click', async () => { F.fotos = F.galSel.slice(); closeSheet('gal'); renderChosen(); await saveFicha(); });
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
   const TABS = ['plan','act','fichas'];
@@ -816,7 +931,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     renderHero(); renderFeed();
     if (force || !composing()) renderMilestones();   // no borrar un comentario a medio escribir
     if (!$('p-plan').hidden) renderGantt();
-    if (S.catalog) renderFichasHeader();
+    if (S.catalog) { if ($('sheet').hidden) renderGrid(); else renderFichasHeader(); }
   }
   async function load(silent){
     if (!token) { $('loading').hidden = true; $('error').hidden = false; return; }
@@ -831,8 +946,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         if (!data.project) { initBrief(); return; }
         document.title = `${data.project.brand?.nombre || data.lead.empresa || 'Proyecto'} · Portal HORIZON`;
         if (data.catalog) {
-          $('t-fichas').hidden = false; renderFichasHeader();
-          const list = filtered(); selectProduct((list[0] || data.catalog.items[0]).id);
+          $('t-fichas').hidden = false; renderGrid();
         }
         const h = location.hash.slice(1);
         setTab(TABS.includes(h) && !$('t-' + h).hidden ? h : 'plan', false);

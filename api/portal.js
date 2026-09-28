@@ -10,7 +10,7 @@
 //      brief    { brief }                          guarda el brief pre-diagnóstico
 //      reorder  { ids: [milestone_id, ...] }        el cliente prioriza lo que viene
 //      comment  { milestone_id?, contenido }        comentario del cliente (general o de un hito)
-//      product  { product_id, data, estado }        ficha de producto (medidas y detalles)
+//      product  { product_id, data, estado }        ficha de producto (medidas, detalles y fotos elegidas)
 //
 // Usa la anon key: las políticas RLS dejan ver y tocar solo el proyecto cuyo portal_token viene
 // en el header x-portal-token, y los permisos por columna limitan qué campos puede escribir.
@@ -139,9 +139,19 @@ module.exports = async function handler(req, res) {
         if (!project.catalog_enabled) return res.status(409).json({ error: 'Fichas no habilitadas' });
         const productId = String(b.product_id || '').substring(0, 60);
         if (!/^[A-Za-z0-9_-]+$/.test(productId)) return res.status(400).json({ error: 'Producto inválido' });
+        const data = cleanProductData(b.data || {});
+        // fotos elegidas: solo ids de fotos de este proyecto, sin repetir, en el orden del cliente
+        if (Array.isArray(b.data?.fotos)) {
+          const wanted = [...new Set(b.data.fotos.map(String).filter(id => UUID_RE.test(id)))].slice(0, 12);
+          if (wanted.length) {
+            const ok = await get(`catalog_photos?project_id=eq.${pid}&id=in.(${wanted.join(',')})&select=id`);
+            const valid = new Set(ok.map(r => r.id));
+            data.fotos = wanted.filter(id => valid.has(id));
+          } else data.fotos = [];
+        }
         const row = {
           project_id: pid, product_id: productId,
-          data: cleanProductData(b.data || {}),
+          data,
           estado: b.estado === 'listo' ? 'listo' : 'borrador',
           updated_at: new Date().toISOString(),
         };
@@ -167,11 +177,12 @@ module.exports = async function handler(req, res) {
 
     let catalog = null;
     if (project?.catalog_enabled) {
-      const [items, details] = await Promise.all([
+      const [items, details, photos] = await Promise.all([
         get(`catalog_items?project_id=eq.${project.id}&select=id,nombre,marca,categoria,modelo,color,imagen_url&order=orden.asc`),
         get(`product_details?project_id=eq.${project.id}&select=product_id,data,estado,updated_at`),
+        get(`catalog_photos?project_id=eq.${project.id}&select=id,nombre,url,thumb_url,ancho,alto&order=orden.asc,created_at.asc`),
       ]);
-      catalog = { items, details: Object.fromEntries(details.map(d => [d.product_id, d])) };
+      catalog = { items, photos, details: Object.fromEntries(details.map(d => [d.product_id, d])) };
     }
 
     delete lead.id;
