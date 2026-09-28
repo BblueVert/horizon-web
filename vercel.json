@@ -17,6 +17,7 @@
     { "source": "/api/ops/tasks/:id", "destination": "/api/ops/tasks?id=:id" },
     { "source": "/ops", "destination": "/OPS/index.html" },
     { "source": "/ops/login", "destination": "/OPS/login.html" },
+    { "source": "/entrar", "destination": "/OPS/login.html" },
     { "source": "/ops/pipeline", "destination": "/OPS/pipeline.html" },
     { "source": "/ops/proyectos", "destination": "/OPS/proyectos.html" },
     { "source": "/ops/proyecto", "destination": "/OPS/proyecto-detalle.html" },

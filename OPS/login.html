@@ -4,100 +4,161 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>HORIZON OPS · Acceso</title>
-<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>HORIZON · Entrar</title>
+<link rel="icon" type="image/png" href="/Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="/OPS/shared/ops.css">
+<script src="/shared/hz-icons.js"></script>
 <style>
+[hidden]{display:none!important;}
 html,body{height:100%;overflow:auto;}
 body{display:flex;align-items:center;justify-content:center;min-height:100vh;
   background:radial-gradient(ellipse at 30% 20%,rgba(255,107,53,.08) 0%,transparent 60%),#0a0914;}
-.login-wrap{width:100%;max-width:380px;padding:24px;}
-.login-card{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:36px 32px;}
-.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
-.login-logo img{height:28px;}
-.login-logo-badge{font-family:var(--fm);font-size:12px;letter-spacing:.4px;color:var(--h1);}
-.login-title{font-family:var(--fd);font-size:30px;letter-spacing:.4px;color:var(--text);margin-bottom:4px;}
-.login-sub{font-family:var(--fm);font-size:12px;letter-spacing:1px;color:var(--text3);margin-bottom:28px;text-transform:uppercase;}
-.login-error{
-  display:none;background:rgba(239,68,68,.08);color:#f87171;
-  border:1px solid rgba(239,68,68,.18);border-radius:7px;
-  padding:10px 12px;font-family:var(--fm);font-size:12.5px;margin-top:12px;
-}
-.login-error.show{display:block;}
+.login-wrap{width:100%;max-width:400px;padding:24px 16px;}
+.login-card{background:var(--card);border:1px solid var(--border2);border-radius:18px;padding:34px 28px;}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:30px;}
+.login-logo img{height:26px;}
+.login-logo-badge{font-size:12px;font-weight:600;letter-spacing:.6px;color:var(--h1);}
+.login-title{font-size:24px;font-weight:700;letter-spacing:-.2px;color:var(--text);margin-bottom:6px;}
+.login-sub{font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.5;}
+.login-sub strong{color:var(--text);font-weight:600;}
+.ops-input{font-size:16px;padding:12px 14px;}
+.code-input{letter-spacing:10px;font-size:26px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;padding:12px 8px;}
+.btn-full{width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:6px;}
+.msg{display:flex;gap:8px;align-items:flex-start;border-radius:10px;padding:11px 12px;font-size:13.5px;line-height:1.45;margin-top:14px;}
+.msg .hz-i{font-size:17px;flex-shrink:0;margin-top:1px;}
+.msg.err{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+.msg.ok{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);}
+.links{display:flex;justify-content:space-between;gap:12px;margin-top:18px;}
+.link{background:none;border:0;color:var(--text2);font-size:13.5px;font-weight:600;cursor:pointer;padding:0;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.link:hover{color:var(--text);}
+.link:disabled{opacity:.45;cursor:default;}
 </style>
-<script src="/shared/hz-icons.js"></script>
 </head>
 <body class="ops-dark">
 <div class="login-wrap">
   <div class="login-card">
     <div class="login-logo">
-      <img src="../Identidad/Logo-Vertical-png.png" alt="HORIZON">
-      <span class="login-logo-badge">OPS</span>
+      <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON">
     </div>
-    <div class="login-title">Acceso</div>
-    <div class="login-sub">Centro de Operaciones · Solo equipo HORIZON</div>
 
-    <form id="loginForm" novalidate>
+    <!-- Paso 1: correo -->
+    <form id="stepEmail" novalidate>
+      <div class="login-title">Entrar</div>
+      <p class="login-sub">Escribe tu correo y te enviamos un código para entrar, sin contraseña.</p>
       <div class="ops-field">
-        <label class="ops-label" for="email">Email</label>
- <input class="ops-input" type="email" id="email" placeholder="tu@email.com" required autocomplete="email">
+        <label class="ops-label" for="email">Correo</label>
+        <input class="ops-input" type="email" id="email" placeholder="tu@correo.com" required autocomplete="email" inputmode="email" autofocus>
       </div>
-      <div class="ops-field">
-        <label class="ops-label" for="password">Contraseña</label>
- <input class="ops-input" type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
-      </div>
-      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;margin-top:4px;" id="btnLogin">
-        <span id="btnText">Ingresar</span>
-      </button>
-      <div class="login-error" id="loginError"></div>
+      <button type="submit" class="btn btn-primary btn-full" id="btnSend"><i class="hz-i" data-i="send"></i><span>Enviarme el código</span></button>
     </form>
+
+    <!-- Paso 2: código -->
+    <form id="stepCode" novalidate hidden>
+      <div class="login-title">Revisa tu correo</div>
+      <p class="login-sub">Enviamos un código a <strong id="sentTo"></strong>. Escríbelo aquí o toca el link del correo.</p>
+      <div class="ops-field">
+        <label class="ops-label" for="code">Código</label>
+        <input class="ops-input code-input" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" id="btnVerify"><i class="hz-i" data-i="check"></i><span>Entrar</span></button>
+      <div class="links">
+        <button type="button" class="link" id="btnBack"><i class="hz-i" data-i="arrow-up" style="transform:rotate(-90deg)"></i>Otro correo</button>
+        <button type="button" class="link" id="btnResend">Reenviar código</button>
+      </div>
+    </form>
+
+    <div id="msg" role="status" aria-live="polite"></div>
   </div>
 </div>
 <script src="/OPS/shared/ops-auth.js"></script>
 <script>
 (async function(){
-  // Si ya hay sesión, redirigir al dashboard
   const sb = getSB();
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    // solo redirige si la cuenta es admin; si no, cierra la sesión y se queda acá (evita un bucle login ↔ /ops)
+  const $ = id => document.getElementById(id);
+  const show = (text, kind = 'err') => { $('msg').innerHTML = text ? `<div class="msg ${kind}"><i class="hz-i" data-i="${kind === 'ok' ? 'check-circle' : 'alert'}"></i><span>${opsEsc(text)}</span></div>` : ''; };
+  const busy = (btn, on, label) => { btn.disabled = on; btn.querySelector('span').textContent = label; };
+
+  // Cada quien a su lugar: equipo HORIZON (ops_admins) → OPS · cliente (leads.email) → su portal.
+  // Si no es ninguno, cierra la sesión y se queda acá (evita un bucle login ↔ /ops).
+  async function enterByRole(){
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return false;
     const { data: isAdmin } = await sb.rpc('is_ops_admin');
-    if (isAdmin === true) { window.location.href = '/ops'; return; }
+    if (isAdmin === true) { location.replace('/ops'); return true; }
+    const { data: portal } = await sb.rpc('my_portal_token');
+    if (portal) { location.replace('/c/' + portal); return true; }
     await sb.auth.signOut();
+    show('Este correo no tiene acceso. Si crees que es un error, escríbenos.');
+    return false;
   }
 
-  if (new URLSearchParams(location.search).get('e') === 'forbidden') {
-    const err = document.getElementById('loginError');
-    err.textContent = 'Esta cuenta no tiene acceso a HORIZON OPS.';
-    err.classList.add('show');
+  // También cubre la vuelta desde el link del correo (la sesión llega en la URL)
+  if (await enterByRole()) return;
+  if (new URLSearchParams(location.search).get('e') === 'forbidden') show('Este correo no tiene acceso. Si crees que es un error, escríbenos.');
+
+  let email = '', cooldown = 0, timer;
+  function startCooldown(){
+    cooldown = 60; $('btnResend').disabled = true; $('btnResend').textContent = 'Reenviar en 60s';
+    clearInterval(timer);
+    timer = setInterval(() => {
+      cooldown--; $('btnResend').textContent = cooldown > 0 ? `Reenviar en ${cooldown}s` : 'Reenviar código';
+      if (cooldown <= 0) { clearInterval(timer); $('btnResend').disabled = false; }
+    }, 1000);
   }
 
-  document.getElementById('loginForm').addEventListener('submit', async function(e){
-    e.preventDefault();
-    const btn    = document.getElementById('btnLogin');
-    const btnTxt = document.getElementById('btnText');
-    const err    = document.getElementById('loginError');
-    err.classList.remove('show');
+  async function sendCode(){
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname },
+    });
+    if (!error) return true;
+    const m = (error.message || '').toLowerCase();
+    if (m.includes('signup') || m.includes('not found') || m.includes('not allowed')) show('Este correo no tiene acceso. Si crees que es un error, escríbenos.');
+    else if (error.status === 429 || m.includes('rate') || m.includes('seconds')) show('Pediste varios códigos seguidos. Espera un minuto y vuelve a intentar.');
+    else show('No pudimos enviar el código. Intenta de nuevo en un momento.');
+    return false;
+  }
 
-    const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+  $('stepEmail').addEventListener('submit', async e => {
+    e.preventDefault(); show('');
+    email = $('email').value.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return show('Escribe un correo válido.');
+    busy($('btnSend'), true, 'Enviando…');
+    const ok = await sendCode();
+    busy($('btnSend'), false, 'Enviarme el código');
+    if (!ok) return;
+    $('sentTo').textContent = email;
+    $('stepEmail').hidden = true; $('stepCode').hidden = false;
+    $('code').value = ''; $('code').focus(); startCooldown();
+  });
 
-    if (!email || !password) {
-      err.textContent = 'Completá los dos campos.';
-      err.classList.add('show'); return;
-    }
+  $('code').addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g, '');
+    if (e.target.value.length === 6) $('stepCode').requestSubmit();
+  });
 
-    btn.disabled = true; btnTxt.textContent = 'Ingresando…';
-
-    const { error } = await sb.auth.signInWithPassword({ email, password });
+  $('stepCode').addEventListener('submit', async e => {
+    e.preventDefault(); show('');
+    const token = $('code').value.trim();
+    if (!/^\d{6,10}$/.test(token)) return show('El código tiene 6 dígitos.');
+    busy($('btnVerify'), true, 'Entrando…');
+    const { error } = await sb.auth.verifyOtp({ email, token, type: 'email' });
     if (error) {
-      err.textContent = 'Email o contraseña incorrectos.';
-      err.classList.add('show');
-      btn.disabled = false; btnTxt.textContent = 'Ingresar'; return;
+      busy($('btnVerify'), false, 'Entrar');
+      $('code').select();
+      return show(/expired/i.test(error.message || '') ? 'El código venció. Pide uno nuevo.' : 'El código no es correcto. Revisa el correo más reciente.');
     }
-    window.location.href = '/ops';
+    if (!(await enterByRole())) { busy($('btnVerify'), false, 'Entrar'); $('stepCode').hidden = true; $('stepEmail').hidden = false; }
+  });
+
+  $('btnResend').addEventListener('click', async () => {
+    show(''); if (await sendCode()) { show('Te enviamos un código nuevo.', 'ok'); startCooldown(); }
+  });
+  $('btnBack').addEventListener('click', () => {
+    show(''); clearInterval(timer); $('btnResend').disabled = false; $('btnResend').textContent = 'Reenviar código';
+    $('stepCode').hidden = true; $('stepEmail').hidden = false; $('email').focus();
   });
 })();
 </script>
