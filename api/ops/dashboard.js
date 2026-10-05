@@ -2,7 +2,8 @@
 
 const { httpsRequest, rateLimit, getIp, opsAuth } = require('../shared');
 
-const PLAN_PRICES = { plan01:290000, plan02:490000, plan03:690000, plan04:890000, plan05:null };
+// Claves históricas en la BD: plan04 = Sistema con IA, plan05 = Agente IA, plan03 = plan anterior
+const PLAN_PRICES = { plan01:490000, plan02:990000, plan03:null, plan04:1990000, plan05:1490000 };
 const PIPELINE_STATUSES = ['new','contactado','propuesta','arranque'];
 
 module.exports = async function handler(req, res) {

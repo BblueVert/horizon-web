@@ -172,17 +172,17 @@ textarea.lm-input{resize:vertical;min-height:70px;line-height:1.5;}
           <label class="lm-lbl">Plan de interés</label>
           <select class="lm-input" id="lf-plan">
       <option value="">Sin definir</option>
-      <option value="plan01">Plan 01 — Presencia Digital ($290.000)</option>
-      <option value="plan02">Plan 02 — Ecosistema Digital ($490.000)</option>
-      <option value="plan03">Plan 03 — Negocio Activo ($690.000)</option>
-      <option value="plan04">Plan 04 — Sistema con IA ($890.000)</option>
-      <option value="plan05">Plan 05 — Agente IA (a consultar)</option>
+      <option value="plan01">Plan 01 — Presencia Digital ($490.000)</option>
+      <option value="plan02">Plan 02 — Ecosistema Digital ($990.000)</option>
+      <option value="plan04">Plan 03 — Sistema con IA ($1.990.000)</option>
+      <option value="plan05">Plan 04 — Agente IA Personalizado (desde $1.490.000)</option>
+      <option value="plan03">Negocio Activo (plan anterior)</option>
           </select>
         </div>
         <div>
           <label class="lm-lbl">Tipo de precio</label>
           <select class="lm-input" id="lf-tipoprecio">
-      <option value="fundador">Precio Fundador (50% OFF)</option>
+      <option value="fundador">Fundador (mismo precio + beneficios)</option>
       <option value="normal">Precio Normal</option>
           </select>
         </div>
@@ -241,7 +241,7 @@ textarea.lm-input{resize:vertical;min-height:70px;line-height:1.5;}
 <script src="/OPS/shared/ops-auth.js"></script>
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
-const PLANS={plan01:{label:'Presencia Digital',preciof:290000},plan02:{label:'Ecosistema Digital',preciof:490000},plan03:{label:'Negocio Activo',preciof:690000},plan04:{label:'Sistema con IA',preciof:890000},plan05:{label:'Agente IA',preciof:null}};
+const PLANS={plan01:{label:'Presencia Digital',preciof:490000},plan02:{label:'Ecosistema Digital',preciof:990000},plan03:{label:'Negocio Activo (plan anterior)',preciof:null},plan04:{label:'Sistema con IA',preciof:1990000},plan05:{label:'Agente IA Personalizado',preciof:1490000}};
 
 // Etapas completas para el stage mover
 const ALL_STAGES=[
