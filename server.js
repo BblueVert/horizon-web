@@ -17,6 +17,7 @@ const waHandler   = require('./api/saas/whatsapp');
 const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
 const recursos    = require('./api/recursos');
+const bot         = require('./api/bot');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -137,6 +138,7 @@ app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/por
 app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
 app.get('/api/recursos',  recursos);
 app.post('/api/recursos', recursos);
+app.all('/api/bot/:accion', (req, res) => { req.query.accion = req.params.accion; return bot(req, res); });
 app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
@@ -156,6 +158,7 @@ const opsPages = {
   '/ops/notas':           'OPS/notas.html',
   '/ops/saas-clientes':   'OPS/saas-clientes.html',
   '/ops/recursos':        'OPS/recursos.html',
+  '/ops/bandeja':         'OPS/bandeja.html',
 };
 Object.entries(opsPages).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
