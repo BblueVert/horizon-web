@@ -16,6 +16,7 @@ const ingest      = require('./api/ops/ingest');
 const waHandler   = require('./api/saas/whatsapp');
 const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
+const recursos    = require('./api/recursos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -113,6 +114,7 @@ const rewrites = {
   '/plan-03':         '/Pages/plan-03.html',
   '/plan-04':         '/Pages/plan-04.html',
   '/servicios':       '/Pages/servicios.html',
+  '/recursos':        '/Pages/recursos/index.html',
   // /crm redirige al pipeline unificado en OPS
   '/reunion':         '/Pages/reunion/index.html',
   '/agendar':         '/Pages/agendar/index.html',
@@ -127,9 +129,14 @@ Object.entries(rewrites).forEach(([from, to]) => {
 app.get('/crm', (_req, res) => res.redirect(301, '/ops/pipeline'));
 app.get('/plan-05', (_req, res) => res.redirect(301, '/servicios'));
 
+// Recursos: /recursos/<slug> y /recursos/r/<token> los resuelve la misma página
+app.get('/recursos/*', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/recursos/index.html')));
+
 // Portal con token dinámico
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
 app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
+app.get('/api/recursos',  recursos);
+app.post('/api/recursos', recursos);
 app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
@@ -148,6 +155,7 @@ const opsPages = {
   '/ops/tareas':          'OPS/tareas.html',
   '/ops/notas':           'OPS/notas.html',
   '/ops/saas-clientes':   'OPS/saas-clientes.html',
+  '/ops/recursos':        'OPS/recursos.html',
 };
 Object.entries(opsPages).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
