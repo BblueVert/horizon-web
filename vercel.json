@@ -1,6 +1,7 @@
 {
   "redirects": [
-    { "source": "/crm", "destination": "/ops/pipeline", "permanent": true }
+    { "source": "/crm", "destination": "/ops/pipeline", "permanent": true },
+    { "source": "/plan-05", "destination": "/servicios", "permanent": true }
   ],
   "rewrites": [
     { "source": "/", "destination": "/Pages/HORIZON_Landing_2026.html" },
@@ -8,7 +9,6 @@
     { "source": "/plan-02", "destination": "/Pages/plan-02.html" },
     { "source": "/plan-03", "destination": "/Pages/plan-03.html" },
     { "source": "/plan-04", "destination": "/Pages/plan-04.html" },
-    { "source": "/plan-05", "destination": "/Pages/plan-05.html" },
     { "source": "/servicios", "destination": "/Pages/servicios.html" },
     { "source": "/reunion", "destination": "/Pages/reunion/index.html" },
     { "source": "/agendar", "destination": "/Pages/agendar/index.html" },

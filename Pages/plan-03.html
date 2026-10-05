@@ -1,19 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contenido Mensual — HORIZON</title>
-<meta name="description" content="Creación y gestión de contenido continuo, calendario editorial por canal y reporte mensual de resultados. Add-on recurrente del Nivel 02.">
+<title>Sistema con IA — HORIZON</title>
+<meta name="description" content="Sistema de IA personalizado: ecosistema completo, agente IA integrado, automatizaciones y campañas Meta Ads gestionadas. $1.990.000 CLP.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://horizonweb.cl/plan-03">
-<meta property="og:title" content="Contenido Mensual — HORIZON">
-<meta property="og:description" content="Donde realmente se nota el crecimiento con el tiempo. Contenido y redes gestionados mes a mes, con reporte de resultados.">
+<meta property="og:title" content="Sistema con IA — HORIZON">
+<meta property="og:description" content="Sistema de IA personalizado: ecosistema completo, agente IA integrado, automatizaciones y campañas Meta Ads gestionadas. $1.990.000 CLP.">
 <meta property="og:image" content="https://horizonweb.cl/Identidad/og-image.png">
 <meta property="og:locale" content="es_CL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Contenido Mensual — HORIZON">
-<meta name="twitter:description" content="Donde realmente se nota el crecimiento con el tiempo. Contenido y redes gestionados mes a mes, con reporte de resultados.">
+<meta name="twitter:title" content="Sistema con IA — HORIZON">
+<meta name="twitter:description" content="Sistema de IA personalizado: ecosistema completo, agente IA integrado, automatizaciones y campañas Meta Ads gestionadas. $1.990.000 CLP.">
 <meta name="twitter:image" content="https://horizonweb.cl/Identidad/og-image.png">
 <link rel="canonical" href="https://horizonweb.cl/plan-03">
 <link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
@@ -23,7 +23,7 @@
   --void:#07060E;--deep:#0D0B18;--surface:#13111F;--card:#1A1828;
   --border:#252235;--border2:#302D45;
   --h1:#FF6B35;--h2:#FF8C42;--h3:#FFB347;--h4:#E8637A;--h5:#C4467A;--h6:#7B3FA0;--h7:#4A3580;
-  --accent:#FFB347;
+  --accent:#FF6B35;--accent-soft:rgba(255,107,53,0.08);--accent-glow:rgba(255,107,53,0.2);
   --text:#F5F2FF;--text2:#9B98B8;--text3:#504D6E;--white:#FAFAFF;
   --fd:'Bebas Neue',sans-serif;--fs:'Helvetica Neue',sans-serif;--fm:'DM Mono',monospace;--fb:'Plus Jakarta Sans',sans-serif;
   --r:12px;--rl:20px;
@@ -34,13 +34,15 @@ html{scroll-behavior:smooth;}
 body{background:var(--void);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.7;overflow-x:hidden;}
 ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--void);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{opacity:.4}50%{opacity:1}}
 
 .wrap{max-width:1100px;margin:0 auto;padding:0 48px;}
 
+/* HEADER */
 header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;background:rgba(7,6,14,.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
 .header-logo-link{display:flex;justify-content:center;}
 .header-logo-link img{height:34px;width:auto;display:block;}
-.nav-cta{justify-self:end;font-family:var(--fb);font-size:12px;font-weight:600;color:var(--void);background:linear-gradient(135deg,var(--h3),var(--h2));padding:8px 18px;border-radius:6px;text-decoration:none;transition:opacity .2s;white-space:nowrap;}
+.nav-cta{justify-self:end;font-family:var(--fb);font-size:12px;font-weight:600;color:var(--void);background:linear-gradient(135deg,var(--h1),var(--h2));padding:8px 18px;border-radius:6px;text-decoration:none;transition:opacity .2s;white-space:nowrap;}
 .nav-cta:hover{opacity:.88;}
 /* HAMBURGER */
 .ham-btn{display:flex;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;width:44px;height:44px;}
@@ -59,100 +61,109 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .ham-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
 .ham-nav li a{display:block;font-family:var(--fb);font-size:14px;font-weight:500;color:var(--text2);text-decoration:none;padding:11px 14px;border-radius:8px;transition:background .2s,color .2s;}
 .ham-nav li a:hover,.ham-nav li a.active{background:var(--surface);}
-.ham-nav li a.active{color:var(--h3);}
-.ham-cta-btn{display:block;text-align:center;background:linear-gradient(135deg,var(--h3),var(--h2));color:var(--void);font-family:var(--fb);font-size:13px;font-weight:700;padding:14px 24px;border-radius:8px;text-decoration:none;margin-top:16px;}
+.ham-nav li a.active{color:var(--h1);}
+.ham-cta-btn{display:block;text-align:center;background:linear-gradient(135deg,var(--h1),var(--h2));color:var(--void);font-family:var(--fb);font-size:13px;font-weight:700;padding:14px 24px;border-radius:8px;text-decoration:none;margin-top:16px;}
 
-.hero-bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 60% at 80% 15%,rgba(255,179,71,.08) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(255,140,66,.06) 0%,transparent 60%),var(--void);}
+/* HERO */
+.hero-bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 50% at 15% 30%,rgba(255,107,53,.09) 0%,transparent 65%),var(--void);}
 .hero{padding:clamp(48px,7vh,80px) 48px;max-width:1100px;margin-top:var(--header-h);margin-left:auto;margin-right:auto;min-height:calc(100dvh - var(--header-h));display:flex;flex-direction:column;justify-content:center;}
-.plan-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:9px;letter-spacing:.28em;color:var(--h3);text-transform:uppercase;margin-bottom:28px;padding:8px 16px;border:1px solid rgba(255,179,71,.25);border-radius:4px;background:rgba(255,179,71,.05);animation:fadeUp .6s ease both;}
-.hero-title{font-family:var(--fd);font-size:clamp(56px,8vw,104px);line-height:.9;letter-spacing:.02em;color:var(--white);margin-bottom:20px;animation:fadeUp .6s .1s ease both;}
-.hero-title .accent{background:linear-gradient(135deg,var(--h3),var(--h4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-para{font-family:var(--fs);font-style:italic;font-size:clamp(16px,2vw,20px);color:var(--text2);max-width:600px;line-height:1.55;margin-bottom:48px;animation:fadeUp .6s .2s ease both;}
+.plan-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:9px;letter-spacing:.28em;color:var(--h1);text-transform:uppercase;margin-bottom:28px;padding:8px 16px;border:1px solid rgba(255,107,53,.25);border-radius:4px;background:rgba(255,107,53,.05);animation:fadeUp .6s ease both;}
+.hero-title{font-family:var(--fd);font-size:clamp(64px,9vw,112px);line-height:.9;letter-spacing:.02em;color:var(--white);margin-bottom:20px;animation:fadeUp .6s .1s ease both;}
+.hero-title .accent{background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-para{font-family:var(--fs);font-style:italic;font-size:clamp(16px,2vw,20px);color:var(--text2);max-width:560px;line-height:1.55;margin-bottom:48px;animation:fadeUp .6s .2s ease both;}
 .hero-para strong{color:var(--text);font-style:normal;}
-
-.hero-price-block{display:flex;align-items:flex-end;gap:32px;margin-bottom:28px;padding:28px 32px;background:var(--card);border:1px solid var(--border2);border-radius:var(--rl);animation:fadeUp .6s .3s ease both;}
+.hero-price-block{display:flex;align-items:flex-end;gap:32px;margin-bottom:40px;padding:28px 32px;background:var(--card);border:1px solid var(--border2);border-radius:var(--rl);animation:fadeUp .6s .3s ease both;}
+.price-main{}
 .price-label{font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
-.price-val{font-family:var(--fd);font-size:52px;letter-spacing:.04em;background:linear-gradient(135deg,var(--h3),var(--h4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.price-val{font-family:var(--fd);font-size:52px;letter-spacing:.04em;background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
 .price-currency{font-family:var(--fm);font-size:10px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-top:4px;}
 .price-tachado{font-family:var(--fd);font-size:22px;letter-spacing:.04em;color:var(--text3);text-decoration:line-through;opacity:.4;align-self:center;}
-.founder-badge{display:inline-block;font-family:var(--fm);font-size:7px;letter-spacing:.15em;color:var(--h3);background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.2);border-radius:4px;padding:3px 8px;vertical-align:middle;margin-left:8px;}
-.cupos-strip{margin-top:0;margin-bottom:28px;padding:14px 20px;background:rgba(255,179,71,.04);border:1px solid rgba(255,179,71,.12);border-radius:10px;animation:fadeUp .6s .5s ease both;}
+.founder-badge{display:inline-block;font-family:var(--fm);font-size:7px;letter-spacing:.15em;color:var(--h1);background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.2);border-radius:4px;padding:3px 8px;vertical-align:middle;margin-left:8px;}
+.cupos-strip{margin-top:0;margin-bottom:28px;padding:14px 20px;background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.12);border-radius:10px;animation:fadeUp .6s .5s ease both;}
 .cupos-strip-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .cupos-strip-label{font-family:var(--fm);font-size:8px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;}
-.cupos-strip-num{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--h3);}
+.cupos-strip-num{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--h1);}
 .cupos-strip-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-bottom:8px;}
-.cupos-strip-fill{height:100%;background:linear-gradient(90deg,var(--h3),var(--h4));border-radius:2px;width:0%;transition:width 1s ease .7s;}
+.cupos-strip-fill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));border-radius:2px;width:0%;transition:width 1s ease .7s;}
 .cupos-strip-sub{font-family:var(--fb);font-size:10px;color:var(--text3);}
 .price-divider{width:1px;height:60px;background:var(--border2);}
+.price-retainer{}
 .retainer-label{font-family:var(--fm);font-size:9px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
 .retainer-val{font-family:var(--fd);font-size:28px;letter-spacing:.04em;color:var(--text);line-height:1;margin-bottom:4px;}
 .retainer-note{font-size:11px;color:var(--text3);}
-
-.exclusive-banner{padding:20px 28px;background:rgba(255,179,71,.07);border:1px solid rgba(255,179,71,.25);border-radius:10px;margin-bottom:40px;animation:fadeUp .6s .35s ease both;}
-.exclusive-label{font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h3);text-transform:uppercase;margin-bottom:12px;}
-.exclusive-items{display:flex;flex-wrap:wrap;gap:12px;}
-.exclusive-item{font-family:var(--fb);font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;}
-.exclusive-item::before{content:'✓';color:var(--h3);font-weight:700;}
-
 .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .6s .4s ease both;}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--h3),var(--h4));color:var(--void);font-family:var(--fb);font-size:13px;font-weight:700;padding:14px 28px;border-radius:8px;text-decoration:none;transition:transform .2s,box-shadow .2s;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,179,71,.25);}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--h1),var(--h2));color:var(--void);font-family:var(--fb);font-size:13px;font-weight:700;letter-spacing:.04em;padding:14px 28px;border-radius:8px;text-decoration:none;transition:transform .2s,box-shadow .2s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,107,53,.28);}
 .btn-secondary{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--text);font-family:var(--fb);font-size:13px;font-weight:500;padding:14px 24px;border-radius:8px;border:1px solid var(--border2);text-decoration:none;transition:border-color .2s,background .2s;}
-.btn-secondary:hover{border-color:rgba(255,179,71,.4);background:rgba(255,179,71,.05);}
+.btn-secondary:hover{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.05);}
 
+/* DIVIDER */
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);}
+
+/* SECTIONS */
 section{padding:80px 0;}
-.section-label{font-family:var(--fm);font-size:9px;letter-spacing:.3em;color:var(--h3);text-transform:uppercase;margin-bottom:14px;}
+.section-label{font-family:var(--fm);font-size:9px;letter-spacing:.3em;color:var(--h1);text-transform:uppercase;margin-bottom:14px;}
 .section-title{font-family:var(--fd);font-size:clamp(36px,5vw,56px);line-height:.95;letter-spacing:.04em;color:var(--white);margin-bottom:16px;}
 .section-desc{font-size:14px;color:var(--text2);max-width:580px;line-height:1.7;margin-bottom:52px;}
 
-.includes-banner{padding:20px 28px;background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.18);border-radius:10px;margin-bottom:40px;display:flex;align-items:center;gap:16px;}
-.includes-banner-icon{font-size:20px;}
-.includes-banner-text{font-family:var(--fm);font-size:10px;letter-spacing:.16em;color:var(--h3);text-transform:uppercase;}
-.includes-banner-desc{font-size:13px;color:var(--text2);margin-top:2px;}
+/* PARA QUIÉN */
+.para-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:var(--rl);overflow:hidden;border:1px solid var(--border);}
+.para-item{padding:32px;background:var(--card);}
+.para-item:first-child{border-left:3px solid var(--h1);}
+.para-icon{font-size:28px;margin-bottom:14px;}
+.para-title{font-family:var(--fb);font-weight:700;font-size:14px;color:var(--white);margin-bottom:8px;}
+.para-body{font-size:13px;color:var(--text2);line-height:1.65;}
 
+/* SERVICIOS */
 .services-list{display:flex;flex-direction:column;gap:2px;}
 .service-item{display:grid;grid-template-columns:64px 1fr;gap:0;background:var(--card);border-radius:10px;overflow:hidden;transition:background .2s;}
 .service-item:hover{background:var(--surface);}
-.service-num{display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:22px;color:var(--h3);background:rgba(255,179,71,.07);border-right:1px solid var(--border);letter-spacing:.05em;}
+.service-num{display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:22px;color:var(--h1);background:rgba(255,107,53,.07);border-right:1px solid var(--border);letter-spacing:.05em;}
 .service-body{padding:24px 28px;}
 .service-name{font-family:var(--fb);font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px;}
 .service-desc{font-size:13px;color:var(--text2);line-height:1.65;}
-.service-exclusive{display:inline-block;font-family:var(--fm);font-size:8px;letter-spacing:.18em;color:var(--h3);background:rgba(255,179,71,.1);text-transform:uppercase;padding:2px 8px;border:1px solid rgba(255,179,71,.25);border-radius:3px;margin-left:10px;vertical-align:middle;}
 
+/* RETAINER */
 .retainer-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .retainer-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:32px;}
-.retainer-card.featured{border-color:rgba(255,179,71,.35);background:linear-gradient(135deg,rgba(255,179,71,.06),rgba(255,140,66,.03));}
-.r-tag{font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h3);text-transform:uppercase;margin-bottom:16px;}
+.retainer-card.featured{border-color:rgba(255,107,53,.35);background:linear-gradient(135deg,rgba(255,107,53,.06),rgba(255,140,66,.03));}
+.r-tag{font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h1);text-transform:uppercase;margin-bottom:16px;}
 .r-name{font-family:var(--fd);font-size:28px;letter-spacing:.06em;color:var(--white);margin-bottom:8px;}
-.r-price{font-family:var(--fd);font-size:40px;letter-spacing:.04em;background:linear-gradient(135deg,var(--h3),var(--h4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
+.r-price{font-family:var(--fd);font-size:40px;letter-spacing:.04em;background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
 .r-period{font-family:var(--fm);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:20px;}
 .r-items{display:flex;flex-direction:column;gap:8px;}
 .r-item{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text2);line-height:1.5;}
 .r-item::before{content:'—';color:var(--border2);flex-shrink:0;margin-top:1px;}
 
+/* META NOTE */
 .meta-note-block{padding:20px 24px;background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.15);border-radius:10px;font-family:var(--fm);font-size:10px;letter-spacing:.12em;color:var(--text3);line-height:1.7;margin-top:16px;}
 .meta-note-block strong{color:var(--h3);}
 
+/* CTA FINAL */
 .cta-final{padding:100px 0;text-align:center;}
 .cta-title{font-family:var(--fd);font-size:clamp(44px,6vw,72px);line-height:.95;color:var(--white);margin-bottom:20px;}
-.cta-title .grad{background:linear-gradient(135deg,var(--h3),var(--h4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.cta-title .grad{background:linear-gradient(135deg,var(--h1),var(--h4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .cta-sub{font-family:var(--fs);font-style:italic;font-size:17px;color:var(--text2);margin-bottom:40px;}
 .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
 
+/* FOOTER */
 footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-items:center;justify-content:space-between;}
-.footer-logo{font-family:var(--fd);font-size:18px;letter-spacing:.2em;background:linear-gradient(135deg,var(--h1),var(--h3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-logo{font-family:var(--fd);font-size:18px;letter-spacing:.2em;background:linear-gradient(135deg,var(--h1),var(--h4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .footer-meta{font-family:var(--fm);font-size:9px;letter-spacing:.15em;color:var(--text3);text-align:right;line-height:1.8;text-transform:uppercase;}
+
+/* BREADCRUMB */
 .breadcrumb{font-family:var(--fm);font-size:9px;letter-spacing:.22em;color:var(--text3);text-transform:uppercase;margin-bottom:24px;}
 .breadcrumb a{color:var(--text3);text-decoration:none;transition:color .2s;}
-.breadcrumb a:hover{color:var(--h3);}
-.breadcrumb span{color:var(--h3);}
+.breadcrumb a:hover{color:var(--h1);}
+.breadcrumb span{color:var(--h1);}
 
 @media(max-width:900px){
+  .other-plans{grid-template-columns:1fr!important;}
   .wrap{padding:0 24px;}
   .hero{padding:clamp(40px,5vh,64px) 24px;}
   .hero-price-block{flex-direction:column;gap:20px;align-items:flex-start;}
   .price-divider{width:100%;height:1px;}
+  .para-grid{grid-template-columns:1fr;}
   .retainer-grid{grid-template-columns:1fr;}
   footer{flex-direction:column;gap:16px;text-align:center;}
   .footer-meta{text-align:center;}
@@ -184,13 +195,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 #scroll-progress {
   position: fixed; top: 0; left: 0; z-index: 9999;
   height: 2px; width: 0%;
-  background: linear-gradient(90deg, var(--accent), var(--h4, #E8637A));
+  background: linear-gradient(90deg, var(--accent), var(--h3, #FFB347));
   transition: width 0.1s linear;
   pointer-events: none;
 }
 /* ── SCROLL REVEAL ── */
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+:root{--accent:var(--h5);}
+.hero-title .accent{background:linear-gradient(135deg,var(--h5),var(--h6));-webkit-background-clip:text;background-clip:text;}
+.retainer-card.featured{border-color:rgba(196,70,122,.35);background:linear-gradient(135deg,rgba(196,70,122,.06),rgba(196,70,122,.02));}
+.excl-block{padding:20px 24px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-family:var(--fb);font-size:13px;line-height:1.7;color:var(--text2);margin-top:24px;}
+.excl-block strong{color:var(--white);}
 </style>
 </head>
 <body>
@@ -212,48 +228,39 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   <ul class="ham-nav">
     <li><a href="/">Home</a></li>
     <li><a href="/servicios">Servicios</a></li>
-    <li><a href="/plan-01">El Sistema</a></li>
-    <li><a href="/plan-02">Auditoría + Contenido</a></li>
-    <li><a href="/plan-03">Contenido Mensual</a></li>
-    <li><a href="/plan-04">Gestión de Ads</a></li>
-    <li><a href="/plan-05">Identidad Visual</a></li>
+    <li><a href="/plan-01">Plan 01 · Presencia Digital</a></li>
+    <li><a href="/plan-02">Plan 02 · Ecosistema Digital</a></li>
+    <li><a href="/plan-03">Plan 03 · Sistema con IA</a></li>
+    <li><a href="/plan-04">Plan 04 · Agente IA Personalizado</a></li>
   </ul>
   <a href="/agendar" class="ham-cta-btn">Agendar diagnóstico →</a>
 </nav>
 
 <div class="hero">
-  <div class="breadcrumb"><a href="/">HORIZON</a> / <span>Contenido Mensual</span></div>
-  <div class="plan-badge">Nivel 02 · Opcional</div>
-  <h1 class="hero-title">CONTENIDO<br><span class="accent">MENSUAL</span></h1>
-  <p class="hero-para">Donde realmente se nota el crecimiento con el tiempo. <strong>Se activa cuando ya hiciste la Auditoría + Contenido y querés que HORIZON siga produciendo mes a mes.</strong></p>
+  <div class="breadcrumb"><a href="/">HORIZON</a> / <a href="/servicios">Servicios</a> / <span>Plan 03</span></div>
+  <div class="plan-badge">Plan 03 · Sistema de IA personalizado</div>
+  <h1 class="hero-title">SISTEMA<br><span class="accent">CON IA</span></h1>
+  <p class="hero-para">El sistema que capta, responde, vende y registra <strong>sin que tengas que estar en cada paso.</strong></p>
 
   <div class="hero-price-block">
-    <div>
-      <div class="price-label">Mínimo, si continúas</div>
+    <div class="price-main">
+      <div class="price-label">Implementación · Pago único</div>
       <div style="display:flex;align-items:baseline;gap:14px;">
-        <div class="price-val">$600.000</div>
+        <div class="price-val">$1.990.000</div>
       </div>
-      <div class="price-currency">CLP / mes</div>
+      <div class="price-currency">CLP + boleta de honorarios</div>
     </div>
     <div class="price-divider"></div>
-    <div>
-      <div class="retainer-label">Requiere</div>
-      <div class="retainer-val" style="font-size:22px;">Auditoría previa</div>
-      <div class="retainer-note">se activa después de Auditoría + Contenido</div>
+    <div class="price-retainer">
+      <div class="retainer-label">Soporte mensual</div>
+      <div class="retainer-val">$350.000 CLP/mes</div>
+      <div class="retainer-note">desde el mes 2 — el primer mes va incluido</div>
     </div>
     <div class="price-divider"></div>
-    <div>
-      <div class="retainer-label">Continuidad</div>
-      <div class="retainer-val" style="font-size:22px;">Mes a mes</div>
-      <div class="retainer-note">sin permanencia forzada</div>
-    </div>
-  </div>
-
-  <div class="exclusive-banner">
-    <div class="exclusive-label">Solo disponible con el Nivel 01 activo</div>
-    <div class="exclusive-items">
-      <span class="exclusive-item">Requiere Auditoría + Contenido previa</span>
-      <span class="exclusive-item">Add-on recurrente, no obligatorio</span>
+    <div class="price-retainer">
+      <div class="retainer-label">Duración del proyecto</div>
+      <div class="retainer-val" style="font-size:22px;">5–6 semanas</div>
+      <div class="retainer-note">desde el kickoff hasta la entrega</div>
     </div>
   </div>
 
@@ -264,118 +271,176 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 
 <div class="divider"></div>
 
+<!-- PARA QUIÉN -->
 <section class="reveal">
   <div class="wrap">
-    <div class="section-label">Ítems del add-on</div>
-    <h2 class="section-title">QUÉ INCLUYE</h2>
-    <p class="section-desc">3 componentes que mantienen tus canales activos y con evidencia de resultado, mes a mes.</p>
-
-    <div class="includes-banner">
-      <div class="includes-banner-icon">✦</div>
-      <div>
-        <div class="includes-banner-text">Continúa la Auditoría + Contenido</div>
-        <div class="includes-banner-desc">Contenido Mensual toma la estrategia definida en la auditoría y la ejecuta de forma continua, mes tras mes.</div>
+    <div class="section-label">Diagnóstico de fit</div>
+    <h2 class="section-title">PARA QUIÉN<br>ES ESTE PLAN</h2>
+    <p class="section-desc">Si te reconoces en dos o más de estos puntos, este es tu punto de partida.</p>
+    <div class="para-grid">
+      <div class="para-item">
+        <div class="para-icon">✓</div>
+        <div class="para-title">Tú sigues siendo el cuello de botella</div>
+        <div class="para-body">Si no estás, el negocio se frena: respuestas, cotizaciones, seguimiento.</div>
+      </div>
+      <div class="para-item">
+        <div class="para-icon">✓</div>
+        <div class="para-title">Ya vendes, pero quieres escalar</div>
+        <div class="para-body">Más clientes sin sumar más horas tuyas ni más caos.</div>
+      </div>
+      <div class="para-item">
+        <div class="para-icon">✓</div>
+        <div class="para-title">Quieres IA trabajando de verdad</div>
+        <div class="para-body">No un chatbot de adorno: un sistema que atiende, agenda y registra.</div>
+      </div>
+      <div class="para-item">
+        <div class="para-icon">✓</div>
+        <div class="para-title">Quieres medir y acelerar con pauta</div>
+        <div class="para-body">Campañas gestionadas, conectadas al CRM y con resultados claros.</div>
       </div>
     </div>
+  </div>
+</section>
 
+<div class="divider"></div>
+
+<!-- QUÉ INCLUYE -->
+<section class="reveal">
+  <div class="wrap">
+    <div class="section-label">Alcance del plan</div>
+    <h2 class="section-title">QUÉ INCLUYE</h2>
+    <p class="section-desc">Todo construido, configurado y entregado funcionando. La propuesta deja por escrito exactamente qué se entrega.</p>
     <div class="services-list">
       <div class="service-item">
         <div class="service-num">01</div>
         <div class="service-body">
-          <div class="service-name">Creación y gestión de contenido continuo</div>
-          <div class="service-desc">Producción de contenido para tus canales según la estrategia definida en la auditoría. No es contenido genérico — sigue la línea que ya se validó para tu negocio.</div>
+          <div class="service-name">Todo lo del Plan 02</div>
+          <div class="service-desc">Web ampliada, sistema según tu rubro, CRM + dashboard y chatbot completo.</div>
         </div>
       </div>
       <div class="service-item">
         <div class="service-num">02</div>
         <div class="service-body">
-          <div class="service-name">Calendario editorial por canal</div>
-          <div class="service-desc">Planificación clara de qué se publica, dónde y cuándo. Nada improvisado — cada pieza responde a un plan.</div>
+          <div class="service-name">Auditoría completa del negocio</div>
+          <div class="service-desc">Posicionamiento, ecosistema digital, contenido, conversión y operación. Informe con prioridades.</div>
         </div>
       </div>
       <div class="service-item">
         <div class="service-num">03</div>
         <div class="service-body">
-          <div class="service-name">Reporte mensual de resultados</div>
-          <div class="service-desc">Cada mes ves qué se publicó y cómo respondió tu audiencia. Datos concretos para decidir si seguir, ajustar o subir la apuesta.</div>
+          <div class="service-name">Agente IA integrado al ecosistema</div>
+          <div class="service-desc">Atiende WhatsApp, Instagram y web con la información real de tu negocio, agenda y deriva a una persona cuando corresponde.</div>
+        </div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">04</div>
+        <div class="service-body">
+          <div class="service-name">Automatizaciones n8n</div>
+          <div class="service-desc">Hasta 8 flujos: cotizaciones, recordatorios, reportes y avisos internos que dejan de depender de ti.</div>
+        </div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">05</div>
+        <div class="service-body">
+          <div class="service-name">Campañas Meta Ads gestionadas</div>
+          <div class="service-desc">Atracción pagada medida y conectada al CRM. La inversión en pauta se paga directo a Meta.</div>
+        </div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">06</div>
+        <div class="service-body">
+          <div class="service-name">SEO técnico avanzado + GEO con monitoreo</div>
+          <div class="service-desc">Auditoría técnica, control a los 30 días y seguimiento mensual de cómo apareces en ChatGPT, Gemini y Perplexity.</div>
+        </div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">07</div>
+        <div class="service-body">
+          <div class="service-name">1 mes de soporte incluido</div>
+          <div class="service-desc">Soporte, gestión de Ads, ajustes del agente IA y reunión mensual de resultados.</div>
         </div>
       </div>
     </div>
+    <div class="excl-block"><strong>No incluye:</strong> Inversión en pauta (pagada directo a Meta), producción audiovisual profesional, agente de voz (módulo adicional) y costos de herramientas de terceros.</div>
   </div>
 </section>
 
 <div class="divider"></div>
 
+<!-- SOPORTE -->
 <section class="reveal">
   <div class="wrap">
-    <div class="section-label">Mientras continúes</div>
-    <h2 class="section-title">INVERSIÓN<br>MENSUAL</h2>
-    <p class="section-desc">Contenido Mensual es un servicio recurrente, mes a mes, sin permanencia forzada. Se mantiene mientras quieras seguir.</p>
-    <div class="retainer-grid" style="grid-template-columns:1fr;">
+    <div class="section-label">Después de la entrega</div>
+    <h2 class="section-title">SOPORTE<br>MENSUAL</h2>
+    <p class="section-desc">El primer mes va incluido. Desde el segundo, eliges si sigues — mes a mes, sin permanencia.</p>
+    <div class="retainer-grid">
       <div class="retainer-card featured">
-        <div class="r-tag">Contenido Mensual</div>
-        <div class="r-name">Mínimo mensual</div>
-        <div class="r-price">$600.000</div>
+        <div class="r-tag">Desde el mes 2</div>
+        <div class="r-name">Mantenimiento + Ads</div>
+        <div class="r-price">$350.000</div>
         <div class="r-period">CLP / mes</div>
         <div class="r-items">
-          <div class="r-item">Creación y gestión de contenido continuo</div>
-          <div class="r-item">Calendario editorial por canal</div>
+          <div class="r-item">Soporte directo y corrección de errores</div>
+          <div class="r-item">Hosting, monitoreo y actualizaciones de seguridad</div>
+          <div class="r-item">Cambios menores y ajustes continuos</div>
           <div class="r-item">Reporte mensual de resultados</div>
+        </div>
+      </div>
+      <div class="retainer-card">
+        <div class="r-tag">Opción con IA</div>
+        <div class="r-name">Sistema completo + IA</div>
+        <div class="r-price">$490.000</div>
+        <div class="r-period">CLP / mes</div>
+        <div class="r-items">
+          <div class="r-item">Todo lo del soporte mensual</div>
+          <div class="r-item">Agente IA atendiendo tus canales</div>
+          <div class="r-item">Entrenamiento mensual con tus conversaciones reales</div>
         </div>
       </div>
     </div>
     <div class="meta-note-block">
-      <strong>Sobre pauta publicitaria:</strong> Contenido Mensual no incluye gestión de campañas. Si querés invertir en pauta, la Gestión de Ads es un servicio aparte — Nivel 02 · Extra, 15% del spend.
+      <strong>Programa Fundadores:</strong> los primeros 3 negocios mantienen el precio y suman beneficios — segundo mes de soporte sin costo, valor del soporte congelado por 12 meses, sesión de resultados a los 60 días y atención prioritaria por WhatsApp.
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
+<!-- CTA FINAL -->
 <div class="cta-final">
   <div class="wrap">
-    <div class="cta-title">AGENDÁ EL<br><span class="grad">DIAGNÓSTICO</span></div>
-    <p class="cta-sub">30 minutos. Sin costo. Sin compromiso.<br>Salís con claridad de qué necesita tu negocio.</p>
+    <div class="cta-title">AGENDA EL<br><span class="grad">DIAGNÓSTICO</span></div>
+    <p class="cta-sub">30 minutos. Sin costo. Sin compromiso.<br>Sales con claridad de qué necesita tu negocio.</p>
     <div class="cta-btns">
       <a href="/agendar" class="btn-primary">→ Agendar diagnóstico</a>
     </div>
   </div>
 </div>
 
-<!-- OTROS SERVICIOS -->
+<!-- OTROS PLANES -->
 <div style="padding:80px 0;border-top:1px solid var(--border);">
   <div class="wrap">
-    <div style="font-family:var(--fm);font-size:9px;letter-spacing:.3em;color:var(--text3);text-transform:uppercase;margin-bottom:14px;">Servicios adicionales</div>
-    <h2 style="font-family:var(--fd);font-size:clamp(32px,4vw,52px);letter-spacing:.04em;color:var(--white);margin-bottom:8px;">OTROS SERVICIOS</h2>
-    <p style="font-family:var(--fb);font-size:14px;color:var(--text2);margin-bottom:40px;">Servicios que se suman al Sistema cuando tu negocio los necesita — no una escalera, un menú de opciones.</p>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-      <a href="/plan-01" style="display:block;padding:28px;background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.2);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s;" onmouseover="this.style.background='rgba(255,107,53,.08)';this.style.borderColor='rgba(255,107,53,.4)'" onmouseout="this.style.background='rgba(255,107,53,.04)';this.style.borderColor='rgba(255,107,53,.2)'">
-        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h1);text-transform:uppercase;margin-bottom:12px;">Nivel 01 · Principal</div>
-        <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">EL SISTEMA</div>
-        <p style="font-family:var(--fb);font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Landing + sistema a medida con panel, roles y agentes de IA en tus canales.</p>
-        <div style="font-family:var(--fm);font-size:13px;color:var(--h1);">$990.000 + $190.000/mes →</div>
+    <div style="font-family:var(--fm);font-size:9px;letter-spacing:.3em;color:var(--text3);text-transform:uppercase;margin-bottom:14px;">Otros planes</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(32px,4vw,52px);letter-spacing:.04em;color:var(--white);margin-bottom:40px;">COMPARA LOS PLANES</h2>
+    <div class="other-plans" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <a href="/plan-01" style="display:block;padding:28px;background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.2);border-radius:12px;text-decoration:none;">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h1);text-transform:uppercase;margin-bottom:12px;">Plan 01 · Página web profesional</div>
+        <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">PRESENCIA DIGITAL</div>
+        <div style="font-family:var(--fm);font-size:13px;color:var(--h1);">$490.000 CLP →</div>
       </a>
-      <a href="/plan-02" style="display:block;padding:28px;background:rgba(255,140,66,.04);border:1px solid rgba(255,140,66,.2);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s;" onmouseover="this.style.background='rgba(255,140,66,.08)';this.style.borderColor='rgba(255,140,66,.4)'" onmouseout="this.style.background='rgba(255,140,66,.04)';this.style.borderColor='rgba(255,140,66,.2)'">
-        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h2);text-transform:uppercase;margin-bottom:12px;">Nivel 02 · Opcional</div>
-        <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">AUDITORÍA + CONTENIDO</div>
-        <p style="font-family:var(--fb);font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Revisamos tus canales digitales completos y armamos la estrategia de contenido.</p>
-        <div style="font-family:var(--fm);font-size:13px;color:var(--h2);">$450.000 CLP →</div>
+      <a href="/plan-02" style="display:block;padding:28px;background:rgba(255,140,66,.04);border:1px solid rgba(255,140,66,.2);border-radius:12px;text-decoration:none;">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h2);text-transform:uppercase;margin-bottom:12px;">Plan 02 · Web + sistema / CRM</div>
+        <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">ECOSISTEMA DIGITAL</div>
+        <div style="font-family:var(--fm);font-size:13px;color:var(--h2);">$990.000 CLP →</div>
       </a>
-      <a href="/plan-04" style="display:block;padding:28px;background:rgba(196,70,122,.04);border:1px solid rgba(196,70,122,.2);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s;" onmouseover="this.style.background='rgba(196,70,122,.08)';this.style.borderColor='rgba(196,70,122,.4)'" onmouseout="this.style.background='rgba(196,70,122,.04)';this.style.borderColor='rgba(196,70,122,.2)'">
-        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h5);text-transform:uppercase;margin-bottom:12px;">Nivel 02 · Extra</div>
-        <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">GESTIÓN DE ADS</div>
-        <p style="font-family:var(--fb);font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Gestionamos tus campañas Meta / Google Ads y optimizamos el presupuesto.</p>
-        <div style="font-family:var(--fm);font-size:13px;color:var(--h5);">15% del spend →</div>
-      </a>
-      <a href="/plan-05" style="display:block;padding:28px;background:rgba(123,63,160,.04);border:1px solid rgba(123,63,160,.2);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s;" onmouseover="this.style.background='rgba(123,63,160,.08)';this.style.borderColor='rgba(123,63,160,.4)'" onmouseout="this.style.background='rgba(123,63,160,.04)';this.style.borderColor='rgba(123,63,160,.2)'">
-        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h6);text-transform:uppercase;margin-bottom:12px;">Nivel 03 · Sugerencia</div>
-        <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">IDENTIDAD VISUAL</div>
-        <p style="font-family:var(--fb);font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Modernizamos tu paleta y tipografía, aplicadas a tu sistema y materiales.</p>
-        <div style="font-family:var(--fm);font-size:13px;color:var(--h6);">$200.000 CLP →</div>
+      <a href="/plan-04" style="display:block;padding:28px;background:rgba(123,63,160,.04);border:1px solid rgba(123,63,160,.2);border-radius:12px;text-decoration:none;">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.25em;color:var(--h6);text-transform:uppercase;margin-bottom:12px;">Plan 04 · Empleado virtual 24/7</div>
+        <div style="font-family:var(--fd);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:10px;">AGENTE IA PERSONALIZADO</div>
+        <div style="font-family:var(--fm);font-size:13px;color:var(--h6);">Desde $1.490.000 CLP →</div>
       </a>
     </div>
     <div style="margin-top:32px;text-align:center;">
-      <a href="/#planes" style="font-family:var(--fm);font-size:10px;letter-spacing:.2em;color:var(--text3);text-decoration:none;text-transform:uppercase;transition:color .2s;" onmouseover="this.style.color='var(--h3)'" onmouseout="this.style.color='var(--text3)'">← Ver toda la inversión en la landing</a>
+      <a href="/servicios" style="font-family:var(--fm);font-size:10px;letter-spacing:.2em;color:var(--text3);text-decoration:none;text-transform:uppercase;">← Ver todos los servicios</a>
     </div>
   </div>
 </div>
@@ -385,7 +450,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     <img src="../Identidad/Logo-Vertical-png.png" alt="HORIZON" style="height:28px;width:auto;display:block;">
     <div style="font-family:var(--fm);font-size:8px;letter-spacing:.18em;color:var(--text3);margin-top:3px;text-transform:uppercase;">Consultoría de Arquitectura Digital · Rancagua, Chile</div>
   </a>
-  <div class="footer-meta">Nivel 02 · Contenido Mensual<br>horizonweb.cl · 2026</div>
+  <div class="footer-meta">
+    Plan 03 · Sistema con IA<br>
+    horizonweb.cl · 2026
+  </div>
 </footer>
 <script>
 (function(){

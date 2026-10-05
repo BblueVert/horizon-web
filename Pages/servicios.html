@@ -1,19 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Servicios — HORIZON</title>
-<meta name="description" content="El Sistema es la base — landing, panel, roles y agentes de IA. Auditoría + Contenido, Contenido Mensual, Gestión de Ads e Identidad Visual se suman solo si tu negocio los necesita.">
+<meta name="description" content="Cuatro planes según la etapa de tu negocio: Presencia Digital ($490.000), Ecosistema Digital ($990.000), Sistema con IA ($1.990.000) y Agente IA Personalizado (desde $1.490.000).">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://horizonweb.cl/servicios">
 <meta property="og:title" content="Servicios — HORIZON">
-<meta property="og:description" content="Un sistema base y cuatro servicios opcionales que se suman cuando tu negocio los necesita — no una escalera de planes.">
+<meta property="og:description" content="Cuatro planes según la etapa de tu negocio: Presencia Digital ($490.000), Ecosistema Digital ($990.000), Sistema con IA ($1.990.000) y Agente IA Personalizado (desde $1.490.000).">
 <meta property="og:image" content="https://horizonweb.cl/Identidad/og-image.png">
 <meta property="og:locale" content="es_CL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Servicios — HORIZON">
-<meta name="twitter:description" content="Un sistema base y cuatro servicios opcionales que se suman cuando tu negocio los necesita — no una escalera de planes.">
+<meta name="twitter:description" content="Cuatro planes según la etapa de tu negocio: Presencia Digital ($490.000), Ecosistema Digital ($990.000), Sistema con IA ($1.990.000) y Agente IA Personalizado (desde $1.490.000).">
 <meta name="twitter:image" content="https://horizonweb.cl/Identidad/og-image.png">
 <link rel="canonical" href="https://horizonweb.cl/servicios">
 <link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
@@ -101,13 +101,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 24px;display
 .service-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .service-card.card-05{grid-column:1 / -1;}
 
-.service-card{display:grid;grid-template-columns:72px 1fr auto;align-items:stretch;background:var(--card);border-radius:var(--rl);overflow:hidden;text-decoration:none;transition:background .25s,transform .2s;border:1px solid var(--border);}
+.service-card{display:grid;grid-template-columns:72px minmax(0,1fr) auto;align-items:stretch;background:var(--card);border-radius:var(--rl);overflow:hidden;text-decoration:none;transition:background .25s,transform .2s;border:1px solid var(--border);}
 .service-card:hover{background:var(--surface);transform:translateY(-2px);}
 
 .sc-number{display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:26px;letter-spacing:.06em;border-right:1px solid var(--border);padding:0 8px;}
 .sc-body{padding:32px 36px;}
 .sc-label{font-family:var(--fm);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:10px;}
-.sc-name{font-family:var(--fd);font-size:clamp(28px,4vw,44px);letter-spacing:.04em;color:var(--white);line-height:.95;margin-bottom:14px;}
+.sc-name{font-family:var(--fd);font-size:clamp(26px,3vw,40px);letter-spacing:.04em;color:var(--white);line-height:.95;margin-bottom:14px;}
 .sc-desc{font-size:13px;color:var(--text2);line-height:1.7;max-width:540px;}
 .sc-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
 .sc-tag{font-family:var(--fm);font-size:9px;letter-spacing:.18em;color:var(--text3);text-transform:uppercase;padding:5px 10px;border:1px solid var(--border);border-radius:4px;}
@@ -187,7 +187,7 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
   .wrap{padding:0 24px;}
   .hero{padding:clamp(40px,5vh,64px) 24px;}
   .service-cards{grid-template-columns:1fr;}
-  .service-card{grid-template-columns:56px 1fr;}
+  .service-card{grid-template-columns:56px minmax(0,1fr);}
   .sc-arrow{display:none;}
   .proceso-grid{grid-template-columns:1fr 1fr;}
   footer{flex-direction:column;gap:16px;text-align:center;}
@@ -201,11 +201,11 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
   .wrap{padding:0 20px;}
   .sc-body{padding:24px 20px;}
   .sc-number{width:44px;font-size:20px;}
-  .service-card{grid-template-columns:44px 1fr;}
+  .service-card{grid-template-columns:44px minmax(0,1fr);}
   .proceso-grid{grid-template-columns:1fr;}
   footer{padding:32px 20px;}
-  .compare-table th:not(:first-child):not(:nth-child(2)){display:none;}
-  .compare-table td:not(:first-child):not(:nth-child(2)){display:none;}
+  .compare-table th:nth-child(3){display:none;}
+  .compare-table td:nth-child(3){display:none;}
   .fs-plans{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:600px){
@@ -222,7 +222,9 @@ footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-i
 .fs-title{font-family:var(--fb);font-size:clamp(22px,4vw,32px);font-weight:700;line-height:1.25;margin-bottom:14px;color:var(--text);}
 .fs-title span{color:var(--text2);font-weight:400;font-size:.85em;}
 .fs-desc{font-family:var(--fs);font-size:14px;color:var(--text2);line-height:1.65;}
-.fs-plans{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+.fs-plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+@media(max-width:900px){.fs-plans{grid-template-columns:1fr 1fr;}}
+@media(max-width:640px){.fs-plans{grid-template-columns:1fr;}}
 .fs-plan{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 16px;}
 .fs-plan-name{font-family:var(--fm);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-bottom:10px;}
 .fs-plan-price{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
@@ -280,11 +282,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   <ul class="ham-nav">
     <li><a href="/">Home</a></li>
     <li><a href="/servicios">Servicios</a></li>
-    <li><a href="/plan-01">El Sistema</a></li>
-    <li><a href="/plan-02">Auditoría + Contenido</a></li>
-    <li><a href="/plan-03">Contenido Mensual</a></li>
-    <li><a href="/plan-04">Gestión de Ads</a></li>
-    <li><a href="/plan-05">Identidad Visual</a></li>
+    <li><a href="/plan-01">Plan 01 · Presencia Digital</a></li>
+    <li><a href="/plan-02">Plan 02 · Ecosistema Digital</a></li>
+    <li><a href="/plan-03">Plan 03 · Sistema con IA</a></li>
+    <li><a href="/plan-04">Plan 04 · Agente IA Personalizado</a></li>
   </ul>
   <a href="/agendar" class="ham-cta-btn">Agendar diagnóstico →</a>
 </nav>
@@ -292,8 +293,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 <div class="hero">
   <div class="breadcrumb"><a href="/">HORIZON</a> / <span>Servicios</span></div>
   <div class="page-badge">Nuestros servicios</div>
-  <h1 class="hero-title">EL SISTEMA<br><span class="grad">Y SUS EXTRAS</span></h1>
-  <p class="hero-para">Un sistema base y cuatro servicios opcionales. <strong>El Sistema es la inversión inicial y la mantención que lo mantiene arriba. Desde ahí, sumas solo lo que tu negocio necesite.</strong> No es una escalera — es un menú.</p>
+  <h1 class="hero-title">CUATRO PLANES<br><span class="grad">UN SISTEMA</span></h1>
+  <p class="hero-para">Desde una página web profesional hasta un sistema con IA que trabaja por ti. <strong>Partes donde está tu negocio hoy y escalas sin perder lo construido.</strong> Pago único de implementación + soporte mensual opcional.</p>
 </div>
 
 <div class="divider"></div>
@@ -306,14 +307,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <a href="/plan-01" class="service-card card-01">
         <div class="sc-number">01</div>
         <div class="sc-body">
-          <div class="sc-label">Nivel 01 · Principal</div>
-          <div class="sc-name">EL<br>SISTEMA</div>
-          <div class="sc-desc">Landing + sistema a medida — panel, roles, automatizaciones y agentes de IA atendiendo tus canales. Instalado sobre tu negocio real, no una plantilla. La base de todo lo demás.</div>
+          <div class="sc-label">Plan 01 · $490.000 CLP</div>
+          <div class="sc-name">PRESENCIA<br>DIGITAL</div>
+          <div class="sc-desc">Que te encuentren, te entiendan y te escriban. Tu negocio visible y contactable las 24 horas.</div>
           <div class="sc-tags">
-            <span class="sc-tag">Panel + roles</span>
-            <span class="sc-tag">Agentes de IA</span>
-            <span class="sc-tag">WhatsApp + Instagram</span>
-            <span class="sc-tag">Soporte y hosting</span>
+            <span class="sc-tag">Sitio web</span>
+            <span class="sc-tag">Google Business</span>
+            <span class="sc-tag">WhatsApp Business</span>
+            <span class="sc-tag">Chatbot básico</span>
           </div>
         </div>
         <div class="sc-arrow">→</div>
@@ -322,13 +323,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <a href="/plan-02" class="service-card card-02">
         <div class="sc-number">02</div>
         <div class="sc-body">
-          <div class="sc-label">Nivel 02 · Opcional</div>
-          <div class="sc-name">AUDITORÍA +<br>CONTENIDO</div>
-          <div class="sc-desc">Revisamos tus canales digitales completos — no solo el sistema — y armamos la estrategia de contenido antes de tocar nada. Proyecto único.</div>
+          <div class="sc-label">Plan 02 · $990.000 CLP</div>
+          <div class="sc-name">ECOSISTEMA<br>DIGITAL</div>
+          <div class="sc-desc">El salto de estar presente a tener un sistema que capta, convierte y registra sin trabajo manual.</div>
           <div class="sc-tags">
-            <span class="sc-tag">Auditoría de canales</span>
-            <span class="sc-tag">Estrategia de contenido</span>
-            <span class="sc-tag">Recomendaciones</span>
+            <span class="sc-tag">Web + sistema</span>
+            <span class="sc-tag">Reservas o tienda</span>
+            <span class="sc-tag">CRM + dashboard</span>
+            <span class="sc-tag">Chatbot completo</span>
           </div>
         </div>
         <div class="sc-arrow">→</div>
@@ -337,13 +339,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <a href="/plan-03" class="service-card card-03">
         <div class="sc-number">03</div>
         <div class="sc-body">
-          <div class="sc-label">Nivel 02 · Opcional</div>
-          <div class="sc-name">CONTENIDO<br>MENSUAL</div>
-          <div class="sc-desc">Donde realmente se nota el crecimiento con el tiempo. Se activa cuando ya se hizo la auditoría y el cliente quiere seguir. Recurrente, sin permanencia forzada.</div>
+          <div class="sc-label">Plan 03 · $1.990.000 CLP</div>
+          <div class="sc-name">SISTEMA<br>CON IA</div>
+          <div class="sc-desc">El sistema que capta, responde, vende y registra sin que tengas que estar en cada paso.</div>
           <div class="sc-tags">
-            <span class="sc-tag">Contenido continuo</span>
-            <span class="sc-tag">Calendario editorial</span>
-            <span class="sc-tag">Reporte mensual</span>
+            <span class="sc-tag">Agente IA integrado</span>
+            <span class="sc-tag">Automatizaciones n8n</span>
+            <span class="sc-tag">Meta Ads</span>
+            <span class="sc-tag">Auditoría completa</span>
           </div>
         </div>
         <div class="sc-arrow">→</div>
@@ -352,27 +355,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <a href="/plan-04" class="service-card card-04">
         <div class="sc-number">04</div>
         <div class="sc-body">
-          <div class="sc-label">Nivel 02 · Extra</div>
-          <div class="sc-name">GESTIÓN<br>DE ADS</div>
-          <div class="sc-desc">Si en algún momento el cliente quiere acelerar con pauta, decide cuánto invertir — HORIZON gestiona la campaña. Solo si aplica.</div>
+          <div class="sc-label">Plan 04 · Desde $1.490.000 CLP</div>
+          <div class="sc-name">AGENTE IA<br>PERSONALIZADO</div>
+          <div class="sc-desc">Un empleado virtual 24/7 que conoce tu negocio, responde, agenda y vende.</div>
           <div class="sc-tags">
-            <span class="sc-tag">Meta / Google Ads</span>
-            <span class="sc-tag">Optimización de presupuesto</span>
-            <span class="sc-tag">Reporte de retorno</span>
-          </div>
-        </div>
-        <div class="sc-arrow">→</div>
-      </a>
-
-      <a href="/plan-05" class="service-card card-05">
-        <div class="sc-number">05</div>
-        <div class="sc-body">
-          <div class="sc-label">Nivel 03 · Sugerencia</div>
-          <div class="sc-name">IDENTIDAD<br>VISUAL</div>
-          <div class="sc-desc">Modernización, no rediseño desde cero: la misma esencia de la marca del cliente, puesta al día y aplicada a todo su sistema. Proyecto único.</div>
-          <div class="sc-tags">
-            <span class="sc-tag">Paleta y tipografía</span>
-            <span class="sc-tag">Aplicación al sistema</span>
+            <span class="sc-tag">WhatsApp + Instagram + web</span>
+            <span class="sc-tag">Agenda automática</span>
+            <span class="sc-tag">Ventas 24/7</span>
           </div>
         </div>
         <div class="sc-arrow">→</div>
@@ -392,39 +381,37 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
         <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         LA INVERSIÓN
       </div>
-      <h2 class="fs-title">Setup + mantención es la base<br><span>lo demás se suma solo si tu negocio lo necesita</span></h2>
-      <p class="fs-desc">El Nivel 01 es la inversión inicial: el sistema completo, instalado y funcionando, más la mantención mensual que lo mantiene arriba. Los Niveles 02 y 03 son opcionales — nunca obligatorios.</p>
+      <h2 class="fs-title">Pago único de implementación<br><span>+ soporte mensual opcional desde el segundo mes</span></h2>
+      <p class="fs-desc">Todos los precios en CLP + boleta de honorarios. El primer mes de soporte va incluido; desde el segundo, es mes a mes y sin permanencia.</p>
     </div>
     <div class="fs-plans">
       <div class="fs-plan">
-        <div class="fs-plan-name">Nivel 01 · Principal — El Sistema</div>
+        <div class="fs-plan-name">Plan 01 — Presencia Digital</div>
+        <div class="fs-plan-price"><span class="fs-price-f">$490.000</span></div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:10px;">CLP + boleta · 3–4 semanas</div>
+        <div style="font-family:var(--fm);font-size:11px;color:var(--text2);">Soporte desde $120.000 CLP/mes</div>
+      </div>
+      <div class="fs-plan">
+        <div class="fs-plan-name">Plan 02 — Ecosistema Digital</div>
         <div class="fs-plan-price"><span class="fs-price-f">$990.000</span></div>
-        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:10px;">CLP · único, 1-2 cuotas</div>
-        <div style="font-family:var(--fm);font-size:11px;color:var(--text2);">+ $190.000 CLP/mes mantención</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:10px;">CLP + boleta · 4–5 semanas</div>
+        <div style="font-family:var(--fm);font-size:11px;color:var(--text2);">Soporte desde $200.000 CLP/mes</div>
       </div>
       <div class="fs-plan">
-        <div class="fs-plan-name">Nivel 02 · Opcional — Auditoría + Contenido</div>
-        <div class="fs-plan-price"><span class="fs-price-f">$450.000</span></div>
-        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);">CLP · proyecto único</div>
+        <div class="fs-plan-name">Plan 03 — Sistema con IA</div>
+        <div class="fs-plan-price"><span class="fs-price-f">$1.990.000</span></div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:10px;">CLP + boleta · 5–6 semanas</div>
+        <div style="font-family:var(--fm);font-size:11px;color:var(--text2);">Soporte desde $350.000 CLP/mes</div>
       </div>
       <div class="fs-plan">
-        <div class="fs-plan-name">Nivel 02 · Opcional — Contenido Mensual</div>
-        <div class="fs-plan-price"><span class="fs-price-f">$600.000</span></div>
-        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);">CLP / mes · mínimo, si continúa</div>
-      </div>
-      <div class="fs-plan">
-        <div class="fs-plan-name">Nivel 02 · Extra — Gestión de Ads</div>
-        <div class="fs-plan-price"><span class="fs-price-f">15%</span></div>
-        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);">Del spend · mensual, solo si aplica</div>
-      </div>
-      <div class="fs-plan">
-        <div class="fs-plan-name">Nivel 03 · Sugerencia — Identidad Visual</div>
-        <div class="fs-plan-price"><span class="fs-price-f">$200.000</span></div>
-        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);">CLP · proyecto único</div>
+        <div class="fs-plan-name">Plan 04 — Agente IA Personalizado</div>
+        <div class="fs-plan-price"><span class="fs-price-f"><span style="font-size:.5em;margin-right:6px;">DESDE</span>$1.490.000</span></div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:10px;">CLP + boleta · 2–3 semanas</div>
+        <div style="font-family:var(--fm);font-size:11px;color:var(--text2);">Soporte desde $290.000 CLP/mes</div>
       </div>
     </div>
     <div style="margin-top:24px;text-align:center;">
-      <p style="font-family:var(--fm);font-size:10px;letter-spacing:.14em;color:var(--text3);text-transform:uppercase;">La mantención del Nivel 01 cubre soporte, hosting, monitoreo, backups, seguridad y entrenamiento del agente de IA — no gestión de contenido ni de pauta.</p>
+      <p style="font-family:var(--fm);font-size:10px;letter-spacing:.14em;color:var(--text3);text-transform:uppercase;">Programa Fundadores: mismo precio + segundo mes de soporte sin costo, valor del soporte congelado por 12 meses y sesión de resultados a los 60 días.</p>
     </div>
   </div>
 </section>
@@ -435,47 +422,41 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 <section class="reveal compare-section">
   <div class="wrap">
     <div class="section-label">Cómo se ordenan</div>
-    <h2 class="section-title">BASE Y<br>OPCIONALES</h2>
-    <p class="section-desc">No son cinco planes escalonados. Es un sistema base y cuatro servicios que se suman por separado, cada uno cuando corresponde.</p>
+    <h2 class="section-title">COMPARA<br>LOS PLANES</h2>
+    <p class="section-desc">Cada plan incluye todo lo del anterior. El Agente IA se puede contratar solo o sumado a cualquier plan.</p>
     <table class="compare-table">
       <thead>
         <tr>
-          <th>Servicio</th>
-          <th>Tipo</th>
-          <th>Requiere</th>
+          <th>Plan</th>
+          <th>Qué es</th>
+          <th>Plazo</th>
           <th>Precio</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td style="color:#FF6B35;">El Sistema<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Nivel 01 · Principal</span></td>
-          <td>Base — siempre activa</td>
-          <td><span class="dash">—</span></td>
-          <td>$990.000 + $190.000/mes</td>
+          <td style="color:#FF6B35;">Presencia Digital<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Plan 01</span></td>
+          <td>Página web profesional</td>
+          <td>3–4 semanas</td>
+          <td>$490.000 + $120.000/mes</td>
         </tr>
         <tr>
-          <td style="color:#FF8C42;">Auditoría + Contenido<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Nivel 02 · Opcional</span></td>
-          <td>Proyecto único</td>
-          <td>El Sistema activo</td>
-          <td>$450.000</td>
+          <td style="color:#FF8C42;">Ecosistema Digital<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Plan 02</span></td>
+          <td>Web + sistema / CRM</td>
+          <td>4–5 semanas</td>
+          <td>$990.000 + $200.000/mes</td>
         </tr>
         <tr>
-          <td style="color:#FFB347;">Contenido Mensual<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Nivel 02 · Opcional</span></td>
-          <td>Recurrente, mes a mes</td>
-          <td>Auditoría previa</td>
-          <td>$600.000/mes</td>
+          <td style="color:#C4467A;">Sistema con IA<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Plan 03</span></td>
+          <td>Sistema de IA personalizado</td>
+          <td>5–6 semanas</td>
+          <td>$1.990.000 + $350.000/mes</td>
         </tr>
         <tr>
-          <td style="color:#C4467A;">Gestión de Ads<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Nivel 02 · Extra</span></td>
-          <td>Recurrente, solo si aplica</td>
-          <td>El Sistema activo</td>
-          <td>15% del spend</td>
-        </tr>
-        <tr>
-          <td style="color:#7B3FA0;">Identidad Visual<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Nivel 03 · Sugerencia</span></td>
-          <td>Proyecto único</td>
-          <td>El Sistema activo</td>
-          <td>$200.000</td>
+          <td style="color:#7B3FA0;">Agente IA Personalizado<br><span style="font-family:var(--fm);font-size:10px;color:var(--text3);">Plan 04</span></td>
+          <td>Empleado virtual 24/7</td>
+          <td>2–3 semanas</td>
+          <td>Desde $1.490.000 + $290.000/mes</td>
         </tr>
       </tbody>
     </table>
@@ -504,7 +485,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
       <div class="proceso-step">
         <div class="paso-num">03</div>
         <div class="paso-name">Implementación</div>
-        <div class="paso-desc">Construcción de El Sistema completo. 3–4 semanas desde el diagnóstico. Entregables parciales para que veas el avance.</div>
+        <div class="paso-desc">Construcción del sistema según tu plan: entre 2 y 6 semanas desde el kickoff. Entregables parciales para que veas el avance.</div>
       </div>
       <div class="proceso-step">
         <div class="paso-num">04</div>

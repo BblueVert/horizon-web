@@ -31,17 +31,20 @@
 
 ## 2. Los productos, uno por uno
 
-### HORIZON Agencia — "El Sistema" (Nivel 01 + add-ons)
-El producto principal, vendido a cualquier PyME de servicio (ver `HORIZON-BUYER-PERSONA.md`, Persona A) o a un restaurante bajo el pitch Mesa Cero (Persona B). Detalle funcional completo en `HORIZON-PRD-EL-SISTEMA.md`. Estructura de pricing vigente (igual a la landing, `Pages/HORIZON_Landing_2026.html#planes`):
+### HORIZON Agencia — 4 planes
+El producto principal, vendido a cualquier PyME de servicio (ver `HORIZON-BUYER-PERSONA.md`, Persona A) o a un restaurante bajo el pitch Mesa Cero (Persona B). Detalle funcional completo en `HORIZON-PRD-EL-SISTEMA.md`. Estructura de pricing vigente (octubre 2026, igual a la landing `Pages/HORIZON_Landing_2026.html#planes` y a `/plan-01` … `/plan-04`):
 
-| Nivel | Ítem | Precio | Frecuencia |
-|---|---|---|---|
-| 01 · Principal | Setup: landing + sistema | $990.000 CLP | Único, 1-2 cuotas |
-| 01 · Principal | Mantención | $190.000 CLP | Mensual, siempre |
-| 02 · Opcional | Auditoría + estrategia de contenido | $450.000 CLP | Único |
-| 02 · Opcional | Contenido mensual | $600.000 CLP mínimo | Mensual, si continúa |
-| 02 · Extra | Gestión de Ads | 15% del spend | Mensual, solo si aplica |
-| 03 · Sugerencia | Identidad visual | $200.000 CLP | Único |
+| Plan | Qué es | Implementación | Plazo | Soporte mensual (desde el mes 2) |
+|---|---|---|---|---|
+| 01 · Presencia Digital | Página web profesional + Google Business + WhatsApp + chatbot básico | $490.000 CLP | 3–4 semanas | $120.000 · con IA $290.000 |
+| 02 · Ecosistema Digital | Web + sistema (reservas, tienda o caja) + CRM + dashboard | $990.000 CLP | 4–5 semanas | $200.000 · con IA $390.000 |
+| 03 · Sistema con IA | Sistema de IA personalizado: Plan 02 + agente IA + n8n + Meta Ads | $1.990.000 CLP | 5–6 semanas | $350.000 Mantenimiento + Ads · $490.000 Sistema completo + IA |
+| 04 · Agente IA Personalizado | Empleado virtual 24/7 en WhatsApp, Instagram y web; solo o sumado a otro plan | desde $1.490.000 CLP | 2–3 semanas | $290.000 |
+
+- Todos los precios + boleta de honorarios. El primer mes de soporte va incluido; luego es mes a mes, sin permanencia.
+- **Programa Fundadores** (3 negocios): mismo precio, sin descuento. Beneficios: segundo mes de soporte sin costo, valor del soporte congelado 12 meses, sesión de resultados a los 60 días y atención prioritaria por WhatsApp. A cambio: testimonio en video, permiso para mostrar el caso, encuesta a los 30 días y reseña voluntaria.
+- Ya no se ofrecen como servicios aparte: Auditoría + Contenido, Contenido Mensual, Gestión de Ads (15% del spend) e Identidad Visual. La auditoría y Meta Ads quedan dentro del Plan 03.
+- Claves internas en la BD de leads (OPS): `plan01` = Plan 01, `plan02` = Plan 02, `plan04` = Plan 03 Sistema con IA, `plan05` = Plan 04 Agente IA, `plan03` = plan anterior "Negocio Activo".
 
 ### HORIZON Vertical SaaS — Binks Barber
 Producto ya construido (`verticales/peluquerias/`), multi-tenant sobre Supabase con RLS. Vende por autoservicio/venta liviana, no requiere instalación presencial completa como El Sistema.
@@ -87,7 +90,7 @@ Este mapa nace del modelo de Mesa Cero (`MESA-CERO-VISION-Y-POSICIONAMIENTO.md`)
 | Mensajería | **WhatsApp Business API** | Canal principal de atención automatizada por IA |
 | Automatización | **n8n** (mencionado en `SISTEMA-DE-CIERRE.md` como `project-n8n`), **Make**, **Zapier** | Workflows reactivos hoy (ej. WhatsApp por cambio de estado de lead); seguimiento proactivo es un hueco identificado, no construido |
 | IA / agentes | **Claude API** (Anthropic) | Agentes de WhatsApp/Instagram/voz para clientes, y el Agente HORIZON interno (Módulo D de OPS) |
-| Growth / pauta | **Meta Ads, Google Ads** | Ejecutados dentro del Nivel 02 "Gestión de Ads" |
+| Growth / pauta | **Meta Ads, Google Ads** | Ejecutados dentro del Plan 03 "Sistema con IA" |
 | CRM / GHL | **GoHighLevel** (logo en landing) | Presente en el stack mostrado al cliente como parte del ecosistema de herramientas que HORIZON integra |
 
 Todo esto se muestra explícitamente en el marquee de logos de la landing (`Pages/HORIZON_Landing_2026.html`) — no es un detalle interno, es parte de cómo HORIZON demuestra credibilidad técnica frente al cliente.
