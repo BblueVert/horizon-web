@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursos gratuitos — HORIZON</title>
+<meta name="description" content="Plantillas interactivas para tu negocio: contexto para tu IA, prompts, checklist de Google y mini-auditoría digital. Gratis, con resultado al instante.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://horizonweb.cl/recursos">
+<meta property="og:title" content="Recursos gratuitos — HORIZON">
+<meta property="og:description" content="Completa el recurso y recibe tu resultado al instante: contexto para tu IA, prompts, checklist de Google y mini-auditoría.">
+<meta property="og:image" content="https://horizonweb.cl/Identidad/og-image.png">
+<meta name="robots" content="index,follow">
+<link rel="icon" type="image/png" href="/Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#07060E;--deep:#0D0B18;--surface:#13111F;--card:#1A1828;--border:#252235;--border2:#302D45;
+  --h1:#FF6B35;--h2:#FF8C42;--h3:#FFB347;--h4:#E8637A;--h5:#C4467A;--h6:#7B3FA0;--violet:#8A2A6E;
+  --ok:#5FD38D;--warn:#FF9F45;--bad:#E8637A;
+  --text:#F5F2FF;--text2:#A9A6C4;--text3:#6E6A8E;--white:#FAFAFF;
+  --fd:'Bebas Neue',sans-serif;--fm:'DM Mono',monospace;--fb:'Plus Jakarta Sans',sans-serif;--fs:'Instrument Serif',serif;
+  --grad:linear-gradient(90deg,var(--h1),var(--h4) 55%,#9B5BC8);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--text);font-family:var(--fb);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(800px 600px at 90% -5%,rgba(123,63,160,.28),transparent 70%),radial-gradient(700px 500px at -10% 105%,rgba(255,107,53,.14),transparent 70%)}
+a{color:inherit}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;max-width:760px;margin:0 auto}
+header img{height:26px;display:block}
+header .back{font:500 11px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--text3);text-decoration:none}
+main{max-width:760px;margin:0 auto;padding:12px 20px 80px}
+.lab{font:500 11px var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--h1)}
+h1{font:400 clamp(44px,11vw,76px)/.92 var(--fd);letter-spacing:.01em;margin:14px 0 14px}
+h1 .g,.g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font:400 34px/1 var(--fd);letter-spacing:.02em;margin-bottom:14px}
+.lead{color:var(--text2);font-size:16px;max-width:600px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.chip{font:500 11px var(--fm);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border2);color:var(--text2);border-radius:30px;padding:6px 12px}
+.cards{display:grid;gap:14px;margin-top:28px}
+.rcard{display:block;text-decoration:none;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;transition:border-color .2s,transform .2s}
+.rcard:hover{border-color:rgba(255,107,53,.45);transform:translateY(-2px)}
+.rcard .kw{font:400 15px var(--fd);letter-spacing:.12em;color:var(--h1)}
+.rcard h3{font:700 20px/1.25 var(--fb);margin:6px 0 6px}
+.rcard p{color:var(--text2);font-size:14px}
+.rcard .go{display:inline-block;margin-top:12px;font:600 13px var(--fb);color:var(--h2)}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;margin-top:18px}
+.step{font:500 11px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+.f{margin-bottom:18px}
+.f label.l{display:block;font-weight:700;font-size:15px;margin-bottom:4px}
+.f .a{display:block;color:var(--text3);font-size:13px;margin-bottom:8px}
+.f .req{color:var(--h1)}
+input[type=text],input[type=tel],input[type=email],textarea{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;color:var(--text);font:500 16px var(--fb);padding:13px 14px;outline:none;transition:border-color .2s}
+textarea{min-height:88px;resize:vertical}
+input:focus,textarea:focus{border-color:var(--h1)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opts{display:grid;gap:8px}
+.opt,.chk{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:13px 14px;cursor:pointer;font-weight:500;transition:border-color .15s,background .15s}
+.opt input,.chk input{position:absolute;opacity:0;pointer-events:none}
+.opt i,.chk i{flex:none;width:20px;height:20px;border:2px solid var(--border2);border-radius:50%;display:grid;place-items:center}
+.chk i{border-radius:6px}
+.opt.on,.chk.on{border-color:var(--h1);background:rgba(255,107,53,.08)}
+.opt.on i,.chk.on i{border-color:var(--h1);background:var(--h1)}
+.opt.on i::after,.chk.on i::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+.chk.on i::after{width:9px;height:5px;border-radius:0;background:none;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text2);margin:6px 0 18px;cursor:pointer}
+.consent input{margin-top:3px;accent-color:var(--h1);width:18px;height:18px;flex:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:15px 22px;font:700 15px var(--fb);cursor:pointer;text-decoration:none;transition:opacity .2s,transform .1s}
+.btn:active{transform:scale(.98)}
+.btn.p{background:linear-gradient(135deg,var(--h1),var(--h2));color:var(--void);width:100%}
+.btn.s{background:transparent;border:1px solid var(--border2);color:var(--text)}
+.btn.wa{background:#25D366;color:#06210f;width:100%}
+.btn[disabled]{opacity:.55;cursor:wait}
+.err{color:var(--bad);font-size:14px;margin-top:10px;min-height:1px}
+.progress{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:18px}
+.progress span{display:block;height:100%;width:0;background:var(--grad);transition:width .3s}
+/* resultado */
+.hero-r{display:flex;gap:20px;align-items:center;margin-top:8px}
+.ring{--p:0;flex:none;width:112px;height:112px;border-radius:50%;background:conic-gradient(var(--c,var(--h1)) calc(var(--p)*1%),var(--border) 0);display:grid;place-items:center}
+.ring b{width:88px;height:88px;border-radius:50%;background:var(--void);display:grid;place-items:center;font:400 38px var(--fd)}
+.nivel{display:inline-block;font:500 11px var(--fm);letter-spacing:.14em;text-transform:uppercase;border-radius:20px;padding:5px 11px;margin-bottom:8px}
+.n-urgente{background:rgba(232,99,122,.15);color:var(--bad)}.n-en{background:rgba(255,159,69,.15);color:var(--warn)}.n-solido{background:rgba(95,211,141,.15);color:var(--ok)}
+.concl{position:relative;background:linear-gradient(135deg,rgba(138,42,110,.22),rgba(255,107,53,.08));border:1px solid rgba(196,70,122,.35);border-radius:18px;padding:20px 20px 20px 22px;margin-top:18px;font-size:16px}
+.concl .lab{color:#E9A6D4;margin-bottom:8px;display:block}
+ol.acc{list-style:none;counter-reset:a;display:grid;gap:10px}
+ol.acc li{counter-increment:a;display:flex;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 14px;font-size:15px}
+ol.acc li::before{content:counter(a);flex:none;width:26px;height:26px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font:700 13px var(--fb);color:#fff}
+pre.out{white-space:pre-wrap;word-break:break-word;background:var(--surface);border:1px solid var(--border2);border-left:4px solid var(--h1);border-radius:12px;padding:16px;font:400 14px/1.6 var(--fm);color:var(--text)}
+.copyrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 8px}
+.copyrow h3{font:700 16px var(--fb)}
+.mini{font:600 12px var(--fb);background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:9px;padding:8px 12px;cursor:pointer;white-space:nowrap}
+.cl li{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--border2);list-style:none}
+.cl li:last-child{border:0}
+.cl .ic{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-weight:800;font-size:13px}
+.cl .ok .ic{background:rgba(95,211,141,.18);color:var(--ok)}.cl .no .ic{background:rgba(232,99,122,.16);color:var(--bad)}
+.cl small{display:block;color:var(--text3);font-size:13px;margin-top:2px}
+.bars{display:grid;gap:14px}
+.bar .t{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:6px}
+.bar .tr{height:10px;background:var(--border);border-radius:10px;overflow:hidden}
+.bar .tr span{display:block;height:100%;border-radius:10px}
+.plan{display:block;text-decoration:none;border:1px solid rgba(255,107,53,.35);background:rgba(255,107,53,.06);border-radius:16px;padding:18px;margin-top:6px}
+.plan .c{font:500 11px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--h1)}
+.plan .nm{font:400 30px/1 var(--fd);margin:6px 0}
+.plan .pr{color:var(--text2);font-size:14px}
+.share{display:flex;gap:8px;align-items:center;background:var(--surface);border:1px dashed var(--border2);border-radius:12px;padding:10px 12px;font:400 12px var(--fm);color:var(--text2);overflow:hidden}
+.share span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stack{display:grid;gap:10px;margin-top:14px}
+.loading{text-align:center;padding:60px 0;color:var(--text2)}
+.spin{width:34px;height:34px;border:3px solid var(--border2);border-top-color:var(--h1);border-radius:50%;margin:0 auto 14px;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+footer{max-width:760px;margin:0 auto;padding:24px 20px 40px;font:500 11px var(--fm);letter-spacing:.12em;color:var(--text3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+footer a{color:var(--text3)}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}.hero-r{gap:14px}.ring{width:92px;height:92px}.ring b{width:72px;height:72px;font-size:30px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/"><img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON"></a>
+  <a class="back" href="/recursos">Recursos</a>
+</header>
+<main id="app"><div class="loading"><div class="spin"></div>Cargando…</div></main>
+<footer><span>HORIZON · Rancagua, Chile</span><span><a href="/">horizonweb.cl</a> · @horizon.webs</span></footer>
+
+<script>
+(function(){
+  const WA = '56946513068';
+  const app = document.getElementById('app');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const qs = new URLSearchParams(location.search);
+  const parts = location.pathname.replace(/\/+$/,'').split('/').filter(Boolean); // ['recursos', slug] | ['recursos','r',token]
+
+  async function api(url, opts){
+    const r = await fetch(url, opts);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || 'Algo falló. Intenta de nuevo.');
+    return j;
+  }
+  function copiar(texto, btn){
+    const done = () => { const t = btn.textContent; btn.textContent = '¡Copiado!'; setTimeout(() => btn.textContent = t, 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(texto).then(done).catch(() => fallback());
+    else fallback();
+    function fallback(){ const ta = document.createElement('textarea'); ta.value = texto; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); done();}catch(e){} ta.remove(); }
+  }
+
+  // ── Hub ──────────────────────────────────────────────────────────────────
+  async function hub(){
+    const lista = await api('/api/recursos');
+    app.innerHTML = `
+      <div class="lab">HORIZON · Recursos gratuitos</div>
+      <h1>Herramientas para <span class="g">tu negocio</span></h1>
+      <p class="lead">Completa el recurso y recibe tu resultado al instante, hecho con la información de tu negocio. Gratis.</p>
+      <div class="cards">${lista.map(r => `
+        <a class="rcard" href="/recursos/${esc(r.slug)}">
+          <div class="kw">${esc(r.kw)} · ${esc(r.tarea)}</div>
+          <h3>${esc(r.titulo)}</h3>
+          <p>${esc(r.bajada)}</p>
+          <span class="go">Empezar · ${esc(r.minutos)} min →</span>
+        </a>`).join('')}
+      </div>`;
+    document.title = 'Recursos gratuitos — HORIZON';
+  }
+
+  // ── Formulario ───────────────────────────────────────────────────────────
+  function campoHTML(c){
+    const req = c.req ? ' <span class="req">*</span>' : '';
+    const ayuda = c.ayuda ? `<span class="a">${esc(c.ayuda)}</span>` : '';
+    if (c.tipo === 'check') return `<label class="chk" data-k="${c.id}"><input type="checkbox" name="${c.id}"><i></i><span>${esc(c.label)}</span></label>`;
+    if (c.tipo === 'opcion') return `<div class="f"><label class="l">${esc(c.label)}${req}</label>${ayuda}<div class="opts">${
+      c.opciones.map(o => `<label class="opt"><input type="radio" name="${c.id}" value="${esc(o.v)}"><i></i><span>${esc(o.l)}</span></label>`).join('')}</div></div>`;
+    const input = c.tipo === 'area' ? `<textarea name="${c.id}" rows="3"></textarea>` : `<input type="text" name="${c.id}">`;
+    return `<div class="f"><label class="l">${esc(c.label)}${req}</label>${ayuda}${input}</div>`;
+  }
+
+  async function formulario(slug){
+    const def = await api('/api/recursos?slug=' + encodeURIComponent(slug));
+    document.title = def.titulo + ' — HORIZON';
+    const checks = def.campos.every(c => c.tipo === 'check');
+    app.innerHTML = `
+      <div class="lab">${esc(def.kw)} · ${esc(def.tarea)}</div>
+      <h1>${esc(def.titulo)}</h1>
+      <p class="lead">${esc(def.bajada)}</p>
+      <div class="meta"><span class="chip">${esc(def.minutos)} min</span><span class="chip">Resultado al instante</span><span class="chip">Gratis</span></div>
+      <form id="f" novalidate>
+        <section class="box">
+          <div class="progress"><span id="pg"></span></div>
+          <div class="step">Paso 1 · ${checks ? 'Marca lo que ya tienes' : 'Tus respuestas'}</div>
+          ${checks ? '<div class="opts">' + def.campos.map(campoHTML).join('') + '</div>' : def.campos.map(campoHTML).join('')}
+        </section>
+        <section class="box">
+          <div class="step">Paso 2 · ¿A quién le enviamos el resultado?</div>
+          <div class="grid2">
+            <div class="f"><label class="l">Tu nombre <span class="req">*</span></label><input type="text" name="nombre" autocomplete="given-name"></div>
+            <div class="f"><label class="l">Tu negocio <span class="req">*</span></label><input type="text" name="negocio" autocomplete="organization"></div>
+            <div class="f"><label class="l">Rubro</label><input type="text" name="rubro" placeholder="Ej.: panadería"></div>
+            <div class="f"><label class="l">Comuna</label><input type="text" name="comuna" placeholder="Ej.: Rancagua"></div>
+            <div class="f"><label class="l">WhatsApp <span class="req">*</span></label><input type="tel" name="whatsapp" placeholder="9 1234 5678" autocomplete="tel"></div>
+            <div class="f"><label class="l">Email <span style="color:var(--text3);font-weight:500">(opcional)</span></label><input type="email" name="email" autocomplete="email"></div>
+          </div>
+          <div class="hp" aria-hidden="true"><label>Web<input type="text" name="web" tabindex="-1" autocomplete="off"></label></div>
+          <label class="consent"><input type="checkbox" name="consent"><span>Autorizo a HORIZON a guardar mis respuestas para entregarme este resultado y contactarme por WhatsApp. Puedo pedir que se eliminen cuando quiera.</span></label>
+          <button class="btn p" type="submit" id="go">Ver mi resultado →</button>
+          <div class="err" id="err"></div>
+        </section>
+      </form>`;
+
+    const f = document.getElementById('f');
+    // estado visual de opciones y checks
+    f.addEventListener('change', e => {
+      const t = e.target;
+      if (t.type === 'radio') f.querySelectorAll(`input[name="${t.name}"]`).forEach(i => i.closest('.opt').classList.toggle('on', i.checked));
+      if (t.type === 'checkbox' && t.closest('.chk')) t.closest('.chk').classList.toggle('on', t.checked);
+      progreso();
+    });
+    f.addEventListener('input', progreso);
+    function progreso(){
+      const n = def.campos.filter(c => {
+        if (c.tipo === 'check') return true;
+        if (c.tipo === 'opcion') return !!f.querySelector(`input[name="${c.id}"]:checked`);
+        return (f.elements[c.id].value || '').trim().length > 0;
+      }).length;
+      document.getElementById('pg').style.width = Math.round(n / def.campos.length * 100) + '%';
+    }
+
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      const err = document.getElementById('err'); err.textContent = '';
+      const respuestas = {};
+      for (const c of def.campos) {
+        if (c.tipo === 'check') respuestas[c.id] = f.elements[c.id].checked;
+        else if (c.tipo === 'opcion') respuestas[c.id] = (f.querySelector(`input[name="${c.id}"]:checked`) || {}).value || '';
+        else respuestas[c.id] = f.elements[c.id].value;
+      }
+      const falta = def.campos.filter(c => c.req && !respuestas[c.id]);
+      if (falta.length) { err.textContent = 'Te falta responder: ' + falta.map(c => c.label).join(', ') + '.'; return; }
+      const v = n => (f.elements[n].value || '').trim();
+      if (!v('nombre') || !v('negocio') || !v('whatsapp')) { err.textContent = 'Completa tu nombre, tu negocio y tu WhatsApp.'; return; }
+      if (!f.elements.consent.checked) { err.textContent = 'Necesitamos tu autorización para guardar tus respuestas.'; return; }
+      const btn = document.getElementById('go'); btn.disabled = true; btn.textContent = 'Preparando tu resultado…';
+      try {
+        const out = await api('/api/recursos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+          slug, respuestas, consentimiento: true, web: v('web'),
+          contacto: { nombre: v('nombre'), negocio: v('negocio'), rubro: v('rubro'), comuna: v('comuna'), whatsapp: v('whatsapp'), email: v('email') },
+          origen: { kw: qs.get('kw') || def.kw, utm_source: qs.get('utm_source'), utm_medium: qs.get('utm_medium'), utm_campaign: qs.get('utm_campaign'), ref: document.referrer },
+        }) });
+        if (out.token) history.replaceState(null, '', '/recursos/r/' + out.token);
+        resultado({ recurso: slug, negocio: out.negocio, resultado: out.resultado, definicion: def }, out.token, v('nombre'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (x) {
+        err.textContent = x.message; btn.disabled = false; btn.textContent = 'Ver mi resultado →';
+      }
+    });
+  }
+
+  // ── Resultado ────────────────────────────────────────────────────────────
+  function colorNivel(n){ return n === 'urgente' ? 'var(--bad)' : n === 'en camino' ? 'var(--warn)' : 'var(--ok)'; }
+  function claseNivel(n){ return n === 'urgente' ? 'n-urgente' : n === 'en camino' ? 'n-en' : 'n-solido'; }
+
+  function entregableHTML(e){
+    if (!e) return '';
+    if (e.contenido) return `<div class="copyrow"><h3>${esc(e.titulo)}</h3><button class="mini" data-copy="0">Copiar</button></div><pre class="out" id="c0">${esc(e.contenido)}</pre>`;
+    if (e.prompts) return e.prompts.map((p, i) => `<div class="copyrow"><h3>${esc(p.t)}</h3><button class="mini" data-copy="${i}">Copiar</button></div><pre class="out" id="c${i}">${esc(p.p)}</pre>`).join('');
+    if (e.checklist) return `<h2>${esc(e.titulo)}</h2><ul class="cl">${e.checklist.map(c => `<li class="${c.ok ? 'ok' : 'no'}"><span class="ic">${c.ok ? '✓' : '✕'}</span><div>${esc(c.l)}${c.como ? `<small>${esc(c.como)}</small>` : ''}</div></li>`).join('')}</ul>`;
+    if (e.bloques) return `<h2>${esc(e.titulo)}</h2><div class="bars">${e.bloques.map(b => {
+      const c = b.pct < 40 ? 'var(--bad)' : b.pct < 75 ? 'var(--warn)' : 'var(--ok)';
+      return `<div class="bar"><div class="t"><span>${esc(b.nombre)}</span><span>${b.pct}%</span></div><div class="tr"><span style="width:${b.pct}%;background:${c}"></span></div></div>`; }).join('')}</div>`;
+    return '';
+  }
+
+  function resultado(data, token, nombre){
+    const r = data.resultado || {};
+    const def = data.definicion || {};
+    const link = token ? location.origin + '/recursos/r/' + token : '';
+    const msg = `Hola Benjamín, soy ${nombre || ''} de ${data.negocio}. Completé el recurso ${def.kw || data.recurso}${r.puntaje != null ? ` y saqué ${r.puntaje}/100` : ''}. ${link ? 'Mi resultado: ' + link + ' ' : ''}Me gustaría conversarlo.`;
+    document.title = 'Tu resultado — HORIZON';
+    app.innerHTML = `
+      <div class="lab">${esc(def.kw || '')} · Resultado de ${esc(data.negocio)}</div>
+      <div class="hero-r">
+        ${r.puntaje != null ? `<div class="ring" style="--p:${r.puntaje};--c:${colorNivel(r.nivel)}"><b>${r.puntaje}</b></div>` : ''}
+        <div>${r.nivel ? `<span class="nivel ${claseNivel(r.nivel)}">${esc(r.nivel)}</span>` : ''}<h1 style="font-size:clamp(36px,8.5vw,58px);margin:0">${esc(r.titular)}</h1></div>
+      </div>
+      ${r.conclusion ? `<div class="concl"><span class="lab">Conclusión</span>${esc(r.conclusion)}</div>` : ''}
+      <section class="box"><h2>Tus próximos pasos</h2><ol class="acc">${(r.acciones || []).map(a => `<li>${esc(a)}</li>`).join('')}</ol></section>
+      <section class="box">${entregableHTML(r.entregable)}</section>
+      ${r.plan ? `<section class="box"><div class="step">Si quieres que lo hagamos por ti</div>
+        <a class="plan" href="${esc(r.plan.url)}"><div class="c">${esc(r.plan.codigo)} · sugerido para tu negocio</div><div class="nm">${esc(r.plan.nombre)}</div><div class="pr">${esc(r.plan.precio)} + boleta · Ver qué incluye →</div></a></section>` : ''}
+      <section class="box">
+        <div class="step">¿Lo conversamos?</div>
+        <a class="btn wa" href="https://wa.me/${WA}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Hablar con Benjamín por WhatsApp</a>
+        ${link ? `<div class="stack"><div class="share"><span>${esc(link)}</span><button class="mini" id="cl">Copiar link</button></div><small style="color:var(--text3);font-size:12px">Guarda este link: tu resultado queda disponible aquí.</small></div>` : ''}
+        <div class="stack"><a class="btn s" href="/recursos">Ver otros recursos</a></div>
+      </section>`;
+    const e = r.entregable || {};
+    app.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+      const i = +b.dataset.copy; copiar(e.contenido || (e.prompts && e.prompts[i].p) || '', b);
+    }));
+    const cl = document.getElementById('cl'); if (cl) cl.addEventListener('click', () => copiar(link, cl));
+  }
+
+  async function verGuardado(token){
+    const d = await api('/api/recursos?r=' + encodeURIComponent(token));
+    resultado(d, token, '');
+  }
+
+  // ── Router ───────────────────────────────────────────────────────────────
+  (async () => {
+    try {
+      if (parts[1] === 'r' && parts[2]) await verGuardado(parts[2]);
+      else if (parts[1]) await formulario(parts[1]);
+      else await hub();
+    } catch (x) {
+      app.innerHTML = `<div class="loading"><h2>Ups</h2><p>${esc(x.message)}</p><div class="stack" style="max-width:280px;margin:18px auto 0"><a class="btn s" href="/recursos">Ver recursos</a></div></div>`;
+    }
+  })();
+})();
+</script>
+</body>
+</html>
