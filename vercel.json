@@ -17,6 +17,7 @@
     { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" },
     { "source": "/c/:token", "destination": "/Pages/portal/index.html" },
     { "source": "/api/ops/tasks/:id", "destination": "/api/ops/tasks?id=:id" },
+    { "source": "/api/bot/:accion", "destination": "/api/bot?accion=:accion" },
     { "source": "/ops", "destination": "/OPS/index.html" },
     { "source": "/ops/login", "destination": "/OPS/login.html" },
     { "source": "/entrar", "destination": "/OPS/login.html" },
@@ -31,7 +32,8 @@
     { "source": "/ops/tareas",          "destination": "/OPS/tareas.html" },
     { "source": "/ops/notas",           "destination": "/OPS/notas.html" },
     { "source": "/ops/saas-clientes",   "destination": "/OPS/saas-clientes.html" },
-    { "source": "/ops/recursos",        "destination": "/OPS/recursos.html" }
+    { "source": "/ops/recursos",        "destination": "/OPS/recursos.html" },
+    { "source": "/ops/bandeja",         "destination": "/OPS/bandeja.html" }
   ],
   "headers": [
     {

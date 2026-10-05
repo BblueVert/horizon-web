@@ -1,0 +1,179 @@
+{
+ "name": "HORIZON · Agente · Seguimientos",
+ "nodes": [
+  {
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "hours",
+       "hoursInterval": 1
+      }
+     ]
+    }
+   },
+   "id": "5c3cc988-8ef3-4432-a0cf-9530b5198784",
+   "name": "Cada hora",
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "typeVersion": 1.2,
+   "position": [
+    0,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "return [{ json: {\n  HORIZON_URL: 'https://www.horizonweb.cl',\n  BOT_SECRET: 'PEGAR_HORIZON_BOT_SECRET',\n  ENVIAR_URL: 'http://localhost:5678/webhook/horizon-agente-enviar',\n} }];"
+   },
+   "id": "ba11415a-1cdb-4b3f-860d-bda81384d495",
+   "name": "Config",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    220,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "url": "={{ $('Config').first().json.HORIZON_URL + '/api/bot/seguimientos' }}",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Authorization",
+       "value": "={{ 'Bearer ' + $('Config').first().json.BOT_SECRET }}"
+      },
+      {
+       "name": "Content-Type",
+       "value": "application/json"
+      }
+     ]
+    },
+    "options": {
+     "timeout": 60000
+    }
+   },
+   "id": "4462e533-4b09-4e6a-b5d2-fdbc47b02b40",
+   "name": "Pedir seguimientos",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    440,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "fieldToSplitOut": "items",
+    "options": {}
+   },
+   "id": "029066af-be60-474e-a96d-da78e3b07339",
+   "name": "Uno por uno",
+   "type": "n8n-nodes-base.splitOut",
+   "typeVersion": 1,
+   "position": [
+    660,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $('Config').first().json.ENVIAR_URL }}",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Authorization",
+       "value": "={{ 'Bearer ' + $('Config').first().json.BOT_SECRET }}"
+      },
+      {
+       "name": "Content-Type",
+       "value": "application/json"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify($json) }}",
+    "options": {}
+   },
+   "id": "f82e4cd4-796e-4bd3-8567-e0e8da0427c6",
+   "name": "Enviar seguimiento",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    880,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "content": "## HORIZON · Agente · Seguimientos\nCada hora pregunta al cerebro a quién toca hacer seguimiento.\nSolo devuelve conversaciones con interés, sin respuesta en ~20 h y aún dentro de la ventana de 24 h de Meta (1 seguimiento por conversación).\nPasadas las 24 h, el seguimiento es manual desde la app.",
+    "height": 360,
+    "width": 420
+   },
+   "id": "ff3a0446-8191-4bcd-a808-349a5ee967a5",
+   "name": "Léeme",
+   "type": "n8n-nodes-base.stickyNote",
+   "typeVersion": 1,
+   "position": [
+    -520,
+    -220
+   ]
+  }
+ ],
+ "connections": {
+  "Cada hora": {
+   "main": [
+    [
+     {
+      "node": "Config",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Config": {
+   "main": [
+    [
+     {
+      "node": "Pedir seguimientos",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Pedir seguimientos": {
+   "main": [
+    [
+     {
+      "node": "Uno por uno",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Uno por uno": {
+   "main": [
+    [
+     {
+      "node": "Enviar seguimiento",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "active": false,
+ "settings": {
+  "executionOrder": "v1"
+ },
+ "pinData": {},
+ "tags": []
+}
