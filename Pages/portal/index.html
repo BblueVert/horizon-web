@@ -173,6 +173,23 @@ button{cursor:pointer;}
 .general{padding:16px 18px;margin-bottom:14px;}
 .general p{font-size:13.5px;color:var(--ink2);margin-bottom:10px;}
 
+/* ── Presupuesto ── */
+.bsum{padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.bsum small{display:block;font-size:12.5px;color:var(--ink3);}
+.bsum strong{font-family:var(--ff-title);font-size:20px;font-variant-numeric:tabular-nums;}
+.bsum .paid strong{color:var(--ok);}
+.blist{padding:4px 18px;}
+.bi{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--line);align-items:baseline;}
+.bi:last-child{border-bottom:0;}
+.bi-n{font-size:15px;font-weight:600;}
+.bi-m{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.bi-d{font-size:13.5px;color:var(--ink2);grid-column:1/-1;}
+.bi-s{grid-column:1/-1;font-size:12.5px;display:flex;align-items:center;gap:6px;color:var(--ink3);}
+.bi-s .hz-i{font-size:14px;}
+.bi.paid .bi-n,.bi.paid .bi-m{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--ink3);}
+.bi.paid .bi-s{color:var(--ok);font-weight:600;}
+@media(max-width:519px){.bsum{grid-template-columns:1fr 1fr;}.bsum div:first-child{grid-column:1/-1;}}
+
 /* ── Fichas ── */
 .fichas-top{display:grid;gap:12px;margin-bottom:14px;}
 .fstat{display:flex;align-items:center;gap:16px;padding:16px 18px;}
@@ -326,6 +343,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     <nav class="tabs" role="tablist" aria-label="Secciones del portal" id="tabs">
       <button class="tab" role="tab" id="t-plan" aria-controls="p-plan" aria-selected="true"><i class="hz-i" data-i="layers"></i><span class="lg">Línea de tiempo</span><span class="sm">Plan</span></button>
       <button class="tab" role="tab" id="t-act" aria-controls="p-act" aria-selected="false"><i class="hz-i" data-i="spark"></i>Actividad</button>
+      <button class="tab" role="tab" id="t-pres" aria-controls="p-pres" aria-selected="false" hidden><i class="hz-i" data-i="coin"></i>Presupuesto</button>
       <button class="tab" role="tab" id="t-fichas" aria-controls="p-fichas" aria-selected="false" hidden><i class="hz-i" data-i="bag"></i>Fichas <span class="count" id="fichas-count" hidden></span></button>
     </nav>
 
@@ -360,6 +378,12 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         </form>
       </div>
       <div class="card feed" id="feed"></div>
+    </section>
+
+    <!-- Presupuesto -->
+    <section class="panel" id="p-pres" role="tabpanel" aria-labelledby="t-pres" hidden>
+      <div class="card bsum" id="b-sum"></div>
+      <div class="card blist" id="b-list"></div>
     </section>
 
     <!-- Fichas de producto -->
@@ -691,6 +715,25 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     }).join('') || '<div class="ev-empty">Aquí irán apareciendo las novedades del proyecto.</div>';
   }
 
+  // ── Presupuesto ───────────────────────────────────────────────────────────
+  const clp = n => '$' + Math.round(n || 0).toLocaleString('es-CL');
+  function renderBudget(){
+    const B = S.budget || [];
+    $('t-pres').hidden = !B.length; if (!B.length) return;
+    const total = B.reduce((a, b) => a + (b.monto || 0), 0);
+    const pagado = B.filter(b => b.estado === 'pagado').reduce((a, b) => a + (b.monto || 0), 0);
+    const sinMonto = B.filter(b => b.monto == null && b.estado !== 'pagado').length;
+    $('b-sum').innerHTML = `<div><small>Total</small><strong>${clp(total)}</strong></div>
+      <div class="paid"><small>Pagado</small><strong>${clp(pagado)}</strong></div>
+      <div><small>Por pagar${sinMonto ? ` · ${sinMonto} por definir` : ''}</small><strong>${clp(total - pagado)}</strong></div>`;
+    $('b-list').innerHTML = B.map(b => { const paid = b.estado === 'pagado';
+      return `<div class="bi${paid ? ' paid' : ''}">
+        <div class="bi-n">${esc(b.nombre)}</div><div class="bi-m">${b.monto != null ? clp(b.monto) : 'Por definir'}</div>
+        ${b.descripcion ? `<div class="bi-d">${esc(b.descripcion)}</div>` : ''}
+        <div class="bi-s">${paid ? ic('check-circle') + 'Pagado' + (b.pagado_at ? ' el ' + fmtD(b.pagado_at, { day:'numeric', month:'long', year:'numeric' }) : '') : ic('circle') + 'Pendiente'}</div>
+      </div>`; }).join('');
+  }
+
   // ── Fichas de producto ────────────────────────────────────────────────────
   const CIERRE = [['','Selecciona'],['cremallera','Cremallera'],['iman','Imán'],['broche','Broche'],['solapa','Solapa'],['hebilla','Hebilla'],['abierto','Abierto'],['otro','Otro']];
   const HERRAJES = [['','Selecciona'],['dorado','Dorado'],['plateado','Plateado'],['bronce','Bronce'],['negro','Negro'],['sin_herrajes','Sin herrajes'],['otro','Otro']];
@@ -891,7 +934,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   $('gal-ok').addEventListener('click', async () => { F.fotos = F.galSel.slice(); closeSheet('gal'); renderChosen(); await saveFicha(); });
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
-  const TABS = ['plan','act','fichas'];
+  const TABS = ['plan','act','pres','fichas'];
   function setTab(name, push = true){
     TABS.forEach(t => { $('t-' + t).setAttribute('aria-selected', String(t === name)); $('p-' + t).hidden = t !== name; });
     if (name === 'plan') renderGantt();
@@ -908,7 +951,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   // ── Brief (preventa) ──────────────────────────────────────────────────────
   function initBrief(){
     $('p-brief').hidden = false; $('tabs').hidden = true;
-    ['p-plan','p-act','p-fichas'].forEach(id => $(id).hidden = true);
+    ['p-plan','p-act','p-pres','p-fichas'].forEach(id => $(id).hidden = true);
     const first = (S.lead.nombre || '').split(' ')[0];
     $('hello').textContent = first ? `Hola, ${first}` : 'Hola';
     $('p-name').textContent = 'Preparemos tu diagnóstico';
@@ -928,7 +971,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   // ── Carga y refresco en vivo ──────────────────────────────────────────────
   const composing = () => [...document.querySelectorAll('.composer textarea')].some(t => t.value.trim()) || !!document.activeElement?.closest?.('.composer');
   function renderAll(force){
-    renderHero(); renderFeed();
+    renderHero(); renderFeed(); renderBudget();
     if (force || !composing()) renderMilestones();   // no borrar un comentario a medio escribir
     if (!$('p-plan').hidden) renderGantt();
     if (S.catalog) { if ($('sheet').hidden) renderGrid(); else renderFichasHeader(); }
@@ -948,6 +991,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         if (data.catalog) {
           $('t-fichas').hidden = false; renderGrid();
         }
+        renderBudget();
         const h = location.hash.slice(1);
         setTab(TABS.includes(h) && !$('t-' + h).hidden ? h : 'plan', false);
       }

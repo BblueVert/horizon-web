@@ -99,6 +99,23 @@
 .ph-card .del{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:14px;}
 .ph-card:hover .del{display:flex;}
 
+/* Presupuesto */
+.bstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.bstat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow-sm);}
+.bstat small{font-size:12px;color:var(--text3);display:block;}
+.bstat strong{font-size:19px;font-variant-numeric:tabular-nums;}
+.bstat.ok strong{color:var(--green);}
+.bitem{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-sm);padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;}
+.bitem + .bitem{margin-top:8px;}
+.bitem.paid .st-name{text-decoration:line-through;color:var(--text3);}
+.bitem .st-row input[type=text],.bitem .st-row input[type=number]{border:1px solid var(--border2);border-radius:8px;padding:5px 8px;font-size:12.5px;font-family:inherit;background:#fff;color:var(--text);}
+.bitem .monto{width:130px;font-variant-numeric:tabular-nums;}
+.bitem label.wide{flex:1;min-width:0;}
+.bitem input.wide{flex:1;min-width:120px;max-width:100%;}
+.seg button.on[data-v="pagado"]{background:#fff;color:var(--green);box-shadow:var(--shadow-sm);}
+.seg button.on[data-v="pendiente"]{background:#fff;color:var(--text);box-shadow:var(--shadow-sm);}
+.internal{font-size:11px;font-weight:600;color:var(--text3);background:var(--card2);border-radius:99px;padding:1px 7px;}
+
 /* Ajustes */
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
 .color-in{display:flex;align-items:center;gap:8px;}
@@ -132,6 +149,7 @@
           <button class="ops-tab" data-tab="avances"><i class="hz-i" data-i="spark"></i>Avances</button>
           <button class="ops-tab" data-tab="conversacion"><i class="hz-i" data-i="message"></i>Conversación <span class="n" id="convN" hidden></span></button>
           <button class="ops-tab" data-tab="fichas" id="tabFichas"><i class="hz-i" data-i="bag"></i>Fichas</button>
+          <button class="ops-tab" data-tab="presupuesto"><i class="hz-i" data-i="coin"></i>Presupuesto</button>
           <button class="ops-tab" data-tab="backlog"><i class="hz-i" data-i="clipboard"></i>Backlog</button>
           <button class="ops-tab" data-tab="ajustes"><i class="hz-i" data-i="gear"></i>Ajustes</button>
         </div>
@@ -209,6 +227,18 @@
           </div>
           <div class="table-wrap"><table class="pt"><thead><tr><th></th><th>Producto</th><th>Estado</th><th>Alto × ancho × fondo</th><th>Asa / correa</th><th>Cierre</th><th>Herrajes</th><th>Notas</th></tr></thead><tbody id="fichasBody"></tbody></table></div>
           <p class="muted" style="margin-top:10px;" id="fichasOff" hidden>Las fichas están desactivadas para este proyecto. Actívalas en Ajustes.</p>
+        </section>
+
+        <!-- Presupuesto -->
+        <section class="panel" id="p-presupuesto">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+            <div class="sec-title" style="margin:0"><i class="hz-i" data-i="coin"></i>Presupuesto del proyecto</div>
+            <button class="btn btn-primary btn-sm" id="addBudget"><i class="hz-i" data-i="plus"></i>Nuevo ítem</button>
+          </div>
+          <label class="notify"><input type="checkbox" id="notifyPaid" checked> Al marcar un ítem como pagado, avisar en el portal del cliente</label>
+          <div class="bstats" id="bStats"></div>
+          <div id="budget"></div>
+          <p class="muted" style="margin-top:12px;">El cliente ve los ítems, montos y estado en su portal (lo pagado aparece tachado). Comprobante y nota interna son solo del equipo.</p>
         </section>
 
         <!-- Backlog -->
@@ -552,6 +582,85 @@ $('exportCsv').addEventListener('click', () => {
   a.download = `fichas-${(P.brand?.nombre || P.nombre).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.csv`; a.click();
 });
 
+/* ── Presupuesto ── */
+let budget = [];
+const clp = n => '$' + Math.round(n || 0).toLocaleString('es-CL');
+async function loadBudget(){
+  const { data, error } = await sb.from('budget_items').select('*').eq('project_id', P.id).order('orden').order('created_at');
+  if (error) { $('budget').innerHTML = '<div class="ops-empty"><div class="ops-empty-text">Falta correr supabase-migration-013-presupuesto.sql</div></div>'; return; }
+  budget = data || []; renderBudget();
+}
+function renderBudget(){
+  const total = budget.reduce((a, b) => a + (b.monto || 0), 0);
+  const pagado = budget.filter(b => b.estado === 'pagado').reduce((a, b) => a + (b.monto || 0), 0);
+  const sinMonto = budget.filter(b => b.monto == null && b.estado !== 'pagado').length;
+  $('bStats').innerHTML = budget.length ? `<div class="bstat"><small>Total cotizado</small><strong>${clp(total)}</strong></div>
+    <div class="bstat ok"><small>Pagado</small><strong>${clp(pagado)}</strong></div>
+    <div class="bstat"><small>Por cobrar${sinMonto ? ` · ${sinMonto} sin monto` : ''}</small><strong>${clp(total - pagado)}</strong></div>` : '';
+  $('budget').innerHTML = budget.map(b => `<div class="bitem${b.estado === 'pagado' ? ' paid' : ''}" data-id="${b.id}">
+      <div style="min-width:0">
+        <input class="st-name" data-f="nombre" value="${esc(b.nombre)}" aria-label="Nombre del ítem">
+        <textarea class="st-desc" data-f="descripcion" rows="1" placeholder="Descripción para el cliente (opcional)">${esc(b.descripcion || '')}</textarea>
+        <div class="st-row">
+          <label>Monto CLP <input type="number" class="monto" data-f="monto" min="0" step="1000" value="${b.monto ?? ''}" placeholder="Por definir"></label>
+          <div class="seg" role="group" aria-label="Estado">
+            ${[['pendiente','circle','Pendiente'],['pagado','check','Pagado']].map(([v,i,l]) => `<button type="button" data-v="${v}" class="${b.estado === v ? 'on' : ''}">${ic(i)}${l}</button>`).join('')}
+          </div>
+          <label>Pagado el <input type="date" data-f="pagado_at" value="${b.pagado_at || ''}"></label>
+        </div>
+        <div class="st-row">
+          <label class="wide">Comprobante <span class="internal">interno</span> <input type="text" class="wide" data-f="comprobante" value="${esc(b.comprobante || '')}" placeholder="Nº de transacción, banco…"></label>
+        </div>
+        <div class="st-row">
+          <label class="wide">Nota <span class="internal">interno</span> <input type="text" class="wide" data-f="nota_interna" value="${esc(b.nota_interna || '')}" placeholder="Reparto, acuerdos…"></label>
+        </div>
+      </div>
+      <button class="icon-btn danger" data-del aria-label="Eliminar ítem">${ic('trash')}</button>
+    </div>`).join('') || '<div class="ops-empty"><div class="ops-empty-text">Sin ítems todavía</div></div>';
+  document.querySelectorAll('#budget .st-desc').forEach(autosize);
+}
+async function saveBudget(id, patch){
+  const { error } = await sb.from('budget_items').update(patch).eq('id', id);
+  if (error) { opsToast('No se pudo guardar', 'error'); return false; }
+  Object.assign(budget.find(b => b.id === id), patch); return true;
+}
+$('budget').addEventListener('input', e => { if (e.target.matches('.st-desc')) autosize(e.target); });
+$('budget').addEventListener('change', async e => {
+  const f = e.target.dataset.f, id = e.target.closest('.bitem')?.dataset.id; if (!f || !id) return;
+  let v = e.target.value.trim();
+  if (f === 'nombre' && !v) { e.target.value = budget.find(b => b.id === id).nombre; return; }
+  if (f === 'monto') { v = v === '' ? null : Math.max(0, Math.round(Number(v))); if (v !== null && !Number.isFinite(v)) return opsToast('Monto no válido', 'error'); }
+  if (await saveBudget(id, { [f]: v || (f === 'monto' ? v : null) })) { renderBudget(); opsToast('Guardado'); }
+});
+$('budget').addEventListener('click', async e => {
+  const card = e.target.closest('.bitem'); if (!card) return;
+  const id = card.dataset.id, b = budget.find(x => x.id === id);
+  const seg = e.target.closest('.seg button');
+  if (seg) {
+    const v = seg.dataset.v; if (v === b.estado) return;
+    const patch = { estado: v, pagado_at: v === 'pagado' ? (b.pagado_at || new Date().toLocaleDateString('sv-SE')) : null };
+    if (!await saveBudget(id, patch)) return;
+    if (v === 'pagado' && $('notifyPaid').checked) {
+      await sb.from('portal_events').insert({ lead_id: lead.id, tipo:'nota', autor:'horizon', fuente:'ops', contenido:`Pago recibido: ${b.nombre}${b.monto != null ? ' · ' + clp(b.monto) : ''}. ¡Gracias!` });
+      loadFeed();
+    }
+    renderBudget(); opsToast(v === 'pagado' ? 'Marcado como pagado' : 'Marcado como pendiente');
+  }
+  if (e.target.closest('[data-del]')) {
+    if (!confirm(`¿Eliminar "${b.nombre}" del presupuesto?`)) return;
+    const { error } = await sb.from('budget_items').delete().eq('id', id);
+    if (error) return opsToast('No se pudo eliminar', 'error');
+    budget = budget.filter(x => x.id !== id); renderBudget();
+  }
+});
+$('addBudget').addEventListener('click', async () => {
+  const orden = Math.max(0, ...budget.map(b => b.orden || 0)) + 1;
+  const { data, error } = await sb.from('budget_items').insert({ project_id: P.id, nombre:'Nuevo ítem', orden }).select().single();
+  if (error) return opsToast('No se pudo crear', 'error');
+  budget.push(data); renderBudget();
+  const inp = document.querySelector(`.bitem[data-id="${data.id}"] .st-name`); inp.focus(); inp.select();
+});
+
 /* ── Backlog ── */
 async function loadTasks(){
   const r = await fetch(`/api/ops/tasks?project_id=${P.id}`, { headers: await opsAuthHeaders() });
@@ -649,7 +758,7 @@ function renderHeader(){
   fillSettings();
   $('loading').hidden = true; $('content').hidden = false;
   await loadStages();
-  await Promise.all([loadFeed(), loadConv(), loadFichas(), loadTasks()]);
+  await Promise.all([loadFeed(), loadConv(), loadFichas(), loadTasks(), loadBudget()]);
   const h = location.hash.slice(1); if (document.querySelector(`.ops-tab[data-tab="${h}"]`)) setTab(h);
 })();
 </script>
