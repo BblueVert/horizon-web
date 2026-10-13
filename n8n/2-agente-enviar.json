@@ -1,0 +1,159 @@
+{
+ "name": "HORIZON · Agente · Enviar",
+ "nodes": [
+  {
+   "parameters": {
+    "httpMethod": "POST",
+    "path": "horizon-agente-enviar",
+    "responseMode": "lastNode",
+    "options": {}
+   },
+   "id": "870a5354-678c-4b81-a2dc-917dcbbf8d08",
+   "name": "Enviar mensaje",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    0,
+    0
+   ],
+   "webhookId": "e0a700be-30c0-45fd-aa62-7bf9867847b7"
+  },
+  {
+   "parameters": {
+    "jsCode": "// ⚙️ Configuración — los tokens de Meta viven SOLO acá\nreturn [{ json: {\n  BOT_SECRET: 'PEGAR_HORIZON_BOT_SECRET',\n  WA_TOKEN: 'PEGAR_TOKEN_PERMANENTE_WHATSAPP',      // Meta → WhatsApp → Configuración de la API (usuario del sistema)\n  WA_PHONE_ID: 'PEGAR_PHONE_NUMBER_ID',\n  IG_TOKEN: 'PEGAR_TOKEN_INSTAGRAM',                 // Instagram API con inicio de sesión de Instagram\n} }];"
+   },
+   "id": "fb7f1c4c-0b00-41ec-99e7-53f3bd214d8c",
+   "name": "Config",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    220,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "// Valida que la llamada venga de HORIZON (OPS o los otros flujos) y arma el envío\nconst cfg = $('Config').first().json;\nconst req = $('Enviar mensaje').first().json;\nconst auth = String(req.headers?.authorization || '');\nif (auth !== 'Bearer ' + cfg.BOT_SECRET) throw new Error('No autorizado');\nconst { canal, contacto_id, texto } = req.body || {};\nif (!canal || !contacto_id || !texto) throw new Error('Faltan datos');\nif (canal === 'whatsapp') return [{ json: {\n  url: 'https://graph.facebook.com/v21.0/' + cfg.WA_PHONE_ID + '/messages', token: cfg.WA_TOKEN,\n  body: { messaging_product: 'whatsapp', to: contacto_id, type: 'text', text: { body: texto } } } }];\nreturn [{ json: {\n  url: 'https://graph.instagram.com/v21.0/me/messages', token: cfg.IG_TOKEN,\n  body: { recipient: { id: contacto_id }, message: { text: texto } } } }];"
+   },
+   "id": "3f3a7c69-4d15-4a27-b6f8-e4272c163749",
+   "name": "Validar y armar",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    440,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $json.url }}",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Authorization",
+       "value": "={{ 'Bearer ' + $json.token }}"
+      },
+      {
+       "name": "Content-Type",
+       "value": "application/json"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify($json.body) }}",
+    "options": {}
+   },
+   "id": "6056d829-d2ac-4813-a4b3-e9134bd16276",
+   "name": "Meta Graph API",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    660,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "return [{ json: { ok: true } }];"
+   },
+   "id": "5ec4f80e-6af7-4775-b634-8acc28a4c1c4",
+   "name": "OK",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    880,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "content": "## HORIZON · Agente · Enviar\nÚnico flujo con los tokens de Meta.\nLo usan: Entrantes, Seguimientos y el OPS (al aprobar un borrador).\nEn Vercel define:\n`N8N_SEND_URL = https://TU-TUNEL/webhook/horizon-agente-enviar`\nRechaza cualquier llamada sin el BOT_SECRET.",
+    "height": 360,
+    "width": 420
+   },
+   "id": "94247fe6-8da4-47a1-affe-c108c92229bd",
+   "name": "Léeme",
+   "type": "n8n-nodes-base.stickyNote",
+   "typeVersion": 1,
+   "position": [
+    -520,
+    -220
+   ]
+  }
+ ],
+ "connections": {
+  "Enviar mensaje": {
+   "main": [
+    [
+     {
+      "node": "Config",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Config": {
+   "main": [
+    [
+     {
+      "node": "Validar y armar",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Validar y armar": {
+   "main": [
+    [
+     {
+      "node": "Meta Graph API",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Meta Graph API": {
+   "main": [
+    [
+     {
+      "node": "OK",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "active": false,
+ "settings": {
+  "executionOrder": "v1"
+ },
+ "pinData": {},
+ "tags": []
+}

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>HORIZON OPS · Bandeja IA</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.bx-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.bx-tab{border:1px solid var(--border2);background:var(--card);color:var(--text2);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;}
+.bx-tab.on{border-color:var(--h1);color:var(--h1-ink);background:var(--h1-soft);}
+.bx-tab b{display:inline-block;min-width:18px;margin-left:6px;padding:0 5px;border-radius:9px;background:var(--h1);color:#fff;font-size:11px;}
+.bx-grid{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:14px;}
+@media(max-width:900px){.bx-grid{grid-template-columns:1fr;}}
+.bx-list,.bx-pane{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.bx-item{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.bx-item:hover,.bx-item.on{background:var(--hover);}
+.bx-item .n{font-weight:700;color:var(--text);font-size:14px;display:flex;justify-content:space-between;gap:8px;}
+.bx-item .s{font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bx-chip{font-size:10px;font-weight:700;border-radius:8px;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase;}
+.c-ig{background:rgba(196,70,122,.14);color:#c4467a;}.c-wa{background:rgba(15,159,110,.14);color:var(--green);}
+.c-hum{background:rgba(184,117,3,.15);color:var(--yellow);}.c-bor{background:var(--h1-soft);color:var(--h1-ink);}
+.bx-pane{padding:16px;min-height:420px;}
+.bx-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:12px;}
+.bx-msgs{display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow:auto;padding:4px;}
+.m{max-width:82%;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.5;white-space:pre-wrap;}
+.m small{display:block;font-size:10px;color:var(--text3);margin-top:3px;}
+.m.cliente{align-self:flex-start;background:var(--card2);color:var(--text);}
+.m.agente{align-self:flex-end;background:var(--h1-soft);color:var(--text);}
+.m.humano{align-self:flex-end;background:rgba(91,94,240,.13);color:var(--text);}
+.m.borrador{align-self:stretch;max-width:100%;border:1px dashed var(--h1);background:var(--panel);}
+.m.descartado{opacity:.45;text-decoration:line-through;}
+.bx-ta,.bx-in,.bx-sel{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--fb);font-size:13px;padding:9px 11px;outline:none;}
+.bx-ta{min-height:80px;resize:vertical;}
+.bx-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+.bx-kb td{vertical-align:top;}
+.bx-kb .t{font-weight:600;color:var(--text);}
+.bx-kb .c{font-size:12px;color:var(--text3);max-width:520px;white-space:pre-wrap;}
+.bx-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:60;align-items:center;justify-content:center;padding:16px;}
+.bx-modal-bg.open{display:flex;}
+.bx-modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;width:min(640px,100%);max-height:90vh;overflow:auto;}
+.bx-modal label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin:10px 0 4px;}
+.bx-help{font-size:12px;color:var(--text3);}
+.bx-empty{padding:40px 16px;text-align:center;color:var(--text3);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div><div class="ops-page-title">Bandeja IA</div><div class="ops-page-sub" id="bxSub">Instagram + WhatsApp · agente HORIZON</div></div>
+      <div class="ops-header-actions"><button class="btn btn-ghost btn-sm" onclick="loadAll()">Actualizar</button></div>
+    </div>
+    <div class="ops-content">
+      <div class="bx-tabs" id="bxTabs"></div>
+      <div id="bxLoading" class="ops-loading"><div class="ops-spinner"></div></div>
+      <div id="bxView"></div>
+    </div>
+  </main>
+</div>
+<div class="bx-modal-bg" id="bxModal"><div class="bx-modal" id="bxModalBox"></div></div>
+
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const e = s => opsEsc(s == null ? '' : String(s));
+const hora = d => d ? new Date(d).toLocaleString('es-CL', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
+const TIPOS = { respuesta:'Respuesta', glosario:'Glosario', objecion:'Objeción', palabra_clave:'Palabra clave', politica:'Regla / sensible' };
+let TAB = 'bandeja', CONVS = [], BORR = {}, KB = [], PEND = [], SEL = null, KBF = '', KBQ = '';
+
+async function api(accion, body){
+  const r = await fetch('/api/bot/' + accion, { method:'POST', headers: await opsAuthHeaders(), body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Error');
+  return j;
+}
+
+async function loadAll(){
+  const sb = getSB();
+  const [c, b, k, p] = await Promise.all([
+    sb.from('agent_conversations').select('*, lead:leads(id,nombre,status)').order('updated_at', { ascending:false }).limit(200),
+    sb.from('agent_messages').select('id,conversation_id').eq('estado','borrador'),
+    sb.from('kb_items').select('*').order('tipo').order('titulo'),
+    sb.from('kb_pendientes').select('*, conv:agent_conversations(nombre,canal)').eq('estado','pendiente').order('created_at', { ascending:false }),
+  ]);
+  document.getElementById('bxLoading').style.display = 'none';
+  const err = c.error || b.error || k.error || p.error;
+  if (err) { document.getElementById('bxView').innerHTML = `<div class="ops-card bx-empty">Error: ${e(err.message)}. ¿Corriste la migración 013?</div>`; return; }
+  CONVS = c.data; KB = k.data; PEND = p.data;
+  BORR = {}; b.data.forEach(m => BORR[m.conversation_id] = (BORR[m.conversation_id] || 0) + 1);
+  tabs(); render();
+}
+
+function tabs(){
+  const nb = Object.values(BORR).reduce((a, b) => a + b, 0);
+  const T = [['bandeja','Conversaciones', nb], ['conocimiento','Base de conocimiento', 0], ['aprender','Por aprender', PEND.length]];
+  document.getElementById('bxTabs').innerHTML = T.map(([k, l, n]) => `<button class="bx-tab${TAB===k?' on':''}" onclick="TAB='${k}';tabs();render()">${l}${n ? `<b>${n}</b>` : ''}</button>`).join('');
+  document.getElementById('bxSub').textContent = `${CONVS.length} conversaciones · ${nb} borradores por revisar · ${KB.length} entradas en la base`;
+}
+function render(){ ({ bandeja: renderBandeja, conocimiento: renderKB, aprender: renderPend })[TAB](); }
+
+// ── Conversaciones ─────────────────────────────────────────────────────────
+function renderBandeja(){
+  const lista = CONVS.slice().sort((a, b) => (BORR[b.id] ? 1 : 0) - (BORR[a.id] ? 1 : 0));
+  document.getElementById('bxView').innerHTML = `<div class="bx-grid">
+    <div class="bx-list">${lista.length ? lista.map(c => `
+      <div class="bx-item${SEL===c.id?' on':''}" onclick="openConv('${c.id}')">
+        <div class="n"><span>${e(c.nombre || c.contacto_id)}</span><span class="bx-chip ${c.canal==='instagram'?'c-ig':'c-wa'}">${c.canal==='instagram'?'IG':'WA'}</span></div>
+        <div class="s">${BORR[c.id] ? `<span class="bx-chip c-bor">${BORR[c.id]} borrador</span> ` : ''}${c.estado!=='bot' ? `<span class="bx-chip c-hum">${e(c.estado)}</span> ` : ''}${e(c.resumen || '')}</div>
+        <div class="s">${hora(c.ultimo_cliente_at)}</div>
+      </div>`).join('') : '<div class="bx-empty">Todavía no llegan mensajes. Cuando conectes n8n, aparecen acá.</div>'}</div>
+    <div class="bx-pane" id="bxPane"><div class="bx-empty">Elige una conversación.</div></div></div>`;
+  if (SEL) openConv(SEL);
+}
+
+async function openConv(id){
+  SEL = id;
+  document.querySelectorAll('.bx-item').forEach(el => el.classList.toggle('on', el.getAttribute('onclick').includes(id)));
+  const c = CONVS.find(x => x.id === id); if (!c) return;
+  const { data: msgs } = await getSB().from('agent_messages').select('*').eq('conversation_id', id).order('created_at');
+  const vence = c.ultimo_cliente_at ? new Date(c.ultimo_cliente_at).getTime() + 24 * 3600e3 : 0;
+  const abierta = vence > Date.now();
+  const restante = abierta ? Math.round((vence - Date.now()) / 3600e3) : 0;
+  document.getElementById('bxPane').innerHTML = `
+    <div class="bx-head">
+      <div><div style="font-weight:700;font-size:16px">${e(c.nombre || c.contacto_id)} <span class="bx-chip ${c.canal==='instagram'?'c-ig':'c-wa'}">${e(c.canal)}</span></div>
+        <div class="bx-help">${e(c.resumen || 'Sin resumen aún')}</div>
+        <div class="bx-help">${abierta ? `Ventana abierta · quedan ~${restante} h para responder por el sistema` : 'Ventana de 24 h cerrada: responde desde la app'}${c.lead ? ` · Lead: ${e(c.lead.nombre || '')} (${e(c.lead.status)})` : ''}</div></div>
+      <div class="bx-row" style="margin:0">
+        ${c.estado === 'bot' ? `<button class="btn btn-ghost btn-sm" onclick="setEstado('${c.id}','humano')">Tomar conversación</button>` : `<button class="btn btn-ghost btn-sm" onclick="setEstado('${c.id}','bot')">Devolver al agente</button>`}
+        <button class="btn btn-ghost btn-sm" onclick="setEstado('${c.id}','cerrada')">Cerrar</button>
+      </div>
+    </div>
+    <div class="bx-msgs" id="bxMsgs">${msgs.map(m => m.estado === 'borrador' ? borradorHTML(m, msgs, abierta) : `
+      <div class="m ${m.rol} ${m.estado==='descartado'?'descartado':''}">${e(m.texto)}<small>${m.rol}${m.accion ? ' · ' + e(m.accion) : ''} · ${hora(m.created_at)}</small></div>`).join('')}</div>
+    ${abierta ? `<div class="bx-row"><input class="bx-in" id="bxManual" placeholder="Escribir como Benjamín…" style="flex:1"><button class="btn btn-primary btn-sm" onclick="manual('${c.id}')">Enviar</button></div>` : ''}`;
+  const box = document.getElementById('bxMsgs'); box.scrollTop = box.scrollHeight;
+}
+
+function borradorHTML(m, msgs, abierta){
+  const idx = msgs.indexOf(m);
+  const pregunta = [...msgs.slice(0, idx)].reverse().find(x => x.rol === 'cliente');
+  return `<div class="m borrador"><div class="bx-help" style="margin-bottom:6px">Borrador del agente (${e(m.accion)}${m.confianza != null ? ' · confianza ' + Math.round(m.confianza * 100) + '%' : ''})</div>
+    <textarea class="bx-ta" id="ta-${m.id}">${e(m.texto === '(sin borrador)' ? '' : m.texto)}</textarea>
+    <label class="bx-help" style="display:flex;gap:6px;align-items:center;margin-top:8px"><input type="checkbox" id="gd-${m.id}" checked> Guardar en la base para que el agente lo aprenda</label>
+    <div class="bx-row"><input class="bx-in" id="gt-${m.id}" value="${e(pregunta ? pregunta.texto.slice(0, 120) : '')}" placeholder="Título / pregunta tipo" style="flex:2">
+      <select class="bx-sel" id="gtp-${m.id}" style="flex:1"><option value="respuesta">Respuesta</option><option value="objecion">Objeción</option><option value="glosario">Glosario</option><option value="politica">Sensible (siempre con aprobación)</option></select></div>
+    <div class="bx-row">
+      <button class="btn btn-primary btn-sm" ${abierta ? '' : 'disabled title="Ventana de 24 h cerrada"'} onclick="aprobar('${m.id}')">Aprobar y enviar</button>
+      <button class="btn btn-ghost btn-sm" onclick="descartar('${m.id}')">Descartar</button>
+    </div></div>`;
+}
+
+async function aprobar(id){
+  const texto = document.getElementById('ta-' + id).value.trim();
+  const guardar = document.getElementById('gd-' + id).checked ? { titulo: document.getElementById('gt-' + id).value.trim(), tipo: document.getElementById('gtp-' + id).value, auto: document.getElementById('gtp-' + id).value !== 'politica' } : null;
+  if (!texto) return opsToast('Escribe la respuesta', 'error');
+  try { await api('aprobar', { message_id: id, texto, guardar }); opsToast(guardar ? 'Enviado y guardado en la base' : 'Enviado'); await loadAll(); }
+  catch (x) { opsToast(x.message, 'error', 5000); }
+}
+async function descartar(id){ try { await api('descartar', { message_id: id }); await loadAll(); } catch (x) { opsToast(x.message, 'error'); } }
+async function setEstado(id, estado){ try { await api('estado', { conversation_id: id, estado }); opsToast(estado === 'humano' ? 'El agente queda en silencio en esta conversación' : 'Listo'); await loadAll(); } catch (x) { opsToast(x.message, 'error'); } }
+async function manual(id){
+  const el = document.getElementById('bxManual'); const texto = el.value.trim(); if (!texto) return;
+  try { await api('enviar', { conversation_id: id, texto }); el.value = ''; opsToast('Enviado'); await loadAll(); } catch (x) { opsToast(x.message, 'error', 5000); }
+}
+
+// ── Base de conocimiento ────────────────────────────────────────────────────
+function renderKB(){
+  const t = KBQ.trim().toLowerCase();
+  const rows = KB.filter(i => (!KBF || i.tipo === KBF) && (!t || [i.titulo, i.contenido, (i.keywords || []).join(' '), (i.variantes || []).join(' ')].join(' ').toLowerCase().includes(t)));
+  document.getElementById('bxView').innerHTML = `
+    <div class="bx-row" style="margin:0 0 12px">
+      <select class="bx-sel" style="width:auto" onchange="KBF=this.value;renderKB()"><option value="">Todos (${KB.length})</option>${Object.entries(TIPOS).map(([k, l]) => `<option value="${k}" ${KBF===k?'selected':''}>${l} (${KB.filter(i => i.tipo === k).length})</option>`).join('')}</select>
+      <input class="bx-in" style="flex:1;min-width:180px" placeholder="Buscar…" value="${e(KBQ)}" oninput="KBQ=this.value;renderKB();this.focus();this.setSelectionRange(this.value.length,this.value.length)">
+      <button class="btn btn-primary btn-sm" onclick="editKB()">+ Nueva entrada</button>
+    </div>
+    <div class="ops-card" style="padding:0;overflow:auto"><table class="ops-table bx-kb"><thead><tr><th>Entrada</th><th>Tipo</th><th>Modo</th><th>Usos</th></tr></thead><tbody>
+      ${rows.map(i => `<tr onclick="editKB('${i.id}')" style="cursor:pointer;${i.activo ? '' : 'opacity:.45'}"><td><div class="t">${e(i.titulo)}</div><div class="c">${e(i.contenido.slice(0, 180))}${i.contenido.length > 180 ? '…' : ''}</div></td>
+        <td>${e(TIPOS[i.tipo] || i.tipo)}</td><td>${i.auto ? 'Responde solo' : 'Con aprobación'}</td><td>${i.usos || 0}</td></tr>`).join('') || '<tr><td colspan="4" class="bx-empty">Sin resultados.</td></tr>'}
+    </tbody></table></div>`;
+}
+
+function editKB(id, pref){
+  const i = id ? KB.find(x => x.id === id) : { tipo:'respuesta', categoria:'general', titulo: pref?.titulo || '', contenido: pref?.contenido || '', variantes: pref?.variantes || [], keywords: [], link:'', auto:true, activo:true };
+  document.getElementById('bxModalBox').innerHTML = `
+    <div style="font-weight:700;font-size:16px">${id ? 'Editar entrada' : 'Nueva entrada'}</div>
+    <label>Tipo</label><select class="bx-sel" id="kTipo">${Object.entries(TIPOS).map(([k, l]) => `<option value="${k}" ${i.tipo===k?'selected':''}>${l}</option>`).join('')}</select>
+    <label>Título · concepto o pregunta tipo</label><input class="bx-in" id="kTitulo" value="${e(i.titulo)}">
+    <label>Respuesta oficial · lo que el agente puede decir</label><textarea class="bx-ta" id="kCont" style="min-height:120px">${e(i.contenido)}</textarea>
+    <label>Otras formas de preguntarlo · una por línea</label><textarea class="bx-ta" id="kVar">${e((i.variantes || []).join('\n'))}</textarea>
+    <label>Palabras que lo activan · separadas por coma</label><input class="bx-in" id="kKw" value="${e((i.keywords || []).join(', '))}">
+    <label>Link (opcional)</label><input class="bx-in" id="kLink" value="${e(i.link || '')}">
+    <label>Categoría</label><input class="bx-in" id="kCat" value="${e(i.categoria || 'general')}">
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="kAuto" ${i.auto ? 'checked' : ''}> El agente puede responder esto solo (si no, prepara borrador)</label>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="kAct" ${i.activo ? 'checked' : ''}> Activa</label>
+    <div class="bx-row" style="justify-content:flex-end;margin-top:14px">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="saveKB(${id ? `'${id}'` : 'null'}, ${pref?.pendId ? `'${pref.pendId}'` : 'null'})">Guardar</button>
+    </div>`;
+  document.getElementById('bxModal').classList.add('open');
+}
+function closeModal(){ document.getElementById('bxModal').classList.remove('open'); }
+
+async function saveKB(id, pendId){
+  const v = x => document.getElementById(x).value.trim();
+  const row = {
+    tipo: v('kTipo'), titulo: v('kTitulo'), contenido: v('kCont'), categoria: v('kCat') || 'general', link: v('kLink') || null,
+    variantes: v('kVar').split('\n').map(s => s.trim()).filter(Boolean),
+    keywords: v('kKw').split(',').map(s => s.trim().toLowerCase()).filter(Boolean),
+    auto: document.getElementById('kAuto').checked, activo: document.getElementById('kAct').checked,
+  };
+  if (!row.titulo || !row.contenido) return opsToast('Título y respuesta son obligatorios', 'error');
+  const sb = getSB();
+  let r;
+  if (id) r = await sb.from('kb_items').update(row).eq('id', id).select().single();
+  else r = await sb.from('kb_items').insert({ ...row, slug: row.titulo.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').slice(0, 50) + '-' + Math.random().toString(36).slice(2, 6) }).select().single();
+  if (r.error) return opsToast(r.error.message, 'error', 5000);
+  if (pendId) await sb.from('kb_pendientes').update({ estado: 'resuelta', kb_item_id: r.data.id }).eq('id', pendId);
+  closeModal(); opsToast('Guardado: el agente ya lo usa'); await loadAll();
+}
+
+// ── Por aprender ────────────────────────────────────────────────────────────
+function renderPend(){
+  document.getElementById('bxView').innerHTML = `<p class="bx-help" style="margin-bottom:10px">Preguntas que el agente no supo responder solo. Al responderlas acá, pasan a la base y la próxima vez responde él.</p>
+    <div class="ops-card" style="padding:0;overflow:auto"><table class="ops-table"><thead><tr><th>Pregunta</th><th>Borrador del agente</th><th>Quién</th><th></th></tr></thead><tbody>
+    ${PEND.map(p => `<tr><td style="color:var(--text);font-weight:600">${e(p.pregunta)}<div class="bx-help">${hora(p.created_at)}</div></td><td class="bx-help">${e(p.borrador || '—')}</td>
+      <td>${e(p.conv?.nombre || '')}<div class="bx-help">${e(p.conv?.canal || '')}</div></td>
+      <td style="white-space:nowrap"><button class="btn btn-primary btn-sm" onclick="aprender('${p.id}')">Enseñar</button> <button class="btn btn-ghost btn-sm" onclick="olvidar('${p.id}')">Descartar</button></td></tr>`).join('')
+      || '<tr><td colspan="4" class="bx-empty">Nada pendiente. El agente supo responder todo 🙌</td></tr>'}
+    </tbody></table></div>`;
+}
+function aprender(id){ const p = PEND.find(x => x.id === id); editKB(null, { titulo: p.pregunta.slice(0, 120), contenido: p.borrador || '', variantes: [p.pregunta], pendId: p.id }); }
+async function olvidar(id){ await getSB().from('kb_pendientes').update({ estado: 'descartada' }).eq('id', id); await loadAll(); }
+
+document.getElementById('bxModal').addEventListener('click', ev => { if (ev.target.id === 'bxModal') closeModal(); });
+(async function(){ const s = await opsRequireAuth(); if (!s) return; await opsInitNav(); await loadAll(); })();
+</script>
+</body>
+</html>

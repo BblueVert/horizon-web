@@ -1,0 +1,352 @@
+{
+ "name": "HORIZON · Agente · Entrantes",
+ "nodes": [
+  {
+   "parameters": {
+    "path": "horizon-agente",
+    "responseMode": "responseNode",
+    "options": {}
+   },
+   "id": "633d513a-8dc3-42ef-b3cc-a08da94649cb",
+   "name": "Verificación Meta",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    0,
+    -160
+   ],
+   "webhookId": "90b29d23-c817-41e5-b32b-45f3476c4244"
+  },
+  {
+   "parameters": {
+    "jsCode": "// ⚙️ Configuración — completa estos valores una sola vez\nreturn [{ json: {\n  HORIZON_URL: 'https://www.horizonweb.cl',            // cerebro del agente\n  BOT_SECRET: 'PEGAR_HORIZON_BOT_SECRET',             // igual al de Vercel\n  VERIFY_TOKEN: 'horizon_verify_2026',                // el mismo que pones en Meta al suscribir el webhook\n  ENVIAR_URL: 'http://localhost:5678/webhook/horizon-agente-enviar',\n  TELEGRAM_TOKEN: '',                                 // opcional: aviso de borradores a tu Telegram\n  TELEGRAM_CHAT_ID: '',\n} }];"
+   },
+   "id": "1e72d3fb-0eba-4291-ba7c-40e5b1ae67c0",
+   "name": "Config verificación",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    220,
+    -160
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "const q = $input.first().json.query || {};\nconst cfg = $('Config verificación').first().json;\nreturn [{ json: { body: q['hub.verify_token'] === cfg.VERIFY_TOKEN ? (q['hub.challenge'] || '') : 'forbidden' } }];"
+   },
+   "id": "7bd63ccf-3054-41ac-b3b3-5a454c0977a2",
+   "name": "Validar token",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    440,
+    -160
+   ]
+  },
+  {
+   "parameters": {
+    "respondWith": "text",
+    "responseBody": "={{ $json.body }}",
+    "options": {}
+   },
+   "id": "a41ed64f-87c8-443e-9cf9-f63d995536ab",
+   "name": "Responder challenge",
+   "type": "n8n-nodes-base.respondToWebhook",
+   "typeVersion": 1,
+   "position": [
+    660,
+    -160
+   ]
+  },
+  {
+   "parameters": {
+    "httpMethod": "POST",
+    "path": "horizon-agente",
+    "responseMode": "onReceived",
+    "options": {}
+   },
+   "id": "eded204e-7329-45a7-b84c-04a19d4b09db",
+   "name": "Mensaje entrante",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    0,
+    120
+   ],
+   "webhookId": "ab641d31-bcac-48fe-8c6d-98102d5703ac"
+  },
+  {
+   "parameters": {
+    "jsCode": "// ⚙️ Configuración — completa estos valores una sola vez\nreturn [{ json: {\n  HORIZON_URL: 'https://www.horizonweb.cl',            // cerebro del agente\n  BOT_SECRET: 'PEGAR_HORIZON_BOT_SECRET',             // igual al de Vercel\n  VERIFY_TOKEN: 'horizon_verify_2026',                // el mismo que pones en Meta al suscribir el webhook\n  ENVIAR_URL: 'http://localhost:5678/webhook/horizon-agente-enviar',\n  TELEGRAM_TOKEN: '',                                 // opcional: aviso de borradores a tu Telegram\n  TELEGRAM_CHAT_ID: '',\n} }];"
+   },
+   "id": "63cba818-c114-4a3b-9770-1bbe62dd7229",
+   "name": "Config",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    220,
+    120
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "// Normaliza mensajes de WhatsApp Cloud API e Instagram (Messaging API) a un formato único\nconst body = $('Mensaje entrante').first().json.body || {};\nconst out = [];\nfor (const entry of body.entry || []) {\n  // WhatsApp\n  for (const ch of entry.changes || []) {\n    const v = ch.value || {};\n    const contacto = (v.contacts || [])[0];\n    for (const m of v.messages || []) {\n      if (m.type !== 'text') continue; // audios, fotos, stickers: los ve Benjamín en la app\n      out.push({ json: { canal: 'whatsapp', contacto_id: m.from, nombre: contacto?.profile?.name || '', texto: m.text?.body || '', mensaje_id: m.id } });\n    }\n  }\n  // Instagram\n  for (const ev of entry.messaging || []) {\n    const m = ev.message;\n    if (!m || m.is_echo || !m.text) continue; // ignora lo que enviamos nosotros\n    out.push({ json: { canal: 'instagram', contacto_id: String(ev.sender.id), nombre: '', texto: m.text, mensaje_id: m.mid } });\n  }\n}\nreturn out;"
+   },
+   "id": "f63a3563-0d3b-4fab-9fae-204a20c3f670",
+   "name": "Normalizar",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    440,
+    120
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $('Config').first().json.HORIZON_URL + '/api/bot/mensaje' }}",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Authorization",
+       "value": "={{ 'Bearer ' + $('Config').first().json.BOT_SECRET }}"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify($json) }}",
+    "options": {
+     "timeout": 40000
+    }
+   },
+   "id": "9c7ae04e-c027-40c3-9ee7-850a8a7dd27e",
+   "name": "Cerebro HORIZON",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    660,
+    120
+   ]
+  },
+  {
+   "parameters": {
+    "conditions": {
+     "boolean": [
+      {
+       "value1": "={{ ['responder','espera'].includes($json.accion) && !!$json.texto }}",
+       "value2": true
+      }
+     ]
+    }
+   },
+   "id": "ffc8bb58-2a3a-422a-a7c4-6a27ba087b40",
+   "name": "¿Hay que responder?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 1,
+   "position": [
+    880,
+    40
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $('Config').first().json.ENVIAR_URL }}",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Authorization",
+       "value": "={{ 'Bearer ' + $('Config').first().json.BOT_SECRET }}"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ canal: $('Normalizar').item.json.canal, contacto_id: $('Normalizar').item.json.contacto_id, texto: $json.texto }) }}",
+    "options": {}
+   },
+   "id": "7b46a84a-d95f-49e4-aa10-ccde4a1f7029",
+   "name": "Enviar respuesta",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1100,
+    40
+   ]
+  },
+  {
+   "parameters": {
+    "conditions": {
+     "boolean": [
+      {
+       "value1": "={{ !!$('Cerebro HORIZON').item.json.notificar && !!$('Config').first().json.TELEGRAM_TOKEN }}",
+       "value2": true
+      }
+     ]
+    }
+   },
+   "id": "397a0923-ff3d-41b0-b4ad-f6cab15c3479",
+   "name": "¿Avisar a Benjamín?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 1,
+   "position": [
+    880,
+    240
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "={{ 'https://api.telegram.org/bot' + $('Config').first().json.TELEGRAM_TOKEN + '/sendMessage' }}",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ chat_id: $('Config').first().json.TELEGRAM_CHAT_ID, text: '🟠 Borrador por aprobar\\n' + $json.notificar.nombre + ' (' + $json.notificar.canal + '): ' + $json.notificar.pregunta + '\\n\\nBorrador: ' + ($json.notificar.borrador || '—') + '\\n\\n' + $json.notificar.ops }) }}",
+    "options": {
+     "response": {
+      "response": {
+       "neverError": true
+      }
+     }
+    }
+   },
+   "id": "d178bc1d-04e5-41fd-a22e-ccfef72f50d4",
+   "name": "Aviso Telegram",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1100,
+    240
+   ]
+  },
+  {
+   "parameters": {
+    "content": "## HORIZON · Agente · Entrantes\n1. Completa los nodos **Config** y **Config verificación** (mismos valores).\n2. URL del webhook para Meta (Instagram y WhatsApp):\n   `https://TU-TUNEL/webhook/horizon-agente`\n   Token de verificación: el VERIFY_TOKEN de Config.\n3. Activa el workflow.\nEl cerebro vive en horizonweb.cl/api/bot. Este flujo solo recibe, pregunta y responde.",
+    "height": 360,
+    "width": 420
+   },
+   "id": "c08c8ad3-011f-44c7-baf2-191f21c91f47",
+   "name": "Léeme",
+   "type": "n8n-nodes-base.stickyNote",
+   "typeVersion": 1,
+   "position": [
+    -520,
+    -220
+   ]
+  }
+ ],
+ "connections": {
+  "Verificación Meta": {
+   "main": [
+    [
+     {
+      "node": "Config verificación",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Config verificación": {
+   "main": [
+    [
+     {
+      "node": "Validar token",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Validar token": {
+   "main": [
+    [
+     {
+      "node": "Responder challenge",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Mensaje entrante": {
+   "main": [
+    [
+     {
+      "node": "Config",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Config": {
+   "main": [
+    [
+     {
+      "node": "Normalizar",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Normalizar": {
+   "main": [
+    [
+     {
+      "node": "Cerebro HORIZON",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Cerebro HORIZON": {
+   "main": [
+    [
+     {
+      "node": "¿Hay que responder?",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "¿Avisar a Benjamín?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Hay que responder?": {
+   "main": [
+    [
+     {
+      "node": "Enviar respuesta",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Avisar a Benjamín?": {
+   "main": [
+    [
+     {
+      "node": "Aviso Telegram",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "active": false,
+ "settings": {
+  "executionOrder": "v1"
+ },
+ "pinData": {},
+ "tags": []
+}
