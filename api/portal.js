@@ -4,7 +4,7 @@
 //
 // GET  /api/portal?token=<uuid>
 //      → lead (sin datos sensibles), proyecto (con co-branding), hitos, actividad, comentarios
-//        y, si el proyecto lo tiene activo, el catálogo con las fichas ya completadas.
+//        presupuesto (sin columnas internas) y, si el proyecto lo tiene activo, el catálogo con las fichas.
 //
 // POST /api/portal  { token, action, ... }
 //      brief    { brief }                          guarda el brief pre-diagnóstico
@@ -164,7 +164,7 @@ module.exports = async function handler(req, res) {
     }
 
     // GET
-    const [events, milestones, comments] = await Promise.all([
+    const [events, milestones, comments, budget] = await Promise.all([
       get(`portal_events?lead_id=eq.${leadId}&select=tipo,autor,fuente,contenido,url,milestone_id,created_at&order=created_at.desc&limit=200`),
       project
         ? get(`project_milestones?project_id=eq.${project.id}` +
@@ -172,6 +172,10 @@ module.exports = async function handler(req, res) {
         : [],
       project
         ? get(`portal_comments?project_id=eq.${project.id}&select=id,milestone_id,autor,nombre,contenido,created_at&order=created_at.asc&limit=500`)
+        : [],
+      project
+        // tolerante: si la migración 013 aún no corre, el portal carga igual sin presupuesto
+        ? get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at&order=orden.asc,created_at.asc`).catch(() => [])
         : [],
     ]);
 
@@ -187,7 +191,7 @@ module.exports = async function handler(req, res) {
 
     delete lead.id;
     if (project) delete project.id;
-    return res.json({ lead, project, milestones, events, comments, catalog });
+    return res.json({ lead, project, milestones, events, comments, budget, catalog });
   } catch (err) {
     console.error('[portal]', err.message);
     return res.status(502).json({ error: 'No se pudo cargar el portal' });
