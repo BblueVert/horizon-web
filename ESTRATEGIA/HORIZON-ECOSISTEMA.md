@@ -15,17 +15,20 @@
    (sistemas a medida,                  (producto propio, mensual,
     instalación presencial)              por nicho específico)
             │                                      │
-   ┌────────┴────────┐                   ┌─────────┴─────────┐
-   │                 │                   │                   │
- El Sistema      Mesa Cero          Binks Barber         Mesa Cero
- (cualquier      (pitch/demo        (peluquerías/         (cuando se
-  PyME de        de restaurante,     barberías —           vende como
-  servicio)       mismo pricing      1er nicho,            SaaS liviano
-                  que El Sistema)    ya construido)         — legacy,
-                                                             ver nota)
+   ┌────────┴────────┐                             │
+   │                 │                             │
+ El Sistema      Mesa Cero                    Binks Barber
+ (cualquier      (restaurantes,                (peluquerías/
+  PyME de        pricing propio,                barberías —
+  servicio)       ver nota)                      1er nicho,
+                                                  ya construido)
 ```
 
-**Nota sobre Mesa Cero:** aparece en las dos capas porque el producto **pivoteó** (agosto 2026, documentado en `MESA-CERO-VISION-Y-POSICIONAMIENTO.md` del repo `mesa-cero`). Nació como SaaS liviano tipo Binks Barber ($29.900–$149.900/mes sin setup grande). El research de mercado mostró que estaba muy por debajo de su valor real, así que se pivoteó a venderse como El Sistema (Agencia): setup $990.000 + mantención $190.000/mes, con la demo y el pitch de restaurante (Tía Julia) en vez del genérico. Hoy vive como **una vertical de Agencia**, no de SaaS — este documento lo trata así.
+**Nota sobre Mesa Cero — tres repos, no uno:** el producto **pivoteó** en agosto 2026 (documentado en `MESA-CERO-VISION-Y-POSICIONAMIENTO.md`, repo `mesa-cero`). Nació como SaaS liviano tipo Binks Barber ($29.900–$149.900/mes sin setup grande); el research de mercado mostró que estaba muy por debajo de su valor real, así que se pivoteó a venderse como sistema a medida (Agencia), con pricing **propio** (no el mismo de "El Sistema" genérico — ver tabla abajo). Hoy vive repartido en tres lugares:
+
+- **`mesa-cero`** — documentos de venta (guiones, propuesta comercial, posicionamiento).
+- **`horizon-restaurant-ecosystem`** — el código real y la landing B2B en producción: **`https://horizon-restaurant-ecosystem.vercel.app`** (`/` landing, `/pedir` tienda online real de Tía Julia, `/ecosistema` demo interactivo, `/dashboard` panel del negocio).
+- **`horizon-web`** (este repo) — hoy **no menciona Mesa Cero** en ningún lado público; se agregó una referencia en el Portfolio de la landing apuntando al sitio real, pero el producto en sí no vive acá.
 
 ---
 
@@ -45,6 +48,20 @@ El producto principal, vendido a cualquier PyME de servicio (ver `HORIZON-BUYER-
 - **Programa Fundadores** (3 negocios): mismo precio, sin descuento. Beneficios: segundo mes de soporte sin costo, valor del soporte congelado 12 meses, sesión de resultados a los 60 días y atención prioritaria por WhatsApp. A cambio: testimonio en video, permiso para mostrar el caso, encuesta a los 30 días y reseña voluntaria.
 - Ya no se ofrecen como servicios aparte: Auditoría + Contenido, Contenido Mensual, Gestión de Ads (15% del spend) e Identidad Visual. La auditoría y Meta Ads quedan dentro del Plan 03.
 - Claves internas en la BD de leads (OPS): `plan01` = Plan 01, `plan02` = Plan 02, `plan04` = Plan 03 Sistema con IA, `plan05` = Plan 04 Agente IA, `plan03` = plan anterior "Negocio Activo".
+
+### HORIZON Agencia — Mesa Cero (restaurantes, pricing propio)
+No usa la tabla de arriba. Tiene su propia escalera de valor, confirmada en la landing B2B real (`horizon-restaurant-ecosystem`):
+
+| Ítem | Precio | Frecuencia |
+|---|---|---|
+| Setup (landing + panel de pedidos, 3 perfiles, Kanban, QR de mesa, reseñas) | $900.000 CLP | Único, 1-2 cuotas |
+| Mantención (incluye el agente de WhatsApp) | Desde $250.000 CLP | Mensual, **mínimo 3 meses desde la instalación** |
+| Auditoría + estrategia de canales | $450.000 CLP | Único |
+| Contenido en piloto automático | Desde $600.000 CLP | Mensual, mientras continúe |
+| Gestión de Ads | 15% del spend | Mensual, solo si aplica |
+| Modernización de marca | $200.000 CLP | Único, se suma en cualquier escalón |
+
+**Por qué la mantención es más cara que la de "El Sistema" genérico:** incluye un agente de WhatsApp con costo de uso variable (mensajería/API), que corre aparte y a cargo del cliente según consumo — no es un margen más alto sin motivo, es porque el ítem que cubre es distinto. El compromiso mínimo de 3 meses tampoco existe en "El Sistema" genérico; es específico de Mesa Cero porque es el tiempo real que toma probar el agente con el volumen real del restaurante.
 
 ### HORIZON Vertical SaaS — Binks Barber
 Producto ya construido (`verticales/peluquerias/`), multi-tenant sobre Supabase con RLS. Vende por autoservicio/venta liviana, no requiere instalación presencial completa como El Sistema.

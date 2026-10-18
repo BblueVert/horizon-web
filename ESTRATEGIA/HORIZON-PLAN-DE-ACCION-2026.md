@@ -38,6 +38,8 @@ La tentación es pensar "necesito cerrar 10 proyectos grandes en diciembre". Es 
 
 **Costos operativos estimados a descontar para el "limpio":** hosting (Vercel), Supabase, dominio, WhatsApp Business API, uso de Claude API, herramientas de automatización — del orden de $100.000–$250.000 CLP/mes a esta escala. No se resta explícitamente arriba porque el objetivo bruto ya deja margen amplio sobre eso; si al llegar a diciembre el margen es más ajustado, restar este rango de la meta bruta para confirmar el "limpio" real.
 
+**Nota sobre Mesa Cero dentro de esta tabla:** los "setups nuevos" de arriba usan el precio de "El Sistema" genérico ($990.000 + $190.000/mes) como promedio de modelación. Mesa Cero (restaurantes) tiene su **propio** pricing, más alto ($900.000 setup + desde $250.000/mes de mantención, agente de WhatsApp incluido — ver `HORIZON-ECOSISTEMA.md`). Si el mix real de cierres tiene más restaurantes que PyMEs genéricas, el facturado real queda por encima de esta tabla, no por debajo — es un colchón adicional, no un riesgo. Al cerrar la semana, registrar cada cierre con su pricing real en el CRM en vez de asumir el promedio.
+
 ---
 
 ## 2. La mecánica semanal (el motor que hay que sostener)
