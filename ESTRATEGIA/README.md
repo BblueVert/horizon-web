@@ -11,6 +11,7 @@ No son documentos teóricos. Cada uno está construido con lo que ya existe en l
 
 | Documento | Qué responde |
 |---|---|
+| [`HORIZON-FUNDAMENTOS.md`](./HORIZON-FUNDAMENTOS.md) | ¿Cómo se explica HORIZON? Propósito, promesa, qué vendemos, concepto creativo, método, ecuación de valor, postura consultiva, estructura y presentación estándar. |
 | [`HORIZON-BUYER-PERSONA.md`](./HORIZON-BUYER-PERSONA.md) | ¿A quién le vendo, exactamente? Los 3 perfiles reales de cliente (agencia general, Mesa Cero, Binks Barber). |
 | [`HORIZON-MARKET-FIT.md`](./HORIZON-MARKET-FIT.md) | ¿Por qué esto puede funcionar en Rancagua y la Región de O'Higgins? Tamaño de mercado, competencia real, por qué ahora. |
 | [`HORIZON-ECOSISTEMA.md`](./HORIZON-ECOSISTEMA.md) | ¿Qué es HORIZON como sistema completo? Las dos capas de negocio, los productos, el stack técnico, cómo se conectan entre sí. |
