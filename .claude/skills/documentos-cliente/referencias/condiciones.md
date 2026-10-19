@@ -16,7 +16,7 @@ Cuando lo decidas, reemplazá el valor y borrá la marca.
 - Forma de pago de la implementación: 50% al firmar para reservar el inicio y 50% antes de la entrega final.
 - Entregas por el portal del cliente: los avances se muestran en el portal durante todo el proyecto. La entrega final (accesos, archivos editables, traspaso de cuentas y puesta en producción a nombre del cliente) se libera al confirmarse el pago del 50% restante.
 - Medio de pago: transferencia bancaria a los datos de `datos-privados.md`.
-- Pago del soporte mensual: el mes 1 va incluido; se cobra desde el mes 2. Ventana de pago: entre el día 25 y el día 5 del mes siguiente. [[DEFINIR: ¿cada mes se paga al inicio del mes que cubre (recomendado) o al cierre?]]
+- Pago del soporte mensual: el mes 1 va incluido; se cobra desde el mes 2. Ventana de pago: entre el día 25 y el día 5 del mes siguiente. Cada mes se paga al inicio del mes que cubre (ej.: el mes 2 se paga entre el 25 del mes 1 y el 5 del mes 2); si no se paga, el soporte se pausa.
 - Aviso para terminar el soporte: 15 días corridos antes del siguiente período.
 - Rondas de revisión del diseño (Figma): 2 rondas incluidas.
 - Plazo del cliente para entregar insumos o aprobar: 5 días hábiles; si se atrasa, el plazo de entrega se corre en los mismos días.
