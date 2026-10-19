@@ -118,6 +118,7 @@ const rewrites = {
   // /crm redirige al pipeline unificado en OPS
   '/reunion':         '/Pages/reunion/index.html',
   '/agendar':         '/Pages/agendar/index.html',
+  '/privacidad':      '/Pages/privacidad.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
 };
 
