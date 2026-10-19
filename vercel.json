@@ -14,6 +14,7 @@
     { "source": "/recursos/:path*", "destination": "/Pages/recursos/index.html" },
     { "source": "/reunion", "destination": "/Pages/reunion/index.html" },
     { "source": "/agendar", "destination": "/Pages/agendar/index.html" },
+    { "source": "/privacidad", "destination": "/Pages/privacidad.html" },
     { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" },
     { "source": "/c/:token", "destination": "/Pages/portal/index.html" },
     { "source": "/api/ops/tasks/:id", "destination": "/api/ops/tasks?id=:id" },
