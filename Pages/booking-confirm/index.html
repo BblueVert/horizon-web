@@ -40,6 +40,7 @@ main { padding: calc(var(--header-h) + 32px) 0 64px; }
 .prep li .ic .ico { width: 18px; height: 18px; }
 .prep li strong { display: block; font-size: 15px; }
 .prep li small { font-size: 13.5px; color: var(--ink2); }
+.portal-txt { font-size: 14px; color: var(--ink2); margin-top: 12px; }
 .next { display: grid; gap: 10px; }
 .next .btn { width: 100%; }
 @media (min-width: 640px) { .next { grid-template-columns: 1fr 1fr; } .card { padding: 26px; } }
@@ -79,6 +80,15 @@ main { padding: calc(var(--header-h) + 32px) 0 64px; }
       <a class="btn btn-acc meet" id="meetBtn" href="#" target="_blank" rel="noopener" hidden>Abrir link de Meet <svg class="ico"><use href="/shared/hz-sprite.svg#i-ext"/></svg></a>
     </section>
 
+    <section class="card portal" id="portalCard" hidden>
+      <div class="when">
+        <span class="ic t-peach"><svg class="ico"><use href="/shared/hz-sprite.svg#i-panel"/></svg></span>
+        <div><small>Tu portal de cliente</small><strong>Completá el brief antes de la sesión</strong></div>
+      </div>
+      <p class="portal-txt">Son 4 preguntas cortas, y si trabajamos juntos, ahí vas a ver todo el avance de tu proyecto. El link también te llegó en la invitación.</p>
+      <a class="btn btn-acc meet" id="portalBtn" href="#">Ir a mi portal <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a>
+    </section>
+
     <section class="card prep">
       <h2>Para aprovechar los 30 minutos</h2>
       <p>No necesitás preparar nada formal. Si podés, tené a mano:</p>
@@ -114,6 +124,7 @@ main { padding: calc(var(--header-h) + 32px) 0 64px; }
   var fechaRaw  = stored.startTime || params.get('startTime') || params.get('fecha') || '';
   var emailRaw  = (stored.attendeeEmail || params.get('attendeeEmail') || params.get('email') || '').toLowerCase().trim();
   var nombreRaw = stored.attendeeName || params.get('attendeeName') || params.get('nombre') || params.get('name') || '';
+  var portalRaw = stored.portalUrl || '';
   var linkRaw   = stored.meetLink || params.get('meetLink') || params.get('location') || params.get('link') || '';
   var $ = function (id) { return document.getElementById(id); };
 
@@ -136,6 +147,7 @@ main { padding: calc(var(--header-h) + 32px) 0 64px; }
     $('lead').textContent = 'Benja te escribe por WhatsApp para confirmarte la hora y mandarte el link de la sesión.';
     $('lblEmail').textContent = 'Email';
   }
+  if (/^https:\/\/(www\.)?horizonweb\.cl\/c\/[0-9a-f-]{36}$/.test(portalRaw)) { $('portalCard').hidden = false; $('portalBtn').href = portalRaw; }
   if (/^https:\/\/meet\.google\.com\//.test(linkRaw)) { $('meetBtn').hidden = false; $('meetBtn').href = linkRaw; }
 
   // Registra la agenda en OPS. Es interno: el visitante no ve el resultado.

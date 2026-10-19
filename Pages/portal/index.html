@@ -66,6 +66,7 @@ button{cursor:pointer;}
 .meter-fill{height:100%;background:var(--brand);border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1);}
 .meter-txt{font-size:13px;color:var(--ink2);white-space:nowrap;font-variant-numeric:tabular-nums;}
 .now{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13.5px;color:var(--ink2);}
+a.chip{text-decoration:none;}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;background:var(--brand-soft);color:var(--ink);font-size:13px;font-weight:500;}
 .chip .hz-i{font-size:14px;}
 .updated{font-size:12.5px;color:var(--ink3);display:flex;align-items:center;gap:6px;}
@@ -412,9 +413,9 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     <section id="p-brief" hidden>
       <div class="card brief">
         <div class="sec-h"><h2 class="sec-t"><i class="hz-i" data-i="pencil"></i>Brief antes de la sesión</h2><span class="sec-hint" id="b-status"></span></div>
-        <div class="fld"><label for="b-negocio">¿A qué se dedica tu negocio?</label><textarea class="ctl" id="b-negocio" maxlength="2000" placeholder="Qué haces, a quién le vendes y cómo operas hoy"></textarea></div>
-        <div class="fld"><label for="b-problema">¿Cuál es el mayor freno que tienes ahora?</label><textarea class="ctl" id="b-problema" maxlength="2000" placeholder="Lo primero que se te venga, sin filtro"></textarea></div>
-        <div class="fld"><label for="b-objetivo">¿Qué resultado esperas de la sesión?</label><textarea class="ctl" id="b-objetivo" maxlength="2000" placeholder="Ej: un plan claro para ordenar las ventas"></textarea></div>
+        <div class="fld"><label for="b-negocio">¿A qué se dedica tu negocio?</label><textarea class="ctl" id="b-negocio" maxlength="2000" placeholder="Qué hacés, a quién le vendés y cómo operás hoy"></textarea></div>
+        <div class="fld"><label for="b-problema">¿Cuál es el mayor freno que tenés ahora?</label><textarea class="ctl" id="b-problema" maxlength="2000" placeholder="Lo primero que se te venga, sin filtro"></textarea></div>
+        <div class="fld"><label for="b-objetivo">¿Qué resultado esperás de la sesión?</label><textarea class="ctl" id="b-objetivo" maxlength="2000" placeholder="Ej: un plan claro para ordenar las ventas"></textarea></div>
         <div class="fld"><label for="b-intentos">¿Ya intentaste resolverlo antes? ¿Cómo fue?</label><textarea class="ctl" id="b-intentos" maxlength="2000" placeholder="Qué probaste y qué pasó"></textarea></div>
       </div>
     </section>
@@ -955,9 +956,13 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     const first = (S.lead.nombre || '').split(' ')[0];
     $('hello').textContent = first ? `Hola, ${first}` : 'Hola';
     $('p-name').textContent = 'Preparemos tu diagnóstico';
-    $('p-desc').textContent = 'Completa este brief antes de la sesión. Se guarda solo mientras escribes.';
-    const f = S.lead.reunion_fecha ? new Date(S.lead.reunion_fecha).toLocaleString('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}) : '';
-    $('now').innerHTML = `<span class="chip">${ic('calendar')}${esc(f || 'Sesión confirmada')}</span>`;
+    $('p-desc').textContent = 'Completá este brief antes de la sesión. Se guarda solo mientras escribís.';
+    // reunion_fecha es hora de Chile: se muestran los componentes tal cual, sin convertir de zona
+    const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(S.lead.reunion_fecha || '');
+    const f = m ? new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'}) + ' · ' + m[4] + ':' + m[5] + ' hrs' : '';
+    const meet = /^https:\/\/meet\.google\.com\//.test(S.lead.cal_link || '') ? S.lead.cal_link : '';
+    $('now').innerHTML = `<span class="chip">${ic('calendar')}${esc(f || 'Sesión confirmada')}</span>` +
+      (meet ? `<a class="chip" href="${esc(meet)}" target="_blank" rel="noopener">${ic('external')}Abrir Google Meet</a>` : '');
     $('meter-wrap').hidden = true; $('updated').hidden = true;
     const keys = ['negocio','problema','objetivo','intentos'], b = S.lead.brief || {};
     let t;

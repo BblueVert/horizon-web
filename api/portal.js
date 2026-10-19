@@ -82,7 +82,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const leads = await get(
-      `leads?portal_token=eq.${token}&select=id,nombre,empresa,status,reunion_fecha,brief,created_at&limit=1`);
+      `leads?portal_token=eq.${token}&select=id,nombre,empresa,status,reunion_fecha,cal_link,brief,created_at&limit=1`);
     if (!leads.length) return res.status(404).json({ error: 'Portal no encontrado' });
     const lead = leads[0];
     const leadId = encodeURIComponent(lead.id);

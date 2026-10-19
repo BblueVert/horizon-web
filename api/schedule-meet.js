@@ -40,6 +40,22 @@ async function getAccessToken() {
   return parsed.access_token;
 }
 
+const SITE = (process.env.SITE_URL || 'https://www.horizonweb.cl').replace(/\/$/, '');
+
+// Texto de la invitación de Google Calendar (la ve el cliente)
+function descripcionInvitacion(nombre, portalUrl) {
+  const first = String(nombre || '').split(' ')[0];
+  return [
+    `Hola${first ? ' ' + first : ''}, quedó agendado tu diagnóstico gratuito con HORIZON (30 min por Google Meet).`,
+    '',
+    'Tu portal de cliente:',
+    portalUrl,
+    'Ahí completás un brief corto antes de la sesión, y si trabajamos juntos, vas a ver todo el avance de tu proyecto en el mismo link.',
+    '',
+    '¿Necesitás cambiar la hora? Escribinos por WhatsApp: +56 9 7696 2659',
+  ].join('\n');
+}
+
 // Calificación previa del diagnóstico (formulario /agendar). Valores cerrados: lo demás se descarta.
 const PRESUPUESTO = { ahora: 'disponible ahora', '1-2m': 'en 1–2 meses', no: 'todavía no', propuesta: 'viene de una propuesta' };
 const VOLUMEN     = { '<10': 'menos de 10', '10-30': '10–30', '30-100': '30–100', '100+': 'más de 100' };
@@ -104,6 +120,25 @@ module.exports = async function handler(req, res) {
 
   if (!SB_URL || !SB_KEY) return res.status(503).json({ error: 'Config incompleta (supabase)' });
 
+  const sbAuth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+  const sbHeaders = { ...sbAuth, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
+
+  // ── 0. Lead existente (mismo email) y su portal ──────────────────────────
+  // Se busca antes de Calendar: el link del portal va en la invitación que recibe el cliente.
+  let existingLead = null;
+  try {
+    const gr   = await httpsRequest('GET',
+      `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}&select=id,status,nota,hooks_respuestas,portal_token&limit=1`,
+      sbAuth
+    );
+    const rows = JSON.parse(gr.body || '[]');
+    existingLead = Array.isArray(rows) ? rows[0] : null;
+  } catch (err) {
+    console.warn('[schedule-meet] GET lead:', err.message);
+  }
+  const portalToken = existingLead?.portal_token || uid();
+  const portalUrl   = `${SITE}/c/${portalToken}`;
+
   // ── 1 & 2. Google Calendar (opcional — si falla igual guardamos el lead) ──
   let meetLink = '';
   let eventId  = '';
@@ -120,7 +155,10 @@ module.exports = async function handler(req, res) {
       const endTime = `${String(Math.floor(endMin / 60) % 24).padStart(2, '0')}:${String(endMin % 60).padStart(2, '0')}`;
       const event = {
         summary:     `Diagnóstico HORIZON — ${nombre}`,
-        description: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}${resumen ? '\n\n' + resumen : ''}${contexto ? '\n\n' + contexto : ''}`,
+        // La descripción la ve el cliente en su invitación: solo lo que le sirve a él.
+        // Los datos internos (calificación, contexto) quedan en OPS y en extendedProperties.private.
+        description: descripcionInvitacion(nombre, portalUrl),
+        extendedProperties: { private: { email, telefono, calificacion: resumen.slice(0, 900), contexto: contexto.slice(0, 900) } },
         start: { dateTime: `${fecha}T${hora}:00`, timeZone: tz },
         end:   { dateTime: `${endFecha}T${endTime}:00`, timeZone: tz },
         attendees: [{ email }],
@@ -150,22 +188,9 @@ module.exports = async function handler(req, res) {
   }
 
   // ── 3. Upsert lead in Supabase ────────────────────────────────────────────
-  const sbAuth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
-  const sbHeaders = { ...sbAuth, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
   const reunionISO = sinPresupuesto ? '' : `${fecha}T${hora}:00`;
   const califRegistro = calif.presupuesto ? { ...calif, resumen, fecha: new Date().toISOString() } : null;
 
-  let existingLead = null;
-  try {
-    const gr   = await httpsRequest('GET',
-      `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}&select=id,status,nota,hooks_respuestas&limit=1`,
-      sbAuth
-    );
-    const rows = JSON.parse(gr.body || '[]');
-    existingLead = Array.isArray(rows) ? rows[0] : null;
-  } catch (err) {
-    console.warn('[schedule-meet] GET lead:', err.message);
-  }
 
   if (existingLead) {
     // No sobreescribir el status — solo actualizar Meet link y fecha
@@ -180,6 +205,7 @@ module.exports = async function handler(req, res) {
     if (nombre)   patch.nombre   = nombre;
     if (telefono) patch.telefono = telefono;
     if (plan)     patch.plan     = plan;
+    if (!existingLead.portal_token) patch.portal_token = portalToken;
     try {
       await httpsRequest('PATCH',
         `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}`,
@@ -196,7 +222,7 @@ module.exports = async function handler(req, res) {
       nota: [resumen && '[Calificación] ' + resumen, contexto].filter(Boolean).join('\n'),
       plan, canal: 'hero', origen: source || (sinPresupuesto ? 'agendar-sin-presupuesto' : 'agendar-directo'),
       status: 'new', prioridad: PRIORIDAD[calif.presupuesto] || 'Media', tipoprecio: 'fundador',
-      cal_link: meetLink, reunion_fecha: reunionISO || null,
+      cal_link: meetLink, reunion_fecha: reunionISO || null, portal_token: portalToken,
       historial: [], hooks_respuestas: califRegistro ? { calificacion: califRegistro } : {},
     };
     try {
@@ -224,5 +250,5 @@ module.exports = async function handler(req, res) {
   }
 
   // invitacion = Google Calendar creó el evento y mandó el email; si no, el front no promete un correo que no salió
-  return res.status(200).json({ ok: true, agendado: true, invitacion: Boolean(eventId), meetLink, reunionFecha: reunionISO });
+  return res.status(200).json({ ok: true, agendado: true, invitacion: Boolean(eventId), meetLink, reunionFecha: reunionISO, portalUrl });
 };
