@@ -1,11 +1,12 @@
 # Convenciones de nombres
 
 - Marca: **HORIZON** en mayúsculas en títulos y UI; "Horizon" aceptable en texto corrido.
+- Logo (manual de marca): solo la versión original `Identidad/Logo HORIZON.svg` (letras blancas + O en degradado) y siempre sobre fondo oscuro. **Prohibido** recolorear las letras o bordes a negro o usarlo sobre fondo claro.
 - Páginas públicas: `Pages/<slug>.html` o `Pages/<slug>/index.html`, slug en minúsculas con guiones.
 - OPS: `OPS/<modulo>.html` + `api/ops/<modulo>.js`, ruta pública `/ops/<modulo>`.
 - Migraciones: `supabase-migration-NNN-<tema>.sql` (NNN = siguiente número, 3 dígitos). Idempotentes (`if not exists`, `drop ... if exists`).
 - SQL: tablas y columnas en `snake_case`, en español cuando son de negocio (`nombre`, `monto`, `estado`).
 - Claves de plan en BD de leads: `plan01`=Plan 01, `plan02`=Plan 02, `plan04`=Plan 03, `plan05`=Plan 04, `plan03`=legacy "Negocio Activo".
 - Etapas del pipeline: `new` → `contactado` → `diagnóstico` → `propuesta` → `contrato`.
-- Tokens CSS (landing 2026, fondo claro): `--bg #FFFBF6 --bg2 #FFF4EA --surface --ink #1A1626 --ink2 --ink3 --line --line2`, tintes `--peach --rose --lilac --mint`, acento `--acc #F2690C`, degradado de marca `--grad` (naranja → rosa → violeta). Header oscuro (`--ink`) con logo blanco; resto claro. Íconos: sprite SVG propio en la landing (trazo 1.75, sin emojis). Animación: GSAP + ScrollTrigger + Lenis desde jsDelivr, siempre con fallback y `prefers-reduced-motion`. Las páginas `plan-0N`, `servicios` y OPS siguen con los tokens oscuros anteriores (`--void --deep --card…`) hasta migrarlas.
+- Tokens CSS (landing 2026, fondo claro): `--bg #FFFBF6 --bg2 #FFF4EA --surface --ink #1A1626 --ink2 --ink3 --line --line2`, tintes `--peach --rose --lilac --mint`, acento `--acc #F2690C`, degradado de marca `--grad` (naranja → rosa → violeta). Header y footer oscuros (`--ink`); resto claro. Superficies de marca destacadas: degradado profundo desde azul-violeta (#1E1744 → #34276E → #5A2F8C) que se desvanece hacia rosa y naranja. Íconos: sprite SVG propio en la landing (trazo 1.75, sin emojis). Animación: GSAP + ScrollTrigger + Lenis desde jsDelivr, siempre con fallback y `prefers-reduced-motion`. Las páginas `plan-0N`, `servicios` y OPS siguen con los tokens oscuros anteriores (`--void --deep --card…`) hasta migrarlas.
 - Contenido: `CONTENIDO/<formato>/AAAA-MM-DD-<slug>.md` (formato = reels | carruseles | stories).

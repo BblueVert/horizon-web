@@ -199,7 +199,13 @@ a { color: inherit; }
 .vs-col h3 { font-size: 15px; font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
 .vs-old { background: var(--surface); }
 .vs-old h3 { color: var(--ink3); }
-.vs-new { background: linear-gradient(160deg, var(--peach), var(--rose) 55%, var(--lilac)); border-color: transparent; }
+.vs-new { background: radial-gradient(120% 90% at 100% 100%, rgba(242,105,12,.55), transparent 55%), linear-gradient(155deg, #1E1744 0%, #34276E 30%, #5A2F8C 58%, #9A3A84 82%, #C4467A 100%); border-color: transparent; color: #fff; }
+.vs-new h3 { color: #D9D2F0; }
+.vs-new h3 img { height: 15px; width: auto; }
+.vs-new .vs-list li { border-color: rgba(255,255,255,.12); }
+.vs-new .vs-list small { color: #D9D2F0; }
+.vs-new .vs-list .ico { color: #FFB98A; }
+.vs-new .on { color: #BBF7D0; background: rgba(255,255,255,.1); border: 1px solid rgba(187,247,208,.3); }
 .vs-list { list-style: none; display: grid; gap: 4px; }
 .vs-list li { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(26,22,38,.08); }
 .vs-list li:last-child { border-bottom: 0; }
@@ -209,7 +215,7 @@ a { color: inherit; }
 .vs-old .ico { color: var(--ink3); }
 .vs-old strong { color: var(--ink2); }
 .state { font: 500 10.5px var(--mono); letter-spacing: .05em; text-transform: uppercase; padding: 4px 9px; border-radius: 99px; }
-.off { color: #A3204A; background: #FFF0F3; } .on { color: #15803D; background: rgba(255,255,255,.7); }
+.off { color: #A3204A; background: #FFF0F3; }
 
 /* ── Proceso ────────────────────────────────── */
 .steps { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -283,13 +289,13 @@ a { color: inherit; }
 .checks small { font-size: 13.5px; color: var(--ink2); }
 
 /* ── Footer ─────────────────────────────────── */
-footer { border-top: 1px solid var(--line); padding: 48px 0 40px; }
+footer { background: var(--ink); color: #fff; padding: 56px 0 44px; }
 footer .wrap { display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
 footer .logo img { height: 24px; margin-bottom: 12px; }
-footer p, footer small { font-size: 13.5px; color: var(--ink2); }
+footer p, footer small { font-size: 13.5px; color: #B9B3CC; }
 footer nav { display: flex; gap: 24px; flex-wrap: wrap; }
-footer nav a { font-size: 14px; color: var(--ink2); text-decoration: none; }
-footer nav a:hover { color: var(--ink); }
+footer nav a { font-size: 14px; color: #B9B3CC; text-decoration: none; }
+footer nav a:hover { color: #fff; }
 .wa { position: fixed; right: 20px; bottom: 20px; width: 56px; height: 56px; border-radius: 18px; background: #25D366; color: #fff; display: grid; place-items: center; box-shadow: 0 12px 28px -10px rgba(37,211,102,.7); z-index: 40; transition: transform .25s; }
 .wa:hover { transform: translateY(-2px) scale(1.03); }
 .wa svg { width: 28px; height: 28px; }
@@ -612,7 +618,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
         </ul>
       </div>
       <div class="vs-col vs-new">
-        <h3><img src="/Identidad/logo-horizon-dark.svg" alt="" style="height:14px;width:auto">Sistema HORIZON</h3>
+        <h3><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON">Sistema</h3>
         <ul class="vs-list">
           <li><svg class="ico"><use href="#i-search"/></svg><div><strong>Captación</strong><small>Web, SEO local, Google y WhatsApp</small></div><span class="state on">Activo</span></li>
           <li><svg class="ico"><use href="#i-agent"/></svg><div><strong>Respuesta con IA en segundos</strong><small>Responde, clasifica y califica</small></div><span class="state on">Activo</span></li>
@@ -780,7 +786,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
 
 <footer>
   <div class="wrap">
-    <div><a href="/" class="logo"><img src="/Identidad/logo-horizon-dark.svg" alt="HORIZON" width="124" height="24"></a><p>Consultoría de Arquitectura Digital<br>Rancagua, Chile · 2026</p></div>
+    <div><a href="/" class="logo"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="124" height="24"></a><p>Consultoría de Arquitectura Digital<br>Rancagua, Chile · 2026</p></div>
     <nav aria-label="Pie de página"><a href="#sistema">Sistema</a><a href="#planes">Planes</a><a href="#casos">Casos</a><a href="/servicios">Servicios</a><a href="/recursos">Recursos</a><a href="/agendar">Agendar</a></nav>
     <small>horizonweb.cl</small>
   </div>
