@@ -1,0 +1,90 @@
+/* HORIZON — sistema visual claro 2026 (páginas públicas).
+   Header y footer oscuros: el logo original va siempre sobre fondo oscuro (manual de marca). */
+:root {
+  --bg: #FFFBF6; --bg2: #FFF4EA; --surface: #FFFFFF;
+  --ink: #1A1626; --ink2: #5F5970; --ink3: #9C96AB;
+  --line: #F0E7DC; --line2: #E6DACB;
+  --peach: #FFE2CC; --rose: #FFDDE5; --lilac: #ECE3FF; --mint: #DDF5E6;
+  --acc: #F2690C; --rose-i: #C4467A; --violet: #7B3FA0; --ok: #16A34A;
+  --grad: linear-gradient(95deg, #F2690C 0%, #C4467A 55%, #7B3FA0 100%);
+  --grad-deep: radial-gradient(120% 90% at 100% 100%, rgba(242,105,12,.55), transparent 55%), linear-gradient(155deg, #1E1744 0%, #34276E 30%, #5A2F8C 58%, #9A3A84 82%, #C4467A 100%);
+  --font: 'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'DM Mono', ui-monospace, monospace;
+  --r: 14px; --r-lg: 24px; --r-xl: 32px;
+  --shadow: 0 1px 2px rgba(26,22,38,.04), 0 24px 48px -28px rgba(26,22,38,.22);
+  --wrap: 1200px; --header-h: 68px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-padding-top: calc(var(--header-h) + 16px); }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+img, svg { display: block; }
+a { color: inherit; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 8px; z-index: 100; }
+.skip:focus { left: 8px; }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; border-radius: 6px; }
+.ico { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+/* Tipografía */
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); display: inline-flex; align-items: center; gap: 8px; }
+.eyebrow::before { content: ''; width: 18px; height: 1.5px; background: var(--acc); }
+.h1, .h2 { font-weight: 800; letter-spacing: -.03em; }
+.h1 { font-size: clamp(38px, 5vw, 64px); line-height: 1.02; }
+.h2 { font-size: clamp(30px, 4vw, 50px); line-height: 1.05; }
+.g { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lead { font-size: clamp(16px, 1.5vw, 18.5px); color: var(--ink2); line-height: 1.6; }
+.t-peach { background: var(--peach); color: #9A3D06; } .t-rose { background: var(--rose); color: #A3204A; }
+.t-lilac { background: var(--lilac); color: var(--violet); } .t-mint { background: var(--mint); color: #15803D; }
+
+/* Botones */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font: 700 15px/1 var(--font); text-decoration: none; padding: 16px 22px; border-radius: 14px; transition: transform .25s, box-shadow .25s, background-position .5s, border-color .25s; cursor: pointer; border: 0; }
+.btn .ico { width: 18px; height: 18px; transition: transform .25s; }
+.btn:hover .ico { transform: translateX(3px); }
+.btn-acc { background: linear-gradient(95deg, #F2690C 0%, #CC3253 50%, #7B3FA0 100%) 0 0 / 200% 100%; color: #fff; box-shadow: 0 10px 26px -10px rgba(204,50,83,.65); }
+.btn-acc:hover { background-position: 60% 0; transform: translateY(-1px); box-shadow: 0 14px 30px -12px rgba(123,63,160,.6); }
+.btn-ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line2); }
+.btn-ghost:hover { border-color: var(--ink3); }
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+/* Header oscuro */
+.header { position: fixed; inset: 0 0 auto; height: var(--header-h); z-index: 50; background: var(--ink); transition: background .3s, box-shadow .3s, transform .35s; }
+.header.scrolled { background: rgba(26,22,38,.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 30px -18px rgba(26,22,38,.6); }
+.header.hide { transform: translateY(-100%); }
+.header .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.logo img { height: 26px; width: auto; }
+.nav { display: flex; gap: 30px; }
+.nav a { font-size: 14px; font-weight: 500; color: #B9B3CC; text-decoration: none; transition: color .2s; }
+.nav a:hover, .nav a[aria-current="page"] { color: #fff; }
+.header .btn-acc { padding: 12px 18px; border-radius: 12px; font-size: 14px; box-shadow: none; }
+.header .back { color: #B9B3CC; font-size: 14px; font-weight: 600; text-decoration: none; display: inline-flex; gap: 8px; align-items: center; }
+.header .back:hover { color: #fff; }
+.header .back .ico { width: 18px; height: 18px; transform: scaleX(-1); }
+.menu-btn { display: none; background: none; border: 0; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; color: #fff; }
+.menu-btn .ico { margin: auto; width: 24px; height: 24px; }
+.drawer { position: fixed; inset: var(--header-h) 0 auto; background: var(--ink); color: #fff; padding: 16px 24px 24px; display: none; flex-direction: column; gap: 4px; z-index: 49; }
+.drawer.open { display: flex; }
+.drawer a:not(.btn) { padding: 14px 0; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.1); }
+.drawer .btn { margin-top: 16px; }
+
+/* Footer oscuro */
+footer.site { background: var(--ink); color: #fff; padding: 56px 0 44px; }
+footer.site .wrap { display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+footer.site .logo img { height: 24px; margin-bottom: 12px; }
+footer.site p, footer.site small { font-size: 13.5px; color: #B9B3CC; }
+footer.site nav { display: flex; gap: 24px; flex-wrap: wrap; }
+footer.site nav a { font-size: 14px; color: #B9B3CC; text-decoration: none; }
+footer.site nav a:hover { color: #fff; }
+.wa { position: fixed; right: 20px; bottom: 20px; width: 56px; height: 56px; border-radius: 18px; background: #25D366; color: #fff; display: grid; place-items: center; box-shadow: 0 12px 28px -10px rgba(37,211,102,.7); z-index: 40; transition: transform .25s; }
+.wa:hover { transform: translateY(-2px) scale(1.03); }
+.wa svg { width: 28px; height: 28px; }
+
+/* Animación: solo oculta si va a correr (ver hz-motion.js) */
+html.anim [data-reveal], html.anim [data-stagger] > *, html.anim [data-intro] { opacity: 0; }
+
+@media (max-width: 760px) {
+  .nav, .header .btn-acc { display: none; }
+  .menu-btn { display: grid; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
