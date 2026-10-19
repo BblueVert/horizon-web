@@ -59,7 +59,7 @@
 <aside class="ops-sidebar">
   <div class="ops-sidebar-top">
     <a href="/ops" class="ops-logo" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
-      <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON">
+      <img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON">
       <span class="ops-logo-badge">OPS</span>
     </a>
   </div>
@@ -92,4 +92,28 @@
     sidebar.innerHTML = buildSidebar(user);
     layout.prepend(sidebar.firstElementChild);
   };
+
+  // ── Celular: barra superior con menú. Sirve para cualquier página con .ops-sidebar
+  //    (también saas-clientes, que arma su propia barra lateral).
+  function initMobileShell() {
+    const layout = document.querySelector('.ops-layout');
+    if (!layout || layout.querySelector('.ops-mbar')) return;
+    const bar = document.createElement('div');
+    bar.className = 'ops-mbar';
+    bar.innerHTML = `<a href="/ops" class="ops-logo" style="text-decoration:none;display:flex;align-items:center">
+        <img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON"><span class="ops-logo-badge">OPS</span></a>
+      <button type="button" aria-label="Abrir menú" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h10"/></svg></button>`;
+    const scrim = document.createElement('div');
+    scrim.className = 'ops-scrim';
+    layout.prepend(bar);
+    document.body.appendChild(scrim);
+    const btn = bar.querySelector('button');
+    const setOpen = open => { document.body.classList.toggle('ops-menu-open', open); btn.setAttribute('aria-expanded', open); };
+    btn.addEventListener('click', () => setOpen(!document.body.classList.contains('ops-menu-open')));
+    scrim.addEventListener('click', () => setOpen(false));
+    document.addEventListener('click', e => { if (e.target.closest('.ops-sidebar a')) setOpen(false); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMobileShell);
+  else initMobileShell();
 })();

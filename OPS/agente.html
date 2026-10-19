@@ -138,6 +138,35 @@ html,body{height:100%;overflow:hidden;}
 
 /* Modal nuevo chat */
 .new-chat-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;}
+.chat-back{display:none;}
+
+/* Celular: lista de chats o chat abierto, uno a la vez */
+@media(max-width:900px){
+  .agente-root{grid-template-columns:1fr;height:100dvh;}
+  .agente-root.chat-open .chats-sidebar{display:none;}
+  .agente-root:not(.chat-open) .chat-area{display:none;}
+  .chats-top{padding:14px 16px 12px;}
+  .chats-new{width:40px;height:40px;border-radius:10px;font-size:20px;}
+  .chats-search{font-size:16px;padding:10px 12px;border-radius:10px;}
+  .chat-item{padding:12px;}
+  .chat-item-name{font-size:14px;}
+  .chat-item-del{opacity:1;font-size:16px;padding:8px;}
+  .chat-back{display:grid;place-items:center;width:40px;height:40px;margin-left:-8px;border:0;background:none;color:var(--text);cursor:pointer;flex-shrink:0;}
+  .chat-back svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .mode-bar{padding:8px 12px;gap:8px;flex-wrap:wrap;}
+  .chat-area-title{font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mode-btn{padding:8px 10px;}
+  .chat-messages{padding:14px 12px;}
+  .msg{max-width:92%;}
+  .msg-bubble{font-size:14.5px;}
+  .chat-input-area{padding:10px 12px calc(12px + env(safe-area-inset-bottom));}
+  .chat-input{font-size:16px;}
+  .chat-send{width:40px;height:40px;}
+  .chat-hints{grid-template-columns:1fr;}
+  .chat-welcome{padding:24px 16px;}
+  .chat-welcome-title{font-size:26px;}
+  .new-chat-box{width:calc(100vw - 32px);padding:22px;}
+}
 .new-chat-modal.open{display:flex;}
 .new-chat-box{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:28px;width:360px;}
 .new-chat-box h3{font-family:var(--fd);font-size:22px;letter-spacing:.4px;margin-bottom:20px;color:var(--text);}
@@ -151,7 +180,7 @@ html,body{height:100%;overflow:hidden;}
   <div class="chats-sidebar">
     <div class="chats-top">
       <a href="/ops" style="display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:14px;opacity:.85;transition:.15s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.85'">
-        <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON" style="height:22px;width:auto;">
+        <img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" style="height:22px;width:auto;">
         <span style="font-family:var(--fm);font-size:11px;letter-spacing:.4px;background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">OPS</span>
       </a>
       <div class="chats-top-row">
@@ -259,13 +288,16 @@ async function openChat(id){
   if(!activeChat) return;
   renderChatList(allChats);
   renderChatArea();
+  document.querySelector('.agente-root').classList.add('chat-open');
 }
+
+function closeChatView(){document.querySelector('.agente-root').classList.remove('chat-open');}
 
 async function deleteChat(id){
   if(!confirm('¿Eliminar este chat?')) return;
   const sb=getSB();
   await sb.from('chats').delete().eq('id',id);
-  if(activeChat?.id===id){activeChat=null;document.getElementById('chatArea').innerHTML=noChatHTML();}
+  if(activeChat?.id===id){activeChat=null;document.getElementById('chatArea').innerHTML=noChatHTML();closeChatView();}
   allChats=allChats.filter(c=>c.id!==id);
   renderChatList(allChats);
  opsToast('Chat eliminado');
@@ -278,6 +310,7 @@ function renderChatArea(){
   const area=document.getElementById('chatArea');
   area.innerHTML=`
     <div class="mode-bar">
+      <button class="chat-back" onclick="closeChatView()" aria-label="Volver a los chats"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div contenteditable="true" class="chat-area-title" id="chatTitle" onblur="saveTitle(this.textContent)">${activeChat.nombre}</div>
       <div class="mode-toggle">
         <button class="mode-btn active socio" id="btnSocio" onclick="setModo('socio')"><i class="hz-i" data-i="briefcase"></i> Socio</button>

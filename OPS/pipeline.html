@@ -95,6 +95,13 @@ textarea.lm-input{resize:vertical;min-height:70px;line-height:1.5;}
 /* Footer */
 .lm-ftr{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;}
 .lm-ftr-l{flex:1;}
+/* Celular: columnas en carrusel horizontal, una etapa por pantalla con la siguiente asomando */
+@media(max-width:800px){
+  .pipeline-stats{grid-template-columns:repeat(2,1fr);}
+  .kanban{display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:82%;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px 8px;scroll-padding:0 16px;}
+  .kanban>*{scroll-snap-align:start;}
+  .lm-grid{grid-template-columns:1fr;}
+}
 </style>
 <script src="/shared/hz-icons.js"></script>
 </head>

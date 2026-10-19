@@ -1,13 +1,15 @@
 /* HORIZON OPS — Estilos compartidos */
 :root{
   /* Tema claro HORIZON: fondo cálido, tarjetas blancas, naranja solo como acento */
-  --void:#f6f4f0;--panel:#ffffff;--card:#ffffff;--card2:#f4f2ee;--card3:#e8e5df;
-  --border:rgba(24,20,40,0.08);--border2:rgba(24,20,40,0.13);--border3:rgba(24,20,40,0.22);
-  --h1:#ff6b35;--h2:#ff8c42;--h1-ink:#d4521f;--h1-soft:#fff1ea;
+  /* Mismos tonos que el sitio (shared/hz-light.css): crema, tinta y la escala del degradado HORIZON */
+  --void:#FFFBF6;--panel:#ffffff;--card:#ffffff;--card2:#FFF4EA;--card3:#F0E7DC;
+  --border:#F0E7DC;--border2:#E6DACB;--border3:#D6C7B4;
+  --h1:#F2690C;--h2:#E0483F;--h1-ink:#C2540A;--h1-soft:#FFE2CC;
+  --grad:linear-gradient(95deg,#F2690C 0%,#CC3253 50%,#7B3FA0 100%);
   --indigo:#5b5ef0;--indigo2:#4f46e5;
   --green:#0f9f6e;--red:#dc2626;--yellow:#b87503;
-  --text:#1b1a22;--text2:#55525f;--text3:#767381;
-  --hover:rgba(24,20,40,.04);
+  --text:#1A1626;--text2:#5F5970;--text3:#857F95;
+  --hover:rgba(26,22,38,.04);
   --shadow-sm:0 1px 2px rgba(24,20,40,.05),0 1px 3px rgba(24,20,40,.04);
   --shadow:0 4px 18px rgba(24,20,40,.07);
   --fm:"Plus Jakarta Sans",system-ui,sans-serif;--fb:"Plus Jakarta Sans",system-ui,sans-serif;--fd:"Plus Jakarta Sans",system-ui,sans-serif;
@@ -17,7 +19,7 @@
 }
 /* Zonas oscuras: panel lateral y login. El logo HORIZON es blanco y va siempre sobre fondo oscuro */
 .ops-sidebar,.chats-sidebar,.ops-dark{
-  --panel:#0f0d1a;--card:#181628;--card2:#1f1c31;--card3:#2a2640;
+  --panel:#1A1626;--card:#241F33;--card2:#2B2540;--card3:#3A3352;
   --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);--border3:rgba(255,255,255,.2);
   --text:#f1eff7;--text2:#b9b6c7;--text3:#8d8a9e;
   --hover:rgba(255,255,255,.06);--h1-soft:rgba(255,107,53,.16);--h1-ink:#ff8c5a;
@@ -33,7 +35,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);-webkit-font
 /* ── Sidebar ── */
 .ops-sidebar{
   background:var(--panel);
-  border-right:1px solid #0f0d1a;
+  border-right:1px solid #1A1626;
   display:flex;flex-direction:column;overflow:hidden;
   position:relative;
 }
@@ -139,9 +141,9 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);-webkit-font
   transition:.15s;text-decoration:none;
 }
 .btn-primary{background:var(--text);color:#fff;box-shadow:var(--shadow-sm);}
-.btn-accent{background:linear-gradient(135deg,var(--h1),var(--h2));color:#fff;}
-.btn-primary:hover{background:#2c2a36;}
-.ops-dark .btn-primary,.ops-sidebar .btn-primary,.chats-sidebar .btn-primary{background:linear-gradient(135deg,var(--h1),var(--h2));color:#fff;}
+.btn-accent{background:var(--grad);color:#fff;}
+.btn-primary:hover{background:#2E2840;}
+.ops-dark .btn-primary,.ops-sidebar .btn-primary,.chats-sidebar .btn-primary{background:var(--grad);color:#fff;}
 .ops-dark .btn-primary:hover,.ops-sidebar .btn-primary:hover,.chats-sidebar .btn-primary:hover{filter:brightness(1.06);}
 .btn-ghost{background:var(--card);color:var(--text2);border:1px solid var(--border2);}
 .btn-ghost:hover{background:var(--card2);color:var(--text);}
@@ -168,7 +170,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);-webkit-font
   padding:9px 12px;outline:none;transition:.15s;
   -webkit-appearance:none;color-scheme:light;
 }
-.ops-input:focus{border-color:var(--h1);box-shadow:0 0 0 3px rgba(255,107,53,.15);}
+.ops-input:focus{border-color:var(--h1);box-shadow:0 0 0 3px rgba(242,105,12,.15);}
 textarea.ops-input{resize:vertical;min-height:80px;line-height:1.5;}
 
 /* ── Tables ── */
@@ -215,7 +217,45 @@ textarea.ops-input{resize:vertical;min-height:80px;line-height:1.5;}
 
 /* ── Progress bar ── */
 .ops-progress{height:6px;background:var(--card3);border-radius:2px;overflow:hidden;}
-.ops-progress-fill{height:100%;background:linear-gradient(90deg,var(--h1),var(--h2));border-radius:2px;transition:width .4s ease;}
+.ops-progress-fill{height:100%;background:var(--grad);border-radius:2px;transition:width .4s ease;}
 
 /* ── Divider ── */
 .ops-divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+
+/* ── Celular: barra superior + menú lateral deslizable (lo inserta ops-nav.js) ── */
+.ops-mbar{display:none;}
+.ops-scrim{display:none;}
+@media(max-width:900px){
+  html,body{height:100%;overflow:hidden;}
+  .ops-layout{display:flex;flex-direction:column;height:100dvh;}
+  .ops-mbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;height:56px;padding:0 8px 0 16px;background:#1A1626;color:#fff;}
+  .ops-mbar img{height:20px;width:auto;}
+  .ops-mbar .ops-logo-badge{margin-left:8px;}
+  .ops-mbar button{width:44px;height:44px;border:0;background:none;color:#fff;display:grid;place-items:center;cursor:pointer;border-radius:10px;}
+  .ops-mbar button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;}
+  .ops-sidebar{position:fixed;z-index:300;inset:0 auto 0 0;width:min(84vw,300px);transform:translateX(-102%);transition:transform .28s ease;box-shadow:0 0 40px rgba(0,0,0,.35);}
+  body.ops-menu-open .ops-sidebar{transform:none;}
+  .ops-scrim{display:block;position:fixed;inset:0;z-index:299;background:rgba(26,22,38,.45);opacity:0;pointer-events:none;transition:opacity .28s;}
+  body.ops-menu-open .ops-scrim{opacity:1;pointer-events:auto;}
+  .ops-nav-item{padding:12px 12px;}
+  .ops-nav-label{font-size:15px;}
+  .ops-main{flex:1;min-height:0;}
+  .ops-header{padding:14px 16px;flex-wrap:wrap;gap:10px;}
+  .ops-page-title{font-size:19px;}
+  .ops-header-actions{flex-wrap:wrap;gap:8px;}
+  .ops-content{padding:16px;}
+  .ops-stats{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .stat-card{padding:14px;}
+  .stat-value{font-size:22px;}
+  .ops-card{padding:16px;border-radius:14px;}
+  .btn{padding:10px 14px;min-height:40px;}
+  .btn-sm{min-height:34px;}
+  .ops-tabs{max-width:100%;overflow-x:auto;}
+  .ops-table{display:block;overflow-x:auto;white-space:nowrap;}
+  .ops-toast{left:16px;right:16px;bottom:16px;}
+}
+@media(max-width:600px){
+  /* Formularios en 2 columnas definidos inline en los modales → una columna */
+  [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
+  .ops-input,select.ops-input,textarea.ops-input{font-size:16px;}
+}

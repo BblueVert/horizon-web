@@ -36,6 +36,14 @@
 .form-input:focus{border-color:var(--h1);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+/* Celular: cada tenant pasa a ser una tarjeta (nombre arriba, datos en dos columnas) */
+@media(max-width:900px){
+  .tenant-head{display:none;}
+  .tenant-row{grid-template-columns:1fr 1fr;gap:8px 12px;padding:14px 16px;}
+  .tenant-row>*:first-child{grid-column:1/-1;}
+  .form-row{grid-template-columns:1fr;}
+  .modal{padding:22px;}
+}
 </style>
 <script src="/shared/hz-icons.js"></script>
 </head>
@@ -352,7 +360,7 @@ function renderMinNav() {
   aside.innerHTML = `
     <div class="ops-sidebar-top">
       <a href="/ops" class="ops-logo" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
-        <img src="/Identidad/Logo-Vertical-png.png" alt="HORIZON">
+        <img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON">
         <span class="ops-logo-badge">OPS</span>
       </a>
     </div>

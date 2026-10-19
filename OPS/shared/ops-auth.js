@@ -3,10 +3,10 @@ const OPS_SB_URL  = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
 const OPS_SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
 
 // Cliente Supabase — requiere que el SDK esté cargado antes de este script
-let _sb = null;
+let _opsSb = null;   // nombre propio: saas-clientes también carga saas-auth.js, que declara _sb
 function getSB() {
-  if (!_sb) _sb = window.supabase.createClient(OPS_SB_URL, OPS_SB_ANON);
-  return _sb;
+  if (!_opsSb) _opsSb = window.supabase.createClient(OPS_SB_URL, OPS_SB_ANON);
+  return _opsSb;
 }
 
 // Verifica la sesión y redirige al login si no hay ninguna.

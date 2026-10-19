@@ -5,32 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>HORIZON · Brief de Reunión</title>
-<link rel="icon" type="image/png" href="../../Identidad/Logo ISO.png">
+<link rel="icon" type="image/png" href="/Identidad/Logo%20ISO.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --void:#07060e; --card:#0f0e1a; --card2:#1a1828; --card3:#221f32;
-  --border:rgba(255,255,255,0.06); --border-h:rgba(255,255,255,0.13);
-  --h1:#ff6b35; --h2:#ff8c42; --amber:#f59e0b; --green:#10b981;
-  --rose:#e8637a; --violet:#a855f7; --blue:#64a2ff; --cyan:#06b6d4;
-  --text:#e8e6f0; --text2:#9a98a8; --text3:#4a4760;
+  --void:#FFFBF6; --card:#ffffff; --card2:#FFF4EA; --card3:#F0E7DC;
+  --border:#F0E7DC; --border-h:#D6C7B4;
+  --h1:#F2690C; --h2:#C2540A; --amber:#f59e0b; --green:#10b981;
+  --rose:#e8637a; --violet:#a855f7; --blue:#3B5BDB; --cyan:#06b6d4;
+  --text:#1A1626; --text2:#5F5970; --text3:#857F95;
   --fm:"DM Mono",monospace; --fb:"Plus Jakarta Sans",sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:100vh;font-size:13px;}
+body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:100vh;font-size:14px;}
+.ico{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 
 /* HEADER */
-.hdr{height:52px;background:var(--card);border-bottom:1px solid var(--border);
+.hdr{height:56px;background:#1A1626;border-bottom:1px solid #1A1626;
   display:flex;align-items:center;justify-content:space-between;padding:0 20px;
   position:sticky;top:0;z-index:100;}
-.hdr-logo{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:2px;
-  display:flex;align-items:center;gap:10px;}
-.hdr-logo span{font-family:var(--fm);font-size:9px;color:var(--text2);letter-spacing:3px;}
+.hdr-logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;}
+.hdr-logo img{height:20px;width:auto;}
+.hdr-logo span{font-family:var(--fm);font-size:10px;color:#B9B2CC;letter-spacing:2px;}
+.hdr .btn-ghost{background:rgba(255,255,255,.08);color:#E4DDF5;border-color:rgba(255,255,255,.12);}
+.hdr .btn-ghost:hover{color:#fff;border-color:rgba(255,255,255,.3);}
 .hdr-r{display:flex;align-items:center;gap:10px;}
 .btn{font-family:var(--fm);font-size:11px;border:none;cursor:pointer;border-radius:6px;
   transition:.15s;display:inline-flex;align-items:center;gap:6px;letter-spacing:.5px;text-decoration:none;}
-.btn-primary{background:var(--h1);color:#fff;padding:7px 14px;}
-.btn-primary:hover{background:#e55a28;}
+.btn-primary{background:linear-gradient(95deg,#F2690C 0%,#CC3253 50%,#7B3FA0 100%);color:#fff;padding:7px 14px;}
+.btn-primary:hover{filter:brightness(1.08);}
 .btn-ghost{background:var(--card2);color:var(--text2);padding:7px 12px;border:1px solid var(--border);}
 .btn-ghost:hover{border-color:var(--border-h);color:var(--text);}
 .btn-sm{padding:5px 10px;font-size:10px;}
@@ -42,7 +45,7 @@ body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:1
 
 /* SELECTOR */
 .lead-selector{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;}
-.sel-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.sel-label{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
 .sel-row{display:flex;gap:10px;align-items:center;}
 select.fsel{background:var(--card2);border:1px solid var(--border);border-radius:6px;
   color:var(--text);font-family:var(--fb);font-size:13px;padding:8px 10px;
@@ -56,7 +59,7 @@ select.fsel:focus{border-color:var(--h1);}
 /* SECCIÓN */
 .section{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden;}
 .section-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.section-icon{font-size:16px;}
+.section-icon{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#FFE2CC;color:var(--h2);}
 .section-title{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:1px;}
 .section-status{font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.5px;margin-left:auto;}
 .section-body{padding:18px 20px;}
@@ -64,7 +67,7 @@ select.fsel:focus{border-color:var(--h1);}
 /* INFO GRID */
 .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
 .info-item{display:flex;flex-direction:column;gap:4px;}
-.info-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
+.info-label{font-family:var(--fm);font-size:10px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
 .info-value{font-size:13px;color:var(--text);font-weight:500;}
 .info-value a{color:var(--blue);text-decoration:none;}
 .info-value a:hover{text-decoration:underline;}
@@ -84,14 +87,14 @@ select.fsel:focus{border-color:var(--h1);}
 .check-item.done .check-box{background:var(--green);border-color:var(--green);}
 .check-box svg{display:none;}
 .check-item.done .check-box svg{display:block;}
-.check-text{flex:1;font-size:12px;color:var(--text2);}
+.check-text{flex:1;font-size:13.5px;color:var(--text2);}
 .check-item.done .check-text{color:var(--text3);text-decoration:line-through;}
-.check-category{font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;margin-top:10px;}
+.check-category{font-family:var(--fm);font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;margin-top:10px;}
 .check-category:first-child{margin-top:0;}
 
 /* HOOKS */
 .hook-block{margin-bottom:14px;}
-.hook-q{font-size:12px;color:var(--text2);margin-bottom:6px;line-height:1.5;}
+.hook-q{font-size:13.5px;color:var(--text2);margin-bottom:6px;line-height:1.5;}
 .hook-q strong{color:var(--h1);font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:3px;}
 .hook-resp{background:var(--card2);border:1px solid var(--border);border-radius:6px;
   width:100%;color:var(--text);font-family:var(--fb);font-size:12px;padding:9px 12px;
@@ -113,6 +116,22 @@ select.fsel:focus{border-color:var(--h1);}
 /* EMPTY */
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3);font-family:var(--fm);font-size:11px;letter-spacing:1px;}
 
+/* CELULAR */
+@media(max-width:640px){
+  .hdr{padding:0 12px 0 16px;}
+  .hdr-logo span{display:none;}
+  .hdr-r{gap:6px;}
+  .hdr .btn{white-space:nowrap;}
+  .hdr-print{display:none!important;}
+  .page{padding:18px 16px 48px;}
+  .sel-row{flex-direction:column;align-items:stretch;}
+  select.fsel,.hook-resp,.notes-area{font-size:16px;}
+  .section-hdr,.section-body,.lead-selector,.brief-actions{padding-left:16px;padding-right:16px;}
+  .info-grid{grid-template-columns:1fr 1fr;}
+  .brief-actions .btn{flex:1 1 100%;justify-content:center;padding:11px 14px;font-size:12px;}
+  .btn-sm{padding:8px 10px;font-size:11px;}
+}
+
 /* PRINT */
 @media print{
   .hdr,.lead-selector,.brief-actions,.check-item{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
@@ -123,13 +142,13 @@ select.fsel:focus{border-color:var(--h1);}
 <body>
 
 <header class="hdr">
-  <div class="hdr-logo">
-    HORIZON
-    <span>· BRIEF DE REUNIÓN</span>
-  </div>
+  <a class="hdr-logo" href="/ops">
+    <img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON">
+    <span>BRIEF DE REUNIÓN</span>
+  </a>
   <div class="hdr-r">
-    <a href="/crm" class="btn btn-ghost btn-sm">← CRM</a>
-    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Imprimir</button>
+    <a href="/ops/pipeline" class="btn btn-ghost btn-sm">← Pipeline</a>
+    <button class="btn btn-ghost btn-sm hdr-print" onclick="window.print()">Imprimir</button>
     <button class="btn btn-primary btn-sm" id="btnGuardar" onclick="guardarTodo()" style="display:none;">Guardar notas</button>
   </div>
 </header>
@@ -153,7 +172,7 @@ select.fsel:focus{border-color:var(--h1);}
     <!-- 1. PERFIL DEL LEAD -->
     <div class="section">
       <div class="section-hdr">
-        <span class="section-icon">👤</span>
+        <span class="section-icon"><svg class="ico"><use href="/shared/hz-sprite.svg#i-users"/></svg></span>
         <span class="section-title">Perfil del lead</span>
         <span class="status-pill" id="leadStatusPill" style="margin-left:auto;"></span>
       </div>
@@ -165,7 +184,7 @@ select.fsel:focus{border-color:var(--h1);}
     <!-- 2. CONTEXTO DEL NEGOCIO -->
     <div class="section">
       <div class="section-hdr">
-        <span class="section-icon">🏢</span>
+        <span class="section-icon"><svg class="ico"><use href="/shared/hz-sprite.svg#i-store"/></svg></span>
         <span class="section-title">Contexto del negocio</span>
       </div>
       <div class="section-body">
@@ -178,7 +197,7 @@ select.fsel:focus{border-color:var(--h1);}
     <!-- 3. RESPUESTAS A HOOKS PRE-REUNIÓN -->
     <div class="section">
       <div class="section-hdr">
-        <span class="section-icon">🎯</span>
+        <span class="section-icon"><svg class="ico"><use href="/shared/hz-sprite.svg#i-search"/></svg></span>
         <span class="section-title">Pre-calificación (hooks)</span>
         <span class="section-status" style="background:rgba(245,158,11,.1);color:var(--amber);" id="hooksStatus">0 / 3 respondidas</span>
       </div>
@@ -193,7 +212,7 @@ select.fsel:focus{border-color:var(--h1);}
     <!-- 4. CHECKLIST PRE-SESIÓN -->
     <div class="section">
       <div class="section-hdr">
-        <span class="section-icon">✅</span>
+        <span class="section-icon"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg></span>
         <span class="section-title">Checklist pre-sesión</span>
         <span class="section-status" id="checkStatus" style="background:rgba(16,185,129,.1);color:var(--green);">0 / 0 completados</span>
       </div>
@@ -205,7 +224,7 @@ select.fsel:focus{border-color:var(--h1);}
     <!-- 5. NOTAS DE LA SESIÓN -->
     <div class="section">
       <div class="section-hdr">
-        <span class="section-icon">📝</span>
+        <span class="section-icon"><svg class="ico"><use href="/shared/hz-sprite.svg#i-book"/></svg></span>
         <span class="section-title">Notas de la sesión</span>
       </div>
       <div class="section-body">
@@ -219,9 +238,9 @@ select.fsel:focus{border-color:var(--h1);}
     <!-- ACCIONES -->
     <div class="brief-actions">
       <span class="brief-actions-label">Después de la sesión</span>
-      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('proposal')">→ Pasar a Propuesta</button>
-      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('qualified')">→ Pasar a Calificado</button>
-      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('lost')" style="color:#ef4444;">✗ Marcar perdido</button>
+      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('propuesta')">→ Pasar a Propuesta enviada</button>
+      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('contactado')">→ Volver a Contactado</button>
+      <button class="btn btn-ghost btn-sm" onclick="avanzarEtapa('cerrado')" style="color:#DC2626;">✗ Cerrar lead</button>
       <button class="btn btn-primary btn-sm" onclick="guardarTodo()">Guardar todo</button>
     </div>
 
@@ -234,48 +253,24 @@ select.fsel:focus{border-color:var(--h1);}
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/OPS/shared/ops-auth.js"></script>
 <script>
 // ── SUPABASE ──────────────────────────────────────────────
-const SB_URL = 'https://dkitbnrpwmwrfnmztdfc.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRraXRibnJwd213cmZubXp0ZGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMzk4OTUsImV4cCI6MjA5NDgxNTg5NX0.ToIz8RM5phcWTa7LY1VbmQZXGIhgkDL1UKxwPJdO3x4';
-
-function tokenExpired() {
-  const t = localStorage.getItem('crm_token');
-  if (!t) return true;
-  try { return JSON.parse(atob(t.split('.')[1])).exp * 1000 < Date.now() + 60_000; }
-  catch { return true; }
-}
-
-async function refreshSession() {
-  const rt = localStorage.getItem('crm_refresh');
-  if (!rt) return false;
-  try {
-    const r = await fetch(SB_URL + '/auth/v1/token?grant_type=refresh_token', {
-      method: 'POST',
-      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: rt })
-    });
-    if (!r.ok) return false;
-    const d = await r.json();
-    localStorage.setItem('crm_token',   d.access_token);
-    localStorage.setItem('crm_refresh', d.refresh_token);
-    return true;
-  } catch { return false; }
-}
+// Usa la misma sesión que OPS (ops-auth.js). Antes leía un token del CRM viejo que ya no existe.
+const SB_URL = OPS_SB_URL;
+const SB_KEY = OPS_SB_ANON;
 
 async function sbFetch(method, path, body) {
-  if (tokenExpired()) {
-    const ok = await refreshSession();
-    if (!ok) { window.location.href = '/crm'; throw new Error('Sesión expirada'); }
-  }
-  const jwt = localStorage.getItem('crm_token');
-  if (!jwt) { window.location.href = '/crm'; throw new Error('Sin token'); }
+  const { data: { session } } = await getSB().auth.getSession();
+  const jwt = session?.access_token;
+  if (!jwt) { window.location.href = '/ops/login'; throw new Error('Sin sesión'); }
   const headers = { 'apikey': SB_KEY, 'Authorization': 'Bearer '+jwt, 'Content-Type': 'application/json' };
   if (method !== 'GET' && method !== 'DELETE') headers['Prefer'] = 'return=minimal';
   const opts = { method, headers };
   if (body !== undefined) opts.body = JSON.stringify(body);
   const r = await fetch(SB_URL + path, opts);
-  if (r.status === 401) { window.location.href = '/crm'; throw new Error('No autorizado'); }
+  if (r.status === 401) { window.location.href = '/ops/login'; throw new Error('No autorizado'); }
   if (!r.ok) { const t = await r.text(); throw new Error(r.status+' '+t); }
   if (method === 'GET') return r.json();
   return null;
@@ -323,12 +318,12 @@ const CHECKLIST_ITEMS = [
 ];
 
 const STATUS_LABELS = {
-  arranque:'Arranque', new:'Nuevo', contacted:'Contactado', diagnostic:'Diagnóstico',
+  arranque:'Arranque', new:'Nuevo', contactado:'Contactado', propuesta:'Propuesta enviada', activo:'Activo (retainer)', cerrado:'Cerrado', contacted:'Contactado', diagnostic:'Diagnóstico',
   proposal:'Propuesta', qualified:'Calificado', contract:'Contrato',
   in_progress:'En proceso', converted:'Cerrado ✓', lost:'Perdido'
 };
 const STATUS_COLORS = {
-  arranque:'#ff6b35', new:'#7b3fa0', contacted:'#f59e0b', diagnostic:'#e8637a',
+  arranque:'#2dd4bf', new:'#7b3fa0', contactado:'#f59e0b', propuesta:'#ff8c42', activo:'#10b981', cerrado:'#6b7280', contacted:'#f59e0b', diagnostic:'#e8637a',
   proposal:'#ff8c42', qualified:'#3b82f6', contract:'#a855f7',
   in_progress:'#06b6d4', converted:'#10b981', lost:'#ef4444'
 };
@@ -345,7 +340,7 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 async function loadLeads(){
   try {
-    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500&status=in.(arranque,new,contacted,diagnostic,proposal,qualified,contract,in_progress)');
+    const rows = await sbFetch('GET', '/rest/v1/leads?order=created_at.desc&limit=500&status=in.(new,contactado,propuesta,arranque,contacted,diagnostic,proposal,qualified,contract,in_progress)');
     allLeads = rows.map(fromDb);
   } catch(e) {
     console.error('loadLeads error:', e);
@@ -428,7 +423,7 @@ function renderBrief(){
   const contextoItems = [
     { label:'Sector / Rubro', value: l.sector||l.empresa||'—' },
     { label:'Canal',          value: l.canal||'—' },
-    { label:'Plan de interés',value: l.plan ? l.plan.replace('plan0','Plan 0') : '—' },
+    { label:'Plan de interés',value: l.plan ? ({plan01:'Plan 01',plan02:'Plan 02',plan04:'Plan 03',plan05:'Plan 04',plan03:'Negocio Activo (legacy)'}[l.plan]||l.plan) : '—' },
     { label:'Prioridad',      value: l.prioridad||'Media' },
   ];
   document.getElementById('contextoGrid').innerHTML = contextoItems.map(i=>
@@ -578,6 +573,7 @@ function mostrarToast(msg){
 
 // ── INIT ──────────────────────────────────────────────────
 async function init(){
+  if (!(await opsRequireAuth())) return;
   await loadLeads();
   poblarSelector();
   const params = new URLSearchParams(window.location.search);
