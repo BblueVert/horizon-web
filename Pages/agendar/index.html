@@ -412,6 +412,10 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
     calif = { presupuesto: 'propuesta', volumen: '', decisor: '' };
     $('stepsBar').hidden = true; $('backWrap').hidden = true;
     show(stepCal);
+  } else if (qp.get('interes')) {
+    // Viene de la página de un plan: preselecciona el plan, pero igual pasa por las preguntas
+    var opt = $('planSel').querySelector('option[value="' + qp.get('interes').replace(/[^a-z0-9]/gi, '') + '"]');
+    if (opt) $('planSel').value = opt.value;
   }
 
   // ── Confirmar ──

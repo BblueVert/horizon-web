@@ -287,9 +287,18 @@ a { color: inherit; }
 .plans-note .ico { color: var(--violet); width: 20px; height: 20px; }
 
 /* ── Casos ──────────────────────────────────── */
-.cases { display: grid; grid-template-columns: 1.15fr .85fr; gap: 16px; }
+.cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .case { border-radius: var(--r-xl); overflow: hidden; border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; }
-.case-vis { aspect-ratio: 16/9; position: relative; overflow: hidden; }
+.case-vis { aspect-ratio: 16/10; position: relative; overflow: hidden; }
+.browser img { width: 100%; height: auto; display: block; }
+.fitt-vis { background: linear-gradient(135deg, #ECE3FF, #FFDDE5); display: grid; place-items: center; }
+.fitt-vis svg { width: 100%; height: 100%; }
+.status.on-air { color: #15803D; } .status.building { color: var(--acc); }
+.status .ico { width: 14px; height: 14px; }
+.milestones { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
+.milestones li { font-size: 11.5px; font-weight: 600; color: var(--ink3); line-height: 1.3; padding-top: 8px; border-top: 3px solid var(--line2); }
+.milestones li.done { color: var(--ink2); border-color: var(--ok); }
+.milestones li.now { color: var(--ink); border-color: var(--acc); }
 .case-body { padding: 28px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .case-body .status { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 7px; }
 .case-body h3 { font-size: 26px; letter-spacing: -.03em; }
@@ -299,7 +308,7 @@ a { color: inherit; }
 .tags span { font-size: 12px; font-weight: 600; color: var(--ink2); background: var(--bg2); border: 1px solid var(--line); padding: 5px 10px; border-radius: 99px; }
 .case-link { margin-top: auto; padding-top: 12px; font-weight: 700; color: var(--acc); text-decoration: none; display: inline-flex; gap: 8px; align-items: center; }
 .case-link .ico { width: 16px; height: 16px; }
-.browser { position: absolute; inset: 28px 28px -12px; background: var(--surface); border-radius: 14px 14px 0 0; box-shadow: var(--shadow); overflow: hidden; }
+.browser { position: absolute; inset: 22px 22px -12px; background: var(--surface); border-radius: 14px 14px 0 0; box-shadow: var(--shadow); overflow: hidden; }
 .browser .bar { height: 30px; background: var(--bg2); display: flex; align-items: center; gap: 6px; padding: 0 12px; border-bottom: 1px solid var(--line); }
 .browser .bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--line2); }
 .browser .bar span { margin-left: 10px; font: 500 10.5px var(--mono); color: var(--ink3); background: var(--surface); padding: 3px 10px; border-radius: 6px; }
@@ -349,7 +358,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
   .p-agent, .p-flow, .p-panel, .p-cta { grid-column: span 1; }
   .p-panel { grid-column: span 2; }
   .p-cta { grid-column: span 2; }
-  .cases { grid-template-columns: 1fr; }
+  .cases { grid-template-columns: 1fr 1fr; }
   .scene { max-width: 560px; }
 }
 @media (max-width: 760px) {
@@ -770,51 +779,86 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
       <p class="lead" data-reveal>Proyectos construidos y desplegados para negocios reales.</p>
     </div>
     <div class="cases" id="casesRail" data-stagger>
+      <!-- CASO · VitalKine -->
       <article class="case">
         <div class="case-vis" style="background:linear-gradient(135deg,#DDF5E6,#ECE3FF)">
           <div class="browser">
             <div class="bar"><i></i><i></i><i></i><span>vitalkine.com</span></div>
-            <!-- Ilustración del sitio: agenda de kinesiología -->
-            <svg viewBox="0 0 520 240" style="width:100%;height:auto" aria-hidden="true">
-              <rect x="28" y="30" width="200" height="18" rx="6" fill="#1A1626"/><rect x="28" y="58" width="160" height="10" rx="5" fill="#E6DACB"/><rect x="28" y="76" width="130" height="10" rx="5" fill="#E6DACB"/>
-              <rect x="28" y="102" width="112" height="34" rx="10" fill="#F2690C"/><rect x="48" y="115" width="72" height="8" rx="4" fill="#fff"/>
-              <g transform="translate(280 26)"><rect width="212" height="180" rx="16" fill="#FFFBF6" stroke="#F0E7DC"/><rect x="16" y="16" width="90" height="10" rx="5" fill="#1A1626"/>
-                <g fill="#F0E7DC"><rect x="16" y="40" width="24" height="24" rx="7"/><rect x="48" y="40" width="24" height="24" rx="7"/><rect x="80" y="40" width="24" height="24" rx="7" fill="#7B3FA0"/><rect x="112" y="40" width="24" height="24" rx="7"/><rect x="144" y="40" width="24" height="24" rx="7"/><rect x="176" y="40" width="20" height="24" rx="7"/></g>
-                <g fill="#fff" stroke="#F0E7DC"><rect x="16" y="78" width="88" height="28" rx="9"/><rect x="112" y="78" width="84" height="28" rx="9" fill="#ECE3FF" stroke="#7B3FA0"/><rect x="16" y="114" width="88" height="28" rx="9"/><rect x="112" y="114" width="84" height="28" rx="9"/></g>
-                <rect x="16" y="150" width="180" height="20" rx="8" fill="#1A1626"/></g>
-            </svg>
+            <img src="/Identidad/casos/vitalkine.webp" alt="Página de inicio de VitalKine" width="1200" height="750" loading="lazy">
           </div>
         </div>
         <div class="case-body">
-          <span class="status" style="color:#15803D"><svg class="ico" style="width:14px;height:14px"><use href="#i-check"/></svg>En producción</span>
+          <span class="status on-air"><svg class="ico"><use href="#i-check"/></svg>En producción</span>
           <h3>VitalKine</h3><span class="sub">Plan 02 · Ecosistema Digital · Kinesiología</span>
           <p>Sitio web a medida con sistema de reservas propio. Dominio propio, SSL, diseño mobile-first y SEO local configurado desde el primer día.</p>
-          <div class="tags"><span>HTML a medida</span><span>Reservas online</span><span>SEO local</span><span>Dominio propio</span></div>
+          <div class="tags"><span>HTML a medida</span><span>Reservas online</span><span>SEO local</span></div>
           <a class="case-link" href="https://vitalkine.com" target="_blank" rel="noopener">Visitar vitalkine.com <svg class="ico"><use href="#i-ext"/></svg></a>
         </div>
       </article>
+      <!-- CASO · Floremané -->
       <article class="case">
         <div class="case-vis" style="background:linear-gradient(135deg,#FFE2CC,#FFDDE5)">
-          <!-- Ilustración: marca de marroquinería -->
-          <svg viewBox="0 0 400 225" style="width:100%;height:100%" aria-hidden="true">
-            <g transform="translate(132 46)">
-              <path d="M40 40c0-26 16-40 34-40s34 14 34 40" fill="none" stroke="#1A1626" stroke-width="7" stroke-linecap="round"/>
-              <rect x="0" y="36" width="148" height="112" rx="22" fill="#7B3FA0"/>
-              <rect x="0" y="36" width="148" height="44" rx="22" fill="#5E2E7E"/>
-              <rect x="62" y="70" width="24" height="18" rx="6" fill="#FFE2CC"/>
+          <div class="browser">
+            <div class="bar"><i></i><i></i><i></i><span>floremane.cl</span></div>
+            <img src="/Identidad/casos/floremane.webp" alt="Página de inicio de Floremané" width="1200" height="750" loading="lazy">
+          </div>
+        </div>
+        <div class="case-body">
+          <span class="status on-air"><svg class="ico"><use href="#i-check"/></svg>En producción</span>
+          <h3>Floremané</h3><span class="sub">Identidad · E-commerce · HORIZON × GO</span>
+          <p>Marca de marroquinería premium desde cero: carteras de cuero full-grain importadas de Italia. Identidad visual completa, packaging y una tienda online pensada como galería editorial.</p>
+          <div class="tags"><span>Identidad visual</span><span>E-commerce</span><span>UX/UI Figma</span></div>
+          <a class="case-link" href="https://floremane.cl" target="_blank" rel="noopener">Visitar floremane.cl <svg class="ico"><use href="#i-ext"/></svg></a>
+        </div>
+      </article>
+      <!-- CASO · VitalFit -->
+      <article class="case">
+        <div class="case-vis" style="background:linear-gradient(135deg,#DDF5E6,#FFF4EA)">
+          <div class="browser">
+            <div class="bar"><i></i><i></i><i></i><span>vitalfit · landing</span></div>
+            <img src="/Identidad/casos/vitalfit.webp" alt="Landing de VitalFit, gimnasio 24/5 en Rancagua" width="1200" height="750" loading="lazy">
+          </div>
+        </div>
+        <div class="case-body">
+          <span class="status on-air"><svg class="ico"><use href="#i-check"/></svg>En producción</span>
+          <h3>VitalFit</h3><span class="sub">Landing · Gimnasio 24/5 · Rancagua</span>
+          <p>Landing para un gimnasio independiente con más de 1.000 socios al mes: planes, horarios, personal trainer y contacto directo por WhatsApp. Es la puerta de entrada de FITT.</p>
+          <div class="tags"><span>Landing</span><span>Identidad digital</span><span>WhatsApp</span></div>
+          <a class="case-link" href="https://vitalfit-landing-alpha.vercel.app" target="_blank" rel="noopener">Ver la landing <svg class="ico"><use href="#i-ext"/></svg></a>
+        </div>
+      </article>
+      <!-- CASO · FITT (en desarrollo) — para actualizar el avance, marcá los hitos con class="done" o "now" -->
+      <article class="case">
+        <div class="case-vis fitt-vis">
+          <svg viewBox="0 0 400 225" role="img" aria-label="Pulso de un socio en la app Fitt">
+            <defs><linearGradient id="gP" x1="0" x2="1"><stop offset="0" stop-color="#F2690C"/><stop offset=".55" stop-color="#C4467A"/><stop offset="1" stop-color="#7B3FA0"/></linearGradient></defs>
+            <g transform="translate(136 18)">
+              <rect width="128" height="200" rx="22" fill="#1A1626"/>
+              <rect x="8" y="10" width="112" height="182" rx="16" fill="#FFFBF6"/>
+              <text x="64" y="40" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="15" fill="#1A1626">Fitt</text>
+              <text x="64" y="56" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#9C96AB">TU PULSO ESTA SEMANA</text>
+              <path id="pulse" d="M16 100h22l8-18 10 34 9-26 7 10h40" fill="none" stroke="url(#gP)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="16" y="128" width="96" height="22" rx="8" fill="#ECE3FF"/><text x="64" y="143" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="8.5" fill="#7B3FA0">3 entrenos · ¡vas en racha!</text>
+              <rect x="16" y="156" width="96" height="22" rx="8" fill="#DDF5E6"/><text x="64" y="171" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="8.5" fill="#15803D">Próxima clase: jue 19:00</text>
             </g>
-            <text x="200" y="210" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="14" letter-spacing="5" fill="#1A1626">FLOREMANÉ</text>
           </svg>
         </div>
         <div class="case-body">
-          <span class="status" style="color:var(--acc)"><svg class="ico" style="width:14px;height:14px"><use href="#i-build"/></svg>En desarrollo</span>
-          <h3>Floremané</h3><span class="sub">Identidad · Packaging · E-commerce · HORIZON × GO</span>
-          <p>Marca de marroquinería premium desde cero: carteras de cuero seleccionadas en Italia para el mercado chileno. Identidad visual completa, packaging y e-commerce de lanzamiento.</p>
-          <div class="tags"><span>Identidad visual</span><span>Packaging</span><span>E-commerce</span><span>UX/UI Figma</span></div>
+          <span class="status building"><svg class="ico"><use href="#i-build"/></svg>En desarrollo</span>
+          <h3>FITT</h3><span class="sub">Producto propio · Gimnasios independientes</span>
+          <p>Sistema de acompañamiento y retención de socios. Caso real: VitalFit, en Rancagua, con más de 2.000 membresías y una deserción de 5 a 10% que nadie veía a tiempo. Detecta cuando un socio baja el ritmo y lo contacta antes de que se vaya.</p>
+          <ol class="milestones" aria-label="Avance del proyecto">
+            <li class="done">Investigación en terreno</li>
+            <li class="done">Concepto y marca</li>
+            <li class="done">Prototipo PWA</li>
+            <li class="now">Producto MVP</li>
+          </ol>
+          <div class="tags"><span>PWA</span><span>Supabase</span><span>n8n</span><span>WhatsApp API</span></div>
+          <a class="case-link" href="https://fitt-prototipo.vercel.app" target="_blank" rel="noopener">Ver el prototipo <svg class="ico"><use href="#i-ext"/></svg></a>
         </div>
       </article>
     </div>
-    <div class="dots" data-rail="casesRail" aria-hidden="true"><i class="on"></i><i></i></div>
+    <div class="dots" data-rail="casesRail" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
   </div>
 </section>
 
