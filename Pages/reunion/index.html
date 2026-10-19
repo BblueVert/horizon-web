@@ -361,20 +361,29 @@ async function recargarLeads(){
 function poblarSelector(){
   const sel = document.getElementById('leadSelect');
   const prevId = sel.value;
-  // Mostrar todos los leads, priorizando los de diagnóstico
+  // Primero los que tienen diagnóstico agendado (el más próximo arriba), después el resto por fecha de creación
   const sorted = [...allLeads].sort((a,b)=>{
-    const pri = {'diagnostic':0,'contacted':1,'new':2};
-    const pa = pri[a.status]??3;
-    const pb = pri[b.status]??3;
-    return pa!==pb ? pa-pb : (b.createdAt||'').localeCompare(a.createdAt||'');
+    if (!!a.reunionFecha !== !!b.reunionFecha) return a.reunionFecha ? -1 : 1;
+    if (a.reunionFecha) return a.reunionFecha.localeCompare(b.reunionFecha);
+    return (b.createdAt||'').localeCompare(a.createdAt||'');
   });
   sel.innerHTML = '<option value="">— Elegir lead —</option>' +
     sorted.map(l=>{
       const stage = STATUS_LABELS[l.status]||l.status;
-      const fecha = l.createdAt ? new Date(l.createdAt).toLocaleDateString('es-CL',{day:'2-digit',month:'short'}) : '';
+      // Un lead que vuelve a agendar se actualiza (mismo email): se muestra la fecha del diagnóstico, no la de creación
+      const fecha = l.reunionFecha ? '· diag. ' + fmtReunion(l.reunionFecha)
+        : l.createdAt ? new Date(l.createdAt).toLocaleDateString('es-CL',{day:'2-digit',month:'short'}) : '';
       return `<option value="${esc(l.id)}">[${stage}] ${esc(l.nombre||'Sin nombre')} — ${esc(l.empresa||'')} ${fecha}</option>`;
     }).join('');
   if(prevId) sel.value = prevId;
+}
+
+// "2026-10-20T12:00:00" es hora de Chile sin zona: se muestra tal cual, sin convertir
+function fmtReunion(str){
+  const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(String(str));
+  if(!m) return String(str);
+  const d = new Date(+m[1], +m[2]-1, +m[3]).toLocaleDateString('es-CL',{weekday:'short',day:'2-digit',month:'short'});
+  return m[4] ? d + ' ' + m[4] + ':' + m[5] : d;
 }
 
 function cargarLead(){
@@ -412,6 +421,7 @@ function renderBrief(){
     { label:'Email',      value: l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '—' },
     { label:'Teléfono',   value: l.telefono ? `<a href="https://wa.me/${String(l.telefono).replace(/\D/g,'')}" target="_blank">+${esc(l.telefono)}</a>` : '—' },
     { label:'Origen',     value: l.origen ? `<span class="info-tag">${ORIGEN_LABELS[l.origen]||l.origen}</span>` : '—' },
+    ...(l.reunionFecha ? [{ label:'Diagnóstico', value: fmtReunion(l.reunionFecha) + ' hrs' }] : []),
     { label:'Creado',     value: l.createdAt ? new Date(l.createdAt).toLocaleString('es-CL') : '—' },
     ...(l.calLink ? [{ label:'Link reunión', value: `<a href="${esc(l.calLink)}" target="_blank">Abrir reunión →</a>` }] : []),
   ];
