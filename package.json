@@ -4,7 +4,8 @@
   "description": "HORIZON Web — landing page y CRM",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "plugin:sync": "node scripts/sync-plugin.js"
   },
   "engines": {
     "node": "24.x"

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITULO}} — HORIZON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Documento imprimible A4. Fondo claro para imprimir; acentos de marca HORIZON. */
+:root {
+  --ink: #14121F; --ink2: #4B4862; --ink3: #8A87A3; --line: #E4E1EE; --soft: #F6F4FB;
+  --h1: #FF6B35; --h4: #E8637A; --h6: #7B3FA0;
+  --font-d: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-m: 'DM Mono', ui-monospace, monospace;
+  --font-b: 'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+@page { size: A4; margin: 18mm 16mm 20mm; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #fff; color: var(--ink); font: 10.5pt/1.55 var(--font-b); }
+.doc { max-width: 178mm; margin: 0 auto; padding: 8mm 0; }
+.bar { height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--h1), var(--h4), var(--h6)); }
+header { display: flex; justify-content: space-between; align-items: flex-end; padding: 14px 0 18px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
+.brand { font: 26pt/1 var(--font-d); letter-spacing: .06em; }
+.meta { text-align: right; font: 8.5pt/1.6 var(--font-m); color: var(--ink2); }
+h1 { font: 30pt/1 var(--font-d); letter-spacing: .02em; margin: 0 0 4px; }
+.sub { color: var(--ink2); margin: 0 0 22px; }
+h2 { font: 600 11.5pt/1.3 var(--font-b); margin: 22px 0 8px; break-after: avoid; }
+h2 .n { font-family: var(--font-m); color: var(--h1); margin-right: 6px; }
+h3 { font: 600 10.5pt/1.3 var(--font-b); margin: 14px 0 6px; }
+p { margin: 0 0 8px; text-align: justify; }
+ul, ol { margin: 0 0 10px; padding-left: 18px; }
+li { margin-bottom: 3px; }
+table { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 9.5pt; break-inside: avoid; }
+th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 8pt/1.3 var(--font-m); text-transform: uppercase; letter-spacing: .06em; color: var(--ink2); background: var(--soft); }
+td.monto, th.monto { text-align: right; white-space: nowrap; }
+tr.total td { font-weight: 700; border-top: 2px solid var(--ink); }
+.box { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 10px 0 14px; break-inside: avoid; }
+.label { font: 500 8pt/1.3 var(--font-m); text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); }
+.check li { list-style: none; margin-left: -18px; }
+.check li::before { content: '☐'; margin-right: 8px; color: var(--ink2); }
+.firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 46px; break-inside: avoid; }
+.firma { border-top: 1px solid var(--ink); padding-top: 8px; font-size: 9pt; }
+.firma strong { display: block; }
+.pendiente { background: #FFF1E8; color: #B4441A; padding: 0 3px; border-radius: 3px; font-family: var(--font-m); font-size: 8.5pt; }
+footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid var(--line); font: 8pt/1.5 var(--font-m); color: var(--ink3); display: flex; justify-content: space-between; }
+@media screen { body { background: #ECEAF3; } .doc { background: #fff; padding: 18mm 16mm; margin: 24px auto; box-shadow: 0 2px 24px rgba(20,18,31,.08); } }
+@media screen and (max-width: 640px) { .doc { margin: 0; padding: 20px 16px; } .firmas { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="doc">
+  <div class="bar"></div>
+  <header>
+    <div class="brand">HORIZON</div>
+    <div class="meta">{{CODIGO}}<br>{{FECHA}} · Rancagua, Chile</div>
+  </header>
+  <h1>{{TITULO}}</h1>
+  <p class="sub">{{SUBTITULO}}</p>
+  <main>
+{{CUERPO}}
+  </main>
+  <footer><span>HORIZON · Sistemas de crecimiento digital</span><span>{{CODIGO}}</span></footer>
+</div>
+</body>
+</html>

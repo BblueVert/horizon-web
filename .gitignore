@@ -37,7 +37,9 @@ node_modules/
 !verticales/peluquerias/public/*.webp
 
 # Archivos internos de Claude / desarrollo
-.claude/
+# .claude/ se versiona (kit de agentes); solo lo personal queda fuera
+.claude/settings.local.json
+.claude/logs/
 .playwright-mcp/
 CLAUDE_HORIZON_2026.md
 

@@ -1,0 +1,9 @@
+{
+  "name": "horizon-kit",
+  "version": "1.0.0",
+  "description": "Kit de contenido HORIZON: skills de reels, carruseles y stories, subagentes de producción y revisión de copy, y guardrails anti-ChatGPT.",
+  "author": { "name": "HORIZON" },
+  "homepage": "https://github.com/BblueVert/horizon-web",
+  "keywords": ["horizon", "contenido", "reels", "carruseles", "stories", "copy"],
+  "hooks": "./hooks/hooks.json"
+}
