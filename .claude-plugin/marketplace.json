@@ -1,0 +1,15 @@
+{
+  "name": "horizon",
+  "owner": { "name": "HORIZON" },
+  "metadata": {
+    "description": "Plugins de HORIZON para Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "horizon-kit",
+      "source": "./plugins/horizon-kit",
+      "description": "Skills, subagentes y hooks de contenido HORIZON.",
+      "version": "1.0.0"
+    }
+  ]
+}

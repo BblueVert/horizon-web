@@ -18,3 +18,7 @@ Screenshots*/
 *.png
 *.jpg
 *.jpeg
+CLAUDE.md
+.claude-plugin
+plugins
+scripts

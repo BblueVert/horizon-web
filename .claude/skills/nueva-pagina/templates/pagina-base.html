@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITULO}} — HORIZON</title>
+<meta name="description" content="{{DESCRIPCION}}">
+<meta property="og:title" content="{{TITULO}} — HORIZON">
+<meta property="og:description" content="{{DESCRIPCION}}">
+<meta property="og:image" content="/Identidad/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #07060E; --deep: #0D0B18; --surface: #13111F; --card: #1A1828;
+  --border: #252235; --border2: #302D45;
+  --h1: #FF6B35; --h2: #FF8C42; --h3: #FFB347; --h4: #E8637A; --h5: #C4467A; --h6: #7B3FA0; --h7: #4A3580;
+  --text: #F5F2FF; --text2: #9B98B8; --text3: #504D6E; --white: #FAFAFF;
+  --font-d: 'Bebas Neue', sans-serif; --font-m: 'DM Mono', monospace; --font-b: 'Plus Jakarta Sans', sans-serif;
+  --r: 12px; --r-lg: 20px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--void); color: var(--text); font-family: var(--font-b); line-height: 1.6; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+.hero { padding: 96px 0 64px; }
+.eyebrow { font-family: var(--font-m); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--text2); }
+h1 { font-family: var(--font-d); font-size: clamp(44px, 8vw, 88px); line-height: .95; margin: 16px 0; }
+h1 span { background: linear-gradient(90deg, var(--h1), var(--h4), var(--h6)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lead { color: var(--text2); max-width: 56ch; font-size: 18px; }
+.cta { display: inline-block; margin-top: 32px; padding: 14px 24px; border-radius: var(--r); background: linear-gradient(90deg, var(--h1), var(--h4)); color: var(--white); font-weight: 600; text-decoration: none; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">HORIZON · Rancagua, Chile</p>
+    <h1>{{TITULAR}} <span>{{TITULAR_DESTACADO}}</span></h1>
+    <p class="lead">{{BAJADA}}</p>
+    <a class="cta" href="/agendar">{{CTA}}</a>
+  </section>
+</main>
+</body>
+</html>

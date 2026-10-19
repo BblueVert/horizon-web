@@ -1,0 +1,27 @@
+# Frases que "suenan a ChatGPT". Una por línea, sin tildes ni mayúsculas importan.
+# El hook PreToolUse bloquea cualquier archivo en CONTENIDO/ que las contenga.
+en el mundo actual
+en la era digital
+en el panorama actual
+panorama digital
+sin lugar a dudas
+cabe destacar
+es importante destacar
+es importante tener en cuenta
+en resumen,
+en conclusion,
+al siguiente nivel
+lleva tu negocio
+desbloquea
+sumergete
+un mundo de posibilidades
+no busques mas
+revoluciona
+transforma tu negocio
+aprovecha al maximo
+en constante evolucion
+game changer
+descubre como
+te contamos todo
+como modelo de lenguaje
+espero que esto te ayude

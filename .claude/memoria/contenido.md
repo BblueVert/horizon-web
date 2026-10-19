@@ -1,0 +1,28 @@
+# Expectativas de contenido
+
+## Voz
+- Fundador visible (Benja), cercano, local, directo. Voseo chileno-rioplatense como en la landing.
+- Si existe `BRAND-VOICE.md` (local, no versionado), es la fuente de verdad y manda sobre este archivo.
+
+## Los 3 modos de voz (de `SISTEMA-DE-CIERRE.md`)
+| Modo | Nivel de consciencia | Objetivo | CTA |
+|---|---|---|---|
+| 1 · Impacto | Consciente del problema | Que se reconozca en el dolor | Seguir / guardar |
+| 2 · Educativo | Conoce la solución | Entender qué es un "sistema digital" | Comentar palabra clave / recurso |
+| 3 · Conversión | Conoce HORIZON | Paso formal | Diagnóstico gratuito (ask pequeño) |
+
+Regla: **nunca** ofrecer el diagnóstico a alguien en Modo 1.
+
+## Qué cuenta como conversión
+- Comentario con palabra clave → DM → lead en OPS (`new`).
+- Diagnóstico agendado (`/agendar`) = conversión principal.
+- Descarga de recurso (`/recursos`) = conversión secundaria (lead frío).
+
+## Calendario base (ajustable)
+- Lun: Reel Modo 1 · Mié: Carrusel Modo 2 · Vie: Reel/caso Modo 3 · Stories: diario.
+
+## Calidad mínima
+- Hook en la primera línea / primeros 2 segundos.
+- Una idea por pieza. Un CTA por pieza.
+- Cero frases genéricas de IA (lista en `.claude/hooks/frases-ia.txt`).
+- Datos o casos reales (Floremané, Binks Barber, Mesa Cero) > promesas.
