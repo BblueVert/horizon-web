@@ -1,133 +1,146 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>HORIZON · Diagnóstico confirmado</title>
-<link rel="icon" type="image/png" href="../../Identidad/Logo ISO.png">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Diagnóstico confirmado — HORIZON</title>
+<meta name="theme-color" content="#1A1626">
+<link rel="icon" href="/Identidad/Logo%20ISO.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/hz-light.css">
 <style>
-:root{
-  --void:#07060e;--card:#0f0e1a;--card2:#1a1828;--border:rgba(255,255,255,0.06);
-  --h1:#ff6b35;--h2:#ff8c42;--green:#10b981;--text:#e8e6f0;--text2:#9a98a8;--text3:#4a4760;
-  --fm:"DM Mono",monospace;--fb:"Plus Jakarta Sans",sans-serif;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--fb);background:var(--void);color:var(--text);min-height:100vh;
-  display:flex;align-items:center;justify-content:center;padding:20px;}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-  padding:40px 36px;max-width:480px;width:100%;text-align:center;}
-.icon{font-size:48px;margin-bottom:20px;}
-.title{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:2px;
-  background:linear-gradient(135deg,var(--h1),var(--h2));-webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
-.sub{color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:24px;}
-.info-block{background:var(--card2);border-radius:8px;padding:16px;margin-bottom:20px;text-align:left;}
-.info-row{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;}
-.info-row:last-child{margin-bottom:0;}
-.info-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;}
-.info-value{font-size:13px;color:var(--text);font-weight:500;}
-.status-ok{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:9px;
-  letter-spacing:1px;padding:4px 12px;border-radius:4px;background:rgba(16,185,129,.1);
-  color:var(--green);margin-bottom:20px;}
-.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--fm);font-size:11px;
-  padding:10px 20px;border-radius:6px;text-decoration:none;border:none;cursor:pointer;
-  letter-spacing:.5px;transition:.15s;}
-.btn-primary{background:var(--h1);color:#fff;}
-.btn-primary:hover{background:#e55a28;}
-.btn-ghost{background:var(--card2);color:var(--text2);border:1px solid var(--border);}
-.btn-ghost:hover{color:var(--text);}
-.btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-.crm-note{font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:20px;letter-spacing:.5px;}
+main { padding: calc(var(--header-h) + 32px) 0 64px; }
+.done { max-width: 620px; margin: 0 auto; display: grid; gap: 16px; }
+.hero-ok { text-align: center; }
+.badge-ok { width: 84px; height: 84px; margin: 0 auto 18px; }
+.badge-ok circle.ring { stroke-dasharray: 220; stroke-dashoffset: 220; animation: ring .8s .1s ease-out forwards; }
+.badge-ok path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: ring .5s .7s ease-out forwards; }
+@keyframes ring { to { stroke-dashoffset: 0; } }
+.hero-ok .h1 { font-size: clamp(32px, 8vw, 48px); }
+.hero-ok .lead { margin-top: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
+.when { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+.when .ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; }
+.when .ic .ico { width: 24px; height: 24px; }
+.when small { font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); }
+.when strong { display: block; font-size: 18px; letter-spacing: -.01em; line-height: 1.3; }
+.rows { list-style: none; display: grid; gap: 0; margin-top: 16px; border-top: 1px solid var(--line); }
+.rows li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.rows li span { color: var(--ink2); }
+.rows li b { font-weight: 600; text-align: right; word-break: break-word; }
+.meet { margin-top: 16px; width: 100%; justify-content: space-between; }
+.prep h2 { font-size: 18px; letter-spacing: -.015em; margin-bottom: 4px; }
+.prep > p { font-size: 14px; color: var(--ink2); margin-bottom: 14px; }
+.prep ol { list-style: none; display: grid; gap: 10px; }
+.prep li { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; }
+.prep li .ic { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; }
+.prep li .ic .ico { width: 18px; height: 18px; }
+.prep li strong { display: block; font-size: 15px; }
+.prep li small { font-size: 13.5px; color: var(--ink2); }
+.next { display: grid; gap: 10px; }
+.next .btn { width: 100%; }
+@media (min-width: 640px) { .next { grid-template-columns: 1fr 1fr; } .card { padding: 26px; } }
 </style>
 </head>
 <body>
-<div class="card">
-  <div class="icon">✅</div>
-  <div class="title">Diagnóstico confirmado</div>
-  <p class="sub" id="subText">Tu sesión quedó agendada. Benja te va a escribir en breve para preparar bien la sesión.</p>
+<header class="header">
+  <div class="wrap">
+    <a href="/" class="logo" aria-label="HORIZON, inicio"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="140" height="27"></a>
+    <a href="/" class="back"><svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg>Volver al inicio</a>
+  </div>
+</header>
 
-  <div class="status-ok" id="crmStatus">⏳ Actualizando CRM...</div>
+<main>
+  <div class="wrap done">
+    <section class="hero-ok">
+      <svg class="badge-ok" viewBox="0 0 84 84" aria-hidden="true">
+        <circle cx="42" cy="42" r="40" fill="#DDF5E6"/>
+        <circle class="ring" cx="42" cy="42" r="35" fill="none" stroke="#16A34A" stroke-width="3" stroke-linecap="round" transform="rotate(-90 42 42)"/>
+        <path d="M29 43l9 9 18-19" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="eyebrow">Diagnóstico gratuito · 30 min</span>
+      <h1 class="h1" style="margin-top:12px" id="title">Tu diagnóstico <span class="g">está confirmado.</span></h1>
+      <p class="lead">Te llegó la invitación por email. Benja te escribe por WhatsApp antes de la sesión para prepararla bien.</p>
+    </section>
 
-  <div class="info-block" id="infoBlock" style="display:none;">
-    <div class="info-row" id="rowNombre" style="display:none;">
-      <span class="info-label">Nombre</span>
-      <span class="info-value" id="valNombre"></span>
-    </div>
-    <div class="info-row" id="rowFecha" style="display:none;">
-      <span class="info-label">Fecha y hora</span>
-      <span class="info-value" id="valFecha"></span>
-    </div>
-    <div class="info-row" id="rowEmail" style="display:none;">
-      <span class="info-label">Email</span>
-      <span class="info-value" id="valEmail"></span>
+    <section class="card" id="detail" hidden>
+      <div class="when">
+        <span class="ic t-lilac"><svg class="ico"><use href="/shared/hz-sprite.svg#i-calendar"/></svg></span>
+        <div><small>Fecha y hora · Chile</small><strong id="valFecha">—</strong></div>
+      </div>
+      <ul class="rows">
+        <li id="rowNombre" hidden><span>Nombre</span><b id="valNombre"></b></li>
+        <li id="rowEmail" hidden><span>Invitación enviada a</span><b id="valEmail"></b></li>
+        <li><span>Lugar</span><b>Google Meet</b></li>
+      </ul>
+      <a class="btn btn-acc meet" id="meetBtn" href="#" target="_blank" rel="noopener" hidden>Abrir link de Meet <svg class="ico"><use href="/shared/hz-sprite.svg#i-ext"/></svg></a>
+    </section>
+
+    <section class="card prep">
+      <h2>Para aprovechar los 30 minutos</h2>
+      <p>No necesitás preparar nada formal. Si podés, tené a mano:</p>
+      <ol>
+        <li><span class="ic t-peach"><svg class="ico"><use href="/shared/hz-sprite.svg#i-users"/></svg></span><div><strong>Cómo te llegan los clientes hoy</strong><small>WhatsApp, Instagram, recomendaciones, Google…</small></div></li>
+        <li><span class="ic t-rose"><svg class="ico"><use href="/shared/hz-sprite.svg#i-chat"/></svg></span><div><strong>Cuántas consultas recibís por semana</strong><small>Un número aproximado alcanza.</small></div></li>
+        <li><span class="ic t-mint"><svg class="ico"><use href="/shared/hz-sprite.svg#i-spark"/></svg></span><div><strong>Lo que más te quita tiempo</strong><small>Eso que te gustaría que funcione solo.</small></div></li>
+      </ol>
+    </section>
+
+    <div class="next">
+      <a class="btn btn-ghost" href="/">Volver al inicio</a>
+      <a class="btn btn-ghost" href="https://wa.me/56946513068?text=Hola%20Benja%2C%20acabo%20de%20agendar%20mi%20diagn%C3%B3stico" target="_blank" rel="noopener">Escribir por WhatsApp</a>
     </div>
   </div>
+</main>
 
-  <div class="btns">
-    <a href="/" class="btn btn-ghost">← Volver al inicio</a>
+<footer class="site">
+  <div class="wrap">
+    <div><a href="/" class="logo"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="124" height="24"></a><p>Consultoría de Arquitectura Digital<br>Rancagua, Chile · 2026</p></div>
+    <small>horizonweb.cl</small>
   </div>
-  <p class="crm-note" id="crmNote"></p>
-</div>
+</footer>
 
 <script>
-(function(){
-  const stored = JSON.parse(sessionStorage.getItem('horizon_booking') || '{}');
-  sessionStorage.removeItem('horizon_booking');
+(function () {
+  'use strict';
+  var stored = {};
+  try { stored = JSON.parse(sessionStorage.getItem('horizon_booking') || '{}'); sessionStorage.removeItem('horizon_booking'); } catch (e) {}
 
-  // Fallback a query params para compatibilidad con Cal.com redirects
-  const params    = new URLSearchParams(window.location.search);
-  const fechaRaw  = stored.startTime   || params.get('startTime')     || params.get('fecha') || '';
-  const emailRaw  = (stored.attendeeEmail || params.get('attendeeEmail') || params.get('email') || '').toLowerCase().trim();
-  const nombreRaw = stored.attendeeName  || params.get('attendeeName')  || params.get('nombre') || params.get('name') || '';
-  const linkRaw   = stored.meetLink      || params.get('meetLink')       || params.get('location') || params.get('link') || '';
+  // Fallback a query params (compatibilidad con redirecciones antiguas de Cal.com)
+  var params = new URLSearchParams(location.search);
+  var fechaRaw  = stored.startTime || params.get('startTime') || params.get('fecha') || '';
+  var emailRaw  = (stored.attendeeEmail || params.get('attendeeEmail') || params.get('email') || '').toLowerCase().trim();
+  var nombreRaw = stored.attendeeName || params.get('attendeeName') || params.get('nombre') || params.get('name') || '';
+  var linkRaw   = stored.meetLink || params.get('meetLink') || params.get('location') || params.get('link') || '';
+  var $ = function (id) { return document.getElementById(id); };
 
-  function formatFecha(str){
-    if(!str) return '';
-    try{
-      // reunion_fecha se guarda como "hora Chile = hora UTC" (sin conversión de zona).
-      // Mostramos en UTC para que coincida con el horario elegido por el usuario.
-      return new Intl.DateTimeFormat('es-CL',{
-        weekday:'long', day:'numeric', month:'long',
-        hour:'2-digit', minute:'2-digit', timeZone:'America/Santiago'
-      }).format(new Date(str));
-    }
-    catch(e){ return str; }
+  // La reserva llega como hora de Chile sin zona ("2026-10-21T10:00:00"): se muestra tal cual, sin convertir.
+  function formatFecha(str) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(str);
+    if (!m) return str;
+    var d = new Date(+m[1], +m[2] - 1, +m[3]);
+    var dia = new Intl.DateTimeFormat('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+    dia = dia.charAt(0).toUpperCase() + dia.slice(1);
+    return m[4] ? dia + ' · ' + m[4] + ':' + m[5] + ' hrs' : dia;
   }
 
-  if(nombreRaw){ document.getElementById('rowNombre').style.display='flex'; document.getElementById('valNombre').textContent=nombreRaw; document.getElementById('infoBlock').style.display='block'; }
-  if(fechaRaw){  document.getElementById('rowFecha').style.display='flex';  document.getElementById('valFecha').textContent=formatFecha(fechaRaw); document.getElementById('infoBlock').style.display='block'; }
-  if(emailRaw){  document.getElementById('rowEmail').style.display='flex';  document.getElementById('valEmail').textContent=emailRaw; document.getElementById('infoBlock').style.display='block'; }
+  if (fechaRaw || nombreRaw || emailRaw) $('detail').hidden = false;
+  if (fechaRaw)  $('valFecha').textContent = formatFecha(fechaRaw);
+  if (nombreRaw) { $('rowNombre').hidden = false; $('valNombre').textContent = nombreRaw; $('title').firstChild.textContent = nombreRaw.split(' ')[0] + ', tu diagnóstico '; }
+  if (emailRaw)  { $('rowEmail').hidden = false; $('valEmail').textContent = emailRaw; }
+  if (/^https:\/\/meet\.google\.com\//.test(linkRaw)) { $('meetBtn').hidden = false; $('meetBtn').href = linkRaw; }
 
-  async function actualizarLead(){
-    try{
-      if(!emailRaw){
-        document.getElementById('crmStatus').textContent = '⚠️ Email no recibido';
-        return;
-      }
-
-      const r = await fetch('/api/booking-confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailRaw, nombre: nombreRaw, cal_link: linkRaw || '', reunion_fecha: fechaRaw || '' })
-      });
-
-      if(r.ok){
-        document.getElementById('crmStatus').textContent = '✅ Agenda registrada — Benja te escribe en breve';
-        document.getElementById('crmStatus').style.background = 'rgba(16,185,129,.15)';
-        document.getElementById('crmNote').textContent = emailRaw;
-      } else {
-        document.getElementById('crmStatus').textContent = '⚠️ Error al registrar agenda';
-        document.getElementById('crmNote').textContent = 'Status ' + r.status;
-      }
-    }catch(e){
-      document.getElementById('crmStatus').textContent = '⚠️ Error al actualizar CRM';
-      document.getElementById('crmNote').textContent = String(e);
-    }
+  // Registra la agenda en OPS. Es interno: el visitante no ve el resultado.
+  if (emailRaw) {
+    fetch('/api/booking-confirm', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: emailRaw, nombre: nombreRaw, cal_link: linkRaw || '', reunion_fecha: fechaRaw || '' })
+    }).then(function (r) { if (!r.ok) console.warn('[booking-confirm] status', r.status); })
+      .catch(function (e) { console.warn('[booking-confirm]', e); });
   }
-
-  actualizarLead();
 })();
 </script>
 </body>

@@ -25,4 +25,4 @@ Regla: **nunca** ofrecer el diagnóstico a alguien en Modo 1.
 - Hook en la primera línea / primeros 2 segundos.
 - Una idea por pieza. Un CTA por pieza.
 - Cero frases genéricas de IA (lista en `.claude/hooks/frases-ia.txt`).
-- Datos o casos reales (Floremané, Binks Barber, Mesa Cero) > promesas.
+- Datos o casos reales (VitalKine, Floremané, FITT, Binks Barber, Mesa Cero; detalle en `casos.md`) > promesas.
