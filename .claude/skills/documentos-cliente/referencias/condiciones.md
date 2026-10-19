@@ -12,10 +12,11 @@ Cuando lo decidas, reemplazá el valor y borrá la marca.
 - Programa Fundadores: mismo precio. Beneficios: 2º mes de soporte sin costo, valor del soporte congelado 12 meses, sesión de resultados a los 60 días y atención prioritaria por WhatsApp. A cambio: testimonio en video, permiso para mostrar el caso, encuesta a los 30 días y reseña voluntaria.
 
 ## Por definir (valor sugerido)
-- Montos y boleta: [[DEFINIR: ¿el precio publicado es el líquido que recibe HORIZON o el bruto de la boleta?]]
-- Forma de pago de la implementación: [[DEFINIR: 50% al firmar para reservar el inicio y 50% contra entrega]]
+- Montos y boleta: el precio publicado es el **bruto** de la boleta de honorarios (precio final para el cliente, sin IVA). En 2026 la retención es 15,25%: si el cliente es empresa, la retiene y la paga al SII; si es persona natural, la declara HORIZON. HORIZON recibe en la práctica el 84,75% (ej.: $490.000 bruto → $415.275 líquido).
+- Forma de pago de la implementación: 50% al firmar para reservar el inicio y 50% antes de la entrega final.
+- Entregas por el portal del cliente: los avances se muestran en el portal durante todo el proyecto. La entrega final (accesos, archivos editables, traspaso de cuentas y puesta en producción a nombre del cliente) se libera al confirmarse el pago del 50% restante.
 - Medio de pago: transferencia bancaria a los datos de `datos-privados.md`.
-- Pago del soporte mensual: [[DEFINIR: por adelantado, los primeros 5 días de cada mes]]
+- Pago del soporte mensual: el mes 1 va incluido; se cobra desde el mes 2. Ventana de pago: entre el día 25 y el día 5 del mes siguiente. [[DEFINIR: ¿cada mes se paga al inicio del mes que cubre (recomendado) o al cierre?]]
 - Aviso para terminar el soporte: [[DEFINIR: 15 días corridos antes del siguiente período]]
 - Rondas de revisión del diseño (Figma): [[DEFINIR: 2 rondas incluidas]]
 - Plazo del cliente para entregar insumos o aprobar: [[DEFINIR: 5 días hábiles; si se atrasa, el plazo de entrega se corre en los mismos días]]
