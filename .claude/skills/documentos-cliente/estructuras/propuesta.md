@@ -6,7 +6,7 @@
 - Tono: profesional y cercano, en usted o impersonal. Corta: 2 páginas máximo.
 
 ## Secciones
-1. **Lo que vimos** (`.box`): 2–3 frases con el dolor principal en palabras del cliente (de "Notas de la visita" y "Dolor principal").
+1. **Lo que vimos** (`.box`): 2–3 frases con el dolor principal en palabras del cliente (de la sección "Diagnóstico" de la ficha: dolor en sus palabras, impacto y qué pasa si no hace nada; citá sus palabras textuales).
 2. **Lo que proponemos:** plan recomendado + 1 frase de por qué este y no otro.
 3. **Qué recibe:** tabla de "Qué incluye" del plan (entregable · detalle).
 4. **No incluye:** lista corta.

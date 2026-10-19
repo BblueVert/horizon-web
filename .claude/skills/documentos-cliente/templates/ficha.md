@@ -17,9 +17,18 @@
 ## Negocio
 - Rubro:
 - Canales actuales (web, IG, WhatsApp, Google Maps…):
-- Dolor principal (en palabras del cliente):
 - Objetivo a 3 meses:
 - Notas de la visita:
+
+## Diagnóstico (escuchar antes de proponer)
+Sin esta sección completa, el hook no deja generar propuesta ni contrato.
+- Dolor en sus palabras: [[FALTA: dolor en sus palabras]]
+- Desde cuándo / qué probó:
+- Impacto (cuánto le cuesta hoy): [[FALTA: impacto]]
+- Qué pasa si no hace nada:
+- Decisor: [[FALTA: decisor]]
+- Urgencia / fecha:
+- Saltar diagnóstico: no
 
 ## Acuerdo comercial
 - Plan: {{01 Presencia Digital | 02 Ecosistema Digital | 03 Sistema con IA | 04 Agente IA}}

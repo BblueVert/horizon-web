@@ -43,6 +43,27 @@ if (/(^|\/)contenido\//i.test(rel)) {
   if (hits.length) problems.push(`Suena a ChatGPT. Reescribí sin: ${hits.map(h => `"${h}"`).join(', ')}.`);
 }
 
+// ── 3. Diagnóstico antes de proponer ─────────────────────────────────────────
+// Propuesta o contrato solo si la ficha tiene dolor, impacto y decisor (o "Saltar diagnóstico: sí").
+if (/^CONTENIDO\/clientes\/[^/]+\/[^/]*(propuesta|contrato)[^/]*\.html$/i.test(rel)) {
+  const fichaPath = path.join(path.dirname(filePath), 'ficha.md');
+  const ficha = fs.existsSync(fichaPath) ? fs.readFileSync(fichaPath, 'utf8') : '';
+  if (!/saltar diagn[oó]stico:\s*s[ií]/i.test(ficha)) {
+    const campo = nombre => {
+      const m = ficha.match(new RegExp(`^- ${nombre}[^:\\n]*:[ \\t]*(.*)$`, 'mi'));
+      return m && m[1].trim() && !m[1].includes('[[FALTA') ? m[1].trim() : '';
+    };
+    const faltan = ['Dolor en sus palabras', 'Impacto', 'Decisor'].filter(c => !campo(c));
+    if (faltan.length) {
+      problems.push(
+        `Diagnóstico incompleto en la ficha (falta: ${faltan.join(', ')}). Primero escuchar, después proponer. ` +
+        'Decile a Benja qué falta y dale 2–3 preguntas de .claude/skills/documentos-cliente/referencias/preguntas-diagnostico.md. ' +
+        'Si él decide seguir igual, anotá "- Saltar diagnóstico: sí (motivo)" en la ficha.'
+      );
+    }
+  }
+}
+
 if (problems.length) {
   process.stderr.write(`Bloqueado por hook (${rel}):\n- ${problems.join('\n- ')}\n`);
   process.exit(2);

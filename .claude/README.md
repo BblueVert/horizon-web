@@ -14,7 +14,8 @@
 | Evento | Script | Efecto |
 |---|---|---|
 | `SessionStart` | `inicio-sesion.js` | Rama, últimos commits, próxima migración, piezas en `CONTENIDO/` |
-| `PreToolUse` (Write/Edit) | `pre-escritura.js` | Bloquea `service_role`/`sk-...` fuera de `.env` y frases de `frases-ia.txt` en `CONTENIDO/` |
+| `UserPromptSubmit` | `recordatorio-consultor.js` | En mensajes de terreno/ventas inyecta un ancla de `anclas.txt`: escuchar → preguntar → reflejar → diagnosticar → proponer |
+| `PreToolUse` (Write/Edit) | `pre-escritura.js` | Bloquea `service_role`/`sk-...` fuera de `.env`, frases de `frases-ia.txt` en `CONTENIDO/` y propuestas/contratos sin diagnóstico en la ficha |
 | `PostToolUse` (Write/Edit) | `post-escritura.js` | Valida `vercel.json`, exige rewrite para páginas nuevas en `Pages/`, avisa `[[FALTA]]`/`[[DEFINIR]]` en documentos de cliente, log |
 | `Stop` / `SubagentStop` | `registro.js` | Log en `.claude/logs/actividad.log` (no se versiona) |
 
