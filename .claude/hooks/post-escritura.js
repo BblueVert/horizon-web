@@ -26,7 +26,7 @@ try {
 
 if (vercel && /^Pages\/.+\.html$/.test(rel)) {
   const routed = (vercel.rewrites || []).some(r => r.destination === `/${rel}`);
-  if (!routed) problems.push(`/${rel} no tiene rewrite en vercel.json: en producción no existe. Agregalo.`);
+  if (!routed) problems.push(`/${rel} no tiene rewrite en vercel.json: en producción no existe. Agrégalo.`);
 }
 
 if (/^CONTENIDO\/clientes\/.+\.(html|md)$/.test(rel) && !rel.endsWith('/ficha.md')) {

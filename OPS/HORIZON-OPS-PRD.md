@@ -12,7 +12,7 @@ Lo que estás construyendo es un sistema de consultoría con software propio —
 
 El CRM que ya existe (`pipeline.html`) es bueno. Pero gestionar leads, proyectos activos, métricas de negocio y desarrollo técnico de clientes desde archivos separados no escala. **HORIZON OPS centraliza todo eso en un solo sistema.**
 
-Y además de ser funcional para vos, es una demo en vivo del nivel de software que HORIZON entrega.
+Y además de ser funcional para ti, es una demo en vivo del nivel de software que HORIZON entrega.
 
 ---
 
@@ -37,7 +37,7 @@ HORIZON OPS no reemplaza nada de esto — lo absorbe.
 
 ### MÓDULO A — Dashboard Operacional
 
-**Para qué sirve:** Vista de alto nivel del negocio. Entrás a HORIZON OPS y en 10 segundos sabés cómo está el negocio.
+**Para qué sirve:** Vista de alto nivel del negocio. Entras a HORIZON OPS y en 10 segundos sabes cómo está el negocio.
 
 **Qué muestra:**
 - MRR consolidado (suma de retainers activos en CLP)
@@ -53,7 +53,7 @@ HORIZON OPS no reemplaza nada de esto — lo absorbe.
 
 ### MÓDULO B — Proyectos Activos (Workspaces)
 
-**Para qué sirve:** Cuando un lead pasa a `status: arranque`, automáticamente tiene un espacio de trabajo en HORIZON OPS. Acá gestionás todo lo que estás construyendo para ese cliente.
+**Para qué sirve:** Cuando un lead pasa a `status: arranque`, automáticamente tiene un espacio de trabajo en HORIZON OPS. Acá gestionas todo lo que estás construyendo para ese cliente.
 
 **Cada workspace contiene:**
 - **Roadmap** — hitos del proyecto con fechas y estado (usa tabla `project_milestones`)
@@ -67,7 +67,7 @@ HORIZON OPS no reemplaza nada de esto — lo absorbe.
 ```
 Lead nuevo → Diagnóstico → Reunión → Arranque → Proyecto Activo → Entregado
 ```
-Cuando cambiás el status a `arranque`, el workspace se activa solo.
+Cuando cambias el status a `arranque`, el workspace se activa solo.
 
 ---
 
@@ -95,7 +95,7 @@ Para: "¿Qué lead tiene más probabilidad de cerrar esta semana?", "¿Cuánto M
 
 **Modo 2 — Líder Técnico:**
 Contexto: el proyecto activo que estés viendo, stack del cliente, milestones, backlog, notas técnicas.
-Para: "¿Qué está bloqueando el proyecto de Floremané?", "Armame la arquitectura para el chatbot de este cliente", "¿Qué queda por entregar en el roadmap?"
+Para: "¿Qué está bloqueando el proyecto de Floremané?", "Ármame la arquitectura para el chatbot de este cliente", "¿Qué queda por entregar en el roadmap?"
 
 **Stack:** Claude API (claude-sonnet-4-6). Context injection desde los datos del módulo activo. Sin historial persistente — cada conversación arranca limpia desde el contexto del momento.
 
@@ -180,8 +180,8 @@ OPS/
 
 ## Criterios de Éxito
 
-1. Entrás a HORIZON OPS y en menos de 10 segundos sabés cómo está el negocio
-2. Podés mover un lead a proyecto activo y que el workspace aparezca inmediatamente
+1. Entras a HORIZON OPS y en menos de 10 segundos sabes cómo está el negocio
+2. Puedes mover un lead a proyecto activo y que el workspace aparezca inmediatamente
 3. El Agente HORIZON responde con contexto real del negocio, no respuestas genéricas
 4. El sistema se ve como software de $890.000 — no como un panel interno mal hecho
 5. No hay duplicidad de datos: todo lee de la misma DB de Supabase

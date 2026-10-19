@@ -7,7 +7,7 @@
 ## Secciones
 1. **Datos del proyecto** (tabla): cliente, plan, contrato asociado (código CON), fecha de kickoff, fecha estimada de entrega, contacto que aprueba.
 2. **Pago inicial recibido:** monto y fecha (o `[[FALTA]]`).
-3. **Lo que necesitamos de su parte** (lista `.check`, con plazo según `condiciones.md`). Elegí solo lo que aplica al plan:
+3. **Lo que necesitamos de su parte** (lista `.check`, con plazo según `condiciones.md`). Elige solo lo que aplica al plan:
    - Logo en buena calidad, colores y tipografías (si existen).
    - Textos o información de servicios, precios, horarios y políticas.
    - Fotos del local, equipo y productos.

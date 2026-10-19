@@ -23,8 +23,8 @@ Requisito: Node (el mismo del proyecto). Sin bash ni jq, así corre igual en Win
 
 ## Uso rápido
 - "estoy en terreno" / `/modo-terreno` → respuestas cortas, ficha del cliente y documentos (propuesta, contrato, orden de inicio, acta) en PDF
-- "escribime un reel sobre clientes que se pierden por WhatsApp" → skill `reels`
-- "usá reel-writer para 3 reels sobre agenda online" → subagente
+- "escríbeme un reel sobre clientes que se pierden por WhatsApp" → skill `reels`
+- "usa reel-writer para 3 reels sobre agenda online" → subagente
 - "nueva página para el caso Floremané" → skill `nueva-pagina` → `page-auditor`
 - Agregar frases prohibidas: una línea más en `hooks/frases-ia.txt`
 - Cambiaste skills/agentes de contenido → `npm run plugin:sync`

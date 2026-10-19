@@ -499,7 +499,7 @@ function getAcciones(l){
       ${calLink?actionBtn('<i class="hz-i" data-i="calendar"></i> Abrir Google Meet',calLink,'#2dd4bf'):''}
       ${portalUrl?actionBtn('<i class="hz-i" data-i="link"></i> Portal del cliente',portalUrl,'#a855f7'):''}
       ${fReunion?`<div class="action-meta">Reunión: <strong>${fechaStr}</strong></div>`:''}
-      ${waBtn('<i class="hz-i" data-i="message"></i> Mensaje inicial + link brief',`Hola ${name}! El diagnóstico que agendaste quedó confirmado para el ${fechaStr||'fecha por confirmar'} ✔\nAntes de vernos, contame cómo está tu negocio y qué te tiene más frenado — lo primero que se te venga.\n${portalUrl?'Acá te dejé un formulario corto para completar:\n'+portalUrl:''}`,tel)}
+      ${waBtn('<i class="hz-i" data-i="message"></i> Mensaje inicial + link brief',`Hola ${name}! El diagnóstico que agendaste quedó confirmado para el ${fechaStr||'fecha por confirmar'} ✔\nAntes de vernos, cuéntame cómo está tu negocio y qué te tiene más frenado — lo primero que se te venga.\n${portalUrl?'Acá te dejé un formulario corto para completar:\n'+portalUrl:''}`,tel)}
       ${!calLink?extraField('cal_link','Link Google Meet','https://meet.google.com/...',calLink):''}`;
 
     case 'contactado': return `
@@ -507,21 +507,21 @@ function getAcciones(l){
       ${calLink?actionBtn('<i class="hz-i" data-i="calendar"></i> Unirse a Google Meet',calLink,'var(--h1)'):'<div class="action-note"><i class="hz-i" data-i="alert"></i> Sin link de Google Meet aún</div>'}
       <a href="/reunion?id=${l.id}" target="_blank" class="action-btn" style="background:rgba(168,85,247,.1);color:#a855f7;border-color:rgba(168,85,247,.2);"><i class="hz-i" data-i="clipboard"></i> Brief de reunión</a>
       ${fReunion?`<div class="action-meta">Reunión: <strong>${fechaStr}</strong></div>`:''}
-      ${waBtn('<i class="hz-i" data-i="message"></i> Recordatorio de sesión',`Hola ${name}! Te recuerdo nuestra sesión${fechaStr?' el '+fechaStr:''}. ${calLink?'Link: '+calLink:''}\n¿Confirmás?`,tel)}
+      ${waBtn('<i class="hz-i" data-i="message"></i> Recordatorio de sesión',`Hola ${name}! Te recuerdo nuestra sesión${fechaStr?' el '+fechaStr:''}. ${calLink?'Link: '+calLink:''}\n¿Confirmas?`,tel)}
       ${!calLink?extraField('cal_link','Link Google Meet','https://meet.google.com/...',calLink):''}`;
 
     case 'propuesta': return `
       <div class="action-lbl">Propuesta enviada — hacer seguimiento</div>
       ${l.propuesta_url?actionBtn('<i class="hz-i" data-i="doc"></i> Ver propuesta',l.propuesta_url,'#ff8c42'):''}
       ${waBtn('<i class="hz-i" data-i="message"></i> Follow-up propuesta',`Hola ${name}, ¿tuviste oportunidad de revisar la propuesta? Quedé a disposición para cualquier consulta 👋`,tel)}
-      ${waBtn('<i class="hz-i" data-i="message"></i> Follow-up 48h',`Hola ${name}, antes de que se cierre la posibilidad quería acercarme. ¿Qué dudas tenés? 🤝`,tel)}
+      ${waBtn('<i class="hz-i" data-i="message"></i> Follow-up 48h',`Hola ${name}, antes de que se cierre la posibilidad quería acercarme. ¿Qué dudas tienes? 🤝`,tel)}
       ${extraField('propuesta_url','Link de la propuesta','https://...',l.propuesta_url||'')}`;
 
     case 'arranque': return `
       <div class="action-lbl">Reunión agendada — pendiente de primer contacto</div>
       ${fReunion?`<div class="action-meta">Reunión: <strong>${fechaStr}</strong></div>`:'<div class="action-note"><i class="hz-i" data-i="alert"></i> Sin fecha de reunión</div>'}
       ${calLink?actionBtn('<i class="hz-i" data-i="calendar"></i> Unirse a Google Meet',calLink,'#2dd4bf'):''}
-      ${waBtn('<i class="hz-i" data-i="message"></i> Confirmación reunión',`Hola ${name}! Solo confirmo que tenemos la sesión el ${fechaStr}. ${calLink?'Link: '+calLink:''}\nCualquier duda avisame 👋`,tel)}
+      ${waBtn('<i class="hz-i" data-i="message"></i> Confirmación reunión',`Hola ${name}! Solo confirmo que tenemos la sesión el ${fechaStr}. ${calLink?'Link: '+calLink:''}\nCualquier duda avísame 👋`,tel)}
       ${!calLink?extraField('cal_link','Link Google Meet','https://meet.google.com/...',calLink):''}`;
 
     case 'activo': return `
@@ -534,8 +534,8 @@ function getAcciones(l){
       ${extraField('github_url','GitHub URL','https://github.com/...',l.github_url||'')}`;
 
     case 'cerrado': return `
-      <div class="action-lbl">Cerrado — pedí testimonio y ofrece retainer</div>
-      ${waBtn('<i class="hz-i" data-i="message"></i> Pedir testimonio',`Hola ${name}, fue un placer trabajar juntos! ¿Podés contarme brevemente:\n• ¿Qué problema querías resolver?\n• ¿Qué resultado obtuviste?\n• ¿Qué destacarías del proceso?\nUnas pocas líneas me ayudan muchísimo 🙏`,tel)}
+      <div class="action-lbl">Cerrado — pide testimonio y ofrece retainer</div>
+      ${waBtn('<i class="hz-i" data-i="message"></i> Pedir testimonio',`Hola ${name}, fue un placer trabajar juntos! ¿Puedes contarme brevemente:\n• ¿Qué problema querías resolver?\n• ¿Qué resultado obtuviste?\n• ¿Qué destacarías del proceso?\nUnas pocas líneas me ayudan muchísimo 🙏`,tel)}
       ${waBtn('<i class="hz-i" data-i="message"></i> Oferta retainer (D+30)',`Hola ${name}, ¿cómo van los resultados? Te quería comentar sobre nuestros planes de continuidad para que el sistema siga creciendo 🚀`,tel)}`;
 
     default: return '';

@@ -90,7 +90,7 @@
 <div class="ops-modal-bg" id="objModal">
   <div class="ops-modal">
     <div style="font-family:var(--fd);font-size:22px;letter-spacing:.4px;margin-bottom:20px;" id="objModalTitle">Nuevo Objetivo</div>
- <div class="ops-field"><label class="ops-label">Objetivo</label><input class="ops-input" id="objTitulo" placeholder="¿Qué querés lograr?" maxlength="200"></div>
+ <div class="ops-field"><label class="ops-label">Objetivo</label><input class="ops-input" id="objTitulo" placeholder="¿Qué quieres lograr?" maxlength="200"></div>
  <div class="ops-field"><label class="ops-label">Descripción</label><textarea class="ops-input" id="objDesc" rows="2" placeholder="Más contexto o motivación…"></textarea></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div class="ops-field">
@@ -275,7 +275,7 @@ function closeModal(){ document.getElementById('objModal').classList.remove('ope
 function renderNewKrs(){ document.getElementById('newKrsList').innerHTML=newKrsList.map((kr,i)=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;"><span style="flex:1;font-size:12px;color:var(--text2);">→ ${typeof kr==='string'?kr:kr.texto}</span><button onclick="newKrsList.splice(${i},1);renderNewKrs();" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">×</button></div>`).join('');}
 function addNewKr(){ const input=document.getElementById('newKrInput'); const t=input.value.trim(); if(!t)return; newKrsList.push({texto:t,done:false}); input.value=''; renderNewKrs(); }
 async function saveObj(){
-  const titulo=document.getElementById('objTitulo').value.trim(); if(!titulo){alert('Agregá un título.');return;}
+  const titulo=document.getElementById('objTitulo').value.trim(); if(!titulo){alert('Agrega un título.');return;}
   const desc=document.getElementById('objDesc').value.trim();
   const per=document.getElementById('objPeriodo').value;
   const data={titulo,descripcion:`${desc}|${per}`,categoria:document.getElementById('objCat').value,fecha_limite:document.getElementById('objFecha').value||null,hooks_respuestas:newKrsList,estado:'activo'};

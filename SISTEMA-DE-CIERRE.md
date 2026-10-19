@@ -32,13 +32,13 @@ Pero la lógica de fondo del documento es excelente y aplica igual: **un lead no
 **Esto ya estaba implícito en HORIZON** (los 3 Modos de Voz son, en el fondo, un mapeo de niveles de consciencia a tipo de contenido). Lo que faltaba era la regla explícita: **no ofrecer el diagnóstico gratuito a alguien en Nivel 1.** Si una persona comenta un reel reaccionando al dolor pero nunca vio contenido educativo de HORIZON, mandarle "agenda 20 minutos conmigo" es saltarse dos escalones — y es exactamente el patrón que hace que un lead "desaparezca o ghostee y nunca sepas por qué".
 
 **Regla de aplicación:**
-Antes de proponer el diagnóstico (la "venta" del embudo gratuito), preguntate: *¿esta persona ya sabe que el problema existe, que hay una solución tipo sistema digital, y que HORIZON específicamente la resuelve?* Si la respuesta a cualquiera es "no sé" → primero un paso de nutrición (un caso, una pregunta que la ubique), no la propuesta directa.
+Antes de proponer el diagnóstico (la "venta" del embudo gratuito), pregúntate: *¿esta persona ya sabe que el problema existe, que hay una solución tipo sistema digital, y que HORIZON específicamente la resuelve?* Si la respuesta a cualquiera es "no sé" → primero un paso de nutrición (un caso, una pregunta que la ubique), no la propuesta directa.
 
 ---
 
 ## Componente 2 — Mensajes con Intención (versión sin ajedrez)
 
-**La idea original:** nunca mandar un recurso sin condición previa — "antes de mandarte esto, contame X" — porque cada intercambio sin condición es "control cedido".
+**La idea original:** nunca mandar un recurso sin condición previa — "antes de mandarte esto, cuéntame X" — porque cada intercambio sin condición es "control cedido".
 
 **Por qué se reescribe:** el original lo enmarca como control de tablero. Eso no calza con la voz de HORIZON (`BRAND-VOICE.md` Modo 3: *"el ask es pequeño... la propuesta de valor está en la pregunta, no en el pitch... personal, como si le escribieras a alguien conocido"*). Pero el principio de fondo —**cada intercambio de valor debería darte algo de vuelta, no ser un envío gratis al vacío**— es correcto y de hecho HORIZON ya lo hace en un caso documentado:
 
@@ -48,12 +48,12 @@ Eso **es** un C1 (recurso con condición), solo que sin el lenguaje de control. 
 
 | Original (ATV) | Versión HORIZON |
 |---|---|
-| C1 — recurso con condición | Antes de mandar un caso, una propuesta de precio o un recurso, hacé **una pregunta pequeña que da contexto real** ("¿qué tipo de negocio tenés?", "¿en qué rubro estás?") — no para "ganar control", sino porque sin esa info no podés personalizar, y personalizar es lo que diferencia a HORIZON de una agencia genérica |
+| C1 — recurso con condición | Antes de mandar un caso, una propuesta de precio o un recurso, haz **una pregunta pequeña que da contexto real** ("¿qué tipo de negocio tienes?", "¿en qué rubro estás?") — no para "ganar control", sino porque sin esa info no puedes personalizar, y personalizar es lo que diferencia a HORIZON de una agencia genérica |
 | C2 — seguimiento condicional | El seguimiento se ancla a algo específico que la persona dijo o vio — nunca un genérico "¿viste el video?". Ej: *"Vi que guardaste el post — ¿en qué rubro estás? El problema se ve diferente dependiendo del negocio"* (ya está en BRAND-VOICE.md) |
 | C3 — urgencia conectada al dolor | Esto **ya es** el ángulo "costo de la inacción" del banco de hooks. No inventar urgencia artificial — usar el cálculo real (*"si son 3 clientes al mes a $150K, son $450K perdidos"*) |
 | AG — agenda antes del recurso pesado | El recurso "pesado" de HORIZON es el **diagnóstico gratuito de 20 min** (no un video ni un PDF). Ese es el punto de entrega real — todo lo anterior nutre hacia ahí, no lo reemplaza |
 
-**Regla de aplicación:** cada vez que vayas a mandar algo de valor (un caso, un cálculo personalizado, una mini-auditoría del sitio del lead), que vaya acompañado de una pregunta que te dé contexto real para la conversación siguiente. No por control — porque sin contexto, lo que mandás es genérico, y lo genérico es exactamente lo que HORIZON dice que no hace ("no vendemos webs bonitas, vendemos sistemas que conocen tu negocio").
+**Regla de aplicación:** cada vez que vayas a mandar algo de valor (un caso, un cálculo personalizado, una mini-auditoría del sitio del lead), que vaya acompañado de una pregunta que te dé contexto real para la conversación siguiente. No por control — porque sin contexto, lo que mandas es genérico, y lo genérico es exactamente lo que HORIZON dice que no hace ("no vendemos webs bonitas, vendemos sistemas que conocen tu negocio").
 
 ---
 
@@ -65,7 +65,7 @@ Eso **es** un C1 (recurso con condición), solo que sin el lenguaje de control. 
 El embudo de HORIZON ya es corto por diseño: contenido → DM → diagnóstico de 20 min → propuesta. El riesgo no es "mandar 4 videos" (HORIZON no opera así), es **sobre-explicar en el DM antes de proponer la llamada** — la tentación de "convencer por chat" en lugar de usar el chat para llegar a la llamada, que es donde Benja realmente cierra.
 
 **Regla de aplicación — el punto de corte de HORIZON:**
-Máximo **una pieza de valor + un caso/testimonio** antes de proponer el diagnóstico. Si después de eso la persona sigue dando vueltas sin agendar, no sigas mandando contenido — pasá al Componente 4 (seguimiento, no nutrición). Mandar una tercera pieza de "convencimiento" es la señal de que el embudo se tapó, no de que falta esfuerzo.
+Máximo **una pieza de valor + un caso/testimonio** antes de proponer el diagnóstico. Si después de eso la persona sigue dando vueltas sin agendar, no sigas mandando contenido — pasa al Componente 4 (seguimiento, no nutrición). Mandar una tercera pieza de "convencimiento" es la señal de que el embudo se tapó, no de que falta esfuerzo.
 
 **Punto medible:** de cada conversación de DM que llega a "te cuento por DM", contar cuántos mensajes de HORIZON pasan antes de la propuesta de agenda. Si el promedio sube de 2-3, el embudo se está tapando.
 
@@ -99,7 +99,7 @@ El n8n actual (`project-n8n`) solo dispara mensajes de WhatsApp **reactivos** a 
 **La idea original:** el closer termina la llamada, graba un audio breve de lo que pasó (objeciones, comparaciones, por qué compró o no compró), eso llega a marketing, y el contenido de la semana siguiente pre-resuelve esas objeciones antes de la próxima llamada. El sistema mejora solo, sin esfuerzo adicional.
 
 **Por qué esto calza perfecto con HORIZON — mejor que con el original:**
-En el framework original esto requiere coordinación entre dos personas (closer y marketing). En HORIZON, **Benja es las dos personas** — lo cual elimina la fricción de "pasar la posta" y hace el loop más rápido, no más lento. Esto es, literalmente, la versión interna de lo que HORIZON le vende a sus clientes ("el sistema que aprende y trabaja sin que vos estés metido manualmente").
+En el framework original esto requiere coordinación entre dos personas (closer y marketing). En HORIZON, **Benja es las dos personas** — lo cual elimina la fricción de "pasar la posta" y hace el loop más rápido, no más lento. Esto es, literalmente, la versión interna de lo que HORIZON le vende a sus clientes ("el sistema que aprende y trabaja sin que tú estés metido manualmente").
 
 **Regla de aplicación — rutina post-diagnóstico:**
 Apenas termina cada llamada de diagnóstico (mientras está fresco, no al final del día), grabar una nota de voz de 1-2 minutos:
@@ -116,8 +116,8 @@ Esa nota se vuelca a un registro simple (puede vivir en `CONTENIDO/2026-XX-MES/r
 ## Resumen — Las 5 Reglas de Aplicación
 
 1. **Mapear el nivel antes de actuar.** No ofrecer el diagnóstico a alguien que todavía no sabe que el problema existe. (Componente 1)
-2. **Cada intercambio de valor lleva una pregunta de contexto.** No por control — porque sin contexto no podés personalizar, y personalizar es la ventaja de HORIZON. (Componente 2)
-3. **Punto de corte: 1 pieza + 1 caso, después se propone agenda.** Si no agenda, no sigas nutriendo — pasá a seguimiento. (Componente 3)
+2. **Cada intercambio de valor lleva una pregunta de contexto.** No por control — porque sin contexto no puedes personalizar, y personalizar es la ventaja de HORIZON. (Componente 2)
+3. **Punto de corte: 1 pieza + 1 caso, después se propone agenda.** Si no agenda, no sigas nutriendo — pasa a seguimiento. (Componente 3)
 4. **El silencio no es el final — es la señal para cambiar de jugada.** Construir la secuencia de seguimiento en n8n, terminando en un recurso de alto valor condicionado a agendar. (Componente 4)
 5. **Cada diagnóstico genera una nota de voz que alimenta el contenido de la semana.** El sistema de ventas y el sistema de contenido se retroalimentan — sin coordinación extra, porque es la misma persona. (Componente 5)
 

@@ -1,12 +1,12 @@
 ---
 name: reels
-description: Escribe guiones de reels para Instagram/TikTok de HORIZON (hook, desarrollo, CTA, texto en pantalla y caption). Usar cuando pidan "escribime un reel", "guion de reel", "idea de video corto" o contenido en video vertical.
+description: Escribe guiones de reels para Instagram/TikTok de HORIZON (hook, desarrollo, CTA, texto en pantalla y caption). Usar cuando pidan "escríbeme un reel", "guion de reel", "idea de video corto" o contenido en video vertical.
 ---
 
 # Reels HORIZON
 
 ## Antes de escribir
-1. Definí el **modo de voz** (1 Impacto · 2 Educativo · 3 Conversión) según `.claude/memoria/contenido.md` (si existe). Si no lo dicen, preguntá.
+1. Define el **modo de voz** (1 Impacto · 2 Educativo · 3 Conversión) según `.claude/memoria/contenido.md` (si existe). Si no lo dicen, pregunta.
 2. Una sola idea. Si el tema tiene 3 ideas, son 3 reels.
 
 ## Estructura (usar `templates/guion-reel.md`)
@@ -14,6 +14,11 @@ description: Escribe guiones de reels para Instagram/TikTok de HORIZON (hook, de
 - **Desarrollo (3–25 s):** 3 beats como máximo. Ejemplo concreto > concepto.
 - **Cierre + CTA (25–35 s):** un solo CTA acorde al modo.
 - **Texto en pantalla** por beat y **caption** con palabra clave de ManyChat en mayúsculas si el CTA es comentar.
+
+## Si se pide el video terminado
+- Música original con `scripts/reel-musica.py` (un `cue.json` por video, sincronizado a los cortes). Distinta en cada reel, misma línea sonora.
+- Portada propia diseñada para ese video.
+- Ver reglas de video en `.claude/memoria/contenido.md`.
 
 ## Entrega
 - 3 hooks alternativos + 1 guion completo.

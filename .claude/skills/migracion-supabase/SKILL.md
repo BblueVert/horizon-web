@@ -6,11 +6,11 @@ description: Crea la siguiente migración SQL numerada de Supabase para HORIZON 
 # Migración Supabase
 
 ## Pasos
-1. Calculá el número: `ls supabase-migration-*.sql` → tomá el mayor NNN y sumá 1 (3 dígitos).
-2. Confirmá el proyecto destino: principal `dkitbnrpwmwrfnmztdfc` (OPS/portal/leads) o SaaS `khvfhvpqhcchgxrtmrjo` (peluquerías).
-3. Copiá `templates/migracion.sql` a `supabase-migration-NNN-<tema>.sql` y completá.
-4. Leé la migración de la que depende y nombrala en el encabezado ("Requiere la 0XX").
-5. Si el front o `api/` usan la tabla nueva, actualizá esos archivos en el mismo cambio.
+1. Calcula el número: `ls supabase-migration-*.sql` → toma el mayor NNN y suma 1 (3 dígitos).
+2. Confirma el proyecto destino: principal `dkitbnrpwmwrfnmztdfc` (OPS/portal/leads) o SaaS `khvfhvpqhcchgxrtmrjo` (peluquerías).
+3. Copia `templates/migracion.sql` a `supabase-migration-NNN-<tema>.sql` y completa.
+4. Lee la migración de la que depende y nómbrala en el encabezado ("Requiere la 0XX").
+5. Si el front o `api/` usan la tabla nueva, actualiza esos archivos en el mismo cambio.
 6. Recordale al usuario que la migración se corre **a mano** en el SQL Editor de Supabase.
 
 ## Reglas

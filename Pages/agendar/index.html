@@ -164,14 +164,14 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
     <section class="booking" aria-label="Agendar">
       <div class="book-title">
         <span class="eyebrow">Diagnóstico gratuito · 30 min</span>
-        <h1 class="h1">Agendá tu <span class="g">diagnóstico.</span></h1>
+        <h1 class="h1">Agenda tu <span class="g">diagnóstico.</span></h1>
       </div>
-      <ol class="steps-bar" id="stepsBar"><li class="on">1 · Antes de agendar</li><li>2 · Elegí tu horario</li></ol>
+      <ol class="steps-bar" id="stepsBar"><li class="on">1 · Antes de agendar</li><li>2 · Elige tu horario</li></ol>
 
       <!-- PASO 1: calificación -->
       <form class="panel" id="stepQ" novalidate data-intro>
         <h2>Tres preguntas rápidas</h2>
-        <p class="sub">Así llegamos a la sesión con lo importante y no perdés tiempo.</p>
+        <p class="sub">Así llegamos a la sesión con lo importante y no pierdes tiempo.</p>
 
         <div class="frame">
           <small>Inversión de un sistema HORIZON</small>
@@ -187,7 +187,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
         </div>
 
         <fieldset>
-          <legend>Si el diagnóstico muestra que te sirve, ¿contás con ese presupuesto?</legend>
+          <legend>Si el diagnóstico muestra que te sirve, ¿cuentas con ese presupuesto?</legend>
           <div class="opts">
             <label class="opt"><input type="radio" name="presupuesto" value="ahora" required><span>Sí, lo tengo disponible</span></label>
             <label class="opt"><input type="radio" name="presupuesto" value="1-2m"><span>Sí, en los próximos 1–2 meses</span></label>
@@ -196,7 +196,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
         </fieldset>
 
         <fieldset>
-          <legend>¿Cuántas consultas o mensajes recibís por semana?</legend>
+          <legend>¿Cuántas consultas o mensajes recibes por semana?</legend>
           <div class="opts row">
             <label class="opt"><input type="radio" name="volumen" value="<10" required><span>Hasta 10</span></label>
             <label class="opt"><input type="radio" name="volumen" value="10-30"><span>10 a 30</span></label>
@@ -223,7 +223,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
       <form class="panel" id="stepNo" hidden novalidate>
         <span class="nurture-ic t-lilac"><svg class="ico"><use href="/shared/hz-sprite.svg#i-book"/></svg></span>
         <h2>Todavía no es el momento, y está perfecto.</h2>
-        <p class="sub">Mientras tanto, estos recursos gratuitos te ayudan a ordenar tu negocio. Si querés, te escribo cuando tenga sentido conversar.</p>
+        <p class="sub">Mientras tanto, estos recursos gratuitos te ayudan a ordenar tu negocio. Si quieres, te escribo cuando tenga sentido conversar.</p>
         <div class="actions">
           <a href="/recursos" class="btn btn-acc">Ver recursos gratis <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a>
         </div>
@@ -231,7 +231,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
           <div class="field"><label for="nNombre">Nombre</label><input id="nNombre" name="nombre" autocomplete="given-name" maxlength="100" required></div>
           <div class="field"><label for="nTel">WhatsApp</label><input id="nTel" name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 xxxx xxxx" maxlength="20" required></div>
           <div class="field"><label for="nEmail">Email</label><input id="nEmail" name="email" type="email" autocomplete="email" maxlength="254" required></div>
-          <button type="submit" class="btn btn-ghost" id="btnNo">Avisame cuando sea buen momento</button>
+          <button type="submit" class="btn btn-ghost" id="btnNo">Avísame cuando sea buen momento</button>
           <div class="status" id="statusNo" role="status"></div>
         </div>
         <div class="actions"><button type="button" class="link-btn" data-back>Cambiar mis respuestas</button></div>
@@ -239,7 +239,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
 
       <!-- PASO 2: horario y datos -->
       <form class="panel" id="stepCal" hidden novalidate>
-        <h2>Elegí día y horario</h2>
+        <h2>Elige día y horario</h2>
         <p class="sub">Horario de Chile. Te llega la invitación con el link de Meet al instante.</p>
         <div class="when">
           <div>
@@ -253,8 +253,8 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
             <div class="cal-grid" id="calGrid" role="grid" aria-label="Días disponibles"></div>
           </div>
           <div>
-            <p class="slots-head">Horarios <span id="selDateLabel">· elegí un día</span></p>
-            <div class="slots" id="slots"><p class="slots-msg">Primero elegí un día.</p></div>
+            <p class="slots-head">Horarios <span id="selDateLabel">· elige un día</span></p>
+            <div class="slots" id="slots"><p class="slots-msg">Primero elige un día.</p></div>
           </div>
         </div>
 
@@ -325,9 +325,9 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
 
   // ── Validaciones compartidas ──
   function check(nombre, telefono, email) {
-    if (nombre.length < 2) return 'Escribí tu nombre.';
-    if (!/^[\+\d\s\-\(\)]{6,20}$/.test(telefono)) return 'Revisá tu WhatsApp. Ej: +56 9 1234 5678.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Revisá tu email.';
+    if (nombre.length < 2) return 'Escribe tu nombre.';
+    if (!/^[\+\d\s\-\(\)]{6,20}$/.test(telefono)) return 'Revisa tu WhatsApp. Ej: +56 9 1234 5678.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Revisa tu email.';
     return '';
   }
   function setStatus(el, cls, msg) { el.className = 'status ' + cls; el.textContent = msg; }
@@ -423,7 +423,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
     e.preventDefault();
     var st = $('statusCal'), btn = $('btnCal');
     var nombre = $('nombre').value.trim(), telefono = $('telefono').value.trim(), email = $('email').value.trim();
-    if (!selDate || !selHora) return setStatus(st, 'error', 'Elegí un día y un horario.');
+    if (!selDate || !selHora) return setStatus(st, 'error', 'Elige un día y un horario.');
     var err = check(nombre, telefono, email);
     if (err) return setStatus(st, 'error', err);
     btn.disabled = true; btn.firstChild.textContent = 'Agendando… ';

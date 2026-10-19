@@ -160,7 +160,7 @@
 <div class="done-overlay" id="doneOverlay" onclick="this.classList.remove('show')">
   <div class="done-icon"><i class="hz-i" data-i="target"></i></div>
   <div class="done-title">¡SESIÓN COMPLETADA!</div>
-  <div class="done-sub" id="doneMessage">Excelente trabajo. Hacé clic para cerrar.</div>
+  <div class="done-sub" id="doneMessage">Excelente trabajo. Haz clic para cerrar.</div>
 </div>
 
 <script src="/OPS/shared/ops-auth.js"></script>
@@ -241,7 +241,7 @@ function playAlarm(){
 function showDone(){
   const task=document.getElementById('focusTask').value.trim();
   const mins=Math.round(totalSec/60);
-  document.getElementById('doneMessage').textContent=`${mins} min de ${currentModeName}${task?' · '+task:''}. Hacé clic para cerrar.`;
+  document.getElementById('doneMessage').textContent=`${mins} min de ${currentModeName}${task?' · '+task:''}. Haz clic para cerrar.`;
   document.getElementById('doneOverlay').classList.add('show');
   // Auto-save
   if(task) autoSaveSession(task, mins);
@@ -255,7 +255,7 @@ async function autoSaveSession(task, mins){
 
 async function saveSession(){
   const task=document.getElementById('focusTask').value.trim();
- if(!task){opsToast('Escribí en qué trabajaste','error');return;}
+ if(!task){opsToast('Escribe en qué trabajaste','error');return;}
   const mins=Math.round((totalSec-remaining)/60)||Math.round(totalSec/60);
   const sb=getSB();
   await sb.from('notas').insert({titulo:`Deep Work: ${task}`,contenido:`${mins} min · ${currentModeName} · ${new Date().toLocaleDateString('es-CL')}`,color:'deepwork'});
@@ -268,7 +268,7 @@ async function loadSessions(){
   const sb=getSB();
   const {data}=await sb.from('notas').select('*').like('titulo','Deep Work:%').order('created_at',{ascending:false}).limit(10);
   const el=document.getElementById('sessionLog');
-  if(!data?.length){el.innerHTML=`<div class="ops-empty"><div class="ops-empty-text">Sin sesiones aún. ¡Empezá el timer!</div></div>`;return;}
+  if(!data?.length){el.innerHTML=`<div class="ops-empty"><div class="ops-empty-text">Sin sesiones aún. ¡Empieza el timer!</div></div>`;return;}
 
   // Stats hoy
   const today=new Date().toLocaleDateString('es-CL');
