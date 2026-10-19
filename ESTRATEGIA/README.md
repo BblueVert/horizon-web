@@ -16,6 +16,7 @@ No son documentos teóricos. Cada uno está construido con lo que ya existe en l
 | [`HORIZON-ECOSISTEMA.md`](./HORIZON-ECOSISTEMA.md) | ¿Qué es HORIZON como sistema completo? Las dos capas de negocio, los productos, el stack técnico, cómo se conectan entre sí. |
 | [`HORIZON-PRD-EL-SISTEMA.md`](./HORIZON-PRD-EL-SISTEMA.md) | ¿Qué es "El Sistema" (Nivel 01) exactamente, como producto? Alcance, lo que es real hoy vs. lo que es visión, arquitectura, roadmap. |
 | [`HORIZON-PLAN-DE-ACCION-2026.md`](./HORIZON-PLAN-DE-ACCION-2026.md) | ¿Qué hago esta semana? Plan semana a semana hasta fin de año, más los hitos de 6 y 12 meses. |
+| [`HORIZON-REMODELACION-OCT-2026.md`](./HORIZON-REMODELACION-OCT-2026.md) | ¿Qué hay hoy y cómo se opera? Registro de la remodelación de oct-2026: sitio, agenda, OPS, portal, pagos con Mercado Pago, condiciones comerciales y qué hacer si algo falla. |
 
 ## Cómo se interpretó el objetivo
 
