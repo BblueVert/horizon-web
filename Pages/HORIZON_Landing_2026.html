@@ -30,6 +30,7 @@
 </script>
 <style>
 :root {
+  --grad-deep: radial-gradient(120% 90% at 100% 100%, rgba(242,105,12,.55), transparent 55%), linear-gradient(155deg, #1E1744 0%, #34276E 30%, #5A2F8C 58%, #9A3A84 82%, #C4467A 100%);
   --bg: #FFFBF6; --bg2: #FFF4EA; --surface: #FFFFFF;
   --ink: #1A1626; --ink2: #5F5970; --ink3: #9C96AB;
   --line: #F0E7DC; --line2: #E6DACB;
@@ -95,13 +96,10 @@ a { color: inherit; }
 .drawer .btn { margin-top: 16px; justify-content: center; }
 
 /* ── Hero ───────────────────────────────────── */
-.hero { position: relative; padding: calc(var(--header-h) + clamp(48px, 7vw, 96px)) 0 clamp(64px, 8vw, 104px); background-image: radial-gradient(var(--line2) 1px, transparent 1px); background-size: 24px 24px; background-position: -12px -12px; }
+.hero { position: relative; padding: calc(var(--header-h) + clamp(32px, 6vw, 88px)) 0 clamp(64px, 8vw, 104px); background-image: radial-gradient(var(--line2) 1px, transparent 1px); background-size: 24px 24px; background-position: -12px -12px; }
 .hero::after { content: ''; position: absolute; inset: auto 0 0; height: 160px; background: linear-gradient(transparent, var(--bg)); pointer-events: none; }
 .hero .wrap { display: grid; grid-template-columns: 1.08fr .92fr; gap: 56px; align-items: center; position: relative; z-index: 1; }
-.pill { display: inline-flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line2); padding: 7px 14px 7px 8px; border-radius: 99px; font-size: 13px; font-weight: 600; color: var(--ink2); }
-.pill b { display: inline-flex; align-items: center; gap: 6px; background: var(--peach); color: #9A3D06; font-weight: 700; padding: 4px 10px; border-radius: 99px; }
-.pill b .ico { width: 14px; height: 14px; }
-.hero h1 { font-weight: 800; font-size: clamp(40px, 4.6vw, 64px); line-height: 1.02; letter-spacing: -.035em; margin: 26px 0 24px; }
+.hero h1 { font-weight: 800; font-size: clamp(40px, 4.6vw, 64px); line-height: 1.02; letter-spacing: -.035em; margin: 0 0 24px; }
 .hero h1 .line { display: block; overflow: hidden; padding-bottom: .08em; }
 .hero h1 .line > span { display: inline-block; }
 .hero .lead { max-width: 40ch; }
@@ -151,16 +149,40 @@ a { color: inherit; }
 /* ── Plataformas ────────────────────────────── */
 .stack { padding: 8px 0 24px; }
 .stack p { text-align: center; font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 22px; }
-.stack ul { list-style: none; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 18px 44px; }
+.marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.marquee ul { list-style: none; display: flex; align-items: center; width: max-content; animation: marquee 34s linear infinite; }
+.marquee:hover ul { animation-play-state: paused; }
+.marquee li { padding-right: 64px; flex-shrink: 0; }
+@keyframes marquee { to { transform: translateX(-50%); } }
 .stack img { height: 22px; width: auto; filter: brightness(0); opacity: .38; transition: opacity .3s; }
 .stack li:hover img { opacity: .8; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee ul { width: auto; flex-wrap: wrap; justify-content: center; gap: 18px 0; }
+  .marquee li[aria-hidden] { display: none; }
+}
 
 /* ── Problema ───────────────────────────────── */
 .problem { display: grid; grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; }
 .problem-art { position: sticky; top: calc(var(--header-h) + 32px); }
-.art { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 28px; }
-.art svg { width: 100%; height: auto; }
-.art figcaption { font-size: 13px; color: var(--ink2); margin-top: 14px; text-align: center; }
+.calc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 28px; box-shadow: var(--shadow); display: grid; gap: 20px; }
+.calc-head { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+.calc-head .ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; }
+.calc-head h3 { font-size: 19px; letter-spacing: -.015em; line-height: 1.25; }
+.calc-head p { font-size: 13.5px; color: var(--ink2); }
+.calc-field label { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.calc-field output { font: 500 13px var(--mono); color: var(--violet); background: var(--lilac); padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+.calc input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 99px; background: linear-gradient(90deg, #F2690C, #C4467A var(--p, 50%), var(--line2) var(--p, 50%)); outline-offset: 6px; cursor: pointer; }
+.calc input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid var(--rose-i); box-shadow: 0 2px 8px rgba(26,22,38,.18); }
+.calc input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--rose-i); }
+.calc-result { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.calc-result > div { border-radius: 16px; padding: 14px 16px; background: var(--bg2); border: 1px solid var(--line); }
+.calc-result > div:last-child { background: var(--grad-deep, linear-gradient(155deg, #1E1744, #5A2F8C 60%, #C4467A)); color: #fff; border: 0; }
+.calc-result small { font: 500 10.5px var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink3); display: block; }
+.calc-result > div:last-child small { color: #D9D2F0; }
+.calc-result b { display: block; font-size: 28px; letter-spacing: -.03em; margin-top: 4px; line-height: 1.1; }
+.calc-note { font-size: 12.5px; color: var(--ink3); }
+.calc .btn { width: 100%; justify-content: space-between; }
 .pains { display: grid; gap: 16px; }
 .pain { display: grid; grid-template-columns: auto 1fr; gap: 20px; padding: 26px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); transition: border-color .3s, transform .3s; }
 .pain:hover { border-color: var(--line2); transform: translateY(-2px); }
@@ -230,8 +252,14 @@ a { color: inherit; }
 
 /* ── Planes ─────────────────────────────────── */
 .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.plan { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 28px 24px; display: flex; flex-direction: column; text-decoration: none; transition: transform .3s, box-shadow .3s, border-color .3s; }
-.plan:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--line2); }
+.plan { --pc: #F2690C; --pt: #FFE2CC; position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 32px 24px 28px; display: flex; flex-direction: column; text-decoration: none; transition: transform .3s, box-shadow .3s, border-color .3s; }
+.plan::before { content: ''; position: absolute; inset: 0 0 auto; height: 5px; background: var(--pc); }
+.plan.c2 { --pc: #E0483F; --pt: #FFDCD6; } .plan.c3 { --pc: #C4467A; --pt: #FFDDE5; } .plan.c4 { --pc: #7B3FA0; --pt: #ECE3FF; }
+.plan.c4::before { background: linear-gradient(90deg, #C4467A, #7B3FA0, #34276E); }
+.plan:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--pc) 45%, transparent); }
+.plan .tag { color: var(--pc) !important; }
+.plan .price { color: var(--pc); }
+.plan .badge { background: var(--pt); color: var(--pc); }
 .plan .tag { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); }
 .plan h3 { font-size: 21px; letter-spacing: -.02em; margin: 14px 0 8px; line-height: 1.15; }
 .plan .desc { font-size: 14px; color: var(--ink2); min-height: 88px; }
@@ -241,11 +269,15 @@ a { color: inherit; }
 .plan ul { list-style: none; display: grid; gap: 10px; margin: 18px 0 24px; }
 .plan li { display: grid; grid-template-columns: auto 1fr; gap: 10px; font-size: 14px; }
 .plan li .ico { width: 18px; height: 18px; color: var(--ok); margin-top: 2px; }
-.plan .more { margin-top: auto; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: var(--acc); }
+.plan .more { margin-top: auto; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: var(--pc); }
 .plan .more .ico { width: 16px; height: 16px; transition: transform .25s; }
 .plan:hover .more .ico { transform: translateX(3px); }
 .plan .badge { position: absolute; top: 22px; right: 20px; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; }
 .plan .badge .ico { width: 20px; height: 20px; }
+.dots { display: none; justify-content: center; gap: 6px; margin-top: 4px; }
+.dots i { width: 7px; height: 7px; border-radius: 99px; background: var(--line2); transition: width .3s, background .3s; }
+.dots i.on { width: 22px; background: var(--ink); }
+.swipe-hint { display: none; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); text-align: center; margin: 0 0 10px; }
 .plans-note { margin-top: 24px; font-size: 13.5px; color: var(--ink2); display: flex; gap: 10px; align-items: flex-start; background: var(--bg2); border: 1px solid var(--line); padding: 16px 18px; border-radius: var(--r); }
 .plans-note .ico { color: var(--violet); width: 20px; height: 20px; }
 
@@ -306,7 +338,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
 /* ── Responsive ─────────────────────────────── */
 @media (max-width: 1024px) {
   .hero .wrap, .problem, .faq-grid, .final-card, .sec-head { grid-template-columns: 1fr; }
-  .problem-art { position: static; max-width: 560px; }
+  .problem-art { position: static; max-width: 560px; order: 2; }
   .plans { grid-template-columns: repeat(2, 1fr); }
   .bento { grid-template-columns: repeat(2, 1fr); }
   .p-agent, .p-flow, .p-panel, .p-cta { grid-column: span 1; }
@@ -318,12 +350,21 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
 @media (max-width: 760px) {
   .nav, .header .btn-acc { display: none; }
   .menu-btn { display: grid; }
-  .scene { height: auto; display: grid; gap: 12px; padding-top: 78px; }
-  .chat, .metric { position: relative; inset: auto; width: 100%; }
-  .metric { width: 82%; margin-left: auto; }
-  .chip-cal { right: 0; top: 0; }
-  .chip-lead { display: none; }
-  .demo-tag { position: static; }
+  .cta-row .btn { width: 100%; justify-content: space-between; }
+  .cta-row .btn-ghost { justify-content: center; }
+  .trust { flex-direction: column; gap: 10px; padding-right: 64px; }
+  /* Celular: una sola pieza compacta (chat + confirmación flotante) */
+  .scene { height: auto; margin-top: 8px; padding-bottom: 46px; }
+  .chat { position: relative; inset: auto; width: 100%; padding: 14px; border-radius: 20px; }
+  .chat-h { gap: 10px; padding-bottom: 12px; margin-bottom: 12px; }
+  .avatar { width: 34px; height: 34px; border-radius: 10px; }
+  .msgs { min-height: 0; gap: 8px; padding-bottom: 26px; }
+  .msg { font-size: 13.5px; padding: 9px 12px; max-width: 86%; }
+  .msg time { display: none; }
+  .msgs .msg:last-child, .typing { display: none !important; }
+  .chip-cal { top: auto; right: 10px; bottom: 0; padding: 10px 12px; }
+  .metric, .chip-lead { display: none; }
+  .demo-tag { left: 4px; bottom: 10px; }
   .bento, .vs, .plans { grid-template-columns: 1fr; }
   .p-panel, .p-cta { grid-column: span 1; }
   .kpis { grid-template-columns: 1fr 1fr; }
@@ -337,6 +378,41 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
   .vs-col { padding: 26px 22px; }
   .faq details p { padding-right: 0; }
   .final-card { border-radius: 28px; }
+
+  /* ── Sistema de tarjetas en celular: mismas medidas para todas ── */
+  .sec { padding: 72px 0; }
+  .sec-head { gap: 14px; margin-bottom: 28px; }
+  .bento, .pains, .plans, .vs, .cases, .checks { gap: 12px; }
+  .pain, .pillar, .plan, .vs-col, .calc, .case-body { padding: 20px; border-radius: 20px; }
+  .case { border-radius: 20px; }
+  .pain .ic, .pillar .ic { width: 40px; height: 40px; border-radius: 12px; }
+  .pain .ic .ico, .pillar .ic .ico { width: 20px; height: 20px; }
+  .pain { gap: 14px; }
+  .pain h3, .pillar h3, .plan h3 { font-size: 17px; line-height: 1.3; letter-spacing: -.01em; }
+  .pain p, .pillar p, .plan .desc, .case-body p { font-size: 14.5px; }
+  /* Ícono en línea con el título; el resto ocupa el ancho completo */
+  .pillar:not(.p-cta) { display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; row-gap: 12px; align-items: center; }
+  .pillar:not(.p-cta) > :not(.ic):not(h3) { grid-column: 1 / -1; }
+  .pillar .mini { margin-top: 4px; padding-top: 0; }
+  .mini-chat .msg { font-size: 13px; padding: 9px 12px; }
+  .kpis, .kpis .kpi:last-child { grid-template-columns: repeat(3, 1fr); grid-column: auto; gap: 8px; }
+  .kpi { padding: 12px 10px; border-radius: 12px; }
+  .kpi b { font-size: 20px; }
+  .kpi small { font-size: 9.5px; }
+  .kpi span { font-size: 11px; }
+  .spark { height: 44px; margin-top: 4px; }
+  .p-cta .h3 { font-size: 22px; }
+  .plan .badge { top: 18px; right: 18px; width: 36px; height: 36px; border-radius: 10px; }
+  .price { font-size: 28px; margin-top: 14px; }
+  .vs-list li { padding: 12px 0; gap: 12px; }
+  .vs-list strong { font-size: 14.5px; }
+  .calc-result b { font-size: 22px; }
+  /* Carruseles en celular (planes y casos) */
+  .plans, .cases { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -24px; padding: 6px 24px 16px; scroll-padding: 0 24px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .plans::-webkit-scrollbar, .cases::-webkit-scrollbar { display: none; }
+  .plan, .case { flex: 0 0 86%; scroll-snap-align: start; }
+  .dots { display: flex; }
+  .swipe-hint { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -405,22 +481,22 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
     <a href="/" class="logo" aria-label="HORIZON, inicio"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="140" height="27"></a>
     <nav class="nav" aria-label="Principal">
       <a href="#sistema">Sistema</a>
-      <a href="#proceso">Proceso</a>
       <a href="#planes">Planes</a>
+      <a href="#proceso">Proceso</a>
       <a href="#casos">Casos</a>
       <a href="#faq">Preguntas</a>
     </nav>
-    <a href="/agendar" class="btn btn-acc" data-origin="nav">Agendar diagnóstico</a>
+    <a href="/agendar" class="btn btn-acc" data-origin="nav">Diagnóstico gratis</a>
     <button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="drawer"><svg class="ico"><use href="#i-menu"/></svg></button>
   </div>
 </header>
 <div class="drawer" id="drawer">
   <a href="#sistema">Sistema</a>
-  <a href="#proceso">Proceso</a>
   <a href="#planes">Planes</a>
+  <a href="#proceso">Proceso</a>
   <a href="#casos">Casos</a>
   <a href="#faq">Preguntas</a>
-  <a href="/agendar" class="btn btn-acc" data-origin="nav-mobile">Agendar diagnóstico <svg class="ico"><use href="#i-arrow"/></svg></a>
+  <a href="/agendar" class="btn btn-acc" data-origin="nav-mobile">Quiero mi diagnóstico gratis <svg class="ico"><use href="#i-arrow"/></svg></a>
 </div>
 
 <main id="main">
@@ -429,7 +505,6 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
 <section class="hero">
   <div class="wrap">
     <div>
-      <span class="pill" data-intro><b><svg class="ico"><use href="#i-pin"/></svg>Rancagua</b>Consultoría de Arquitectura Digital</span>
       <h1>
         <span class="line"><span>Esta noche,</span></span>
         <span class="line"><span>5 clientes te escriben.</span></span>
@@ -437,8 +512,8 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
       </h1>
       <p class="lead" data-intro>La mayoría de los negocios no pierde clientes por su producto. Los pierde porque <strong>no tiene un sistema que responda a tiempo.</strong></p>
       <div class="cta-row" data-intro>
-        <a href="/agendar" class="btn btn-acc" data-origin="hero">Ver cuántos clientes estoy perdiendo <svg class="ico"><use href="#i-arrow"/></svg></a>
-        <a href="#sistema" class="btn btn-ghost">Cómo funciona</a>
+        <a href="/agendar" class="btn btn-acc" data-origin="hero">Quiero mi diagnóstico gratis <svg class="ico"><use href="#i-arrow"/></svg></a>
+        <a href="#calculadora" class="btn btn-ghost">Calcular cuánto estoy perdiendo</a>
       </div>
       <div class="trust" data-intro>
         <span><svg class="ico"><use href="#i-check"/></svg>Diagnóstico gratis de 30 min</span>
@@ -483,7 +558,8 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
 <section class="stack" aria-label="Plataformas">
   <div class="wrap">
     <p>Infraestructura sobre las mejores plataformas del mercado</p>
-    <ul data-stagger>
+    <div class="marquee" data-reveal>
+    <ul>
       <li><img src="/Identidad/strip-logos/Google/Google_Logo_0.svg" alt="Google" height="22"></li>
       <li><img src="/Identidad/strip-logos/META/meta-color.svg" alt="Meta" height="22"></li>
       <li><img src="/Identidad/strip-logos/Supabase/supabase-logo-wordmark--light.svg" alt="Supabase" height="22"></li>
@@ -491,40 +567,45 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
       <li><img src="/Identidad/strip-logos/Vercel/vercel-text.svg" alt="Vercel" height="22"></li>
       <li><img src="/Identidad/strip-logos/Anthropic/Anthropic_Logo_0.svg" alt="Anthropic" height="16" style="height:16px"></li>
       <li><img src="/Identidad/strip-logos/Open%20AI/OpenAI_Logo.svg" alt="OpenAI" height="22"></li>
+      <li aria-hidden="true"><img src="/Identidad/strip-logos/Google/Google_Logo_0.svg" alt="" height="22"></li>
+      <li aria-hidden="true"><img src="/Identidad/strip-logos/META/meta-color.svg" alt="" height="22"></li>
+      <li aria-hidden="true"><img src="/Identidad/strip-logos/Supabase/supabase-logo-wordmark--light.svg" alt="" height="22"></li>
+      <li aria-hidden="true"><img src="/Identidad/strip-logos/N8N/n8n-text.svg" alt="" height="22"></li>
+      <li aria-hidden="true"><img src="/Identidad/strip-logos/Vercel/vercel-text.svg" alt="" height="22"></li>
+      <li aria-hidden="true"><img src="/Identidad/strip-logos/Anthropic/Anthropic_Logo_0.svg" alt="" height="16" style="height:16px"></li>
+      <li aria-hidden="true"><img src="/Identidad/strip-logos/Open%20AI/OpenAI_Logo.svg" alt="" height="22"></li>
     </ul>
+    </div>
   </div>
 </section>
 
 <!-- PROBLEMA -->
 <section class="sec" id="problema">
   <div class="wrap problem">
-    <figure class="problem-art" data-reveal>
-      <div class="art">
-        <!-- Ilustración: el celular del dueño a las 23:00 -->
-        <svg viewBox="0 0 420 380" role="img" aria-label="Celular con mensajes sin responder durante la noche">
-          <defs>
-            <linearGradient id="gN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ECE3FF"/><stop offset="1" stop-color="#FFDDE5"/></linearGradient>
-          </defs>
-          <rect x="0" y="0" width="420" height="380" rx="22" fill="url(#gN)"/>
-          <circle cx="340" cy="70" r="30" fill="#FFF4EA"/><circle cx="356" cy="60" r="27" fill="url(#gN)"/>
-          <g fill="#fff" opacity=".9"><circle cx="70" cy="60" r="2.5"/><circle cx="120" cy="34" r="1.8"/><circle cx="270" cy="40" r="2"/><circle cx="390" cy="140" r="1.8"/><circle cx="40" cy="170" r="2"/></g>
-          <rect x="128" y="62" width="164" height="300" rx="30" fill="#1A1626"/>
-          <rect x="138" y="74" width="144" height="276" rx="22" fill="#FFFBF6"/>
-          <rect x="186" y="82" width="48" height="8" rx="4" fill="#1A1626"/>
-          <text x="210" y="122" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="26" fill="#1A1626">23:14</text>
-          <g font-family="Plus Jakarta Sans, sans-serif" font-size="9.5" fill="#5F5970">
-            <rect x="148" y="140" width="124" height="34" rx="10" fill="#fff" stroke="#F0E7DC"/><circle cx="162" cy="157" r="7" fill="#25D366"/><text x="174" y="154" font-weight="700" fill="#1A1626">Clienta nueva</text><text x="174" y="166">¿Cuánto sale el corte?</text>
-            <rect x="148" y="180" width="124" height="34" rx="10" fill="#fff" stroke="#F0E7DC"/><circle cx="162" cy="197" r="7" fill="#C4467A"/><text x="174" y="194" font-weight="700" fill="#1A1626">Instagram</text><text x="174" y="206">¿Tienen hora mañana?</text>
-            <rect x="148" y="220" width="124" height="34" rx="10" fill="#fff" stroke="#F0E7DC"/><circle cx="162" cy="237" r="7" fill="#25D366"/><text x="174" y="234" font-weight="700" fill="#1A1626">Pedro</text><text x="174" y="246">Hola?? sigue abierto?</text>
-            <rect x="148" y="260" width="124" height="34" rx="10" fill="#fff" stroke="#F0E7DC" opacity=".6"/><rect x="148" y="300" width="124" height="34" rx="10" fill="#fff" stroke="#F0E7DC" opacity=".3"/>
-          </g>
-          <g transform="translate(270 58)"><circle r="20" fill="#F2690C"/><text y="6" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="16" fill="#fff">14</text></g>
-          <g transform="translate(62 250)"><rect width="66" height="46" rx="14" fill="#fff"/><path d="M14 30h38M14 18h26" stroke="#E6DACB" stroke-width="5" stroke-linecap="round"/><path d="M66 32l10 8-14-2z" fill="#fff"/></g>
-          <g transform="translate(300 200)"><rect width="76" height="50" rx="14" fill="#fff"/><path d="M14 18h48M14 32h30" stroke="#E6DACB" stroke-width="5" stroke-linecap="round"/><path d="M0 34l-10 10 14-4z" fill="#fff"/></g>
-        </svg>
+    <aside class="problem-art calc" id="calculadora" data-reveal aria-labelledby="calcTitle">
+      <div class="calc-head">
+        <span class="ic t-peach"><svg class="ico"><use href="#i-panel"/></svg></span>
+        <div><h3 id="calcTitle">¿Cuánto se te escapa al mes?</h3><p>Mové los valores con los números de tu negocio.</p></div>
       </div>
-      <figcaption>14 mensajes sin responder. Cada uno es un cliente que mañana le escribe a otro.</figcaption>
-    </figure>
+      <div class="calc-field">
+        <label for="cQ">Consultas que recibís por semana <output id="oQ">40</output></label>
+        <input type="range" id="cQ" min="5" max="200" step="5" value="40">
+      </div>
+      <div class="calc-field">
+        <label for="cP">Quedan sin respuesta a tiempo <output id="oP">30%</output></label>
+        <input type="range" id="cP" min="5" max="80" step="5" value="30">
+      </div>
+      <div class="calc-field">
+        <label for="cT">Lo que gasta un cliente en promedio <output id="oT">$15.000</output></label>
+        <input type="range" id="cT" min="5000" max="300000" step="5000" value="15000">
+      </div>
+      <div class="calc-result" aria-live="polite">
+        <div><small>Consultas perdidas al mes</small><b id="rQ">52</b></div>
+        <div><small>Ventas que se van a otro</small><b id="rV">$234.000</b></div>
+      </div>
+      <p class="calc-note">Supuesto conservador: 3 de cada 10 consultas terminan en compra. En el diagnóstico lo calculamos con tus datos reales.</p>
+      <a href="/agendar" class="btn btn-acc" data-origin="calculadora">Quiero recuperar esas ventas <svg class="ico"><use href="#i-arrow"/></svg></a>
+    </aside>
 
     <div>
       <span class="eyebrow" data-reveal>Diagnóstico actual</span>
@@ -594,8 +675,72 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
       </article>
       <article class="pillar p-cta">
         <div><span class="eyebrow" style="color:#C9C3D6">Datos de ejemplo</span><p class="h3" style="margin-top:16px">Mirá un sistema funcionando en un negocio como el tuyo.</p></div>
-        <div><p style="margin-bottom:20px">En el diagnóstico te muestro uno real, con tu rubro.</p><a href="/agendar" class="btn btn-acc" data-origin="sistema">Agendar diagnóstico <svg class="ico"><use href="#i-arrow"/></svg></a></div>
+        <div><p style="margin-bottom:20px">En el diagnóstico te muestro uno real, con tu rubro.</p><a href="/agendar" class="btn btn-acc" data-origin="sistema">Quiero ver uno funcionando <svg class="ico"><use href="#i-arrow"/></svg></a></div>
       </article>
+    </div>
+  </div>
+</section>
+
+<!-- PLANES -->
+<section class="sec" id="planes">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow" data-reveal>La inversión</span><h2 class="h2" data-reveal>Cuatro planes según <span class="g">la etapa de tu negocio.</span></h2></div>
+      <p class="lead" data-reveal>Pago único de implementación y soporte mensual opcional desde el segundo mes. Sin permanencia.</p>
+    </div>
+    <p class="swipe-hint">Deslizá para ver los 4 planes →</p>
+    <div class="plans" id="plansRail" data-stagger>
+      <a class="plan c1" href="/plan-01">
+        <span class="badge"><svg class="ico"><use href="#i-web"/></svg></span>
+        <span class="tag">Plan 01</span><h3>Presencia Digital</h3>
+        <p class="desc">Tu página web profesional, conectada a Google y WhatsApp. Que te encuentren, te entiendan y te escriban.</p>
+        <p class="price">$490.000</p><p class="terms">CLP + boleta · 3–4 semanas<br>Soporte desde $120.000/mes</p>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>Sitio web profesional + Google Business</li><li><svg class="ico"><use href="#i-check"/></svg>WhatsApp Business y chatbot básico 24/7</li><li><svg class="ico"><use href="#i-check"/></svg>Formulario y registro automático de contactos</li></ul>
+        <span class="more">Ver qué incluye <svg class="ico"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="plan c2" href="/plan-02">
+        <span class="badge"><svg class="ico"><use href="#i-layers"/></svg></span>
+        <span class="tag">Plan 02</span><h3>Ecosistema Digital</h3>
+        <p class="desc">Web + sistema para ordenar toda la información: reservas o tienda, CRM y métricas. Todo conversa entre sí.</p>
+        <p class="price">$990.000</p><p class="terms">CLP + boleta · 4–5 semanas<br>Soporte desde $200.000/mes</p>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>Todo lo del Plan 01</li><li><svg class="ico"><use href="#i-check"/></svg>Reservas, tienda o caja + inventario</li><li><svg class="ico"><use href="#i-check"/></svg>CRM + dashboard y chatbot completo</li></ul>
+        <span class="more">Ver qué incluye <svg class="ico"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="plan c3" href="/plan-03">
+        <span class="badge"><svg class="ico"><use href="#i-spark"/></svg></span>
+        <span class="tag">Plan 03</span><h3>Sistema con IA</h3>
+        <p class="desc">El sistema de IA personalizado que capta, responde, vende y registra sin que tengas que estar en cada paso.</p>
+        <p class="price">$1.990.000</p><p class="terms">CLP + boleta · 5–6 semanas<br>Soporte desde $350.000/mes</p>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>Todo lo del Plan 02 + agente IA integrado</li><li><svg class="ico"><use href="#i-check"/></svg>Automatizaciones n8n y campañas Meta Ads</li><li><svg class="ico"><use href="#i-check"/></svg>Auditoría completa y GEO con monitoreo</li></ul>
+        <span class="more">Ver qué incluye <svg class="ico"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="plan c4" href="/plan-04">
+        <span class="badge"><svg class="ico"><use href="#i-agent"/></svg></span>
+        <span class="tag">Plan 04</span><h3>Agente IA Personalizado</h3>
+        <p class="desc">Un empleado virtual 24/7 entrenado con tu negocio: responde, agenda y vende en tus canales.</p>
+        <p class="price"><small>Desde </small>$1.490.000</p><p class="terms">CLP + boleta · 2–3 semanas<br>Soporte desde $290.000/mes</p>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>Atiende WhatsApp, Instagram y web</li><li><svg class="ico"><use href="#i-check"/></svg>Agenda, responde objeciones y vende</li><li><svg class="ico"><use href="#i-check"/></svg>Disponible solo o sumado a otro plan</li></ul>
+        <span class="more">Ver qué incluye <svg class="ico"><use href="#i-arrow"/></svg></span>
+      </a>
+    </div>
+    <div class="dots" data-rail="plansRail" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+    <p class="plans-note" data-reveal><svg class="ico"><use href="#i-gift"/></svg><span>Precios en CLP + boleta de honorarios. El primer mes de soporte va incluido en todos los planes. <strong>Programa Fundadores:</strong> mismo precio, segundo mes de soporte sin costo y valor del soporte congelado por 12 meses. <a href="/servicios">Ver todos los servicios</a></span></p>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section class="sec system" id="proceso">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow" data-reveal>Cómo trabajamos</span><h2 class="h2" data-reveal>Del diagnóstico al <span class="g">sistema funcionando.</span></h2></div>
+      <p class="lead" data-reveal>Sin onboardings interminables. Primero escucho cómo funciona tu negocio; después construimos con propósito y sin sorpresas.</p>
+    </div>
+    <div class="steps" id="steps">
+      <div class="track" aria-hidden="true"><i id="trackFill"></i></div>
+      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-ear"/></svg></span><span class="num">01</span><h3>Diagnóstico gratuito</h3><p>30 minutos para entender tu negocio real: qué está trabado, qué necesita y dónde está la oportunidad. Sin presentaciones ni presión.</p><span class="meta">30 min · Sin compromiso</span></div>
+      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-blueprint"/></svg></span><span class="num">02</span><h3>Blueprint del sistema</h3><p>Diseñamos la arquitectura completa: qué construimos, en qué orden, con qué herramientas y por qué.</p><span class="meta">3–5 días hábiles</span></div>
+      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-build"/></svg></span><span class="num">03</span><h3>Construcción</h3><p>Diseño, desarrollo, integraciones y pruebas. Ves el avance, y el sistema se entrega funcionando, no como promesa.</p><span class="meta">2–6 semanas según plan</span></div>
+      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-rocket"/></svg></span><span class="num">04</span><h3>Activación y soporte</h3><p>Lo instalo en persona y sale en vivo. El primer mes de soporte va incluido; después sigue mes a mes, sin permanencia.</p><span class="meta">Soporte desde el mes 2</span></div>
     </div>
   </div>
 </section>
@@ -630,68 +775,6 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
   </div>
 </section>
 
-<!-- PROCESO -->
-<section class="sec system" id="proceso">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow" data-reveal>Cómo trabajamos</span><h2 class="h2" data-reveal>Del diagnóstico al <span class="g">sistema funcionando.</span></h2></div>
-      <p class="lead" data-reveal>Sin onboardings interminables. Primero escucho cómo funciona tu negocio; después construimos con propósito y sin sorpresas.</p>
-    </div>
-    <div class="steps" id="steps">
-      <div class="track" aria-hidden="true"><i id="trackFill"></i></div>
-      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-ear"/></svg></span><span class="num">01</span><h3>Diagnóstico gratuito</h3><p>30 minutos para entender tu negocio real: qué está trabado, qué necesita y dónde está la oportunidad. Sin presentaciones ni presión.</p><span class="meta">30 min · Sin compromiso</span></div>
-      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-blueprint"/></svg></span><span class="num">02</span><h3>Blueprint del sistema</h3><p>Diseñamos la arquitectura completa: qué construimos, en qué orden, con qué herramientas y por qué.</p><span class="meta">3–5 días hábiles</span></div>
-      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-build"/></svg></span><span class="num">03</span><h3>Construcción</h3><p>Diseño, desarrollo, integraciones y pruebas. Ves el avance, y el sistema se entrega funcionando, no como promesa.</p><span class="meta">2–6 semanas según plan</span></div>
-      <div class="step" data-reveal><span class="ic"><svg class="ico"><use href="#i-rocket"/></svg></span><span class="num">04</span><h3>Activación y soporte</h3><p>Lo instalo en persona y sale en vivo. El primer mes de soporte va incluido; después sigue mes a mes, sin permanencia.</p><span class="meta">Soporte desde el mes 2</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- PLANES -->
-<section class="sec" id="planes">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow" data-reveal>La inversión</span><h2 class="h2" data-reveal>Cuatro planes según <span class="g">la etapa de tu negocio.</span></h2></div>
-      <p class="lead" data-reveal>Pago único de implementación y soporte mensual opcional desde el segundo mes. Sin permanencia.</p>
-    </div>
-    <div class="plans" data-stagger>
-      <a class="plan" href="/plan-01">
-        <span class="badge t-peach"><svg class="ico"><use href="#i-web"/></svg></span>
-        <span class="tag">Plan 01</span><h3>Presencia Digital</h3>
-        <p class="desc">Tu página web profesional, conectada a Google y WhatsApp. Que te encuentren, te entiendan y te escriban.</p>
-        <p class="price">$490.000</p><p class="terms">CLP + boleta · 3–4 semanas<br>Soporte desde $120.000/mes</p>
-        <ul><li><svg class="ico"><use href="#i-check"/></svg>Sitio web profesional + Google Business</li><li><svg class="ico"><use href="#i-check"/></svg>WhatsApp Business y chatbot básico 24/7</li><li><svg class="ico"><use href="#i-check"/></svg>Formulario y registro automático de contactos</li></ul>
-        <span class="more">Ver plan 01 <svg class="ico"><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="plan" href="/plan-02">
-        <span class="badge t-rose"><svg class="ico"><use href="#i-layers"/></svg></span>
-        <span class="tag">Plan 02</span><h3>Ecosistema Digital</h3>
-        <p class="desc">Web + sistema para ordenar toda la información: reservas o tienda, CRM y métricas. Todo conversa entre sí.</p>
-        <p class="price">$990.000</p><p class="terms">CLP + boleta · 4–5 semanas<br>Soporte desde $200.000/mes</p>
-        <ul><li><svg class="ico"><use href="#i-check"/></svg>Todo lo del Plan 01</li><li><svg class="ico"><use href="#i-check"/></svg>Reservas, tienda o caja + inventario</li><li><svg class="ico"><use href="#i-check"/></svg>CRM + dashboard y chatbot completo</li></ul>
-        <span class="more">Ver plan 02 <svg class="ico"><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="plan" href="/plan-03">
-        <span class="badge t-lilac"><svg class="ico"><use href="#i-spark"/></svg></span>
-        <span class="tag">Plan 03</span><h3>Sistema con IA</h3>
-        <p class="desc">El sistema de IA personalizado que capta, responde, vende y registra sin que tengas que estar en cada paso.</p>
-        <p class="price">$1.990.000</p><p class="terms">CLP + boleta · 5–6 semanas<br>Soporte desde $350.000/mes</p>
-        <ul><li><svg class="ico"><use href="#i-check"/></svg>Todo lo del Plan 02 + agente IA integrado</li><li><svg class="ico"><use href="#i-check"/></svg>Automatizaciones n8n y campañas Meta Ads</li><li><svg class="ico"><use href="#i-check"/></svg>Auditoría completa y GEO con monitoreo</li></ul>
-        <span class="more">Ver plan 03 <svg class="ico"><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="plan" href="/plan-04">
-        <span class="badge t-mint"><svg class="ico"><use href="#i-agent"/></svg></span>
-        <span class="tag">Plan 04</span><h3>Agente IA Personalizado</h3>
-        <p class="desc">Un empleado virtual 24/7 entrenado con tu negocio: responde, agenda y vende en tus canales.</p>
-        <p class="price"><small>Desde </small>$1.490.000</p><p class="terms">CLP + boleta · 2–3 semanas<br>Soporte desde $290.000/mes</p>
-        <ul><li><svg class="ico"><use href="#i-check"/></svg>Atiende WhatsApp, Instagram y web</li><li><svg class="ico"><use href="#i-check"/></svg>Agenda, responde objeciones y vende</li><li><svg class="ico"><use href="#i-check"/></svg>Disponible solo o sumado a otro plan</li></ul>
-        <span class="more">Ver plan 04 <svg class="ico"><use href="#i-arrow"/></svg></span>
-      </a>
-    </div>
-    <p class="plans-note" data-reveal><svg class="ico"><use href="#i-gift"/></svg><span>Precios en CLP + boleta de honorarios. El primer mes de soporte va incluido en todos los planes. <strong>Programa Fundadores:</strong> mismo precio, segundo mes de soporte sin costo y valor del soporte congelado por 12 meses. <a href="/servicios">Ver todos los servicios</a></span></p>
-  </div>
-</section>
-
 <!-- CASOS -->
 <section class="sec system" id="casos">
   <div class="wrap">
@@ -699,7 +782,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
       <div><span class="eyebrow" data-reveal>Trabajo real</span><h2 class="h2" data-reveal>Sistemas en producción, <span class="g">no mockups.</span></h2></div>
       <p class="lead" data-reveal>Proyectos construidos y desplegados para negocios reales.</p>
     </div>
-    <div class="cases" data-stagger>
+    <div class="cases" id="casesRail" data-stagger>
       <article class="case">
         <div class="case-vis" style="background:linear-gradient(135deg,#DDF5E6,#ECE3FF)">
           <div class="browser">
@@ -744,6 +827,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
         </div>
       </article>
     </div>
+    <div class="dots" data-rail="casesRail" aria-hidden="true"><i class="on"></i><i></i></div>
   </div>
 </section>
 
@@ -770,7 +854,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
         <span class="eyebrow" data-reveal>El primer paso</span>
         <h2 class="h2" style="margin-top:18px" data-reveal>Agendá el diagnóstico. Salí con un número.</h2>
         <p class="lead" data-reveal>30 minutos, sin costo y sin compromiso. Calculamos cuántos clientes estás perdiendo por semana con los datos reales de tu negocio, no con generalidades.</p>
-        <a href="/agendar" class="btn btn-acc" data-origin="cta-seccion" data-reveal>Calcular mis clientes perdidos <svg class="ico"><use href="#i-arrow"/></svg></a>
+        <a href="/agendar" class="btn btn-acc" data-origin="cta-seccion" data-reveal>Reservar mi diagnóstico gratis <svg class="ico"><use href="#i-arrow"/></svg></a>
       </div>
       <ul class="checks" data-stagger>
         <li><span class="n">01</span><div><strong>Cómo llegan tus clientes</strong><small>Canales, calidad del flujo y puntos de contacto.</small></div></li>
@@ -885,8 +969,39 @@ document.addEventListener('DOMContentLoaded', function () {
       scrollTrigger: { trigger: spark, start: 'top 85%', once: true } });
   }
 
-  // ── Ilustración del problema: leve parallax ──
-  gsap.to('.problem-art svg', { yPercent: -4, ease: 'none', scrollTrigger: { trigger: '#problema', start: 'top bottom', end: 'bottom top', scrub: true } });
+});
+
+// ── Calculadora de clientes perdidos ──
+(function () {
+  var q = document.getElementById('cQ'), pc = document.getElementById('cP'), t = document.getElementById('cT');
+  if (!q) return;
+  var clp = function (n) { return '$' + Math.round(n).toLocaleString('es-CL'); };
+  function fill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+  function calc() {
+    var perdidas = q.value * 4.33 * pc.value / 100;
+    document.getElementById('oQ').textContent = q.value;
+    document.getElementById('oP').textContent = pc.value + '%';
+    document.getElementById('oT').textContent = clp(t.value);
+    document.getElementById('rQ').textContent = Math.round(perdidas);
+    document.getElementById('rV').textContent = clp(perdidas * 0.3 * t.value);
+    [q, pc, t].forEach(fill);
+  }
+  [q, pc, t].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+
+// ── Carruseles en celular: punto activo ──
+document.querySelectorAll('.dots[data-rail]').forEach(function (dots) {
+  var rail = document.getElementById(dots.dataset.rail);
+  if (!rail) return;
+  rail.addEventListener('scroll', function () {
+    var cards = rail.children, best = 0, min = Infinity;
+    for (var i = 0; i < cards.length; i++) {
+      var d = Math.abs(cards[i].getBoundingClientRect().left - rail.getBoundingClientRect().left - 24);
+      if (d < min) { min = d; best = i; }
+    }
+    dots.querySelectorAll('i').forEach(function (dot, i) { dot.classList.toggle('on', i === best); });
+  }, { passive: true });
 });
 </script>
 </body>
