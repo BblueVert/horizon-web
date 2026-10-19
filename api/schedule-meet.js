@@ -223,5 +223,6 @@ module.exports = async function handler(req, res) {
     ).catch(err => console.error('[schedule-meet] n8n notify:', err.message));
   }
 
-  return res.status(200).json({ ok: true, agendado: true, meetLink, reunionFecha: reunionISO });
+  // invitacion = Google Calendar creó el evento y mandó el email; si no, el front no promete un correo que no salió
+  return res.status(200).json({ ok: true, agendado: true, invitacion: Boolean(eventId), meetLink, reunionFecha: reunionISO });
 };

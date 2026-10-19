@@ -432,8 +432,8 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
            presupuesto: calif.presupuesto, volumen: calif.volumen, decisor: calif.decisor })
       .then(function (d) {
         var meet = d.meetLink || '';
-        setStatus(st, 'ok', meet ? 'Diagnóstico confirmado. Tu link de Meet: ' + meet : 'Diagnóstico confirmado. Te llega la confirmación por email.');
-        try { sessionStorage.setItem('horizon_booking', JSON.stringify({ attendeeName: nombre, attendeeEmail: email, startTime: d.reunionFecha || selDate, meetLink: meet })); } catch (x) {}
+        setStatus(st, 'ok', meet ? 'Diagnóstico confirmado. Tu link de Meet: ' + meet : d.invitacion ? 'Diagnóstico confirmado. Te llega la confirmación por email.' : 'Diagnóstico agendado. Benja te confirma por WhatsApp.');
+        try { sessionStorage.setItem('horizon_booking', JSON.stringify({ attendeeName: nombre, attendeeEmail: email, startTime: d.reunionFecha || selDate, meetLink: meet, invitacion: d.invitacion !== false })); } catch (x) {}
         setTimeout(function () { location.href = '/booking-confirm'; }, 2200);
       })
       .catch(function (x) { setStatus(st, 'error', x.message); btn.disabled = false; btn.firstChild.textContent = 'Confirmar mi diagnóstico '; });

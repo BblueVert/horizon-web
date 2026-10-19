@@ -63,7 +63,7 @@ main { padding: calc(var(--header-h) + 32px) 0 64px; }
       </svg>
       <span class="eyebrow">Diagnóstico gratuito · 30 min</span>
       <h1 class="h1" style="margin-top:12px" id="title">Tu diagnóstico <span class="g">está confirmado.</span></h1>
-      <p class="lead">Te llegó la invitación por email. Benja te escribe por WhatsApp antes de la sesión para prepararla bien.</p>
+      <p class="lead" id="lead">Te llegó la invitación por email. Benja te escribe por WhatsApp antes de la sesión para prepararla bien.</p>
     </section>
 
     <section class="card" id="detail" hidden>
@@ -73,7 +73,7 @@ main { padding: calc(var(--header-h) + 32px) 0 64px; }
       </div>
       <ul class="rows">
         <li id="rowNombre" hidden><span>Nombre</span><b id="valNombre"></b></li>
-        <li id="rowEmail" hidden><span>Invitación enviada a</span><b id="valEmail"></b></li>
+        <li id="rowEmail" hidden><span id="lblEmail">Invitación enviada a</span><b id="valEmail"></b></li>
         <li><span>Lugar</span><b>Google Meet</b></li>
       </ul>
       <a class="btn btn-acc meet" id="meetBtn" href="#" target="_blank" rel="noopener" hidden>Abrir link de Meet <svg class="ico"><use href="/shared/hz-sprite.svg#i-ext"/></svg></a>
@@ -131,6 +131,11 @@ main { padding: calc(var(--header-h) + 32px) 0 64px; }
   if (fechaRaw)  $('valFecha').textContent = formatFecha(fechaRaw);
   if (nombreRaw) { $('rowNombre').hidden = false; $('valNombre').textContent = nombreRaw; $('title').firstChild.textContent = nombreRaw.split(' ')[0] + ', tu diagnóstico '; }
   if (emailRaw)  { $('rowEmail').hidden = false; $('valEmail').textContent = emailRaw; }
+  // Si Google Calendar no creó el evento no salió ningún email: no prometerlo.
+  if (stored.invitacion === false) {
+    $('lead').textContent = 'Benja te escribe por WhatsApp para confirmarte la hora y mandarte el link de la sesión.';
+    $('lblEmail').textContent = 'Email';
+  }
   if (/^https:\/\/meet\.google\.com\//.test(linkRaw)) { $('meetBtn').hidden = false; $('meetBtn').href = linkRaw; }
 
   // Registra la agenda en OPS. Es interno: el visitante no ve el resultado.
