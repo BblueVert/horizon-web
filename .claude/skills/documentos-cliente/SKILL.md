@@ -7,7 +7,7 @@ description: Genera los documentos formales de un cliente HORIZON (propuesta com
 
 ## Entradas
 - `CONTENIDO/clientes/<slug>/ficha.md` (datos del cliente y del acuerdo).
-- `referencias/datos-horizon.md` (datos del prestador).
+- `referencias/datos-horizon.md` (datos públicos del prestador) y `referencias/datos-privados.md` (RUT, domicilio, banco; local, no versionado).
 - `referencias/condiciones.md` (condiciones comerciales por defecto).
 - Alcance: `Pages/plan-0N.html` ("Qué incluye" y "No incluye") · Precios: `ESTRATEGIA/HORIZON-ECOSISTEMA.md`.
 
@@ -20,7 +20,7 @@ description: Genera los documentos formales de un cliente HORIZON (propuesta com
 | Acta de entrega | `estructuras/acta-entrega.md` | Al entregar el proyecto |
 
 ## Pasos
-1. Leé la ficha, `datos-horizon.md` y `condiciones.md`. Si la ficha no existe, pedí los datos mínimos (razón social o nombre, RUT, plan, monto).
+1. Leé la ficha, `datos-horizon.md`, `datos-privados.md` (si existe) y `condiciones.md`. Si la ficha no existe, pedí los datos mínimos (razón social o nombre, RUT, plan, monto).
 2. Para cada documento: copiá `templates/base.html` y reemplazá `{{TITULO}}`, `{{SUBTITULO}}`, `{{CODIGO}}`, `{{FECHA}}` y `{{CUERPO}}` con el HTML armado según su estructura.
 3. Guardá en `CONTENIDO/clientes/<slug>/AAAA-MM-DD-<documento>.html`.
 4. Generá el PDF: `node scripts/doc-pdf.js <archivo.html>` (si no hay navegador disponible, avisá que se imprime desde el navegador → Guardar como PDF).
