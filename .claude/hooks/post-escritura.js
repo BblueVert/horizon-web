@@ -29,6 +29,12 @@ if (vercel && /^Pages\/.+\.html$/.test(rel)) {
   if (!routed) problems.push(`/${rel} no tiene rewrite en vercel.json: en producción no existe. Agregalo.`);
 }
 
+if (/^CONTENIDO\/clientes\/.+\.(html|md)$/.test(rel) && !rel.endsWith('/ficha.md')) {
+  const texto = fs.readFileSync(filePath, 'utf8');
+  const pendientes = [...new Set(texto.match(/\[\[(FALTA|DEFINIR)[^\]]*\]\]/g) || [])];
+  if (pendientes.length) problems.push(`${rel} tiene ${pendientes.length} pendiente(s): ${pendientes.join(', ')}. Avisale al usuario; no los inventes.`);
+}
+
 try {
   const logDir = path.join(root, '.claude', 'logs');
   fs.mkdirSync(logDir, { recursive: true });
