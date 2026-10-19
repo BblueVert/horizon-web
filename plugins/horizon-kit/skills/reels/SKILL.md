@@ -15,6 +15,11 @@ description: Escribe guiones de reels para Instagram/TikTok de HORIZON (hook, de
 - **Cierre + CTA (25–35 s):** un solo CTA acorde al modo.
 - **Texto en pantalla** por beat y **caption** con palabra clave de ManyChat en mayúsculas si el CTA es comentar.
 
+## Si se pide el video terminado
+- Música original con `scripts/reel-musica.py` (un `cue.json` por video, sincronizado a los cortes). Distinta en cada reel, misma línea sonora.
+- Portada propia diseñada para ese video.
+- Ver reglas de video en `.claude/memoria/contenido.md`.
+
 ## Entrega
 - 3 hooks alternativos + 1 guion completo.
 - Guardar en `CONTENIDO/reels/AAAA-MM-DD-<slug>.md`.
