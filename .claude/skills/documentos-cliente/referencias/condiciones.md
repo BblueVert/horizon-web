@@ -14,7 +14,7 @@ Cuando lo decidas, reemplazá el valor y borrá la marca.
 ## Por definir (valor sugerido)
 - Montos y boleta: [[DEFINIR: ¿el precio publicado es el líquido que recibe HORIZON o el bruto de la boleta?]]
 - Forma de pago de la implementación: [[DEFINIR: 50% al firmar para reservar el inicio y 50% contra entrega]]
-- Medio de pago: transferencia bancaria a los datos de `datos-horizon.md`.
+- Medio de pago: transferencia bancaria a los datos de `datos-privados.md`.
 - Pago del soporte mensual: [[DEFINIR: por adelantado, los primeros 5 días de cada mes]]
 - Aviso para terminar el soporte: [[DEFINIR: 15 días corridos antes del siguiente período]]
 - Rondas de revisión del diseño (Figma): [[DEFINIR: 2 rondas incluidas]]

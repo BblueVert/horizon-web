@@ -6,6 +6,8 @@
 *.key
 *.pem
 secrets.json
+# Datos personales del prestador (RUT, domicilio, banco) — el repo es público
+.claude/skills/documentos-cliente/referencias/datos-privados.md
 credentials.json
 
 # Archivos de sistema
