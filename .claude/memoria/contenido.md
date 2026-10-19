@@ -1,7 +1,7 @@
 # Expectativas de contenido
 
 ## Voz
-- Fundador visible (Benja), cercano, local, directo. Voseo chileno-rioplatense como en la landing.
+- Fundador visible (Benja), cercano, local, directo. **Tuteo chileno** (tú tienes, puedes, agenda, escríbenos). **Nunca voseo** (vos, tenés, podés, agendá): Benja es chileno, no argentino.
 - Si existe `BRAND-VOICE.md` (local, no versionado), es la fuente de verdad y manda sobre este archivo.
 
 ## Los 3 modos de voz (de `SISTEMA-DE-CIERRE.md`)

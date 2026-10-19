@@ -427,9 +427,9 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     <section id="p-brief" hidden>
       <div class="card brief">
         <div class="sec-h"><h2 class="sec-t"><i class="hz-i" data-i="pencil"></i>Brief antes de la sesión</h2><span class="sec-hint" id="b-status"></span></div>
-        <div class="fld"><label for="b-negocio">¿A qué se dedica tu negocio?</label><textarea class="ctl" id="b-negocio" maxlength="2000" placeholder="Qué hacés, a quién le vendés y cómo operás hoy"></textarea></div>
-        <div class="fld"><label for="b-problema">¿Cuál es el mayor freno que tenés ahora?</label><textarea class="ctl" id="b-problema" maxlength="2000" placeholder="Lo primero que se te venga, sin filtro"></textarea></div>
-        <div class="fld"><label for="b-objetivo">¿Qué resultado esperás de la sesión?</label><textarea class="ctl" id="b-objetivo" maxlength="2000" placeholder="Ej: un plan claro para ordenar las ventas"></textarea></div>
+        <div class="fld"><label for="b-negocio">¿A qué se dedica tu negocio?</label><textarea class="ctl" id="b-negocio" maxlength="2000" placeholder="Qué haces, a quién le vendes y cómo operas hoy"></textarea></div>
+        <div class="fld"><label for="b-problema">¿Cuál es el mayor freno que tienes ahora?</label><textarea class="ctl" id="b-problema" maxlength="2000" placeholder="Lo primero que se te venga, sin filtro"></textarea></div>
+        <div class="fld"><label for="b-objetivo">¿Qué resultado esperas de la sesión?</label><textarea class="ctl" id="b-objetivo" maxlength="2000" placeholder="Ej: un plan claro para ordenar las ventas"></textarea></div>
         <div class="fld"><label for="b-intentos">¿Ya intentaste resolverlo antes? ¿Cómo fue?</label><textarea class="ctl" id="b-intentos" maxlength="2000" placeholder="Qué probaste y qué pasó"></textarea></div>
       </div>
     </section>
@@ -762,7 +762,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         <div class="ent-s">${E.total} ${E.total === 1 ? 'acceso o archivo listo' : 'accesos y archivos listos'}. Se desbloquean apenas se confirme el pago del saldo.</div></div></div>`;
     } else {
       el.innerHTML = `<div class="ent-h"><span class="ent-ic">${ic('check-circle')}</span><div><div class="ent-t">Entrega final</div>
-        <div class="ent-s">Todo lo de tu proyecto, a tu nombre. Guardá estos links.</div></div></div>
+        <div class="ent-s">Todo lo de tu proyecto, a tu nombre. Guarda estos links.</div></div></div>
         <div class="ent-l">${E.items.map(i => /^https:\/\//.test(i.url) ? `<a href="${esc(i.url)}" target="_blank" rel="noopener">${ic('external')}${esc(i.nombre)}</a>` : '').join('')}</div>`;
     }
   }
@@ -782,7 +782,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   // Vuelta desde Mercado Pago
   (function(){
     const p = new URLSearchParams(location.search).get('pago'); if (!p) return;
-    const msg = { ok:['¡Pago recibido! Se confirma acá en unos segundos.','check-circle'], pendiente:['Tu pago quedó pendiente. Te avisamos cuando se acredite.','clock'], error:['El pago no se completó. Podés intentarlo de nuevo.','alert'] }[p];
+    const msg = { ok:['¡Pago recibido! Se confirma acá en unos segundos.','check-circle'], pendiente:['Tu pago quedó pendiente. Te avisamos cuando se acredite.','clock'], error:['El pago no se completó. Puedes intentarlo de nuevo.','alert'] }[p];
     if (msg) setTimeout(() => toast(msg[0], msg[1]), 600);
     history.replaceState(null, '', location.pathname + location.hash);
     if (p === 'ok') { let n = 0; const iv = setInterval(() => { if (++n > 6) return clearInterval(iv); load(true); }, 5000); }
@@ -1009,7 +1009,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     const first = (S.lead.nombre || '').split(' ')[0];
     $('hello').textContent = first ? `Hola, ${first}` : 'Hola';
     $('p-name').textContent = 'Preparemos tu diagnóstico';
-    $('p-desc').textContent = 'Completá este brief antes de la sesión. Se guarda solo mientras escribís.';
+    $('p-desc').textContent = 'Completa este brief antes de la sesión. Se guarda solo mientras escribes.';
     // reunion_fecha es hora de Chile: se muestran los componentes tal cual, sin convertir de zona
     const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(S.lead.reunion_fecha || '');
     const f = m ? new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'}) + ' · ' + m[4] + ':' + m[5] + ' hrs' : '';

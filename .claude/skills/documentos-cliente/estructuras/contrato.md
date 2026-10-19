@@ -1,6 +1,6 @@
 # Estructura — Contrato de prestación de servicios + Anexo A
 
-> Plantilla base. **Antes de usarla con clientes reales, hacela revisar una vez por un abogado.**
+> Plantilla base. **Antes de usarla con clientes reales, hazla revisar una vez por un abogado.**
 > Se usa literal: solo se reemplazan las variables `{{…}}`. Cada cláusula va como `<h2><span class="n">N.</span>TÍTULO</h2>` + párrafos.
 
 - Título: `Contrato de Prestación de Servicios`

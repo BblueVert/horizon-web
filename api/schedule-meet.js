@@ -50,9 +50,9 @@ function descripcionInvitacion(nombre, portalUrl) {
     '',
     'Tu portal de cliente:',
     portalUrl,
-    'Ahí completás un brief corto antes de la sesión, y si trabajamos juntos, vas a ver todo el avance de tu proyecto en el mismo link.',
+    'Ahí completas un brief corto antes de la sesión, y si trabajamos juntos, vas a ver todo el avance de tu proyecto en el mismo link.',
     '',
-    '¿Necesitás cambiar la hora? Escribinos por WhatsApp: +56 9 7696 2659',
+    '¿Necesitas cambiar la hora? Escríbenos por WhatsApp: +56 9 7696 2659',
   ].join('\n');
 }
 

@@ -45,7 +45,7 @@ Estructura en 5 capas para que Claude trabaje en este repo con las reglas de HOR
 | 4 · Subagentes | `.claude/agents/` | `documentador`, `copy-reviewer`, `page-auditor`, `reel-writer`, `carrusel-maker`, `stories-builder`. |
 | 5 · Plugin | `plugins/horizon-kit/` + `.claude-plugin/` | El kit empaquetado para instalarlo en otros proyectos. |
 
-**En terreno:** decí "modo terreno" y dictá los datos del negocio. El subagente `documentador` arma propuesta, contrato, orden de inicio y acta de entrega en tono formal, sin inventar datos.
+**En terreno:** di "modo terreno" y dicta los datos del negocio. El subagente `documentador` arma propuesta, contrato, orden de inicio y acta de entrega en tono formal, sin inventar datos.
 
 ---
 
@@ -102,7 +102,7 @@ VitalKine, Floremané, VitalFit y FITT, este último con hitos que se actualizan
   - No borrar ese proyecto.
 
 ### Para probar
-- Usá un correo **de otra cuenta**. Google no te manda invitaciones a vos mismo, ni siquiera a un alias `+test` de tu Gmail.
+- Usa un correo **de otra cuenta**. Google no te manda invitaciones a ti mismo, ni siquiera a un alias `+test` de tu Gmail.
 
 ---
 
@@ -160,7 +160,7 @@ Link único por cliente: `https://www.horizonweb.cl/c/<token>`.
 
 ### Probado
 - **Pago real de $1.000 el 19-10-2026:** se marcó pagado solo y se liberó la entrega.
-- **No te podés pagar a vos mismo.** Si estás logueado con tu cuenta de Mercado Pago, el botón "Pagar" queda gris. Para probar, pagá como invitado o con otra cuenta.
+- **No te puedes pagar a ti mismo.** Si estás logueado con tu cuenta de Mercado Pago, el botón "Pagar" queda gris. Para probar, paga como invitado o con otra cuenta.
 
 ---
 
@@ -226,20 +226,20 @@ Todas van en **Production y Preview**. Después de cambiar una variable, hay que
 ## 11. Cómo se opera un cliente de punta a punta
 1. **Agenda:** el prospecto agenda en `/agendar`. Le llega la invitación con el link a su portal y aparece en OPS como `new`, con prioridad según su calificación.
 2. **Antes de la sesión:**
-   - Revisá su brief en el portal y su calificación en `/reunion`.
-   - Escuchá primero, preguntá y recién después diagnosticá.
-3. **Propuesta:** con `modo-terreno` o `documentos-cliente` armás la propuesta y el contrato.
+   - Revisa su brief en el portal y su calificación en `/reunion`.
+   - Escucha primero, pregunta y recién después diagnostica.
+3. **Propuesta:** con `modo-terreno` o `documentos-cliente` armas la propuesta y el contrato.
 4. **Cierre:**
-   - En el pipeline, movelo a **Arranque** y tocá **▶ Activar Proyecto**.
+   - En el pipeline, muévelo a **Arranque** y toca **▶ Activar Proyecto**.
    - En el proyecto → **Presupuesto**:
      - Anticipo 50%.
      - Saldo 50%, con **"Libera la entrega final"** marcado.
    - Mandale el link del portal para pagar el anticipo.
-5. **Durante el proyecto:** cargá avances e hitos en OPS. El cliente los ve en su portal y puede comentar y priorizar.
+5. **Durante el proyecto:** carga avances e hitos en OPS. El cliente los ve en su portal y puede comentar y priorizar.
 6. **Entrega:**
-   - Cargá los links en **Entrega final**.
+   - Carga los links en **Entrega final**.
    - Cuando paga el saldo, se le liberan solos.
-7. **Soporte:** desde el mes 2, agregá cada mes un ítem "Soporte <mes>" para que lo pague entre el 25 y el 5.
+7. **Soporte:** desde el mes 2, agrega cada mes un ítem "Soporte <mes>" para que lo pague entre el 25 y el 5.
 
 ---
 
@@ -248,7 +248,7 @@ Todas van en **Production y Preview**. Después de cambiar una variable, hay que
 |---|---|---|---|
 | No llega la invitación ni aparece el link de Meet | Vercel → Logs → `schedule-meet` | `invalid_grant` (token rechazado) | Repetir OAuth Playground con **"Use your own OAuth credentials"** marcado antes del Step 1, pegar el token en Vercel y hacer Redeploy. |
 | Log: "Google Calendar no configurado" | Variables de Vercel | Las `GOOGLE_*` no están en ese entorno | Marcarlas en Production y Preview, y hacer Redeploy. |
-| Agendaste vos y no te llegó nada | — | Google no te manda invitaciones a vos mismo | Probar con un correo de otra cuenta. |
+| Agendaste tú y no te llegó nada | — | Google no te manda invitaciones a ti mismo | Probar con un correo de otra cuenta. |
 | El botón "Pagar" de Mercado Pago queda gris | — | Estás pagando con la misma cuenta que cobra | Pagar como invitado o con otra cuenta. |
 | Se pagó pero el ítem sigue pendiente | Vercel → Logs → `[pagos]` | Firma inválida, monto distinto o webhook mal configurado | Revisar la URL del webhook, que el evento sea "Pagos", el `MP_WEBHOOK_SECRET` y Redeploy. |
 | El portal no muestra el botón de pago | Variables de Vercel | Falta `MP_ACCESS_TOKEN` o el ítem no tiene monto | Cargar la variable o el monto. |

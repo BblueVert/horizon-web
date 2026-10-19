@@ -40,7 +40,19 @@ if (/(^|\/)contenido\//i.test(rel)) {
   const phrases = fs.readFileSync(path.join(__dirname, 'frases-ia.txt'), 'utf8')
     .split('\n').map(l => norm(l.trim())).filter(l => l && !l.startsWith('#'));
   const hits = phrases.filter(p => body.includes(p));
-  if (hits.length) problems.push(`Suena a ChatGPT. Reescribí sin: ${hits.map(h => `"${h}"`).join(', ')}.`);
+  if (hits.length) problems.push(`Suena a ChatGPT. Reescribe sin: ${hits.map(h => `"${h}"`).join(', ')}.`);
+}
+
+// ── 2b. Tuteo chileno: sin voseo en el copy ──────────────────────────────────
+if (/^(Pages|OPS|api|verticales|CONTENIDO)\//i.test(rel) || /(^|\/)contenido\//i.test(rel)) {
+  const lista = path.join(__dirname, 'voseo.txt');
+  if (fs.existsSync(lista)) {
+    const formas = fs.readFileSync(lista, 'utf8').split('\n').map(l => l.trim().toLowerCase()).filter(l => l && !l.startsWith('#'));
+    const low = text.toLowerCase();
+    const L = 'a-záéíóúñü';
+    const hits = formas.filter(f => new RegExp(`(^|[^${L}])${f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![${L}])`, 'i').test(low));
+    if (hits.length) problems.push(`Voseo detectado (Benja es chileno, usa tuteo): ${hits.map(h => `"${h}"`).join(', ')}. Ej.: "tenés" → "tienes", "agendá" → "agenda", "escribinos" → "escríbenos".`);
+  }
 }
 
 // ── 3. Diagnóstico antes de proponer ─────────────────────────────────────────
@@ -57,8 +69,8 @@ if (/^CONTENIDO\/clientes\/[^/]+\/[^/]*(propuesta|contrato)[^/]*\.html$/i.test(r
     if (faltan.length) {
       problems.push(
         `Diagnóstico incompleto en la ficha (falta: ${faltan.join(', ')}). Primero escuchar, después proponer. ` +
-        'Decile a Benja qué falta y dale 2–3 preguntas de .claude/skills/documentos-cliente/referencias/preguntas-diagnostico.md. ' +
-        'Si él decide seguir igual, anotá "- Saltar diagnóstico: sí (motivo)" en la ficha.'
+        'Dile a Benja qué falta y dale 2–3 preguntas de .claude/skills/documentos-cliente/referencias/preguntas-diagnostico.md. ' +
+        'Si él decide seguir igual, anota "- Saltar diagnóstico: sí (motivo)" en la ficha.'
       );
     }
   }

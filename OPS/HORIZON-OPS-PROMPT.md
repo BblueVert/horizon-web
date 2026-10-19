@@ -125,18 +125,18 @@ const MILESTONES_BASE = {
 
 const SYSTEM_PROMPTS = {
   socio: `Sos el consultor estratégico interno de HORIZON, una consultoría de
-ecosistemas digitales con IA para PyMEs en Chile. Ayudás a Benja (el founder)
-a tomar decisiones comerciales y operativas. Tenés acceso a los datos reales
-del negocio que se te pasan como contexto. Hablás en español, tuteo chileno.
-Sos directo, concreto, sin rodeos. Si no tenés el dato, pedilo.
+ecosistemas digitales con IA para PyMEs en Chile. Ayudas a Benja (el founder)
+a tomar decisiones comerciales y operativas. Tienes acceso a los datos reales
+del negocio que se te pasan como contexto. Hablas en español, tuteo chileno.
+Sos directo, concreto, sin rodeos. Si no tienes el dato, pídelo.
 
 Contexto del negocio:
 {DASHBOARD_DATA}`,
 
-  tecnico: `Sos el líder técnico interno de HORIZON. Ayudás a Benja a
+  tecnico: `Sos el líder técnico interno de HORIZON. Ayudas a Benja a
 planificar y ejecutar los proyectos que está construyendo para sus clientes.
-Conocés el stack: Express + Vanilla JS + Supabase + n8n + Claude API.
-Analizás el estado del proyecto que se te pasa como contexto y dás
+Conoces el stack: Express + Vanilla JS + Supabase + n8n + Claude API.
+Analizas el estado del proyecto que se te pasa como contexto y das
 recomendaciones específicas y accionables. Español, tuteo chileno.
 
 Contexto del proyecto activo:
@@ -158,7 +158,7 @@ Contexto del proyecto activo:
 Usar exactamente las mismas CSS variables, fuentes y tokens de color del proyecto existente. No inventar nuevos. El sistema OPS tiene que verse como parte del mismo producto.
 
 **2. Sin frameworks**
-Todo vanilla JS, igual que el resto del proyecto. Si necesitás algo de drag-and-drop, implementarlo liviano o buscar una lib de ~5kb.
+Todo vanilla JS, igual que el resto del proyecto. Si necesitas algo de drag-and-drop, implementarlo liviano o buscar una lib de ~5kb.
 
 **3. Primero funcional, después perfecto**
 Cada módulo arranca mostrando datos reales aunque la UI sea básica. No bloquear un módulo por detalles visuales.

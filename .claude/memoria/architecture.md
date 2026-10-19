@@ -15,7 +15,7 @@
 
 ## Seguridad
 - Helpers comunes en `api/shared.js`: `sanitize`, `sanitizeEmail`, `rateLimit`, `getIp`, `httpsPost`. Úsalos, no reimplementes.
-- CSP y headers duplicados en `server.js` y `vercel.json`: si agregás un dominio externo, actualizá **los dos**.
+- CSP y headers duplicados en `server.js` y `vercel.json`: si agregas un dominio externo, actualiza **los dos**.
 - La anon key de Supabase es pública (va en el front). La `service_role` **solo** en servidor.
 - Toda tabla nueva: RLS activado + policies explícitas.
 

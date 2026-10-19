@@ -1,6 +1,6 @@
 # Datos privados del prestador — PLANTILLA
 
-Copiá este archivo como `datos-privados.md` en esta misma carpeta y completalo.
+Copia este archivo como `datos-privados.md` en esta misma carpeta y complétalo.
 `datos-privados.md` está en `.gitignore`: nunca se sube al repo (que es público).
 Si falta, los documentos quedan con `[[FALTA: …]]` en esos campos.
 

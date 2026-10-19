@@ -201,7 +201,7 @@ html,body{height:100%;overflow:hidden;}
   <div class="chat-area" id="chatArea">
     <div class="no-chat" id="noChatMsg">
       <div style="font-size:40px;"><i class="hz-i" data-i="agent"></i></div>
-      <div class="no-chat-text">Seleccioná un chat o creá uno nuevo</div>
+      <div class="no-chat-text">Selecciona un chat o crea uno nuevo</div>
     </div>
   </div>
 </div>
@@ -303,7 +303,7 @@ async function deleteChat(id){
  opsToast('Chat eliminado');
 }
 
-function noChatHTML(){return `<div class="no-chat" id="noChatMsg"><div style="font-size:40px;"><i class="hz-i" data-i="agent"></i></div><div class="no-chat-text">Seleccioná un chat o creá uno nuevo</div></div>`;}
+function noChatHTML(){return `<div class="no-chat" id="noChatMsg"><div style="font-size:40px;"><i class="hz-i" data-i="agent"></i></div><div class="no-chat-text">Selecciona un chat o crea uno nuevo</div></div>`;}
 
 /* ─── Área de chat ─── */
 function renderChatArea(){
@@ -320,7 +320,7 @@ function renderChatArea(){
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input-area">
       <div class="chat-input-wrap">
- <textarea class="chat-input" id="chatInput" placeholder="Escribí tu consulta…" rows="1"
+ <textarea class="chat-input" id="chatInput" placeholder="Escribe tu consulta…" rows="1"
           onkeydown="onKey(event)" oninput="autoH(this)"></textarea>
         <button class="chat-send" id="btnSend" onclick="send()">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -428,7 +428,7 @@ async function send(){
     document.getElementById('chatMetaInfo').textContent=`Modo ${modo} · ${msgs.length} mensajes`;
   }catch(e){
     document.getElementById(tid)?.remove();
-    const errMsg={role:'agente',content:'Error de conexión. Verificá que el servidor esté corriendo.',ts:new Date().toISOString()};
+    const errMsg={role:'agente',content:'Error de conexión. Verifica que el servidor esté corriendo.',ts:new Date().toISOString()};
     msgs.push(errMsg); activeChat.messages=msgs; renderMessages(msgs);
   }finally{ document.getElementById('btnSend').disabled=false; }
 }

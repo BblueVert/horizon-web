@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Convierte documentos HTML a PDF con Chrome/Chromium en modo headless (sin dependencias npm).
 // Uso: node scripts/doc-pdf.js <archivo.html> [más archivos…]
-// Si Chrome no está en una ruta conocida, definí CHROME_PATH.
+// Si Chrome no está en una ruta conocida, define CHROME_PATH.
 'use strict';
 
 const fs = require('fs');
@@ -26,7 +26,7 @@ const CANDIDATOS = [
 
 const chrome = CANDIDATOS.find(p => fs.existsSync(p));
 if (!chrome) {
-  console.error('No encontré Chrome/Chromium. Abrí el HTML en el navegador → Imprimir → Guardar como PDF, o definí CHROME_PATH.');
+  console.error('No encontré Chrome/Chromium. Abre el HTML en el navegador → Imprimir → Guardar como PDF, o define CHROME_PATH.');
   process.exit(1);
 }
 

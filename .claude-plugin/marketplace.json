@@ -9,7 +9,7 @@
       "name": "horizon-kit",
       "source": "./plugins/horizon-kit",
       "description": "Skills, subagentes y hooks de contenido HORIZON.",
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   ]
 }

@@ -1,7 +1,7 @@
 # Condiciones comerciales por defecto
 
 Lo que está en **[[DEFINIR]]** es una propuesta razonable que todavía no está confirmada.
-Cuando lo decidas, reemplazá el valor y borrá la marca.
+Cuando lo decidas, reemplaza el valor y borra la marca.
 
 ## Ya definidas (fuente: landing y `ESTRATEGIA/HORIZON-ECOSISTEMA.md`)
 - Precios en CLP + boleta de honorarios.

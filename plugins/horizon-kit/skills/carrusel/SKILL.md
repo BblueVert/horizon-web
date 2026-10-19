@@ -15,7 +15,7 @@ description: Arma carruseles de Instagram/LinkedIn para HORIZON (texto por slide
 - Fondo `--void` (#07060E), tarjetas `--card` (#1A1828), acento gradiente naranja→violeta (#FF6B35 → #7B3FA0).
 - Titulares Bebas Neue, cuerpo Plus Jakarta Sans, datos/etiquetas DM Mono.
 - Formato 1080×1350. Margen 96 px. Logo HORIZON chico abajo a la derecha.
-- Para cada slide, entregá un prompt de imagen/ícono listo para usar si lleva visual.
+- Para cada slide, entrega un prompt de imagen/ícono listo para usar si lleva visual.
 
 ## Entrega
 - Guardar en `CONTENIDO/carruseles/AAAA-MM-DD-<slug>.md`.

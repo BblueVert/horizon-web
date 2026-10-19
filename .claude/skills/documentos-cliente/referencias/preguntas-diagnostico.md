@@ -4,7 +4,7 @@
 Regla 70/30: el cliente habla el 70% del tiempo.
 
 ## 1. Abrir (que hable él)
-- "Contame cómo funciona un día normal en el negocio."
+- "Cuéntame cómo funciona un día normal en el negocio."
 - "¿Cómo te llegan hoy los clientes?"
 - "¿Qué es lo que más te quita tiempo en la semana?"
 
@@ -17,22 +17,22 @@ Regla 70/30: el cliente habla el 70% del tiempo.
 ## 3. Impacto y futuro
 - "Si esto sigue igual 6 meses, ¿qué pasa?"
 - "Si mañana estuviera resuelto, ¿qué sería distinto?"
-- "¿Qué harías con las horas que recuperás?"
+- "¿Qué harías con las horas que recuperas?"
 
 ## 4. Decisión
 - "¿Quién más participa en esta decisión?"
 - "¿Qué tendría que pasar para que digas que sí?"
-- "¿Hay una fecha en la que necesitás tener esto funcionando?"
+- "¿Hay una fecha en la que necesitas tener esto funcionando?"
 
 ## 5. Reflejar (antes de diagnosticar)
 - "A ver si entendí bien: [sus palabras]. ¿Es así?"
 - "De todo lo que me contaste, ¿qué es lo que más te urge?"
 
 ## Señales de que todavía no es momento de proponer
-- No sabés el dolor dicho con sus propias palabras.
-- No sabés cuánto le cuesta.
-- No sabés quién decide.
-- Hablaste más vos que él.
+- No sabes el dolor dicho con sus propias palabras.
+- No sabes cuánto le cuesta.
+- No sabes quién decide.
+- Hablaste más tú que él.
 
 ## Después de la visita (2 minutos)
 1. ¿Qué dijo con sus palabras exactas?

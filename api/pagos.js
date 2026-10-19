@@ -42,7 +42,7 @@ async function crearPago(req, res) {
   const ANON   = process.env.SUPABASE_ANON_KEY;
   const MP     = process.env.MP_ACCESS_TOKEN;
   if (!SB_URL || !ANON) return res.status(503).json({ error: 'Config incompleta' });
-  if (!MP) return res.status(503).json({ error: 'El pago en línea todavía no está disponible. Escribinos por WhatsApp.' });
+  if (!MP) return res.status(503).json({ error: 'El pago en línea todavía no está disponible. Escríbenos por WhatsApp.' });
 
   const token  = String(req.body?.token || '');
   const itemId = String(req.body?.item_id || '');
@@ -83,7 +83,7 @@ async function crearPago(req, res) {
     const data = JSON.parse(r.body || '{}');
     if (r.status >= 300 || !data.init_point) {
       console.error('[pagos] preferencia:', r.status, data.message || '');
-      return res.status(502).json({ error: 'No se pudo iniciar el pago. Probá de nuevo en un rato.' });
+      return res.status(502).json({ error: 'No se pudo iniciar el pago. Prueba de nuevo en un rato.' });
     }
     return res.json({ ok: true, url: data.init_point });
   } catch (err) {

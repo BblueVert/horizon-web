@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Capa 5 — copia las piezas de contenido de .claude/ al plugin horizon-kit.
-// .claude/ es la única fuente de verdad: editá ahí y corré `npm run plugin:sync`.
+// .claude/ es la única fuente de verdad: edita ahí y corre `npm run plugin:sync`.
 'use strict';
 
 const fs = require('fs');
@@ -13,7 +13,7 @@ const dest = path.join(root, 'plugins', 'horizon-kit');
 const PIEZAS = {
   skills: ['reels', 'carrusel', 'stories'],
   agents: ['copy-reviewer.md', 'reel-writer.md', 'carrusel-maker.md', 'stories-builder.md'],
-  hooks: ['pre-escritura.js', 'frases-ia.txt'],
+  hooks: ['pre-escritura.js', 'frases-ia.txt', 'voseo.txt'],
 };
 
 for (const [dir, items] of Object.entries(PIEZAS)) {
@@ -27,4 +27,4 @@ for (const [dir, items] of Object.entries(PIEZAS)) {
 
 const manifest = path.join(dest, '.claude-plugin', 'plugin.json');
 const { version } = JSON.parse(fs.readFileSync(manifest, 'utf8'));
-console.log(`\nhorizon-kit v${version} sincronizado. Si cambió algo, subí la versión en plugin.json.`);
+console.log(`\nhorizon-kit v${version} sincronizado. Si cambió algo, sube la versión en plugin.json.`);

@@ -18,7 +18,7 @@ Si el repo es privado, cada persona necesita acceso de lectura en GitHub.
 | Comandos | `/horizon-kit:contenido-semana <foco>` |
 
 ## Actualizar (solo quien mantiene el kit)
-1. Editá en `.claude/` (fuente de verdad), nunca acá directo.
+1. Edita en `.claude/` (fuente de verdad), nunca acá directo.
 2. `npm run plugin:sync`
-3. Subí `version` en `.claude-plugin/plugin.json` y en `/.claude-plugin/marketplace.json`.
+3. Sube `version` en `.claude-plugin/plugin.json` y en `/.claude-plugin/marketplace.json`.
 4. Commit + push. El equipo actualiza con `/plugin marketplace update horizon`.
