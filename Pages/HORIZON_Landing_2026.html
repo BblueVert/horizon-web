@@ -144,11 +144,13 @@ a { color: inherit; }
 .chip-cal .ic { background: var(--mint); color: var(--ok); }
 .chip-lead { left: -3%; bottom: 40px; }
 .chip-lead .ic { background: var(--lilac); color: var(--violet); }
-.demo-tag { position: absolute; left: 0; bottom: -30px; font: 500 11px var(--mono); color: var(--ink3); }
+.demo-badge { margin-left: auto; align-self: flex-start; font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); background: var(--bg2); border: 1px solid var(--line); padding: 4px 8px; border-radius: 99px; }
 
 /* ── Plataformas ────────────────────────────── */
-.stack { padding: 8px 0 24px; }
-.stack p { text-align: center; font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 22px; }
+.stack { border-block: 1px solid var(--line); padding: 18px 0; margin-top: 8px; }
+.stack .wrap { display: flex; align-items: center; gap: 28px; }
+.stack p { flex-shrink: 0; font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin: 0; }
+.stack .marquee { flex: 1; min-width: 0; }
 .marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
 .marquee ul { list-style: none; display: flex; align-items: center; width: max-content; animation: marquee 34s linear infinite; }
 .marquee:hover ul { animation-play-state: paused; }
@@ -166,19 +168,19 @@ a { color: inherit; }
 .problem { display: grid; grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; }
 .problem-art { position: sticky; top: calc(var(--header-h) + 32px); }
 .calc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 28px; box-shadow: var(--shadow); display: grid; gap: 20px; }
-.calc-head { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+.calc-head { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
 .calc-head .ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; }
 .calc-head h3 { font-size: 19px; letter-spacing: -.015em; line-height: 1.25; }
 .calc-head p { font-size: 13.5px; color: var(--ink2); }
-.calc-field label { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
-.calc-field output { font: 500 13px var(--mono); color: var(--violet); background: var(--lilac); padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+.calc-field label { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 12px; }
+.calc-field output { flex-shrink: 0; min-width: 64px; text-align: center; font: 500 13px/1 var(--mono); color: var(--violet); background: var(--lilac); padding: 6px 10px; border-radius: 99px; white-space: nowrap; }
 .calc input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 99px; background: linear-gradient(90deg, #F2690C, #C4467A var(--p, 50%), var(--line2) var(--p, 50%)); outline-offset: 6px; cursor: pointer; }
 .calc input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid var(--rose-i); box-shadow: 0 2px 8px rgba(26,22,38,.18); }
 .calc input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--rose-i); }
 .calc-result { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .calc-result > div { border-radius: 16px; padding: 14px 16px; background: var(--bg2); border: 1px solid var(--line); }
 .calc-result > div:last-child { background: var(--grad-deep, linear-gradient(155deg, #1E1744, #5A2F8C 60%, #C4467A)); color: #fff; border: 0; }
-.calc-result small { font: 500 10.5px var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink3); display: block; }
+.calc-result small { font: 500 10.5px/1.3 var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink3); display: block; min-height: 2.6em; }
 .calc-result > div:last-child small { color: #D9D2F0; }
 .calc-result b { display: block; font-size: 28px; letter-spacing: -.03em; margin-top: 4px; line-height: 1.1; }
 .calc-note { font-size: 12.5px; color: var(--ink3); }
@@ -205,15 +207,18 @@ a { color: inherit; }
 .mini { margin-top: auto; padding-top: 10px; }
 .mini-chat { display: grid; gap: 8px; }
 .mini-chat .msg { font-size: 13px; }
-.flow { width: 100%; height: auto; }
-.flow .dash { stroke-dasharray: 5 7; animation: dash 1.4s linear infinite; }
+.flow-steps { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; }
+.flow-steps::before { content: ''; position: absolute; left: 12%; right: 12%; top: 50%; border-top: 2px dashed var(--line2); }
+.flow-steps li { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 72px; border-radius: 16px; font-size: 12px; font-weight: 700; color: var(--ink); text-align: center; }
+.flow-steps .ico { width: 20px; height: 20px; }
 @keyframes dash { to { stroke-dashoffset: -24; } }
-.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.kpi { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
-.kpi small { font: 500 10.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
-.kpi b { display: block; font-size: 26px; letter-spacing: -.03em; margin-top: 4px; }
-.kpi span { font-size: 12px; color: var(--ok); font-weight: 600; }
-.spark { width: 100%; height: 56px; margin-top: 12px; }
+.funnel { display: grid; gap: 10px; }
+.f-row { display: grid; grid-template-columns: 96px 1fr 36px; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; }
+.f-row span { color: var(--ink2); }
+.f-row i { height: 10px; border-radius: 99px; background: var(--bg2); position: relative; overflow: hidden; }
+.f-row i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: inherit; background: var(--grad); transform-origin: left; }
+.f-row b { text-align: right; font-size: 15px; }
+.f-note { font: 500 11px var(--mono); color: var(--ink3); letter-spacing: .03em; margin-top: 2px; }
 
 /* ── Comparación ────────────────────────────── */
 .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -354,7 +359,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
   .cta-row .btn-ghost { justify-content: center; }
   .trust { flex-direction: column; gap: 10px; padding-right: 64px; }
   /* Celular: una sola pieza compacta (chat + confirmación flotante) */
-  .scene { height: auto; margin-top: 8px; padding-bottom: 46px; }
+  .scene { height: auto; margin-top: 8px; padding-bottom: 40px; }
   .chat { position: relative; inset: auto; width: 100%; padding: 14px; border-radius: 20px; }
   .chat-h { gap: 10px; padding-bottom: 12px; margin-bottom: 12px; }
   .avatar { width: 34px; height: 34px; border-radius: 10px; }
@@ -364,11 +369,8 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
   .msgs .msg:last-child, .typing { display: none !important; }
   .chip-cal { top: auto; right: 10px; bottom: 0; padding: 10px 12px; }
   .metric, .chip-lead { display: none; }
-  .demo-tag { left: 4px; bottom: 10px; }
   .bento, .vs, .plans { grid-template-columns: 1fr; }
   .p-panel, .p-cta { grid-column: span 1; }
-  .kpis { grid-template-columns: 1fr 1fr; }
-  .kpis .kpi:last-child { grid-column: span 2; }
   .steps { grid-template-columns: 1fr; gap: 28px; }
   .track { left: 23px; right: auto; top: 24px; bottom: 24px; width: 2px; height: auto; }
   .track i { transform-origin: top; }
@@ -394,13 +396,10 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
   .pillar:not(.p-cta) { display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; row-gap: 12px; align-items: center; }
   .pillar:not(.p-cta) > :not(.ic):not(h3) { grid-column: 1 / -1; }
   .pillar .mini { margin-top: 4px; padding-top: 0; }
+  .flow-steps { gap: 8px; }
+  .flow-steps li { height: 64px; font-size: 11px; border-radius: 14px; }
+  .f-row { grid-template-columns: 84px 1fr 30px; gap: 10px; font-size: 13px; }
   .mini-chat .msg { font-size: 13px; padding: 9px 12px; }
-  .kpis, .kpis .kpi:last-child { grid-template-columns: repeat(3, 1fr); grid-column: auto; gap: 8px; }
-  .kpi { padding: 12px 10px; border-radius: 12px; }
-  .kpi b { font-size: 20px; }
-  .kpi small { font-size: 9.5px; }
-  .kpi span { font-size: 11px; }
-  .spark { height: 44px; margin-top: 4px; }
   .p-cta .h3 { font-size: 22px; }
   .plan .badge { top: 18px; right: 18px; width: 36px; height: 36px; border-radius: 10px; }
   .price { font-size: 28px; margin-top: 14px; }
@@ -527,6 +526,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
         <div class="chat-h">
           <span class="avatar"><svg class="ico"><use href="#i-store"/></svg></span>
           <div><strong>Barbería Centro</strong><small><i></i>Agente HORIZON · en línea 24/7</small></div>
+          <span class="demo-badge">Ejemplo</span>
         </div>
         <div class="msgs" id="msgs">
           <div class="msg in">Hola, ¿tienen hora para hoy en la tarde?<time>22:47</time></div>
@@ -549,7 +549,6 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
         <div class="big">12<span>esta semana</span></div>
         <div class="bars" id="bars"><i style="height:30%"></i><i style="height:45%"></i><i style="height:38%"></i><i style="height:58%"></i><i style="height:52%"></i><i style="height:74%"></i><i style="height:100%"></i></div>
       </div>
-      <span class="demo-tag">Vista de ejemplo</span>
     </div>
   </div>
 </section>
@@ -557,7 +556,7 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
 <!-- PLATAFORMAS -->
 <section class="stack" aria-label="Plataformas">
   <div class="wrap">
-    <p>Infraestructura sobre las mejores plataformas del mercado</p>
+    <p>Construido con</p>
     <div class="marquee" data-reveal>
     <ul>
       <li><img src="/Identidad/strip-logos/Google/Google_Logo_0.svg" alt="Google" height="22"></li>
@@ -588,20 +587,20 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
         <div><h3 id="calcTitle">¿Cuánto se te escapa al mes?</h3><p>Mové los valores con los números de tu negocio.</p></div>
       </div>
       <div class="calc-field">
-        <label for="cQ">Consultas que recibís por semana <output id="oQ">40</output></label>
+        <label for="cQ">Consultas por semana <output id="oQ">40</output></label>
         <input type="range" id="cQ" min="5" max="200" step="5" value="40">
       </div>
       <div class="calc-field">
-        <label for="cP">Quedan sin respuesta a tiempo <output id="oP">30%</output></label>
+        <label for="cP">Sin respuesta a tiempo <output id="oP">30%</output></label>
         <input type="range" id="cP" min="5" max="80" step="5" value="30">
       </div>
       <div class="calc-field">
-        <label for="cT">Lo que gasta un cliente en promedio <output id="oT">$15.000</output></label>
+        <label for="cT">Ticket promedio <output id="oT">$15.000</output></label>
         <input type="range" id="cT" min="5000" max="300000" step="5000" value="15000">
       </div>
       <div class="calc-result" aria-live="polite">
-        <div><small>Consultas perdidas al mes</small><b id="rQ">52</b></div>
-        <div><small>Ventas que se van a otro</small><b id="rV">$234.000</b></div>
+        <div><small>Consultas perdidas/mes</small><b id="rQ">52</b></div>
+        <div><small>Ventas perdidas/mes</small><b id="rV">$234.000</b></div>
       </div>
       <p class="calc-note">Supuesto conservador: 3 de cada 10 consultas terminan en compra. En el diagnóstico lo calculamos con tus datos reales.</p>
       <a href="/agendar" class="btn btn-acc" data-origin="calculadora">Quiero recuperar esas ventas <svg class="ico"><use href="#i-arrow"/></svg></a>
@@ -642,36 +641,24 @@ html.anim [data-intro], html.anim [data-reveal], html.anim [data-stagger] > * { 
         <span class="ic t-lilac"><svg class="ico"><use href="#i-flow"/></svg></span>
         <h3>Automatización de procesos</h3>
         <p>Captura, seguimiento y cierre coordinados sin intervención manual. Menos errores, menos tiempo perdido.</p>
-        <div class="mini">
-          <!-- Ilustración: flujo del lead -->
-          <svg class="flow" viewBox="0 0 440 120" role="img" aria-label="Flujo: nuevo lead, respuesta IA, agenda, CRM">
-            <g fill="none" stroke="#E6DACB" stroke-width="2"><path class="dash" d="M86 60h48M222 60h48M356 60h-0"/><path class="dash" d="M222 60h48"/></g>
-            <g fill="none" stroke="#C4467A" stroke-width="2"><path class="dash" d="M96 60h38M232 60h38"/></g>
-            <g font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#1A1626" text-anchor="middle">
-              <rect x="6" y="30" width="80" height="60" rx="16" fill="#FFE2CC"/><text x="46" y="84">Nuevo lead</text>
-              <rect x="142" y="30" width="80" height="60" rx="16" fill="#FFDDE5"/><text x="182" y="84">Responde IA</text>
-              <rect x="278" y="30" width="80" height="60" rx="16" fill="#ECE3FF"/><text x="318" y="84">Agenda</text>
-              <rect x="372" y="38" width="62" height="44" rx="14" fill="#DDF5E6"/><text x="403" y="64">CRM</text>
-            </g>
-            <g fill="none" stroke="#1A1626" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <g transform="translate(36 40)"><circle cx="10" cy="7" r="3.5"/><path d="M3.5 19a6.5 6.5 0 0 1 13 0"/></g>
-              <g transform="translate(172 40)"><rect x="2" y="5" width="16" height="12" rx="4"/><path d="M10 5V2"/></g>
-              <g transform="translate(308 40)"><rect x="2" y="3" width="16" height="15" rx="3"/><path d="M2 8h16M7 11.5l2 2 4-4"/></g>
-            </g>
-            <path d="M358 60h12" stroke="#E6DACB" stroke-width="2" class="dash"/>
-          </svg>
-        </div>
+        <ol class="mini flow-steps" aria-label="Flujo: nuevo lead, responde la IA, agenda, CRM">
+          <li class="t-peach"><svg class="ico"><use href="#i-user-plus"/></svg><span>Nuevo lead</span></li>
+          <li class="t-rose"><svg class="ico"><use href="#i-agent"/></svg><span>Responde IA</span></li>
+          <li class="t-lilac"><svg class="ico"><use href="#i-calendar"/></svg><span>Agenda</span></li>
+          <li class="t-mint"><svg class="ico"><use href="#i-panel"/></svg><span>CRM</span></li>
+        </ol>
       </article>
       <article class="pillar p-panel">
         <span class="ic t-rose"><svg class="ico"><use href="#i-panel"/></svg></span>
         <h3>Panel de rendimiento en tiempo real</h3>
         <p>Sabés cuántos interesados tenés, en qué etapa están y dónde se caen. Decisiones con datos, no con intuición.</p>
-        <div class="mini kpis">
-          <div class="kpi"><small>Leads</small><b>48</b><span>esta semana</span></div>
-          <div class="kpi"><small>Agendados</small><b>21</b><span>44% del total</span></div>
-          <div class="kpi"><small>Respuesta</small><b>4 seg</b><span>promedio</span></div>
+        <div class="mini funnel" aria-label="Ejemplo de embudo semanal">
+          <div class="f-row"><span>Consultas</span><i style="--w:100%"></i><b>48</b></div>
+          <div class="f-row"><span>Respondidas</span><i style="--w:96%"></i><b>46</b></div>
+          <div class="f-row"><span>Agendadas</span><i style="--w:44%"></i><b>21</b></div>
+          <div class="f-row"><span>Ventas</span><i style="--w:18%"></i><b>9</b></div>
+          <p class="f-note">Embudo semanal de ejemplo</p>
         </div>
-        <svg class="spark" viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="gS" x1="0" x2="1"><stop offset="0" stop-color="#F2690C"/><stop offset=".55" stop-color="#C4467A"/><stop offset="1" stop-color="#7B3FA0"/></linearGradient><linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDDE5"/><stop offset="1" stop-color="#FFDDE5" stop-opacity="0"/></linearGradient></defs><path d="M0 46 C40 40 60 44 90 36 S150 30 180 32 240 18 270 22 330 10 400 6 V56 H0z" fill="url(#gF)"/><path id="sparkLine" d="M0 46 C40 40 60 44 90 36 S150 30 180 32 240 18 270 22 330 10 400 6" fill="none" stroke="url(#gS)" stroke-width="2.5" stroke-linecap="round"/></svg>
       </article>
       <article class="pillar p-cta">
         <div><span class="eyebrow" style="color:#C9C3D6">Datos de ejemplo</span><p class="h3" style="margin-top:16px">Mirá un sistema funcionando en un negocio como el tuyo.</p></div>
@@ -961,13 +948,9 @@ document.addEventListener('DOMContentLoaded', function () {
     vertical ? { scaleY: 1 } : { scaleX: 1 },
     { ease: 'none', scrollTrigger: { trigger: '#steps', start: 'top 75%', end: 'bottom 60%', scrub: .6 } }));
 
-  // ── Panel: la curva se dibuja al entrar ──
-  var spark = document.getElementById('sparkLine');
-  if (spark) {
-    var len = spark.getTotalLength();
-    gsap.fromTo(spark, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut',
-      scrollTrigger: { trigger: spark, start: 'top 85%', once: true } });
-  }
+  // ── Panel: las barras del embudo crecen al entrar ──
+  gsap.from('.f-row i', { scaleX: 0, transformOrigin: 'left', duration: 1, ease: ease, stagger: .12,
+    scrollTrigger: { trigger: '.funnel', start: 'top 85%', once: true } });
 
 });
 

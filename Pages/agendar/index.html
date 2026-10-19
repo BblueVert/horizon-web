@@ -25,7 +25,16 @@ main { padding: calc(var(--header-h) + 28px) 0 64px; }
 .facts { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .facts li { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); padding: 8px 12px; border-radius: 99px; font-size: 13.5px; font-weight: 600; }
 .facts .ico { width: 17px; height: 17px; color: var(--violet); }
-.gets { display: none; }
+.booking { order: 1; }
+.intro { order: 2; padding-top: 8px; border-top: 1px solid var(--line); }
+.intro .h1 { font-size: 26px; }
+.book-title { margin-bottom: 18px; }
+.book-title .h1 { font-size: clamp(32px, 9vw, 44px); margin-top: 10px; }
+.gets { display: grid; gap: 10px; margin-top: 20px; list-style: none; }
+.gets li { display: grid; grid-template-columns: auto 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+.gets .n { font: 500 12px var(--mono); color: var(--acc); padding-top: 2px; }
+.gets strong { display: block; font-size: 15px; }
+.gets small { font-size: 13.5px; color: var(--ink2); }
 
 /* Pasos */
 .steps-bar { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
@@ -107,12 +116,10 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
 @media (min-width: 900px) {
   main { padding-top: calc(var(--header-h) + 56px); }
   .layout { grid-template-columns: .8fr 1.2fr; gap: 56px; align-items: start; }
-  .intro { position: sticky; top: calc(var(--header-h) + 32px); }
-  .gets { display: grid; gap: 10px; margin-top: 28px; list-style: none; }
-  .gets li { display: grid; grid-template-columns: auto 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
-  .gets .n { font: 500 12px var(--mono); color: var(--acc); padding-top: 2px; }
-  .gets strong { display: block; font-size: 15px; }
-  .gets small { font-size: 13.5px; color: var(--ink2); }
+  .intro { order: 1; position: sticky; top: calc(var(--header-h) + 32px); padding-top: 0; border: 0; }
+  .intro .h1 { font-size: clamp(38px, 4vw, 52px); }
+  .booking { order: 2; }
+  .book-title { display: none; }
   .panel { padding: 28px; border-radius: 24px; }
   .panel h2 { font-size: 24px; }
   .opts.wide { grid-template-columns: 1fr 1fr 1fr; }
@@ -139,8 +146,8 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
   <div class="wrap layout">
 
     <section class="intro" data-intro>
-      <span class="eyebrow">Diagnóstico gratuito</span>
-      <h1 class="h1">Entendamos tu negocio <span class="g">antes de proponer nada.</span></h1>
+      <span class="eyebrow">Sobre la llamada</span>
+      <h2 class="h1">Entendamos tu negocio <span class="g">antes de proponer nada.</span></h2>
       <p class="lead">Una sesión 1:1 con Benja para ver cómo llegan tus clientes, dónde se pierden y qué conviene hacer primero.</p>
       <ul class="facts">
         <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-clock"/></svg>30 minutos</li>
@@ -154,7 +161,11 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
       </ul>
     </section>
 
-    <section aria-label="Agendar">
+    <section class="booking" aria-label="Agendar">
+      <div class="book-title">
+        <span class="eyebrow">Diagnóstico gratuito · 30 min</span>
+        <h1 class="h1">Agendá tu <span class="g">diagnóstico.</span></h1>
+      </div>
       <ol class="steps-bar" id="stepsBar"><li class="on">1 · Antes de agendar</li><li>2 · Elegí tu horario</li></ol>
 
       <!-- PASO 1: calificación -->
