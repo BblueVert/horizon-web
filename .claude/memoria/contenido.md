@@ -15,7 +15,7 @@ Regla: **nunca** ofrecer el diagnóstico a alguien en Modo 1.
 
 ## Qué cuenta como conversión
 - Comentario con palabra clave → DM → lead en OPS (`new`).
-- Diagnóstico agendado (`/agendar`) = conversión principal.
+- Diagnóstico agendado (`/agendar`) = conversión principal. Antes del calendario, `/agendar` califica: presupuesto desde $490.000 (ahora / 1–2 meses / todavía no), consultas por semana y quién decide. Queda en OPS en `leads.hooks_respuestas.calificacion`, con resumen en `nota` y `prioridad` Alta/Media/Baja. "Todavía no" no agenda: queda como lead frío (`origen = agendar-sin-presupuesto`) y se envía a `/recursos`.
 - Descarga de recurso (`/recursos`) = conversión secundaria (lead frío).
 
 ## Calendario base (ajustable)

@@ -1,555 +1,427 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>HORIZON · Agendar Diagnóstico</title>
-<link rel="icon" type="image/png" href="../../Identidad/Logo ISO.png">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Agendar diagnóstico gratuito — HORIZON</title>
+<meta name="theme-color" content="#1A1626">
+<link rel="icon" href="/Identidad/Logo%20ISO.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/hz-light.css">
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('anim');
+    setTimeout(function () { if (!window.gsap) document.documentElement.classList.remove('anim'); }, 2500);
+  }
+</script>
 <style>
-:root{
-  --void:#07060e;--card:#141224;--card2:#1c1a2e;--card3:#231f3a;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
-  --h1:#ff6b35;--h2:#ff8c42;
-  --indigo:#6366f1;--indigo2:#818cf8;
-  --green:#10b981;
-  --text:#e8e6f0;--text2:#9a98a8;--text3:#4a4760;
-  --fm:"DM Mono",monospace;--fb:"Plus Jakarta Sans",sans-serif;--fd:"Bebas Neue",sans-serif;
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;overflow:hidden;}
-body{font-family:var(--fb);background:var(--void);color:var(--text);}
+/* ── Página /agendar (mobile-first) ── */
+main { padding: calc(var(--header-h) + 28px) 0 64px; }
+.layout { display: grid; gap: 24px; }
+.intro .h1 { font-size: clamp(32px, 7vw, 52px); margin: 14px 0 12px; }
+.facts { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.facts li { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); padding: 8px 12px; border-radius: 99px; font-size: 13.5px; font-weight: 600; }
+.facts .ico { width: 17px; height: 17px; color: var(--violet); }
+.gets { display: none; }
 
-/* ── 3 columnas fijas ── */
-.app{
-  display:grid;
-  /* info | calendario compacto | slots+form */
-  grid-template-columns:230px 290px 1fr;
-  height:100vh;
-  overflow:hidden;
-}
+/* Pasos */
+.steps-bar { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+.steps-bar li { font: 500 11.5px var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink3); padding-top: 10px; border-top: 3px solid var(--line2); }
+.steps-bar li.on { color: var(--ink); border-color: var(--acc); }
+.steps-bar li.done { color: var(--ink2); border-color: var(--ink); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
+.panel[hidden] { display: none; }
+.panel h2 { font-size: 20px; letter-spacing: -.02em; line-height: 1.25; }
+.panel .sub { font-size: 14.5px; color: var(--ink2); margin-top: 6px; }
 
-/* ── COL 1: INFO ── */
-.col-info{
-  position:relative;
-  background:linear-gradient(170deg,#0d0c18 0%,#130f1f 60%,#0f0e1a 100%);
-  border-right:1px solid var(--border);
-  padding:28px 22px;
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.col-info::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,var(--h1) 0%,var(--h2) 45%,transparent 100%);
-}
-.brand-logo{margin-bottom:24px;}
-.brand-logo img{height:32px;width:auto;display:block;}
-.info-title{
-  font-family:var(--fd);font-size:36px;line-height:1;letter-spacing:2px;
-  margin-bottom:10px;
-}
-.info-title span{
-  background:linear-gradient(135deg,var(--h1),var(--h2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.info-sub{color:var(--text2);font-size:12px;line-height:1.65;margin-bottom:20px;max-width:210px;}
+/* Encuadre de inversión */
+.frame { margin: 18px 0 6px; border-radius: 16px; padding: 16px; background: var(--grad-deep); color: #fff; }
+.frame small { font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #D9D2F0; }
+.frame strong { display: block; font-size: 26px; letter-spacing: -.03em; margin: 4px 0 8px; }
+.frame strong span { display: block; font-size: 13px; font-weight: 600; letter-spacing: 0; color: #D9D2F0; margin-top: 2px; }
+.frame ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 13px; color: #EDE8FA; }
+.frame li { display: flex; gap: 6px; align-items: flex-start; }
+.frame li .ico { width: 15px; height: 15px; color: #FFB98A; margin-top: 3px; }
 
-.meta-pills{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
-.pill{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--card2);border:1px solid var(--border2);
-  border-radius:6px;padding:6px 10px;width:fit-content;
-}
-.pill-icon{font-size:12px;flex-shrink:0;}
-.pill-text{font-family:var(--fm);font-size:9px;color:var(--text2);letter-spacing:.4px;}
-.pill-text strong{color:var(--text);font-weight:500;}
+/* Preguntas */
+fieldset { border: 0; margin-top: 20px; }
+legend { font-weight: 700; font-size: 15.5px; margin-bottom: 10px; letter-spacing: -.01em; }
+legend small { display: block; font-weight: 500; font-size: 13px; color: var(--ink2); margin-top: 2px; }
+.opts { display: grid; gap: 8px; }
+.opts.row { grid-template-columns: 1fr 1fr; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.opt span { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 12px 14px; border: 1.5px solid var(--line2); border-radius: 14px; font-size: 14.5px; font-weight: 600; background: var(--surface); transition: border-color .2s, background .2s; }
+.opt span::before { content: ''; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--ink3); flex-shrink: 0; transition: border .2s, background .2s; }
+.opt input:checked + span { border-color: var(--rose-i); background: #FFF6F8; }
+.opt input:checked + span::before { border: 5px solid var(--rose-i); }
+.opt input:focus-visible + span { outline: 2px solid var(--acc); outline-offset: 2px; }
+.actions { margin-top: 22px; display: grid; gap: 10px; }
+.actions .btn { width: 100%; justify-content: space-between; }
+.link-btn { background: none; border: 0; font: 600 14px var(--font); color: var(--ink2); text-decoration: underline; cursor: pointer; justify-self: center; padding: 6px; }
 
-.divider-line{border:none;border-top:1px solid var(--border);margin:0 0 18px;}
+/* Calendario */
+.cal-top { display: flex; align-items: center; justify-content: space-between; margin: 18px 0 10px; }
+.cal-top strong { font-size: 15px; text-transform: capitalize; }
+.cal-nav { display: flex; gap: 6px; }
+.cal-nav button { width: 38px; height: 38px; border-radius: 11px; border: 1px solid var(--line2); background: var(--surface); cursor: pointer; display: grid; place-items: center; color: var(--ink); }
+.cal-nav .ico { width: 18px; height: 18px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-dow { text-align: center; font: 500 11px var(--mono); color: var(--ink3); padding: 6px 0; }
+.cal-day { aspect-ratio: 1; border-radius: 12px; border: 0; background: var(--bg2); font: 600 14px var(--font); color: var(--ink); cursor: pointer; transition: background .2s, color .2s; }
+.cal-day:hover:not(:disabled) { background: var(--peach); }
+.cal-day:disabled { background: transparent; color: var(--line2); cursor: default; }
+.cal-day.today { box-shadow: inset 0 0 0 1.5px var(--violet); }
+.cal-day.sel { background: var(--ink); color: #fff; }
+.cal-empty { aspect-ratio: 1; }
+.slots-head { margin: 20px 0 10px; font-weight: 700; font-size: 15px; }
+.slots-head span { font-weight: 500; color: var(--ink2); }
+.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.slot { min-height: 44px; border-radius: 12px; border: 1.5px solid var(--line2); background: var(--surface); font: 600 14px var(--font); cursor: pointer; color: var(--ink); }
+.slot:hover:not(:disabled) { border-color: var(--rose-i); }
+.slot.sel { background: var(--ink); color: #fff; border-color: var(--ink); }
+.slot:disabled { color: var(--ink3); text-decoration: line-through; background: var(--bg2); cursor: default; }
+.slots-msg { grid-column: 1 / -1; font-size: 14px; color: var(--ink2); }
 
-.features{display:flex;flex-direction:column;gap:12px;margin-top:auto;}
-.feat{display:flex;align-items:flex-start;gap:9px;}
-.feat-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:linear-gradient(135deg,var(--h1),var(--h2));
-  flex-shrink:0;margin-top:5px;
-}
-.feat-text{font-size:11px;color:var(--text2);line-height:1.5;}
-.feat-text strong{color:var(--text);display:block;font-size:12px;margin-bottom:1px;}
+/* Datos */
+.fields { display: grid; gap: 12px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+.field label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 6px; }
+.field label small { font-weight: 500; color: var(--ink3); }
+.field input, .field select, .field textarea { width: 100%; min-height: 48px; padding: 12px 14px; border: 1.5px solid var(--line2); border-radius: 12px; font: 500 15px var(--font); color: var(--ink); background: var(--surface); }
+.field textarea { min-height: 80px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--rose-i); }
+.field select:disabled { background: var(--bg2); }
+.status { display: none; margin-top: 12px; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; }
+.status.error { display: block; background: #FFF0F3; color: #A3204A; }
+.status.ok { display: block; background: #F0FDF4; color: #15803D; }
+.status a { color: inherit; word-break: break-all; }
 
-/* ── COL 2: CALENDARIO (celdas fijas) ── */
-.col-cal{
-  border-right:1px solid var(--border);
-  padding:28px 20px;
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.cal-heading{
-  font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);
-  text-transform:uppercase;margin-bottom:14px;
-}
-.cal-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:14px;
-}
-.cal-nav-btn{
-  background:var(--card2);border:1px solid var(--border2);border-radius:6px;
-  color:var(--text2);width:28px;height:28px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:15px;transition:.15s;line-height:1;
-}
-.cal-nav-btn:hover{background:var(--card3);color:var(--text);}
-.cal-month{font-family:var(--fd);font-size:22px;letter-spacing:2px;color:var(--text);}
+/* Todavía no */
+.nurture-ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 14px; }
+.nurture-ic .ico { width: 24px; height: 24px; }
 
-/* Celdas exactamente 34px — 7×34 + 6×2 = 250px → cabe en 290px con padding */
-.cal-grid{
-  display:grid;
-  grid-template-columns:repeat(7,34px);
-  gap:2px;
+/* Escritorio */
+@media (min-width: 900px) {
+  main { padding-top: calc(var(--header-h) + 56px); }
+  .layout { grid-template-columns: .8fr 1.2fr; gap: 56px; align-items: start; }
+  .intro { position: sticky; top: calc(var(--header-h) + 32px); }
+  .gets { display: grid; gap: 10px; margin-top: 28px; list-style: none; }
+  .gets li { display: grid; grid-template-columns: auto 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .gets .n { font: 500 12px var(--mono); color: var(--acc); padding-top: 2px; }
+  .gets strong { display: block; font-size: 15px; }
+  .gets small { font-size: 13.5px; color: var(--ink2); }
+  .panel { padding: 28px; border-radius: 24px; }
+  .panel h2 { font-size: 24px; }
+  .opts.wide { grid-template-columns: 1fr 1fr 1fr; }
+  .when { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: start; }
+  .slots { grid-template-columns: 1fr 1fr; }
+  .slots-head { margin-top: 18px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .actions .btn { width: auto; justify-self: start; }
 }
-.cal-dow{
-  width:34px;height:24px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--fm);font-size:7px;color:var(--text3);
-  letter-spacing:.8px;text-transform:uppercase;
-}
-.cal-day{
-  width:34px;height:34px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--fm);font-size:11px;color:var(--text2);
-  border-radius:7px;cursor:pointer;transition:.15s;user-select:none;
-  position:relative;
-}
-.cal-day:hover:not(.off):not(.past):not(.sel){
-  background:rgba(255,107,53,.12);color:var(--h1);
-}
-.cal-day.today::after{
-  content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
-  width:3px;height:3px;border-radius:50%;background:var(--indigo2);
-}
-.cal-day.sel{
-  background:linear-gradient(135deg,var(--h1),var(--h2))!important;
-  color:#fff!important;font-weight:600;
-  box-shadow:0 3px 12px rgba(255,107,53,.35);
-}
-.cal-day.off,.cal-day.past{opacity:.18;cursor:not-allowed;pointer-events:none;}
-.cal-day.empty{cursor:default;}
-
-.cal-legend{
-  display:flex;align-items:center;gap:14px;
-  margin-top:auto;padding-top:14px;
-}
-.leg-item{display:flex;align-items:center;gap:5px;font-family:var(--fm);font-size:8px;color:var(--text3);}
-.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-
-/* ── COL 3: SLOTS + FORM ── */
-.col-form{
-  padding:24px 22px;
-  display:flex;flex-direction:column;
-  overflow:hidden; /* el form en sí hace scroll si hace falta */
-}
-
-.slots-heading{
-  font-family:var(--fm);font-size:8px;letter-spacing:2px;color:var(--text3);
-  text-transform:uppercase;margin-bottom:4px;flex-shrink:0;
-}
-.sel-date-label{
-  font-family:var(--fd);font-size:20px;letter-spacing:1.5px;color:var(--text);
-  margin-bottom:10px;min-height:24px;flex-shrink:0;
-}
-
-.slots-list{
-  display:flex;flex-direction:column;gap:4px;
-  flex-shrink:0;margin-bottom:14px;
-}
-
-.slot{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--card);border:1px solid var(--border2);border-radius:7px;
-  padding:7px 12px;cursor:pointer;transition:.15s;user-select:none;flex-shrink:0;
-}
-.slot:hover:not(.disabled){border-color:rgba(255,107,53,.35);background:rgba(255,107,53,.04);}
-.slot.active{background:rgba(255,107,53,.1);border-color:var(--h1);}
-.slot-time{font-family:var(--fm);font-size:11px;color:var(--text);letter-spacing:.4px;}
-.slot.active .slot-time{color:var(--h1);}
-.slot-badge{
-  font-family:var(--fm);font-size:7px;letter-spacing:.8px;text-transform:uppercase;
-  padding:2px 6px;border-radius:3px;
-}
-.slot:not(.disabled):not(.active) .slot-badge{color:var(--green);background:rgba(16,185,129,.1);}
-.slot.active .slot-badge{color:var(--h1);background:rgba(255,107,53,.15);}
-.slot.disabled{opacity:.22;pointer-events:none;}
-.slot.disabled .slot-badge{color:var(--text3);background:var(--card2);}
-.slots-loading{
-  font-family:var(--fm);font-size:9px;color:var(--text3);
-  padding:14px 0;letter-spacing:.5px;text-align:center;
-}
-
-/* Formulario — scroll interno si la pantalla es muy pequeña */
-.form-wrap{
-  flex:1;overflow-y:auto;
-  scrollbar-width:thin;scrollbar-color:var(--card3) transparent;
-}
-.form-wrap::-webkit-scrollbar{width:3px;}
-.form-wrap::-webkit-scrollbar-thumb{background:var(--card3);border-radius:2px;}
-
-.form-sep{border:none;border-top:1px solid var(--border);margin:0 0 12px;}
-
-.field{margin-bottom:9px;}
-.label{
-  font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);
-  text-transform:uppercase;display:block;margin-bottom:5px;
-}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-
-input[type=text],input[type=email],input[type=tel],select,textarea{
-  width:100%;background:var(--card);border:1px solid var(--border2);
-  border-radius:7px;color:var(--text);font-family:var(--fb);font-size:12px;
-  padding:8px 11px;outline:none;transition:.15s;
-  -webkit-appearance:none;-moz-appearance:none;appearance:none;color-scheme:dark;
-}
-input:focus,select:focus,textarea:focus{
-  border-color:var(--h1);box-shadow:0 0 0 2px rgba(255,107,53,.1);
-}
-select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a4760' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 11px center;padding-right:28px;
-}
-textarea{resize:none;line-height:1.5;}
-
-.btn-submit{
-  width:100%;
-  background:linear-gradient(135deg,var(--h1),var(--h2));
-  color:#fff;border:none;border-radius:7px;padding:11px;
-  font-family:var(--fm);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
-  cursor:pointer;transition:.15s;margin-top:4px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 4px 14px rgba(255,107,53,.25);
-}
-.btn-submit:hover:not(:disabled){filter:brightness(1.08);box-shadow:0 6px 18px rgba(255,107,53,.35);}
-.btn-submit:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
-
-.form-status{
-  font-family:var(--fm);font-size:9px;margin-top:8px;
-  padding:8px 11px;border-radius:6px;display:none;letter-spacing:.4px;
-}
-.form-status.error{display:block;background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.18);}
-.form-status.success{display:block;background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.18);}
-
-.meet-result{
-  display:none;margin-top:10px;padding:12px;background:var(--card);
-  border:1px solid rgba(16,185,129,.2);border-radius:7px;text-align:center;
-}
-.meet-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
-.meet-link{color:var(--indigo2);font-family:var(--fm);font-size:10px;word-break:break-all;display:block;margin-bottom:6px;}
-.meet-note{color:var(--text2);font-size:11px;line-height:1.5;}
-
-/* ── Mobile ── */
-@media(max-width:860px){
-  html,body{overflow:auto;}
-  .app{grid-template-columns:1fr;height:auto;overflow:visible;}
-  .col-info{padding:24px 18px;border-right:none;border-bottom:1px solid var(--border);}
-  .col-cal{padding:24px 18px;border-right:none;border-bottom:1px solid var(--border);overflow:visible;}
-  .col-form{padding:24px 18px;overflow:visible;}
-  .form-wrap{overflow:visible;}
-  .slots-list{max-height:none;}
-  .info-title{font-size:32px;}
-}
+@media (max-width: 359px) { .opts.row, .frame ul { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-<div class="app">
+<a href="#main" class="skip">Saltar al contenido</a>
 
-  <!-- ── COL 1: INFO ── -->
-  <div class="col-info">
-    <div class="brand-logo"><img src="../../Identidad/Logo-Vertical-png.png" alt="HORIZON"></div>
-    <div class="info-title">Agenda tu<br><span>Diagnóstico</span><br>gratuito</div>
-    <p class="info-sub">Una sesión 1:1 con Benja donde analizamos tu negocio y definimos el camino concreto.</p>
-
-    <div class="meta-pills">
-      <div class="pill"><span class="pill-icon">⏱</span><span class="pill-text"><strong>60 minutos</strong> · Online</span></div>
-      <div class="pill"><span class="pill-icon">🎥</span><span class="pill-text"><strong>Google Meet</strong> · Link al instante</span></div>
-      <div class="pill"><span class="pill-icon">🎯</span><span class="pill-text"><strong>Sin compromiso</strong> · Sin presión</span></div>
-    </div>
-
-    <hr class="divider-line">
-
-    <div class="features">
-      <div class="feat"><div class="feat-dot"></div><div class="feat-text"><strong>Diagnóstico real</strong>Revisamos tu situación y definimos pasos concretos.</div></div>
-      <div class="feat"><div class="feat-dot"></div><div class="feat-text"><strong>Privado y confidencial</strong>Tu info nunca se comparte con terceros.</div></div>
-      <div class="feat"><div class="feat-dot"></div><div class="feat-text"><strong>Solo 10 cupos</strong>Atención personalizada, sin masificación.</div></div>
-    </div>
+<header class="header">
+  <div class="wrap">
+    <a href="/" class="logo" aria-label="HORIZON, inicio"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="140" height="27"></a>
+    <a href="/" class="back"><svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg>Volver al inicio</a>
   </div>
+</header>
 
-  <!-- ── COL 2: CALENDARIO ── -->
-  <div class="col-cal">
-    <div class="cal-heading">Selecciona una fecha</div>
-    <div class="cal-nav">
-      <button type="button" class="cal-nav-btn" onclick="calPrev()">‹</button>
-      <span id="calMonthLabel" class="cal-month"></span>
-      <button type="button" class="cal-nav-btn" onclick="calNext()">›</button>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-    <div class="cal-legend" style="margin-top:auto;padding-top:12px;">
-      <div class="leg-item"><div class="leg-dot" style="background:linear-gradient(135deg,var(--h1),var(--h2));"></div>Seleccionado</div>
-      <div class="leg-item"><div class="leg-dot" style="background:var(--indigo2);"></div>Hoy</div>
-      <div class="leg-item"><div class="leg-dot" style="background:rgba(255,255,255,.15);"></div>No disponible</div>
-    </div>
-  </div>
+<main id="main">
+  <div class="wrap layout">
 
-  <!-- ── COL 3: SLOTS + FORM ── -->
-  <div class="col-form">
-    <div class="slots-heading">Horario disponible</div>
-    <div class="sel-date-label" id="calSelLabel">— Elige un día</div>
+    <section class="intro" data-intro>
+      <span class="eyebrow">Diagnóstico gratuito</span>
+      <h1 class="h1">Entendamos tu negocio <span class="g">antes de proponer nada.</span></h1>
+      <p class="lead">Una sesión 1:1 con Benja para ver cómo llegan tus clientes, dónde se pierden y qué conviene hacer primero.</p>
+      <ul class="facts">
+        <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-clock"/></svg>30 minutos</li>
+        <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-video"/></svg>Google Meet</li>
+        <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-shield"/></svg>Sin compromiso</li>
+      </ul>
+      <ul class="gets">
+        <li><span class="n">01</span><div><strong>Cómo llegan tus clientes</strong><small>Canales y puntos de contacto actuales.</small></div></li>
+        <li><span class="n">02</span><div><strong>Dónde se pierden</strong><small>Tiempo de respuesta, fricciones y abandono.</small></div></li>
+        <li><span class="n">03</span><div><strong>Un número concreto</strong><small>Cuántos clientes se te escapan por semana.</small></div></li>
+      </ul>
+    </section>
 
-    <div class="slots-list" id="slotsCol">
-      <div class="slots-loading">Selecciona una fecha →</div>
-    </div>
+    <section aria-label="Agendar">
+      <ol class="steps-bar" id="stepsBar"><li class="on">1 · Antes de agendar</li><li>2 · Elegí tu horario</li></ol>
 
-    <div class="form-wrap">
-      <hr class="form-sep">
-      <form id="agendarForm" novalidate>
-        <div class="row2">
-          <div class="field">
-            <label class="label" for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required
-              autocomplete="given-name" maxlength="100" minlength="2">
+      <!-- PASO 1: calificación -->
+      <form class="panel" id="stepQ" novalidate data-intro>
+        <h2>Tres preguntas rápidas</h2>
+        <p class="sub">Así llegamos a la sesión con lo importante y no perdés tiempo.</p>
+
+        <div class="frame">
+          <small>Inversión de un sistema HORIZON</small>
+          <strong>Desde $490.000 <span>CLP + boleta · pago único</span></strong>
+          <ul>
+            <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg>Diseño y construcción</li>
+            <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg>Google y WhatsApp</li>
+            <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg>Automatizaciones</li>
+            <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg>Instalación presencial</li>
+            <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg>1er mes de soporte</li>
+            <li><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg>Sin permanencia</li>
+          </ul>
+        </div>
+
+        <fieldset>
+          <legend>Si el diagnóstico muestra que te sirve, ¿contás con ese presupuesto?</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="presupuesto" value="ahora" required><span>Sí, lo tengo disponible</span></label>
+            <label class="opt"><input type="radio" name="presupuesto" value="1-2m"><span>Sí, en los próximos 1–2 meses</span></label>
+            <label class="opt"><input type="radio" name="presupuesto" value="no"><span>Todavía no</span></label>
           </div>
-          <div class="field">
-            <label class="label" for="telefono">Teléfono</label>
-            <input type="tel" id="telefono" name="telefono" placeholder="+56 9 xxxx xxxx" required
-              autocomplete="tel" maxlength="20" pattern="[\+\d\s\-\(\)]{6,20}">
+        </fieldset>
+
+        <fieldset>
+          <legend>¿Cuántas consultas o mensajes recibís por semana?</legend>
+          <div class="opts row">
+            <label class="opt"><input type="radio" name="volumen" value="<10" required><span>Hasta 10</span></label>
+            <label class="opt"><input type="radio" name="volumen" value="10-30"><span>10 a 30</span></label>
+            <label class="opt"><input type="radio" name="volumen" value="30-100"><span>30 a 100</span></label>
+            <label class="opt"><input type="radio" name="volumen" value="100+"><span>Más de 100</span></label>
           </div>
-        </div>
+        </fieldset>
 
-        <div class="field">
-          <label class="label" for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="tu@empresa.com" required
-            autocomplete="email" maxlength="254">
-        </div>
+        <fieldset>
+          <legend>¿Quién decide la inversión en tu negocio?</legend>
+          <div class="opts wide">
+            <label class="opt"><input type="radio" name="decisor" value="yo" required><span>Yo</span></label>
+            <label class="opt"><input type="radio" name="decisor" value="socio"><span>Con un socio/a</span></label>
+            <label class="opt"><input type="radio" name="decisor" value="otro"><span>Otra persona</span></label>
+          </div>
+        </fieldset>
 
-        <div class="field">
-          <label class="label" for="planSel">Plan de interés <span style="color:var(--text3)">(opcional)</span></label>
-          <select id="planSel" name="plan">
-            <option value="">Aún no sé — primero el diagnóstico</option>
-            <option value="plan01">Plan 01 · Presencia Digital</option>
-            <option value="plan02">Plan 02 · Ecosistema Digital</option>
-            <option value="plan04">Plan 03 · Sistema con IA</option>
-            <option value="plan05">Plan 04 · Agente IA Personalizado</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label class="label" for="contexto">Principal desafío <span style="color:var(--text3)">(opcional)</span></label>
-          <textarea id="contexto" name="contexto" rows="2"
-            placeholder="Ej: Necesito sistematizar mi proceso de ventas…" maxlength="1000"></textarea>
-        </div>
-
-        <input type="hidden" id="fechaHidden" name="fecha">
-        <input type="hidden" id="horaHidden" name="hora">
-
-        <button type="submit" class="btn-submit" id="btnSubmit">
-          <span id="btnText">Confirmar sesión</span>
-        </button>
-
-        <div class="form-status" id="formStatus"></div>
-        <div class="meet-result" id="meetResult">
-          <div class="meet-label">Tu link de Google Meet</div>
-          <a class="meet-link" id="meetLinkEl" href="#" target="_blank" rel="noopener"></a>
-          <div class="meet-note">Invitación enviada a tu email. Redirigiendo…</div>
+        <div class="actions">
+          <button type="submit" class="btn btn-acc" id="btnQ" disabled>Elegir mi horario <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></button>
         </div>
       </form>
-    </div>
+
+      <!-- TODAVÍA NO -->
+      <form class="panel" id="stepNo" hidden novalidate>
+        <span class="nurture-ic t-lilac"><svg class="ico"><use href="/shared/hz-sprite.svg#i-book"/></svg></span>
+        <h2>Todavía no es el momento, y está perfecto.</h2>
+        <p class="sub">Mientras tanto, estos recursos gratuitos te ayudan a ordenar tu negocio. Si querés, te escribo cuando tenga sentido conversar.</p>
+        <div class="actions">
+          <a href="/recursos" class="btn btn-acc">Ver recursos gratis <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a>
+        </div>
+        <div class="fields">
+          <div class="field"><label for="nNombre">Nombre</label><input id="nNombre" name="nombre" autocomplete="given-name" maxlength="100" required></div>
+          <div class="field"><label for="nTel">WhatsApp</label><input id="nTel" name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 xxxx xxxx" maxlength="20" required></div>
+          <div class="field"><label for="nEmail">Email</label><input id="nEmail" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+          <button type="submit" class="btn btn-ghost" id="btnNo">Avisame cuando sea buen momento</button>
+          <div class="status" id="statusNo" role="status"></div>
+        </div>
+        <div class="actions"><button type="button" class="link-btn" data-back>Cambiar mis respuestas</button></div>
+      </form>
+
+      <!-- PASO 2: horario y datos -->
+      <form class="panel" id="stepCal" hidden novalidate>
+        <h2>Elegí día y horario</h2>
+        <p class="sub">Horario de Chile. Te llega la invitación con el link de Meet al instante.</p>
+        <div class="when">
+          <div>
+            <div class="cal-top">
+              <strong id="calMonth"></strong>
+              <div class="cal-nav">
+                <button type="button" id="calPrev" aria-label="Mes anterior"><svg class="ico"><use href="/shared/hz-sprite.svg#i-chev-l"/></svg></button>
+                <button type="button" id="calNext" aria-label="Mes siguiente"><svg class="ico"><use href="/shared/hz-sprite.svg#i-chev-r"/></svg></button>
+              </div>
+            </div>
+            <div class="cal-grid" id="calGrid" role="grid" aria-label="Días disponibles"></div>
+          </div>
+          <div>
+            <p class="slots-head">Horarios <span id="selDateLabel">· elegí un día</span></p>
+            <div class="slots" id="slots"><p class="slots-msg">Primero elegí un día.</p></div>
+          </div>
+        </div>
+
+        <div class="fields">
+          <div class="row2">
+            <div class="field"><label for="nombre">Nombre</label><input id="nombre" name="nombre" autocomplete="given-name" maxlength="100" required></div>
+            <div class="field"><label for="telefono">WhatsApp</label><input id="telefono" name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 xxxx xxxx" maxlength="20" required></div>
+          </div>
+          <div class="field"><label for="email">Email <small>(ahí llega la invitación)</small></label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+          <div class="field">
+            <label for="planSel">Plan de interés <small>(opcional)</small></label>
+            <select id="planSel" name="plan">
+              <option value="">Aún no sé, primero el diagnóstico</option>
+              <option value="plan01">Plan 01 · Presencia Digital</option>
+              <option value="plan02">Plan 02 · Ecosistema Digital</option>
+              <option value="plan04">Plan 03 · Sistema con IA</option>
+              <option value="plan05">Plan 04 · Agente IA Personalizado</option>
+            </select>
+          </div>
+          <div class="field"><label for="contexto">¿Qué te gustaría resolver? <small>(opcional)</small></label><textarea id="contexto" name="contexto" maxlength="1000" placeholder="Ej: me escriben de noche y no alcanzo a responder"></textarea></div>
+          <button type="submit" class="btn btn-acc" id="btnCal">Confirmar mi diagnóstico <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></button>
+          <div class="status" id="statusCal" role="status"></div>
+        </div>
+        <div class="actions" id="backWrap"><button type="button" class="link-btn" data-back>Volver a las preguntas</button></div>
+      </form>
+    </section>
+
   </div>
+</main>
 
-</div>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<script src="/shared/hz-motion.js" defer></script>
 <script>
-(function(){
-  const HOURS  = ['10:00','11:00','12:00','14:00','15:00','16:00','17:00','18:00'];
-  const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const DOWS   = ['L','M','M','J','V','S','D'];
-  const DNAMES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+(function () {
+  'use strict';
+  var HOURS  = ['10:00','11:00','12:00','14:00','15:00','16:00','17:00','18:00'];
+  var MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var DOWS   = ['L','M','M','J','V','S','D'];
+  var DNAMES = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  var $ = function (id) { return document.getElementById(id); };
 
-  const today = new Date(); today.setHours(0,0,0,0);
-  const minDate = new Date(today); minDate.setDate(minDate.getDate()+1);
-  const maxDate = new Date(today); maxDate.setDate(maxDate.getDate()+21);
+  var stepQ = $('stepQ'), stepNo = $('stepNo'), stepCal = $('stepCal'), bar = $('stepsBar').children;
+  var calif = { presupuesto: '', volumen: '', decisor: '' };
 
-  let calYear  = today.getFullYear();
-  let calMonth = today.getMonth();
-  let selDate  = '';
-  let selHora  = '';
-
-  function toStr(d){ return d.toISOString().slice(0,10); }
-
-  function renderCal(){
-    document.getElementById('calMonthLabel').textContent =
-      MONTHS[calMonth].toUpperCase()+' '+calYear;
-
-    const first    = new Date(calYear, calMonth, 1);
-    const nDays    = new Date(calYear, calMonth+1, 0).getDate();
-    const startDow = (first.getDay()+6)%7;
-
-    let html = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
-    for(let i=0;i<startDow;i++) html+=`<div class="cal-day empty"></div>`;
-
-    for(let day=1;day<=nDays;day++){
-      const d   = new Date(calYear, calMonth, day);
-      const ds  = toStr(d);
-      const dow = d.getDay();
-      const off = dow===0||dow===6||d<minDate||d>maxDate;
-      const isSel   = ds===selDate;
-      const isToday = d.getTime()===today.getTime();
-
-      let cls='cal-day';
-      if(isSel)        cls+=' sel';
-      else if(isToday) cls+=' today';
-      if(d<minDate||d>maxDate) cls+=' past';
-      else if(dow===0||dow===6) cls+=' off';
-
-      html+=`<div class="${cls}"${!off?` onclick="calClick('${ds}')"`:''  }>${day}</div>`;
-    }
-    document.getElementById('calGrid').innerHTML = html;
+  function show(panel) {
+    [stepQ, stepNo, stepCal].forEach(function (p) { p.hidden = p !== panel; });
+    bar[0].className = panel === stepQ ? 'on' : 'done';
+    bar[1].className = panel === stepCal ? 'on' : '';
+    var top = $('stepsBar').getBoundingClientRect().top + scrollY - 90;
+    if (scrollY > top) (window.hzLenis ? hzLenis.scrollTo(top) : scrollTo(0, top));
   }
+  document.querySelectorAll('[data-back]').forEach(function (b) { b.addEventListener('click', function () { show(stepQ); }); });
 
-  window.calPrev = function(){
-    if(--calMonth<0){calMonth=11;calYear--;} renderCal();
-  };
-  window.calNext = function(){
-    if(++calMonth>11){calMonth=0;calYear++;} renderCal();
-  };
-
-  window.calClick = async function(ds){
-    selDate=ds; selHora='';
-    document.getElementById('fechaHidden').value=ds;
-    document.getElementById('horaHidden').value='';
-    renderCal();
-    const d=new Date(ds+'T12:00:00');
-    document.getElementById('calSelLabel').textContent=
-      DNAMES[d.getDay()]+' '+d.getDate()+' de '+MONTHS[d.getMonth()].toLowerCase();
-    await loadSlots(ds);
-  };
-
-  async function loadSlots(ds){
-    const col=document.getElementById('slotsCol');
-    col.innerHTML='<div class="slots-loading">Cargando horarios…</div>';
-    let booked=[];
-    try{
-      const r=await fetch('/api/available-slots?fecha='+ds);
-      if(r.ok){ const j=await r.json(); booked=j.booked||[]; }
-    }catch(e){}
-    col.innerHTML=HOURS.map(h=>{
-      const taken=booked.includes(h);
-      return `<div class="slot${taken?' disabled':''}"${!taken?` onclick="slotClick('${h}',this)"`:''  }>
-        <span class="slot-time">${h}</span>
-        <span class="slot-badge">${taken?'ocupado':'disponible'}</span>
-      </div>`;
-    }).join('');
-  }
-
-  window.slotClick=function(h,el){
-    document.querySelectorAll('#slotsCol .slot').forEach(s=>s.classList.remove('active'));
-    el.classList.add('active');
-    selHora=h;
-    document.getElementById('horaHidden').value=h;
-  };
-
-  const init=new Date(minDate);
-  while(init.getDay()===0||init.getDay()===6) init.setDate(init.getDate()+1);
-  calClick(toStr(init));
-
-  // Leer URL params para pre-rellenar desde propuestas externas
-  const _up = new URLSearchParams(window.location.search);
-  window._bookingSource = _up.get('source') || '';
-  const _plan = _up.get('plan');
-  if(_plan){
-    const sel = document.getElementById('planSel');
-    if(sel){
-      sel.value = _plan;
-      sel.disabled = true;
-      sel.style.opacity = '0.5';
-      sel.style.cursor  = 'not-allowed';
-      sel.style.pointerEvents = 'none';
-      // Asegurar que el valor viaje aunque el campo esté disabled
-      const hidden = document.createElement('input');
-      hidden.type  = 'hidden';
-      hidden.name  = 'plan';
-      hidden.value = _plan;
-      sel.parentNode.appendChild(hidden);
-      // Etiqueta visual
-      const lbl = sel.previousElementSibling;
-      if(lbl){
-        const badge = document.createElement('span');
-        badge.textContent = ' · incluido en tu propuesta';
-        badge.style.cssText = 'font-family:var(--fm);font-size:9px;color:var(--h1);letter-spacing:.3px;';
-        lbl.appendChild(badge);
-      }
-    }
-  }
-
-  document.getElementById('agendarForm').addEventListener('submit',async function(e){
+  // ── Paso 1: las tres preguntas ──
+  stepQ.addEventListener('change', function () {
+    var f = new FormData(stepQ);
+    calif = { presupuesto: f.get('presupuesto') || '', volumen: f.get('volumen') || '', decisor: f.get('decisor') || '' };
+    $('btnQ').disabled = !(calif.presupuesto && calif.volumen && calif.decisor);
+    $('btnQ').firstChild.textContent = calif.presupuesto === 'no' ? 'Continuar ' : 'Elegir mi horario ';
+  });
+  stepQ.addEventListener('submit', function (e) {
     e.preventDefault();
-    const status=document.getElementById('formStatus');
-    const btn=document.getElementById('btnSubmit');
-    const btnTxt=document.getElementById('btnText');
-    status.className='form-status'; status.style.display='none';
+    if ($('btnQ').disabled) return;
+    show(calif.presupuesto === 'no' ? stepNo : stepCal);
+  });
 
-    const nombre  =document.getElementById('nombre').value.trim();
-    const email   =document.getElementById('email').value.trim();
-    const telefono=document.getElementById('telefono').value.trim();
-    const fecha   =document.getElementById('fechaHidden').value;
-    const contexto=document.getElementById('contexto').value.trim();
-    const plan    =document.getElementById('planSel').value;
+  // ── Validaciones compartidas ──
+  function check(nombre, telefono, email) {
+    if (nombre.length < 2) return 'Escribí tu nombre.';
+    if (!/^[\+\d\s\-\(\)]{6,20}$/.test(telefono)) return 'Revisá tu WhatsApp. Ej: +56 9 1234 5678.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Revisá tu email.';
+    return '';
+  }
+  function setStatus(el, cls, msg) { el.className = 'status ' + cls; el.textContent = msg; }
+  function post(body) {
+    return fetch('/api/schedule-meet', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (d) { if (!r.ok || !d.ok) throw new Error(d.error || 'No se pudo guardar.'); return d; }); });
+  }
 
-    if(!nombre||!email||!telefono||!fecha||!selHora){
-      status.textContent='⚠️ Completa todos los campos y selecciona día y horario.';
-      status.className='form-status error'; return;
-    }
-    if(nombre.length<2||nombre.length>100){
-      status.textContent='⚠️ El nombre debe tener entre 2 y 100 caracteres.';
-      status.className='form-status error'; return;
-    }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254){
-      status.textContent='⚠️ Email inválido.';
-      status.className='form-status error'; return;
-    }
-    if(!/^[\+\d\s\-\(\)]{6,20}$/.test(telefono)){
-      status.textContent='⚠️ Teléfono inválido. Ej: +56 9 xxxx xxxx.';
-      status.className='form-status error'; return;
-    }
-    if(contexto.length>1000){
-      status.textContent='⚠️ El mensaje no puede superar 1000 caracteres.';
-      status.className='form-status error'; return;
-    }
+  // ── Todavía no: lead frío ──
+  stepNo.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var st = $('statusNo'), btn = $('btnNo');
+    var nombre = $('nNombre').value.trim(), telefono = $('nTel').value.trim(), email = $('nEmail').value.trim();
+    var err = check(nombre, telefono, email);
+    if (err) return setStatus(st, 'error', err);
+    btn.disabled = true;
+    post({ nombre: nombre, telefono: telefono, email: email, presupuesto: 'no', volumen: calif.volumen, decisor: calif.decisor, source: window._source || '' })
+      .then(function () { setStatus(st, 'ok', 'Listo, ' + nombre.split(' ')[0] + '. Te escribo cuando tenga sentido conversar.'); btn.hidden = true; })
+      .catch(function (x) { setStatus(st, 'error', x.message); btn.disabled = false; });
+  });
 
-    btn.disabled=true; btnTxt.textContent='⏳ Creando tu sesión…';
+  // ── Paso 2: calendario ──
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var minDate = new Date(today); minDate.setDate(minDate.getDate() + 1);
+  var maxDate = new Date(today); maxDate.setDate(maxDate.getDate() + 21);
+  var calY = minDate.getFullYear(), calM = minDate.getMonth(), selDate = '', selHora = '';
+  var toStr = function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 
-    try{
-      const r=await fetch('/api/schedule-meet',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({nombre,email,telefono,fecha,hora:selHora,contexto,plan,source:window._bookingSource||''})
+  function renderCal() {
+    $('calMonth').textContent = MONTHS[calM] + ' ' + calY;
+    var first = new Date(calY, calM, 1), nDays = new Date(calY, calM + 1, 0).getDate(), start = (first.getDay() + 6) % 7;
+    var html = DOWS.map(function (d) { return '<div class="cal-dow">' + d + '</div>'; }).join('');
+    for (var i = 0; i < start; i++) html += '<div class="cal-empty"></div>';
+    for (var day = 1; day <= nDays; day++) {
+      var d = new Date(calY, calM, day), ds = toStr(d), dow = d.getDay();
+      var off = dow === 0 || dow === 6 || d < minDate || d > maxDate;
+      var cls = 'cal-day' + (ds === selDate ? ' sel' : '') + (d.getTime() === today.getTime() ? ' today' : '');
+      html += '<button type="button" class="' + cls + '" data-d="' + ds + '"' + (off ? ' disabled' : '') + ' aria-label="' + DNAMES[dow] + ' ' + day + '">' + day + '</button>';
+    }
+    $('calGrid').innerHTML = html;
+    $('calPrev').disabled = calY === today.getFullYear() && calM <= today.getMonth();
+    $('calNext').disabled = new Date(calY, calM + 1, 1) > maxDate;
+  }
+  $('calPrev').addEventListener('click', function () { if (--calM < 0) { calM = 11; calY--; } renderCal(); });
+  $('calNext').addEventListener('click', function () { if (++calM > 11) { calM = 0; calY++; } renderCal(); });
+  $('calGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('.cal-day'); if (!b || b.disabled) return;
+    selDate = b.dataset.d; selHora = ''; renderCal(); loadSlots(selDate);
+    var d = new Date(selDate + 'T12:00:00');
+    $('selDateLabel').textContent = '· ' + DNAMES[d.getDay()] + ' ' + d.getDate() + ' de ' + MONTHS[d.getMonth()];
+  });
+
+  function loadSlots(ds) {
+    var box = $('slots');
+    box.innerHTML = '<p class="slots-msg">Cargando horarios…</p>';
+    fetch('/api/available-slots?fecha=' + ds).then(function (r) { return r.ok ? r.json() : { booked: [] }; }).catch(function () { return { booked: [] }; })
+      .then(function (j) {
+        var booked = j.booked || [];
+        box.innerHTML = HOURS.map(function (h) {
+          var taken = booked.indexOf(h) > -1;
+          return '<button type="button" class="slot" data-h="' + h + '"' + (taken ? ' disabled aria-label="' + h + ' ocupado"' : '') + '>' + h + '</button>';
+        }).join('');
       });
-      const data=await r.json();
-      if(!r.ok||!data.ok){
-        status.textContent='⚠️ '+(data.error||'Error al crear la sesión. Intenta de nuevo.');
-        status.className='form-status error';
-        btn.disabled=false; btnTxt.textContent='Confirmar sesión'; return;
-      }
-      const meetLink=data.meetLink||'';
-      document.getElementById('meetLinkEl').href=meetLink;
-      document.getElementById('meetLinkEl').textContent=meetLink;
-      document.getElementById('meetResult').style.display='block';
-      btnTxt.textContent='✅ Sesión confirmada';
-      setTimeout(()=>{
-        sessionStorage.setItem('horizon_booking',JSON.stringify({
-          attendeeName:nombre,attendeeEmail:email,
-          startTime:data.reunionFecha||fecha,meetLink
-        }));
-        window.location.href='/booking-confirm';
-      },2500);
-    }catch(err){
-      status.textContent='⚠️ Error de conexión. Intenta de nuevo.';
-      status.className='form-status error';
-      btn.disabled=false; btnTxt.textContent='Confirmar sesión';
-    }
+  }
+  $('slots').addEventListener('click', function (e) {
+    var b = e.target.closest('.slot'); if (!b || b.disabled) return;
+    document.querySelectorAll('.slot.sel').forEach(function (s) { s.classList.remove('sel'); });
+    b.classList.add('sel'); selHora = b.dataset.h;
+  });
+
+  // Primer día hábil seleccionado por defecto
+  var init = new Date(minDate); while (init.getDay() === 0 || init.getDay() === 6) init.setDate(init.getDate() + 1);
+  calY = init.getFullYear(); calM = init.getMonth(); renderCal();
+  $('calGrid').querySelector('[data-d="' + toStr(init) + '"]').click();
+
+  // ── Viene de una propuesta (?plan=…&source=…): ya está calificado ──
+  var qp = new URLSearchParams(location.search);
+  window._source = qp.get('source') || '';
+  if (qp.get('plan')) {
+    var sel = $('planSel');
+    sel.value = qp.get('plan'); sel.disabled = true;
+    calif = { presupuesto: 'propuesta', volumen: '', decisor: '' };
+    $('stepsBar').hidden = true; $('backWrap').hidden = true;
+    show(stepCal);
+  }
+
+  // ── Confirmar ──
+  stepCal.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var st = $('statusCal'), btn = $('btnCal');
+    var nombre = $('nombre').value.trim(), telefono = $('telefono').value.trim(), email = $('email').value.trim();
+    if (!selDate || !selHora) return setStatus(st, 'error', 'Elegí un día y un horario.');
+    var err = check(nombre, telefono, email);
+    if (err) return setStatus(st, 'error', err);
+    btn.disabled = true; btn.firstChild.textContent = 'Agendando… ';
+    post({ nombre: nombre, telefono: telefono, email: email, fecha: selDate, hora: selHora,
+           plan: $('planSel').value, contexto: $('contexto').value.trim(), source: window._source,
+           presupuesto: calif.presupuesto, volumen: calif.volumen, decisor: calif.decisor })
+      .then(function (d) {
+        var meet = d.meetLink || '';
+        setStatus(st, 'ok', meet ? 'Diagnóstico confirmado. Tu link de Meet: ' + meet : 'Diagnóstico confirmado. Te llega la confirmación por email.');
+        try { sessionStorage.setItem('horizon_booking', JSON.stringify({ attendeeName: nombre, attendeeEmail: email, startTime: d.reunionFecha || selDate, meetLink: meet })); } catch (x) {}
+        setTimeout(function () { location.href = '/booking-confirm'; }, 2200);
+      })
+      .catch(function (x) { setStatus(st, 'error', x.message); btn.disabled = false; btn.firstChild.textContent = 'Confirmar mi diagnóstico '; });
   });
 })();
 </script>

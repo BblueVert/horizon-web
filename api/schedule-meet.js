@@ -40,6 +40,23 @@ async function getAccessToken() {
   return parsed.access_token;
 }
 
+// Calificación previa del diagnóstico (formulario /agendar). Valores cerrados: lo demás se descarta.
+const PRESUPUESTO = { ahora: 'disponible ahora', '1-2m': 'en 1–2 meses', no: 'todavía no', propuesta: 'viene de una propuesta' };
+const VOLUMEN     = { '<10': 'menos de 10', '10-30': '10–30', '30-100': '30–100', '100+': 'más de 100' };
+const DECISOR     = { yo: 'el dueño', socio: 'con un socio', otro: 'otra persona' };
+const PRIORIDAD   = { ahora: 'Alta', propuesta: 'Alta', '1-2m': 'Media', no: 'Baja' };
+
+function pick(map, val) { return Object.prototype.hasOwnProperty.call(map, val) ? val : ''; }
+
+function resumenCalificacion(c) {
+  if (!c.presupuesto) return '';
+  return [
+    'Presupuesto: ' + PRESUPUESTO[c.presupuesto],
+    c.volumen && 'Consultas/semana: ' + VOLUMEN[c.volumen],
+    c.decisor && 'Decide: ' + DECISOR[c.decisor],
+  ].filter(Boolean).join(' · ');
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://horizonweb.cl');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -61,12 +78,22 @@ module.exports = async function handler(req, res) {
   // Normalize 'plan-01' → 'plan01' to match CRM keys
   const plan = planRaw.replace(/^plan-(\d+)$/, 'plan$1');
   const source  = sanitize(body.source  || '', 100);
+  const calif = {
+    presupuesto: pick(PRESUPUESTO, String(body.presupuesto || '')),
+    volumen:     pick(VOLUMEN,     String(body.volumen || '')),
+    decisor:     pick(DECISOR,     String(body.decisor || '')),
+  };
+  // "Todavía no": no se agenda; queda como lead frío para nutrir.
+  const sinPresupuesto = calif.presupuesto === 'no';
+  const resumen = resumenCalificacion(calif);
 
   if (!email)         return res.status(400).json({ error: 'Email requerido' });
   if (!nombre)        return res.status(400).json({ error: 'Nombre requerido' });
   if (!telefono)      return res.status(400).json({ error: 'Teléfono requerido' });
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return res.status(400).json({ error: 'Fecha inválida' });
-  if (!/^\d{2}:\d{2}$/.test(hora))         return res.status(400).json({ error: 'Hora inválida' });
+  if (!sinPresupuesto) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return res.status(400).json({ error: 'Fecha inválida' });
+    if (!/^\d{2}:\d{2}$/.test(hora))         return res.status(400).json({ error: 'Hora inválida' });
+  }
 
   const SB_URL  = process.env.SUPABASE_URL;
   const SB_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
@@ -80,20 +107,20 @@ module.exports = async function handler(req, res) {
   // ── 1 & 2. Google Calendar (opcional — si falla igual guardamos el lead) ──
   let meetLink = '';
   let eventId  = '';
-  const calReady = CAL_ID && G_CI && G_CS && G_RT;
+  const calReady = !sinPresupuesto && CAL_ID && G_CI && G_CS && G_RT;
   if (calReady) {
     try {
       const accessToken = await getAccessToken();
       const tz = 'America/Santiago';
       const [hh, mm] = hora.split(':').map(Number);
-      const endHour = (hh + 1) % 24;
-      const endFecha = hh === 23
+      const endMin   = hh * 60 + mm + 30;               // diagnóstico de 30 minutos
+      const endFecha = endMin >= 24 * 60
         ? (() => { const d = new Date(fecha + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); return d.toISOString().slice(0, 10); })()
         : fecha;
-      const endTime = `${String(endHour).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+      const endTime = `${String(Math.floor(endMin / 60) % 24).padStart(2, '0')}:${String(endMin % 60).padStart(2, '0')}`;
       const event = {
         summary:     `Diagnóstico HORIZON — ${nombre}`,
-        description: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}${contexto ? '\n\n' + contexto : ''}`,
+        description: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}${resumen ? '\n\n' + resumen : ''}${contexto ? '\n\n' + contexto : ''}`,
         start: { dateTime: `${fecha}T${hora}:00`, timeZone: tz },
         end:   { dateTime: `${endFecha}T${endTime}:00`, timeZone: tz },
         attendees: [{ email }],
@@ -118,19 +145,20 @@ module.exports = async function handler(req, res) {
     } catch (err) {
       console.warn('[schedule-meet] Calendar skip (no bloqueante):', err.message);
     }
-  } else {
+  } else if (!sinPresupuesto) {
     console.warn('[schedule-meet] Google Calendar no configurado — guardando lead sin Meet link');
   }
 
   // ── 3. Upsert lead in Supabase ────────────────────────────────────────────
   const sbAuth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
   const sbHeaders = { ...sbAuth, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
-  const reunionISO = `${fecha}T${hora}:00`;
+  const reunionISO = sinPresupuesto ? '' : `${fecha}T${hora}:00`;
+  const califRegistro = calif.presupuesto ? { ...calif, resumen, fecha: new Date().toISOString() } : null;
 
   let existingLead = null;
   try {
     const gr   = await httpsRequest('GET',
-      `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}&select=id,status&limit=1`,
+      `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(email)}&select=id,status,nota,hooks_respuestas&limit=1`,
       sbAuth
     );
     const rows = JSON.parse(gr.body || '[]');
@@ -141,7 +169,14 @@ module.exports = async function handler(req, res) {
 
   if (existingLead) {
     // No sobreescribir el status — solo actualizar Meet link y fecha
-    const patch = { canal: 'hero', cal_link: meetLink, reunion_fecha: reunionISO, ...(source && { origen: source }) };
+    const patch = sinPresupuesto ? {} : { canal: 'hero', cal_link: meetLink, reunion_fecha: reunionISO };
+    if (source) patch.origen = source;
+    if (califRegistro) {
+      const prev = existingLead.hooks_respuestas && typeof existingLead.hooks_respuestas === 'object' ? existingLead.hooks_respuestas : {};
+      patch.hooks_respuestas = { ...prev, calificacion: califRegistro };
+      patch.prioridad = PRIORIDAD[calif.presupuesto];
+      patch.nota = [existingLead.nota, '[Calificación] ' + resumen].filter(Boolean).join('\n');
+    }
     if (nombre)   patch.nombre   = nombre;
     if (telefono) patch.telefono = telefono;
     if (plan)     patch.plan     = plan;
@@ -157,11 +192,12 @@ module.exports = async function handler(req, res) {
     }
   } else {
     const newLead = {
-      id: uid(), nombre, email, empresa: '', telefono, nota: contexto,
-      plan, canal: 'hero', origen: source || 'agendar-directo',
-      status: 'new', prioridad: 'Media', tipoprecio: 'fundador',
-      cal_link: meetLink, reunion_fecha: reunionISO,
-      historial: [], hooks_respuestas: {},
+      id: uid(), nombre, email, empresa: '', telefono,
+      nota: [resumen && '[Calificación] ' + resumen, contexto].filter(Boolean).join('\n'),
+      plan, canal: 'hero', origen: source || (sinPresupuesto ? 'agendar-sin-presupuesto' : 'agendar-directo'),
+      status: 'new', prioridad: PRIORIDAD[calif.presupuesto] || 'Media', tipoprecio: 'fundador',
+      cal_link: meetLink, reunion_fecha: reunionISO || null,
+      historial: [], hooks_respuestas: califRegistro ? { calificacion: califRegistro } : {},
     };
     try {
       const r = await httpsRequest('POST', `${SB_URL}/rest/v1/leads`, sbHeaders, newLead);
@@ -177,13 +213,15 @@ module.exports = async function handler(req, res) {
   }
 
   // ── 4. Notify n8n (booking webhook — fire & forget) ──────────────────────
+  if (sinPresupuesto) return res.status(200).json({ ok: true, agendado: false });
+
   const N8N_BOOKING = process.env.N8N_BOOKING_WEBHOOK;
   if (N8N_BOOKING) {
     httpsRequest('POST', N8N_BOOKING,
       { 'Content-Type': 'application/json' },
-      { nombre, email, telefono, plan, meetLink, reunionFecha: reunionISO, contexto }
+      { nombre, email, telefono, plan, meetLink, reunionFecha: reunionISO, contexto, calificacion: califRegistro }
     ).catch(err => console.error('[schedule-meet] n8n notify:', err.message));
   }
 
-  return res.status(200).json({ ok: true, meetLink, reunionFecha: reunionISO });
+  return res.status(200).json({ ok: true, agendado: true, meetLink, reunionFecha: reunionISO });
 };
