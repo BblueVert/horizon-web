@@ -10,5 +10,5 @@ RUT, domicilio y datos bancarios van en `datos-privados.md` (misma carpeta, igno
 - Nombre comercial: HORIZON
 - Comuna / ciudad: Rancagua
 - Correo: soportebinks@gmail.com
-- Teléfono / WhatsApp: [[DEFINIR: confirmar el número comercial vigente; el sitio hoy usa +56 9 4651 3068 en 12 páginas]]
+- Teléfono / WhatsApp: +56 9 7696 2659 (consultoría)
 - Sitio: horizonweb.cl
