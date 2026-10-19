@@ -66,6 +66,7 @@ button{cursor:pointer;}
 .meter-fill{height:100%;background:var(--brand);border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1);}
 .meter-txt{font-size:13px;color:var(--ink2);white-space:nowrap;font-variant-numeric:tabular-nums;}
 .now{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13.5px;color:var(--ink2);}
+a.chip{text-decoration:none;}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;background:var(--brand-soft);color:var(--ink);font-size:13px;font-weight:500;}
 .chip .hz-i{font-size:14px;}
 .updated{font-size:12.5px;color:var(--ink3);display:flex;align-items:center;gap:6px;}
@@ -186,6 +187,19 @@ button{cursor:pointer;}
 .bi-d{font-size:13.5px;color:var(--ink2);grid-column:1/-1;}
 .bi-s{grid-column:1/-1;font-size:12.5px;display:flex;align-items:center;gap:6px;color:var(--ink3);}
 .bi-s .hz-i{font-size:14px;}
+.bi-pay{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:4px;}
+.btn-pay{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:700;background:#009EE3;color:#fff;}
+.btn-pay:disabled{opacity:.6;}
+.btn-pay .hz-i{font-size:16px;}
+.bi-lock{font-size:12.5px;color:var(--ink3);display:inline-flex;align-items:center;gap:5px;}
+.ent{padding:18px;margin-bottom:14px;display:grid;gap:12px;}
+.ent-h{display:flex;align-items:center;gap:12px;}
+.ent-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);font-size:20px;flex-shrink:0;}
+.ent-t{font-weight:700;font-size:15.5px;}
+.ent-s{font-size:13.5px;color:var(--ink2);}
+.ent-l{display:grid;gap:8px;}
+.ent-l a{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);font-weight:600;font-size:14.5px;}
+.ent-l a:hover{border-color:var(--line2);background:var(--surface2);}
 .bi.paid .bi-n,.bi.paid .bi-m{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--ink3);}
 .bi.paid .bi-s{color:var(--ok);font-weight:600;}
 @media(max-width:519px){.bsum{grid-template-columns:1fr 1fr;}.bsum div:first-child{grid-column:1/-1;}}
@@ -382,6 +396,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
 
     <!-- Presupuesto -->
     <section class="panel" id="p-pres" role="tabpanel" aria-labelledby="t-pres" hidden>
+      <div class="card ent" id="b-ent" hidden></div>
       <div class="card bsum" id="b-sum"></div>
       <div class="card blist" id="b-list"></div>
     </section>
@@ -412,9 +427,9 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     <section id="p-brief" hidden>
       <div class="card brief">
         <div class="sec-h"><h2 class="sec-t"><i class="hz-i" data-i="pencil"></i>Brief antes de la sesión</h2><span class="sec-hint" id="b-status"></span></div>
-        <div class="fld"><label for="b-negocio">¿A qué se dedica tu negocio?</label><textarea class="ctl" id="b-negocio" maxlength="2000" placeholder="Qué haces, a quién le vendes y cómo operas hoy"></textarea></div>
-        <div class="fld"><label for="b-problema">¿Cuál es el mayor freno que tienes ahora?</label><textarea class="ctl" id="b-problema" maxlength="2000" placeholder="Lo primero que se te venga, sin filtro"></textarea></div>
-        <div class="fld"><label for="b-objetivo">¿Qué resultado esperas de la sesión?</label><textarea class="ctl" id="b-objetivo" maxlength="2000" placeholder="Ej: un plan claro para ordenar las ventas"></textarea></div>
+        <div class="fld"><label for="b-negocio">¿A qué se dedica tu negocio?</label><textarea class="ctl" id="b-negocio" maxlength="2000" placeholder="Qué hacés, a quién le vendés y cómo operás hoy"></textarea></div>
+        <div class="fld"><label for="b-problema">¿Cuál es el mayor freno que tenés ahora?</label><textarea class="ctl" id="b-problema" maxlength="2000" placeholder="Lo primero que se te venga, sin filtro"></textarea></div>
+        <div class="fld"><label for="b-objetivo">¿Qué resultado esperás de la sesión?</label><textarea class="ctl" id="b-objetivo" maxlength="2000" placeholder="Ej: un plan claro para ordenar las ventas"></textarea></div>
         <div class="fld"><label for="b-intentos">¿Ya intentaste resolverlo antes? ¿Cómo fue?</label><textarea class="ctl" id="b-intentos" maxlength="2000" placeholder="Qué probaste y qué pasó"></textarea></div>
       </div>
     </section>
@@ -695,6 +710,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     brief:     { t:'Brief completado',    i:'pencil' },
     prioridad: { t:'Prioridades actualizadas', i:'list' },
     booking:   { t:'Diagnóstico agendado', i:'calendar' },
+    pago:      { t:'Pago recibido',        i:'coin' },
   };
   function renderFeed(){
     const items = [
@@ -731,8 +747,46 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         <div class="bi-n">${esc(b.nombre)}</div><div class="bi-m">${b.monto != null ? clp(b.monto) : 'Por definir'}</div>
         ${b.descripcion ? `<div class="bi-d">${esc(b.descripcion)}</div>` : ''}
         <div class="bi-s">${paid ? ic('check-circle') + 'Pagado' + (b.pagado_at ? ' el ' + fmtD(b.pagado_at, { day:'numeric', month:'long', year:'numeric' }) : '') : ic('circle') + 'Pendiente'}</div>
+        ${!paid && S.pagoOnline && b.monto > 0 ? `<div class="bi-pay"><button class="btn-pay" type="button" data-pay="${esc(b.id)}">${ic('lock')}Pagar ${clp(b.monto)} con Mercado Pago</button>
+          ${b.bloquea_entrega ? `<span class="bi-lock">${ic('lock')}Con este pago se libera la entrega final</span>` : ''}</div>` : ''}
       </div>`; }).join('');
+    renderEntrega();
   }
+
+  // Entrega final: accesos y archivos; quedan bloqueados hasta pagar el saldo
+  function renderEntrega(){
+    const E = S.entrega, el = $('b-ent');
+    el.hidden = !E; if (!E) return;
+    if (E.bloqueada) {
+      el.innerHTML = `<div class="ent-h"><span class="ent-ic">${ic('lock')}</span><div><div class="ent-t">Entrega final</div>
+        <div class="ent-s">${E.total} ${E.total === 1 ? 'acceso o archivo listo' : 'accesos y archivos listos'}. Se desbloquean apenas se confirme el pago del saldo.</div></div></div>`;
+    } else {
+      el.innerHTML = `<div class="ent-h"><span class="ent-ic">${ic('check-circle')}</span><div><div class="ent-t">Entrega final</div>
+        <div class="ent-s">Todo lo de tu proyecto, a tu nombre. Guardá estos links.</div></div></div>
+        <div class="ent-l">${E.items.map(i => /^https:\/\//.test(i.url) ? `<a href="${esc(i.url)}" target="_blank" rel="noopener">${ic('external')}${esc(i.nombre)}</a>` : '').join('')}</div>`;
+    }
+  }
+
+  // Pago con Mercado Pago: el servidor arma el cobro con el monto de la base y redirige a la pasarela
+  $('b-list').addEventListener('click', async e => {
+    const btn = e.target.closest('[data-pay]'); if (!btn) return;
+    btn.disabled = true; const txt = btn.innerHTML; btn.innerHTML = ic('refresh') + 'Abriendo Mercado Pago…';
+    try {
+      const r = await fetch('/api/pagos', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, item_id: btn.dataset.pay }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !/^https:\/\/[^/]*mercadopago\./.test(j.url || '')) throw new Error(j.error || 'No se pudo iniciar el pago');
+      location.href = j.url;
+    } catch (err) { btn.disabled = false; btn.innerHTML = txt; toast(err.message, 'alert'); }
+  });
+
+  // Vuelta desde Mercado Pago
+  (function(){
+    const p = new URLSearchParams(location.search).get('pago'); if (!p) return;
+    const msg = { ok:['¡Pago recibido! Se confirma acá en unos segundos.','check-circle'], pendiente:['Tu pago quedó pendiente. Te avisamos cuando se acredite.','clock'], error:['El pago no se completó. Podés intentarlo de nuevo.','alert'] }[p];
+    if (msg) setTimeout(() => toast(msg[0], msg[1]), 600);
+    history.replaceState(null, '', location.pathname + location.hash);
+    if (p === 'ok') { let n = 0; const iv = setInterval(() => { if (++n > 6) return clearInterval(iv); load(true); }, 5000); }
+  })();
 
   // ── Fichas de producto ────────────────────────────────────────────────────
   const CIERRE = [['','Selecciona'],['cremallera','Cremallera'],['iman','Imán'],['broche','Broche'],['solapa','Solapa'],['hebilla','Hebilla'],['abierto','Abierto'],['otro','Otro']];
@@ -955,9 +1009,13 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     const first = (S.lead.nombre || '').split(' ')[0];
     $('hello').textContent = first ? `Hola, ${first}` : 'Hola';
     $('p-name').textContent = 'Preparemos tu diagnóstico';
-    $('p-desc').textContent = 'Completa este brief antes de la sesión. Se guarda solo mientras escribes.';
-    const f = S.lead.reunion_fecha ? new Date(S.lead.reunion_fecha).toLocaleString('es-CL',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}) : '';
-    $('now').innerHTML = `<span class="chip">${ic('calendar')}${esc(f || 'Sesión confirmada')}</span>`;
+    $('p-desc').textContent = 'Completá este brief antes de la sesión. Se guarda solo mientras escribís.';
+    // reunion_fecha es hora de Chile: se muestran los componentes tal cual, sin convertir de zona
+    const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(S.lead.reunion_fecha || '');
+    const f = m ? new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'}) + ' · ' + m[4] + ':' + m[5] + ' hrs' : '';
+    const meet = /^https:\/\/meet\.google\.com\//.test(S.lead.cal_link || '') ? S.lead.cal_link : '';
+    $('now').innerHTML = `<span class="chip">${ic('calendar')}${esc(f || 'Sesión confirmada')}</span>` +
+      (meet ? `<a class="chip" href="${esc(meet)}" target="_blank" rel="noopener">${ic('external')}Abrir Google Meet</a>` : '');
     $('meter-wrap').hidden = true; $('updated').hidden = true;
     const keys = ['negocio','problema','objetivo','intentos'], b = S.lead.brief || {};
     let t;

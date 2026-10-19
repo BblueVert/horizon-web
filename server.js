@@ -17,6 +17,7 @@ const waHandler   = require('./api/saas/whatsapp');
 const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
 const recursos    = require('./api/recursos');
+const pagos       = require('./api/pagos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -139,6 +140,7 @@ app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
 app.get('/api/recursos',  recursos);
 app.post('/api/recursos', recursos);
 app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
+app.post('/api/pagos', pagos);   // pago desde el portal + webhook de Mercado Pago (?webhook=1)
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
 const opsPages = {

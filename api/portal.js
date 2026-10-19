@@ -82,7 +82,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const leads = await get(
-      `leads?portal_token=eq.${token}&select=id,nombre,empresa,status,reunion_fecha,brief,created_at&limit=1`);
+      `leads?portal_token=eq.${token}&select=id,nombre,empresa,status,reunion_fecha,cal_link,brief,created_at&limit=1`);
     if (!leads.length) return res.status(404).json({ error: 'Portal no encontrado' });
     const lead = leads[0];
     const leadId = encodeURIComponent(lead.id);
@@ -175,9 +175,20 @@ module.exports = async function handler(req, res) {
         : [],
       project
         // tolerante: si la migración 013 aún no corre, el portal carga igual sin presupuesto
-        ? get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at&order=orden.asc,created_at.asc`).catch(() => [])
+        ? get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at,bloquea_entrega&order=orden.asc,created_at.asc`)
+            .catch(() => get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at&order=orden.asc,created_at.asc`))
+            .catch(() => [])
         : [],
     ]);
+
+    // Entrega final: la función de la migración 014 devuelve los links solo si el saldo está pagado.
+    // Tolerante: sin la migración, el portal carga igual sin esta sección.
+    let entrega = null;
+    if (project) {
+      const er = await httpsRequest('POST', `${SB_URL}/rest/v1/rpc/portal_entrega_final`, hw('return=representation'), {}).catch(() => null);
+      if (er?.status === 200) { try { entrega = JSON.parse(er.body); } catch {} }
+      if (entrega && !entrega.total) entrega = null;
+    }
 
     let catalog = null;
     if (project?.catalog_enabled) {
@@ -191,7 +202,7 @@ module.exports = async function handler(req, res) {
 
     delete lead.id;
     if (project) delete project.id;
-    return res.json({ lead, project, milestones, events, comments, budget, catalog });
+    return res.json({ lead, project, milestones, events, comments, budget, catalog, entrega, pagoOnline: Boolean(process.env.MP_ACCESS_TOKEN) });
   } catch (err) {
     console.error('[portal]', err.message);
     return res.status(502).json({ error: 'No se pudo cargar el portal' });

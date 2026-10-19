@@ -114,6 +114,12 @@
 .bitem input.wide{flex:1;min-width:120px;max-width:100%;}
 .seg button.on[data-v="pagado"]{background:#fff;color:var(--green);box-shadow:var(--shadow-sm);}
 .seg button.on[data-v="pendiente"]{background:#fff;color:var(--text);box-shadow:var(--shadow-sm);}
+.bitem .chk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;}
+.mp-tag{font-size:11px;font-weight:700;color:#007EB5;background:#E5F5FC;border-radius:99px;padding:2px 8px;}
+.ditem{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;}
+.ditem + .ditem{margin-top:8px;}
+.ditem input{border:1px solid var(--border2);border-radius:8px;padding:7px 9px;font-size:13px;font-family:inherit;background:#fff;color:var(--text);min-width:0;}
+@media(max-width:600px){.ditem{grid-template-columns:1fr auto;}.ditem input[data-f="url"]{grid-column:1/-1;grid-row:2;}}
 .internal{font-size:11px;font-weight:600;color:var(--text3);background:var(--card2);border-radius:99px;padding:1px 7px;}
 
 /* Ajustes */
@@ -238,7 +244,14 @@
           <label class="notify"><input type="checkbox" id="notifyPaid" checked> Al marcar un ítem como pagado, avisar en el portal del cliente</label>
           <div class="bstats" id="bStats"></div>
           <div id="budget"></div>
-          <p class="muted" style="margin-top:12px;">El cliente ve los ítems, montos y estado en su portal (lo pagado aparece tachado). Comprobante y nota interna son solo del equipo.</p>
+          <p class="muted" style="margin-top:12px;">El cliente ve los ítems, montos y estado en su portal (lo pagado aparece tachado) y puede pagar cada ítem pendiente con Mercado Pago: al aprobarse, se marca pagado solo. Comprobante y nota interna son solo del equipo.</p>
+
+          <div class="row" style="justify-content:space-between;margin:26px 0 6px;">
+            <div class="sec-title" style="margin:0"><i class="hz-i" data-i="lock"></i>Entrega final</div>
+            <button class="btn btn-primary btn-sm" id="addDelivery"><i class="hz-i" data-i="plus"></i>Nuevo link</button>
+          </div>
+          <p class="muted" style="margin-bottom:10px;">Accesos, archivos editables, traspaso de cuentas. El cliente los ve en su portal recién cuando están pagados todos los ítems marcados con «Libera la entrega final».</p>
+          <div id="deliveries"></div>
         </section>
 
         <!-- Backlog -->
@@ -607,7 +620,9 @@ function renderBudget(){
             ${[['pendiente','circle','Pendiente'],['pagado','check','Pagado']].map(([v,i,l]) => `<button type="button" data-v="${v}" class="${b.estado === v ? 'on' : ''}">${ic(i)}${l}</button>`).join('')}
           </div>
           <label>Pagado el <input type="date" data-f="pagado_at" value="${b.pagado_at || ''}"></label>
+          ${b.metodo_pago === 'mercadopago' ? '<span class="mp-tag">Mercado Pago</span>' : ''}
         </div>
+        ${'bloquea_entrega' in b ? `<div class="st-row"><label class="chk"><input type="checkbox" data-f="bloquea_entrega" ${b.bloquea_entrega ? 'checked' : ''}> Libera la entrega final (saldo)</label></div>` : ''}
         <div class="st-row">
           <label class="wide">Comprobante <span class="internal">interno</span> <input type="text" class="wide" data-f="comprobante" value="${esc(b.comprobante || '')}" placeholder="Nº de transacción, banco…"></label>
         </div>
@@ -627,6 +642,7 @@ async function saveBudget(id, patch){
 $('budget').addEventListener('input', e => { if (e.target.matches('.st-desc')) autosize(e.target); });
 $('budget').addEventListener('change', async e => {
   const f = e.target.dataset.f, id = e.target.closest('.bitem')?.dataset.id; if (!f || !id) return;
+  if (f === 'bloquea_entrega') { if (await saveBudget(id, { bloquea_entrega: e.target.checked })) opsToast('Guardado'); return; }
   let v = e.target.value.trim();
   if (f === 'nombre' && !v) { e.target.value = budget.find(b => b.id === id).nombre; return; }
   if (f === 'monto') { v = v === '' ? null : Math.max(0, Math.round(Number(v))); if (v !== null && !Number.isFinite(v)) return opsToast('Monto no válido', 'error'); }
@@ -659,6 +675,46 @@ $('addBudget').addEventListener('click', async () => {
   if (error) return opsToast('No se pudo crear', 'error');
   budget.push(data); renderBudget();
   const inp = document.querySelector(`.bitem[data-id="${data.id}"] .st-name`); inp.focus(); inp.select();
+});
+
+/* ── Entrega final (project_deliveries, migración 014) ── */
+let deliveries = [];
+async function loadDeliveries(){
+  const { data, error } = await sb.from('project_deliveries').select('*').eq('project_id', P.id).order('orden').order('created_at');
+  if (error) { $('deliveries').innerHTML = '<div class="ops-empty"><div class="ops-empty-text">Falta correr supabase-migration-014-pagos-entrega.sql</div></div>'; $('addDelivery').hidden = true; return; }
+  deliveries = data || []; renderDeliveries();
+}
+function renderDeliveries(){
+  $('deliveries').innerHTML = deliveries.map(d => `<div class="ditem" data-id="${d.id}">
+      <input data-f="nombre" value="${esc(d.nombre)}" placeholder="Nombre (ej: Accesos del sitio)" aria-label="Nombre">
+      <input data-f="url" value="${esc(d.url)}" placeholder="https://…" aria-label="Link">
+      <button class="icon-btn danger" data-del aria-label="Eliminar link">${ic('trash')}</button>
+    </div>`).join('') || '<div class="ops-empty"><div class="ops-empty-text">Sin links todavía</div></div>';
+}
+$('deliveries').addEventListener('change', async e => {
+  const f = e.target.dataset.f, id = e.target.closest('.ditem')?.dataset.id; if (!f || !id) return;
+  const d = deliveries.find(x => x.id === id), v = e.target.value.trim();
+  if (!v || (f === 'url' && !/^https:\/\//.test(v))) { e.target.value = d[f]; return opsToast(f === 'url' ? 'El link tiene que empezar con https://' : 'Falta el nombre', 'error'); }
+  const { error } = await sb.from('project_deliveries').update({ [f]: v }).eq('id', id);
+  if (error) return opsToast('No se pudo guardar', 'error');
+  d[f] = v; opsToast('Guardado');
+});
+$('deliveries').addEventListener('click', async e => {
+  if (!e.target.closest('[data-del]')) return;
+  const id = e.target.closest('.ditem').dataset.id, d = deliveries.find(x => x.id === id);
+  if (!confirm(`¿Eliminar "${d.nombre}"?`)) return;
+  const { error } = await sb.from('project_deliveries').delete().eq('id', id);
+  if (error) return opsToast('No se pudo eliminar', 'error');
+  deliveries = deliveries.filter(x => x.id !== id); renderDeliveries();
+});
+$('addDelivery').addEventListener('click', async () => {
+  const url = prompt('Link (https://…)'); if (!url) return;
+  if (!/^https:\/\//.test(url.trim())) return opsToast('El link tiene que empezar con https://', 'error');
+  const nombre = (prompt('Nombre que verá el cliente', 'Accesos y archivos del proyecto') || '').trim(); if (!nombre) return;
+  const orden = Math.max(0, ...deliveries.map(d => d.orden || 0)) + 1;
+  const { data, error } = await sb.from('project_deliveries').insert({ project_id: P.id, nombre, url: url.trim(), orden }).select().single();
+  if (error) return opsToast('No se pudo crear', 'error');
+  deliveries.push(data); renderDeliveries();
 });
 
 /* ── Backlog ── */
@@ -758,7 +814,7 @@ function renderHeader(){
   fillSettings();
   $('loading').hidden = true; $('content').hidden = false;
   await loadStages();
-  await Promise.all([loadFeed(), loadConv(), loadFichas(), loadTasks(), loadBudget()]);
+  await Promise.all([loadFeed(), loadConv(), loadFichas(), loadTasks(), loadBudget(), loadDeliveries()]);
   const h = location.hash.slice(1); if (document.querySelector(`.ops-tab[data-tab="${h}"]`)) setTab(h);
 })();
 </script>
