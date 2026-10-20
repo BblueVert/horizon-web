@@ -2,6 +2,7 @@
 
 ## Voz
 - Fundador visible (Benja), cercano, local, directo. **Tuteo chileno** (tú tienes, puedes, agenda, escríbenos). **Nunca voseo** (vos, tenés, podés, agendá): Benja es chileno, no argentino.
+- **Anuncios y reels en segunda persona:** le hablamos al cliente sobre lo que él vive ("agendas en 1 minuto", "te llega tu portal", "pagas y tu entrega se libera sola"). Nada de "dejé de…" ni "le llega su portal". Benja aparece como firma o cara, no como sujeto del texto.
 - Si existe `BRAND-VOICE.md` (local, no versionado), es la fuente de verdad y manda sobre este archivo.
 
 ## Los 3 modos de voz (de `SISTEMA-DE-CIERRE.md`)
