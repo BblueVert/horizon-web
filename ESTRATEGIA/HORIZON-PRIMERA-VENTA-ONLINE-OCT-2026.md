@@ -32,7 +32,7 @@
 | Fuente | Contactos en 11 días | Conversaciones esperadas |
 |---|---|---|
 | Red cercana (WhatsApp/IG de conocidos y referidos de clientes) | 40 | 15 |
-| DM a negocios de Rancagua y Machalí (lista real en `CONTENIDO/campanas/prospectos-rancagua.md`) | 135 (15 al día) | 15 |
+| DM a negocios de Rancagua y Machalí (68 negocios reales en `CONTENIDO/campanas/prospectos-rancagua.md`; se completa hasta 135 con búsquedas en Instagram) | 135 (15 al día) | 15 |
 | Meta Ads, clic a WhatsApp ($20.000 en 4 días) | — | 8–12 |
 | Contenido orgánico (3 reels + stories) | — | 2–5 |
 | **Total** | | **40** |
