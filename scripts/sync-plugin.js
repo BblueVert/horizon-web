@@ -11,9 +11,9 @@ const src = path.join(root, '.claude');
 const dest = path.join(root, 'plugins', 'horizon-kit');
 
 const PIEZAS = {
-  skills: ['reels', 'carrusel', 'stories'],
+  skills: ['reels', 'carrusel', 'stories', 'ordenar-prompt'],
   agents: ['copy-reviewer.md', 'reel-writer.md', 'carrusel-maker.md', 'stories-builder.md'],
-  hooks: ['pre-escritura.js', 'frases-ia.txt', 'voseo.txt'],
+  hooks: ['pre-escritura.js', 'prompt-largo.js', 'frases-ia.txt', 'voseo.txt'],
 };
 
 for (const [dir, items] of Object.entries(PIEZAS)) {

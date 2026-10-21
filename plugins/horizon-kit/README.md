@@ -12,9 +12,9 @@ Si el repo es privado, cada persona necesita acceso de lectura en GitHub.
 ## Qué trae
 | Tipo | Piezas |
 |---|---|
-| Skills | `reels`, `carrusel`, `stories` |
+| Skills | `reels`, `carrusel`, `stories`, `ordenar-prompt` |
 | Subagentes | `copy-reviewer`, `reel-writer`, `carrusel-maker`, `stories-builder` |
-| Hooks | Bloqueo de frases de IA en `CONTENIDO/` + bloqueo de secretos |
+| Hooks | Bloqueo de frases de IA en `CONTENIDO/` + bloqueo de secretos + recordatorio de `ordenar-prompt` en pedidos largos |
 | Comandos | `/horizon-kit:contenido-semana <foco>` |
 
 ## Actualizar (solo quien mantiene el kit)
