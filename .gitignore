@@ -58,3 +58,6 @@ ESTRATEGIA-CONTENIDO-2026.md
 # Entradas obsoletas (ya reemplazadas por carpetas organizadas)
 # Skills Horizon/  →  _recursos/skills/
 # files/           →  _docs-internos/
+
+# Manual de identidad: el PDF se regenera con node scripts/marca-pdf.js Identidad/manual
+Identidad/manual/*.pdf

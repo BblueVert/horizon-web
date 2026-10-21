@@ -2,6 +2,7 @@
 
 ## Voz
 - Fundador visible (Benja), cercano, local, directo. **Tuteo chileno** (tú tienes, puedes, agenda, escríbenos). **Nunca voseo** (vos, tenés, podés, agendá): Benja es chileno, no argentino.
+- **Anuncios y reels en segunda persona:** le hablamos al cliente sobre lo que él vive ("agendas en 1 minuto", "te llega tu portal", "pagas y tu entrega se libera sola"). Nada de "dejé de…" ni "le llega su portal". Benja aparece como firma o cara, no como sujeto del texto.
 - Si existe `BRAND-VOICE.md` (local, no versionado), es la fuente de verdad y manda sobre este archivo.
 
 ## Los 3 modos de voz (de `SISTEMA-DE-CIERRE.md`)
@@ -24,7 +25,9 @@ Regla: **nunca** ofrecer el diagnóstico a alguien en Modo 1.
 ## Video (reels)
 - **Música original por video, generada a medida**, nunca música buscada o de terceros. Cada reel tiene su propia base (tempo, tonalidad y progresión distintos) pero la misma línea sonora HORIZON: bombo cálido, clap, sub bajo con pump, pad y pluck brillante. Los golpes, toques y confirmaciones se sincronizan con los cortes del video. Generador: `scripts/reel-musica.py` + un `cue.json` por video (guardado junto al reel en `CONTENIDO/reels/`).
 - **Portada propia por video**, diseñada según lo que muestra (no un cuadro sacado del video). Lo importante dentro del recorte 4:5 central para la grilla.
-- Mucho movimiento: cortes al ritmo, cámara con golpes, scroll real del sitio, toques en pantalla, tipografía cinética. Nada de capturas estáticas con subtítulos.
+- Movimiento constante pero legible: tipografía cinética, toques en pantalla, acercamiento lento de cámara y golpes sincronizados con la música. Nada de capturas estáticas con subtítulos.
+- **Pantallas: pantallazos, no barridos.** La web se muestra con capturas fijas que cambian con un desliz corto (cada una visible 1 s o más), no con scroll rápido. Celulares y navegadores siempre derechos y frontales: sin caída, giro ni 3D; la cámara solo hace un golpe corto en los toques. Lo clave dentro de la zona segura de Meta (y 270–1250 en 1080×1920). Motor: `engine.html` con `"flat": true`.
+- **Ritmo de anuncios:** 40–45 s, con tiempo para leer cada texto y ver lo que se anima. Entre escenas, fundido cruzado suave (`"xfade"` en el motor), nunca barridos de color ni cortes bruscos: tiene que sentirse como usar la web.
 - Si no hay voz de Benja grabada, el reel se lee solo con texto en pantalla; la voz se agrega en Instagram (Editar → Voz en off) o la graba Benja y se mezcla.
 
 ## Calidad mínima

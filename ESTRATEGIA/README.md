@@ -17,6 +17,9 @@ No son documentos teóricos. Cada uno está construido con lo que ya existe en l
 | [`HORIZON-PRD-EL-SISTEMA.md`](./HORIZON-PRD-EL-SISTEMA.md) | ¿Qué es "El Sistema" (Nivel 01) exactamente, como producto? Alcance, lo que es real hoy vs. lo que es visión, arquitectura, roadmap. |
 | [`HORIZON-PLAN-DE-ACCION-2026.md`](./HORIZON-PLAN-DE-ACCION-2026.md) | ¿Qué hago esta semana? Plan semana a semana hasta fin de año, más los hitos de 6 y 12 meses. |
 | [`HORIZON-REMODELACION-OCT-2026.md`](./HORIZON-REMODELACION-OCT-2026.md) | ¿Qué hay hoy y cómo se opera? Registro de la remodelación de oct-2026: sitio, agenda, OPS, portal, pagos con Mercado Pago, condiciones comerciales y qué hacer si algo falla. |
+| [`HORIZON-METODO.md`](./HORIZON-METODO.md) | ¿Cómo piensa y trabaja HORIZON? Los 6 tramos del recorrido del cliente, cómo se trabaja un proyecto, cómo hablamos y de dónde nace cada producto digital. |
+| [`HORIZON-PRIMERA-VENTA-ONLINE-OCT-2026.md`](./HORIZON-PRIMERA-VENTA-ONLINE-OCT-2026.md) | ¿Cómo llega la primera venta 100% online? Escalera de valor (Kit $29.990 → diagnóstico → Plan 01), paso a paso del 21 al 31 de octubre. |
+| [`HORIZON-ENTREGABLES-DE-MARCA.md`](./HORIZON-ENTREGABLES-DE-MARCA.md) | ¿Cómo se ven y qué contienen la estrategia, la presentación, el manual y la hoja de marca que entrega HORIZON? Retícula, tipos de página y contenido versión PyME. |
 
 ## Cómo se interpretó el objetivo
 
