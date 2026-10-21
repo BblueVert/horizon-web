@@ -40,6 +40,7 @@ Regla HORIZON: **se arregla primero el tramo más roto, no el más visible.** Un
   - Tono de voz.
   - Plantillas del día a día ya armadas: posts, stories, catálogo de WhatsApp, tarjeta con QR, letrero, portada de Google.
   - Lo demás (Pantone, acabados de imprenta, sistemas de ilustración) es para marcas grandes.
+- **Entregables:** estrategia, presentación, manual y hoja de marca según `HORIZON-ENTREGABLES-DE-MARCA.md`.
 - **Dónde se ve en HORIZON:** el co-branding del portal (cada cliente con su color y su letra), la landing 2026 y la identidad del Plan 01: **estrategia antes del diseño, 2 rutas visuales para elegir y preguntas guiadas para decidir sin gusto personal**.
 
 - **En el diagnóstico (puntaje rápido):** ¿lo explicas en una frase? ¿Tus 3 canales se ven del mismo negocio? ¿Te distingues en la grilla del rubro?
