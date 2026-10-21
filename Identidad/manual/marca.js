@@ -46,7 +46,7 @@ window.MARCA = {
     fondos: [
       { nombre: 'Tinta', css: '#1A1626', ok: true },
       { nombre: 'Superficie profunda', css: 'linear-gradient(135deg,#1E1744 0%,#34276E 55%,#5A2F8C 100%)', ok: true },
-      { nombre: 'Foto oscurecida', img: 'IMG-13', overlay: 'rgba(26,22,38,.55)', ok: true }
+      { nombre: 'Foto oscurecida', img: 'IMG-21', overlay: 'rgba(26,22,38,.55)', ok: true }
     ],
     incorrectos: [
       { nombre: 'Sobre fondo claro', estilo: 'bg-claro', porque: 'Las letras blancas desaparecen.' },
@@ -132,9 +132,9 @@ window.MARCA = {
     post: { etiqueta: 'Diagnóstico gratis', titulo: 'No te faltan clientes.', titulo2: 'Te falta un sistema.' },
     story: { titulo: '¿Dónde se te escapan?', cta: 'Agenda en horizonweb.cl' },
     catalogo: [
-      { nombre: 'Diagnóstico', detalle: '30 min · por videollamada', precio: 'Gratis', img: 'IMG-15' },
-      { nombre: 'Kit Responde y Agenda', detalle: 'Guía, 30 mensajes y planilla', precio: '$29.990', img: 'IMG-16' },
-      { nombre: 'Plan 01 · Presencia Digital', detalle: 'Web, agenda y portal', precio: 'Desde $490.000', img: 'IMG-17' }
+      { nombre: 'Diagnóstico', detalle: '30 min · por videollamada', precio: 'Gratis', icono: 'i-video' },
+      { nombre: 'Kit Responde y Agenda', detalle: 'Guía, 30 mensajes y planilla', precio: '$29.990', icono: 'i-chat' },
+      { nombre: 'Plan 01 · Presencia Digital', detalle: 'Web, agenda y portal', precio: 'Desde $490.000', icono: 'i-web' }
     ],
     destacadas: [ ['i-wallet', 'Planes'], ['i-calendar', 'Agenda'], ['i-layers', 'Casos'], ['i-pin', 'Rancagua'] ],
     tarjeta: { nombre: 'Benjamín Vera Yáñez', cargo: 'Fundador · HORIZON', web: 'horizonweb.cl', whatsapp: '+56 9 7696 2659', qr: 'https://www.horizonweb.cl/agendar' }
@@ -163,6 +163,8 @@ window.MARCA = {
   imagenes: {},
   // Los espacios toman la proporción real de cada imagen. imagenes_pos solo si una pieza de formato fijo necesita otro punto focal.
   imagenes_pos: {},
+  // Capítulos cuyo separador muestra una pieza real de la marca en vez de una foto.
+  separadores: { 2: 'simbolo', 4: 'tipografia', 8: 'archivos' },
 
   contacto: { lineas: ['horizonweb.cl', 'WhatsApp +56 9 7696 2659', 'Rancagua · Región de O’Higgins'] }
 };

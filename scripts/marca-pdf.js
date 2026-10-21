@@ -51,7 +51,7 @@ const html = plantilla
   .replace('<!--MARCA-->', () => `<script>\n${marca.replace(/<\/script/gi, '<\\/script')}\n</script>${extra}`);
 const salida = path.join(dir, 'manual-identidad.html');
 fs.writeFileSync(salida, html);
-console.log(`✓ ${path.relative(process.cwd(), salida)} · imágenes: ${Object.keys(encontradas).length}/20`);
+console.log(`✓ ${path.relative(process.cwd(), salida)} · imágenes: ${Object.keys(encontradas).length}`);
 if (args.includes('--sin-pdf')) process.exit(0);
 
 const pdf = salida.replace(/\.html$/, '.pdf');

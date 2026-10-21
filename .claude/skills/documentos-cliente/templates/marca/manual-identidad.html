@@ -180,7 +180,8 @@ const SLOTS = {
   'IMG-17':'Catálogo · ilustración servicio 3',
   'IMG-18':'Portada de Google Business',
   'IMG-19':'Foto tomada con el celular (paso a paso)',
-  'IMG-20':'Fondo del cierre · ilustración'
+  'IMG-20':'Fondo del cierre · ilustración (opcional)',
+  'IMG-21':'Foto de la marca trabajando · logo sobre foto oscurecida'
 };
 const img = (id, cls='', style='') => {
   const src = IM[id] || (id && !/^IMG-/.test(id) ? id : '');
@@ -250,12 +251,18 @@ const colsIdx = [[0,1,2],[3,4],[5,6],[7,8]];
 add('idx', `<div class="hd"><span class="cap">Índice</span><span class="doc">${esc(DOC)} · ${esc(M.nombre)}</span><span></span></div>
   <h1>Índice</h1><div class="cols">${colsIdx.map(col=>`<div class="col">${col.map(i=>`<div class="it"><b>${i}.0</b><h3>${esc(CAPS[i].t)}</h3><p>${esc(CAPS[i].d)}</p></div>`).join('')}</div>`).join('')}</div>${foot()}`);
 
+/* Separadores sin foto: piezas reales de la marca (marca.js → separadores: {2:'simbolo', 4:'tipografia', 8:'archivos'}) */
+const SEP_PIEZA = {
+  simbolo: (w,h) => `<div class="ph" style="width:${w}px;height:${h}px;background:var(--ink);display:flex;align-items:center;justify-content:center">${logoImg(LS,'height:62%')}</div>`,
+  tipografia: (w,h) => `<div class="ph" style="width:${w}px;height:${h}px;background:var(--bg);color:var(--ink);display:grid;grid-template-columns:repeat(${M.tipografias.length},1fr)">${M.tipografias.map((t,i)=>`<div style="padding:40px 44px;display:flex;flex-direction:column;${i?'border-left:1px solid var(--line2)':''}"><span class="lbl acc">${esc(t.rol)}</span><span style="font-family:${t.css};font-weight:${t.peso_muestra};font-size:190px;line-height:1;letter-spacing:-.04em;margin-top:auto">Aa</span><span style="font-family:${t.css};font-weight:${t.peso_muestra};font-size:26px;margin-top:10px">${esc(t.familia)}</span></div>`).join('')}</div>`,
+  archivos: (w,h) => `<div class="ph" style="width:${w}px;height:${h}px;background:var(--bg);color:var(--ink);padding:44px 52px;font-family:var(--mono)"><div style="font-size:26px;display:flex;gap:14px;align-items:center;margin-bottom:22px">${ico('i-layers')} ${esc(M.archivos.raiz)}</div>${M.archivos.arbol.slice(0,6).map(([f])=>`<div style="font-size:21px;padding:9px 0 9px 34px;border-top:1px solid var(--line);color:var(--ink2)">${esc(f)}</div>`).join('')}</div>`
+};
 const sep = c => {
-  const cap = CAPS[c];
-  const r = ar(cap.img), w = Math.round(Math.min(800, 600*r)), h = Math.round(w/r);
+  const cap = CAPS[c], pieza = (M.separadores||{})[c];
+  const r = pieza ? 16/9 : ar(cap.img), w = Math.round(Math.min(800, 600*r)), h = Math.round(w/r);
   add('dark sep', `<div class="name" style="max-width:${1728-w-48}px"><div class="lbl">Capítulo ${c}</div><h1>${esc(cap.t)}</h1></div>
   <div class="secs">${SECNAMES[c].map((s,i)=>`<div><b>${c}.${i+1}</b>${esc(s)}</div>`).join('')}</div>
-  ${img(cap.img,'',`width:${w}px;height:${h}px`)}<div class="big g">${c}.0</div>
+  ${pieza && SEP_PIEZA[pieza] ? SEP_PIEZA[pieza](w,h) : img(cap.img,'',`width:${w}px;height:${h}px`)}<div class="big g">${c}.0</div>
   <div class="dots">${CAPS.slice(1).map(k=>`<i class="${k.n===c?'on':''}"></i>`).join('')}</div>`);
 };
 
@@ -318,7 +325,17 @@ content(2,2, `<h2>Que se lea en cualquier tamaño.</h2><p>Bajo estos tamaños el
      ${[[LP,L.minimos[0].px*2,'Recomendado'],[LS,L.minimos[1].px*3,'Recomendado'],[LP,L.minimos[0].px,'Mínimo'],[LS,L.minimos[1].px,'Mínimo']].map(([v,w,t],i)=>`<div style="display:flex;flex-direction:column;gap:12px"><div class="tile ink" style="flex:1">${logoImg(v,(v===LP?`width:${w}px`:`width:${w}px`)+';max-width:none;max-height:none')}</div><span class="lbl">${t} · ${w} px</span></div>`).join('')}
    </div>`);
 content(2,3, `<h2>Sobre qué va.</h2><p>${logoDark?esc(L.regla):'El logo va sobre los fondos de la marca o sobre fotos con suficiente contraste.'}</p><p>Sobre una foto, oscurécela o elige una zona tranquila de la imagen.</p>`,
-  `<div class="grid" style="grid-template-columns:repeat(3,1fr)">${L.fondos.map((f,_,all)=>{const fi=all.find(x=>x.img);const TH=fi?Math.min(600,Math.round(365/ar(fi.img))):520;const src=f.img&&(IM[f.img]||'');const bg=f.img?(src?`linear-gradient(${f.overlay},${f.overlay}),url('${esc(src)}') center/cover`:`linear-gradient(${f.overlay},${f.overlay}),var(--ink3)`):f.css;return `<div><div class="tile" style="height:${TH}px;background:${bg}">${f.img&&!src?`<b style="position:absolute;left:20px;bottom:18px;font:500 16px var(--mono);color:var(--acc)">${esc(f.img)}</b>`:''}${logoImg(LP,'width:78%;max-width:none')}</div><div class="cap-row">${f.ok?OK:NO}<div><h4>${esc(f.nombre)}</h4></div></div></div>`}).join('')}</div>`);
+  (()=>{
+    const fondoBg = f => { const src = f.img && (IM[f.img]||''); return f.img ? (src ? `linear-gradient(${f.overlay},${f.overlay}),url('${esc(src)}') center/cover` : `linear-gradient(${f.overlay},${f.overlay}),var(--ink3)`) : f.css; };
+    const tile = (f, h) => `<div><div class="tile" style="height:${h}px;background:${fondoBg(f)}">${f.img&&!IM[f.img]?`<b style="position:absolute;left:20px;bottom:18px;font:500 16px var(--mono);color:var(--acc)">${esc(f.img)}</b>`:''}${logoImg(LP,'width:78%;max-width:340px')}</div><div class="cap-row">${f.ok?OK:NO}<div><h4>${esc(f.nombre)}</h4></div></div></div>`;
+    const foto = L.fondos.find(f=>f.img && IM[f.img]), resto = L.fondos.filter(f=>f!==foto);
+    if (foto && ar(foto.img) > 1.2) {   /* foto horizontal: grande a la izquierda, sin recorte; los otros fondos apilados */
+      const PW = 760, PH = Math.round(PW/ar(foto.img)), SH = Math.round((PH - 24 - 50*(resto.length-1)) / resto.length);
+      return `<div style="display:grid;grid-template-columns:${PW}px 1fr;gap:24px;width:100%">${tile(foto, PH)}<div style="display:flex;flex-direction:column;gap:24px">${resto.map(f=>tile(f, SH)).join('')}</div></div>`;
+    }
+    const TH = foto ? Math.min(600, Math.round(365/ar(foto.img))) : 520;
+    return `<div class="grid" style="grid-template-columns:repeat(3,1fr)">${L.fondos.map(f=>tile(f, TH)).join('')}</div>`;
+  })());
 const MAL = {
   'bg-claro': ['background:var(--bg2);border:1px solid var(--line2)', ''],
   'recolor': ['background:var(--ink)', 'filter:brightness(0) invert(1) sepia(1) saturate(7) hue-rotate(-18deg)'],
@@ -433,7 +450,7 @@ const post2 = `<div style="width:1080px;height:1350px;position:relative;backgrou
 content(7,0, `<h2>Post de Instagram.</h2><p>Dos tipos: frase sobre crema y foto con texto abajo. El sello del logo siempre sobre tinta.</p>`+
   spec([['Medida','1080 × 1350 px (4:5)'],['Formato','JPG o PNG'],['Margen','96 px a cada lado'],['Grilla','Lo clave dentro del cuadrado central']]),
   `<div style="display:flex;gap:24px">${sc(1080,1350,.51,post1,'border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(26,22,38,.12)')}${sc(1080,1350,.51,post2,'border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(26,22,38,.12)')}</div>`);
-const story = `<div style="width:1080px;height:1920px;position:relative;background:var(--deep);color:#fff">${imgFit('IMG-14','position:absolute;inset:0;border-radius:0;opacity:.55')}
+const story = `<div style="width:1080px;height:1920px;position:relative;background:var(--deep);color:#fff">${IM['IMG-14']?imgFit('IMG-14','position:absolute;inset:0;border-radius:0;opacity:.55'):''}
    <div style="position:absolute;left:0;right:0;top:0;height:250px;background:repeating-linear-gradient(135deg,rgba(242,105,12,.35) 0 14px,rgba(242,105,12,.12) 14px 28px);border-bottom:3px dashed #F2690C"></div>
    <div style="position:absolute;left:0;right:0;bottom:0;height:250px;background:repeating-linear-gradient(135deg,rgba(242,105,12,.35) 0 14px,rgba(242,105,12,.12) 14px 28px);border-top:3px dashed #F2690C"></div>
    <div style="position:absolute;left:96px;top:110px;font:500 34px var(--mono);color:#fff">250 px libres</div><div style="position:absolute;left:96px;bottom:110px;font:500 34px var(--mono);color:#fff">250 px libres</div>
@@ -448,9 +465,14 @@ content(7,2, `<h2>Foto de perfil y destacadas.</h2><p>El perfil usa el símbolo,
      <div style="display:flex;align-items:center;gap:56px"><div style="width:320px;height:320px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px var(--bg),0 0 0 9px var(--acc)">${logoImg(LS,'width:62%')}</div>
      <div><div style="font-size:30px;font-weight:800;margin-bottom:6px">${esc(M.nombre.toLowerCase())}</div><div style="font-size:18px;color:var(--ink2);line-height:1.5;max-width:460px">${esc(M.esencia.frase)}</div></div></div>
      <div style="display:flex;gap:44px">${(A.destacadas||[]).map(([i,t])=>`<div style="text-align:center"><div style="width:150px;height:150px;border-radius:50%;background:var(--deep);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 5px var(--bg),0 0 0 7px var(--line2)"><svg class="ico" style="width:58px;height:58px" aria-hidden="true"><use href="#${i}"/></svg></div><div style="margin-top:18px;font-size:18px;font-weight:600">${esc(t)}</div></div>`).join('')}</div></div>`);
-content(7,3, `<h2>Catálogo de WhatsApp y Google.</h2><p>Un ítem por servicio, con la misma ilustración de fondo y el precio a la vista. En Google, el símbolo como logo y una portada real.</p>`+
+content(7,3, `<h2>Catálogo de WhatsApp y Google.</h2><p>Un ítem por servicio, todos con el mismo diseño: fondo atardecer, ícono de trazo, nombre y precio a la vista. En Google, el símbolo como logo y una portada real.</p>`+
   spec([['Catálogo','1080 × 1080 px por servicio, JPG'],['Google · logo','720 × 720 px o más'],['Google · portada','1024 × 576 px o más']]),
-  `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%">${(A.catalogo||[]).map(c=>`<div style="background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden">${img(c.img,'',`height:${Math.round(365/ar(c.img))}px;border-radius:0`)}<div style="padding:20px 22px"><div style="font-size:21px;font-weight:800;letter-spacing:-.02em">${esc(c.nombre)}</div><div style="font-size:15px;color:var(--ink2);margin:4px 0 12px">${esc(c.detalle)}</div><div style="font:500 20px var(--mono);color:var(--acc)">${esc(c.precio)}</div></div></div>`).join('')}
+  `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%">${(A.catalogo||[]).map(c=>sc(1080,1080,.338,`<div style="width:1080px;height:1080px;background:var(--deep);color:#fff;padding:90px;display:flex;flex-direction:column">
+       <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 30px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.7)">${esc(M.nombre)}</span>${logoImg(LS,'height:90px')}</div>
+       <span style="margin-top:110px;width:170px;height:170px;border-radius:50%;border:3px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center"><svg class="ico" style="width:84px;height:84px;stroke-width:1.5" aria-hidden="true"><use href="#${esc(c.icono||'i-spark')}"/></svg></span>
+       <div style="margin-top:auto;font-weight:800;font-size:${c.nombre.length>18?76:96}px;line-height:1;letter-spacing:-.04em">${esc(c.nombre)}</div>
+       <div style="font-size:38px;color:rgba(255,255,255,.75);margin:20px 0 44px">${esc(c.detalle)}</div>
+       <span style="align-self:flex-start;background:#fff;color:var(--ink);font:500 44px var(--mono);padding:22px 40px;border-radius:999px">${esc(c.precio)}</span></div>`,'border-radius:16px;overflow:hidden;box-shadow:0 14px 34px rgba(26,22,38,.14)')).join('')}
     ${(()=>{const H=340,W=Math.min(1144-H-24,Math.round(H*ar('IMG-18')));return `<div style="grid-column:1/4;display:grid;grid-template-columns:${H}px ${W}px;gap:24px;height:${Math.round(W/ar('IMG-18'))}px"><div class="tile ink">${logoImg(LS,'width:58%')}</div>${img('IMG-18','',`height:${Math.round(W/ar('IMG-18'))}px`)}</div>`})()}</div>`);
 const T = A.tarjeta, CW = 1063, CH = 591;
 const cardF = `<div style="width:${CW}px;height:${CH}px;background:var(--deep);display:flex;align-items:center;justify-content:center">${logoImg(LP,'width:56%')}</div>`;
@@ -484,8 +506,8 @@ content(8,1, `<h2>Desde la entrega, los cuidas tú.</h2><p>${esc(AR.respaldo)}</
   `<div class="grid" style="grid-template-columns:repeat(3,1fr)">${(AR.pasos||[]).map(([t,d],i)=>`<div class="card" style="height:480px;display:flex;flex-direction:column"><span style="font:800 110px/1 var(--sans);letter-spacing:-.05em" class="g">0${i+1}</span><h4 style="margin-top:auto;font-size:32px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px">${esc(t)}</h4><p style="font-size:19px;line-height:1.5;color:var(--ink2)">${esc(d)}</p></div>`).join('')}</div>`);
 
 /* CIERRE */
-add('dark end', `${img('IMG-20','', `position:absolute;right:96px;top:72px;width:${Math.round(Math.min(680,560*ar('IMG-20')))}px;height:${Math.round(Math.min(680,560*ar('IMG-20'))/ar('IMG-20'))}px;border-radius:28px`)}${logoImg(LP,'position:absolute;left:96px;top:120px;width:420px')}
-  <h1>¿Dudas con una pieza? Pregunta antes de publicarla.</h1>
+add('dark end', `${!IM['IMG-20']?'':img('IMG-20','', `position:absolute;right:96px;top:72px;width:${Math.round(Math.min(680,560*ar('IMG-20')))}px;height:${Math.round(Math.min(680,560*ar('IMG-20'))/ar('IMG-20'))}px;border-radius:28px`)}${logoImg(LP,'position:absolute;left:96px;top:120px;width:420px')}
+  <h1 style="${IM['IMG-20']?'':'max-width:1500px'}">¿Dudas con una pieza? Pregunta antes de publicarla.</h1>
   <div class="lines">${M.contacto.lineas.map(esc).join('<br>')}</div>
   <div class="sello">${esc(DOC)}<br>${esc(M.version||'')}</div>`);
 

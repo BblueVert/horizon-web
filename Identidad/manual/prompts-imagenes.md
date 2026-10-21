@@ -11,29 +11,36 @@ Los prompts están en inglés porque los generadores responden mejor así. Arrib
 
 ---
 
-## Versión elegida (octubre 2026)
-De cada prompt se generaron 2 versiones. Se eligió una por estos criterios: sin texto, trazo de línea parejo, paleta atardecer y celulares derechos.
+## Imágenes en uso (octubre 2026)
+De 40 generadas quedaron 12, más 1 de reemplazo. Cada una se usa **una sola vez** y tiene que mostrar algo de lo que habla su página.
 
-| Código | Elegida | Por qué |
+| Código | Dónde | Imagen |
 |---|---|---|
-| IMG-01 | Sol a la derecha, rayos largos | Deja libre la zona del título |
-| IMG-02 | Kinesióloga de frente con el celular | Luz de atardecer y un fondo más limpio |
-| IMG-03 | Arco grueso en degradado | Simétrica; se lee como atardecer |
-| IMG-04 | Objetos en diagonal sobre crema | Pasa de claro a oscuro, como el atardecer |
-| IMG-05 | Papelería con letras fragmentadas | Las letras se leen menos; el recorte las deja afuera |
-| IMG-06 | Barbero con WhatsApp | Es WhatsApp, no otra app de mensajes |
-| IMG-07 | Dueña fotografiando productos | Más orden y celular derecho |
-| IMG-08 | Flat lay sin texto | La otra traía "7 · Aplicaciones" escrito |
-| IMG-09 | Carpetas en línea | Mismo trazo que el resto; la otra tenía rellenos |
-| IMG-10 | Kinesióloga en recepción, de frente | Centrada para el recorte vertical |
-| IMG-11 | Local en esquina con plantas | Dueño visible y más cercano |
-| IMG-12 | Sala con ventana | Más luz y orden |
-| IMG-13 | Kinesióloga con paciente al fondo | Composición natural con espacio para el texto |
-| IMG-14 | Sol con reflejos | Más presencia detrás del título |
-| IMG-15 a 17 | Versiones de solo línea | Iguales entre sí, sin confeti |
-| IMG-18 | Diseñador con vista a la ciudad | Muestra lo local |
-| IMG-19 | Producto junto a la ventana | Horizonte derecho y fondo despejado |
-| IMG-20 | Camino en degradado con estrellas | Más profundidad |
+| IMG-01 | Portada | Sol de línea sobre el horizonte. Es la única ilustración de atardecer |
+| IMG-02 | Separador 1 · Esencia | Kinesióloga en su sala, con el celular |
+| IMG-04 | Separador 3 · Color | Objetos en diagonal sobre crema, de claro a oscuro |
+| IMG-06 | Separador 5 · Voz | Barbero con WhatsApp |
+| IMG-07 | Separador 6 · Fotografía | Dueña fotografiando sus productos |
+| IMG-08 | Separador 7 · Aplicaciones | Mesa con tarjeta QR y celular con el feed |
+| IMG-10 | 1.2 Cliente principal | Kinesióloga en recepción |
+| IMG-11 | 6.1 Regla 2 | Local en una esquina, con el dueño |
+| IMG-12 | 6.1 Regla 3 | Sala ordenada junto a la ventana |
+| IMG-13 | 7.1 Post | Kinesióloga respondiendo, con paciente al fondo |
+| IMG-18 | 7.4 Portada de Google | Diseñador con vista a la ciudad |
+| IMG-19 | 6.2 Con el celular | Foto vista desde la cámara del celular |
+| IMG-21 | 2.4 Logo sobre foto | Diseñador trabajando, otra toma. Es HORIZON sobre su propio trabajo |
+
+**Descartadas, con la pieza que las reemplaza**
+| Código | Por qué no | Reemplazo |
+|---|---|---|
+| IMG-03 · Logo | Dibujaba un símbolo que no es el de HORIZON | El símbolo real sobre tinta |
+| IMG-05 · Tipografía | Letras inventadas, sin relación con nuestras fuentes | "Aa" en Plus Jakarta Sans y DM Mono |
+| IMG-09 · Archivos | Ilustración genérica | La carpeta real `Identidad/` |
+| IMG-14 · Story | Repetía el atardecer de la portada | La superficie atardecer, sin imagen |
+| IMG-15 a 17 · Catálogo | Ilustraciones vectoriales sin calidad | Fichas de catálogo diseñadas con la marca (ícono, nombre y precio) |
+| IMG-20 · Cierre | Repetía el atardecer de la portada | Cierre sin imagen |
+
+**Regla para la próxima vez:** si una imagen no muestra algo real de la marca o de su cliente, no va. Para logo, tipografía, color y archivos se usan las piezas reales, no ilustraciones generadas.
 
 ---
 
