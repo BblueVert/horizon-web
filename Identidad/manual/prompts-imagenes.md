@@ -3,11 +3,37 @@
 Cada imagen tiene un código (`IMG-01` … `IMG-20`). En el manual, ese código aparece en el espacio donde va la imagen.
 
 **Cómo cargarlas**
-1. Guarda cada imagen como `Identidad/manual/img/IMG-NN.webp`. También sirve `.jpg` o `.png`.
+1. Guarda cada imagen como `Identidad/manual/img/IMG-NN.jpg`. Usa JPG: con WebP o PNG el PDF pesa casi 4 veces más.
 2. Corre `node scripts/marca-pdf.js Identidad/manual`.
 3. El script las detecta y las pone en su lugar. No hay que tocar `marca.js`.
 
 Los prompts están en inglés porque los generadores responden mejor así. Arriba de cada uno va qué es y dónde va.
+
+---
+
+## Versión elegida (octubre 2026)
+De cada prompt se generaron 2 versiones. Se eligió una por estos criterios: sin texto, trazo de línea parejo, paleta atardecer y celulares derechos.
+
+| Código | Elegida | Por qué |
+|---|---|---|
+| IMG-01 | Sol a la derecha, rayos largos | Deja libre la zona del título |
+| IMG-02 | Kinesióloga de frente con el celular | Luz de atardecer y un fondo más limpio |
+| IMG-03 | Arco grueso en degradado | Simétrica; se lee como atardecer |
+| IMG-04 | Objetos en diagonal sobre crema | Pasa de claro a oscuro, como el atardecer |
+| IMG-05 | Papelería con letras fragmentadas | Las letras se leen menos; el recorte las deja afuera |
+| IMG-06 | Barbero con WhatsApp | Es WhatsApp, no otra app de mensajes |
+| IMG-07 | Dueña fotografiando productos | Más orden y celular derecho |
+| IMG-08 | Flat lay sin texto | La otra traía "7 · Aplicaciones" escrito |
+| IMG-09 | Carpetas en línea | Mismo trazo que el resto; la otra tenía rellenos |
+| IMG-10 | Kinesióloga en recepción, de frente | Centrada para el recorte vertical |
+| IMG-11 | Local en esquina con plantas | Dueño visible y más cercano |
+| IMG-12 | Sala con ventana | Más luz y orden |
+| IMG-13 | Kinesióloga con paciente al fondo | Composición natural con espacio para el texto |
+| IMG-14 | Sol con reflejos | Más presencia detrás del título |
+| IMG-15 a 17 | Versiones de solo línea | Iguales entre sí, sin confeti |
+| IMG-18 | Diseñador con vista a la ciudad | Muestra lo local |
+| IMG-19 | Producto junto a la ventana | Horizonte derecho y fondo despejado |
+| IMG-20 | Camino en degradado con estrellas | Más profundidad |
 
 ---
 

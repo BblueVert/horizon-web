@@ -85,7 +85,7 @@ svg.ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.75;s
 
 /* portada */
 .cover .logo{position:absolute;top:150px;left:50%;transform:translateX(-50%);width:560px}
-.cover .bg{position:absolute;inset:0;opacity:.5;mix-blend-mode:screen;border-radius:0}
+.cover .bg{background-color:transparent!important;position:absolute;inset:0;opacity:.85;mix-blend-mode:lighten;border-radius:0;-webkit-mask-image:linear-gradient(90deg,transparent 28%,#000 60%);mask-image:linear-gradient(90deg,transparent 28%,#000 60%)}
 .cover .bg.empty{opacity:1;mix-blend-mode:normal;border:0;background:none;justify-content:flex-start;padding:0}
 .cover .bg.empty b{position:absolute;top:44px;right:96px;font-size:14px}
 .cover .bg.empty span{display:none}
@@ -178,7 +178,8 @@ const SLOTS = {
 };
 const img = (id, cls='', style='') => {
   const src = IM[id] || (id && !/^IMG-/.test(id) ? id : '');
-  return src ? `<div class="ph ${cls}" style="background-image:url('${esc(src)}');${style}"></div>`
+  const pos = (M.imagenes_pos||{})[id];
+  return src ? `<div class="ph ${cls}" style="background-image:url('${esc(src)}');${pos?`background-position:${pos};`:''}${style}"></div>`
              : `<div class="ph empty ${cls}" style="${style}"><b>${esc(id)}</b><span>${esc(SLOTS[id]||'')}</span></div>`;
 };
 
@@ -398,8 +399,8 @@ content(6,1, `<h2>Con el celular basta.</h2><p>No necesitas cámara. Necesitas e
   `<div style="display:grid;grid-template-columns:1fr 400px;gap:56px;width:100%;align-items:center">
      <ol style="list-style:none;border-top:1px solid var(--line2)">${(M.fotografia_celular||[]).map((p,i)=>`<li style="display:grid;grid-template-columns:70px 1fr;gap:16px;padding:26px 0;border-bottom:1px solid var(--line2);font-size:25px;font-weight:600;line-height:1.35"><span class="lbl acc" style="font-size:18px">0${i+1}</span>${esc(p)}</li>`).join('')}</ol>
      <div style="width:400px;height:780px;border-radius:54px;background:var(--ink);padding:14px"><div style="width:100%;height:100%;border-radius:42px;overflow:hidden;position:relative">${img('IMG-19','','position:absolute;inset:0;border-radius:0')}
-       <div style="position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 33.33% 0/1.5px 100% no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 66.66% 0/1.5px 100% no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 0 33.33%/100% 1.5px no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 0 66.66%/100% 1.5px no-repeat"></div>
-       <span style="position:absolute;left:50%;bottom:30px;width:70px;height:70px;margin-left:-35px;border-radius:50%;border:5px solid #fff"></span></div></div></div>`);
+       ${IM['IMG-19']?'':`<div style="position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 33.33% 0/1.5px 100% no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 66.66% 0/1.5px 100% no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 0 33.33%/100% 1.5px no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 0 66.66%/100% 1.5px no-repeat"></div>
+       <span style="position:absolute;left:50%;bottom:30px;width:70px;height:70px;margin-left:-35px;border-radius:50%;border:5px solid #fff"></span>`}</div></div></div>`);
 
 /* 7 · APLICACIONES */
 sep(7);
@@ -433,7 +434,7 @@ content(7,2, `<h2>Foto de perfil y destacadas.</h2><p>El perfil usa el símbolo,
      <div style="display:flex;gap:44px">${(A.destacadas||[]).map(([i,t])=>`<div style="text-align:center"><div style="width:150px;height:150px;border-radius:50%;background:var(--deep);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 5px var(--bg),0 0 0 7px var(--line2)"><svg class="ico" style="width:58px;height:58px" aria-hidden="true"><use href="#${i}"/></svg></div><div style="margin-top:18px;font-size:18px;font-weight:600">${esc(t)}</div></div>`).join('')}</div></div>`);
 content(7,3, `<h2>Catálogo de WhatsApp y Google.</h2><p>Un ítem por servicio, con la misma ilustración de fondo y el precio a la vista. En Google, el símbolo como logo y una portada real.</p>`+
   spec([['Catálogo','1080 × 1080 px por servicio, JPG'],['Google · logo','720 × 720 px o más'],['Google · portada','1024 × 576 px o más']]),
-  `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%">${(A.catalogo||[]).map(c=>`<div style="background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden">${img(c.img,'','height:300px;border-radius:0')}<div style="padding:20px 22px"><div style="font-size:21px;font-weight:800;letter-spacing:-.02em">${esc(c.nombre)}</div><div style="font-size:15px;color:var(--ink2);margin:4px 0 12px">${esc(c.detalle)}</div><div style="font:500 20px var(--mono);color:var(--acc)">${esc(c.precio)}</div></div></div>`).join('')}
+  `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%">${(A.catalogo||[]).map(c=>`<div style="background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden">${img(c.img,'','height:300px;border-radius:0;background-size:contain')}<div style="padding:20px 22px"><div style="font-size:21px;font-weight:800;letter-spacing:-.02em">${esc(c.nombre)}</div><div style="font-size:15px;color:var(--ink2);margin:4px 0 12px">${esc(c.detalle)}</div><div style="font:500 20px var(--mono);color:var(--acc)">${esc(c.precio)}</div></div></div>`).join('')}
     <div style="grid-column:1/4;display:grid;grid-template-columns:200px 1fr;gap:24px;height:250px"><div class="tile ink">${logoImg(LS,'width:58%')}</div>${img('IMG-18','','height:250px')}</div></div>`);
 const T = A.tarjeta, CW = 1063, CH = 591;
 const cardF = `<div style="width:${CW}px;height:${CH}px;background:var(--deep);display:flex;align-items:center;justify-content:center">${logoImg(LP,'width:56%')}</div>`;
