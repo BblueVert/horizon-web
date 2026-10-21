@@ -161,8 +161,8 @@ window.MARCA = {
   // Imágenes: basta con dejarlas en img/IMG-NN.webp (el script las detecta). Aquí solo si una vive en otra ruta.
   // Sin imagen, la página muestra el espacio con su código (ver prompts-imagenes.md).
   imagenes: {},
-  // Punto focal del recorte (background-position) cuando el centro no sirve.
-  imagenes_pos: { 'IMG-01': '0 150px', 'IMG-05': '85% 40%', 'IMG-11': '70% 60%' },
+  // Los espacios toman la proporción real de cada imagen. imagenes_pos solo si una pieza de formato fijo necesita otro punto focal.
+  imagenes_pos: {},
 
   contacto: { lineas: ['horizonweb.cl', 'WhatsApp +56 9 7696 2659', 'Rancagua · Región de O’Higgins'] }
 };

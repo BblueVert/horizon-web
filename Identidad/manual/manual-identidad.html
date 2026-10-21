@@ -111,7 +111,7 @@ svg.ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.75;s
 .sep .name h1{font-weight:800;font-size:150px;line-height:.9;letter-spacing:-.05em}
 .sep .secs{position:absolute;left:96px;top:520px;font-size:24px;line-height:1.9;color:rgba(255,255,255,.85)}
 .sep .secs b{font:500 18px var(--mono);color:var(--acc);display:inline-block;width:70px}
-.sep .ph{position:absolute;right:96px;top:72px;width:640px;height:600px;border-radius:28px}
+.sep .ph{position:absolute;right:96px;top:72px;border-radius:28px}
 .sep .big{position:absolute;right:96px;bottom:64px;font:800 300px/.8 var(--sans);letter-spacing:-.06em}
 .sep .dots{position:absolute;left:96px;bottom:96px;display:flex;gap:12px}
 .sep .dots i{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5)}
@@ -335,8 +335,8 @@ window.MARCA = {
   // Imágenes: basta con dejarlas en img/IMG-NN.webp (el script las detecta). Aquí solo si una vive en otra ruta.
   // Sin imagen, la página muestra el espacio con su código (ver prompts-imagenes.md).
   imagenes: {},
-  // Punto focal del recorte (background-position) cuando el centro no sirve.
-  imagenes_pos: { 'IMG-01': '0 150px', 'IMG-05': '85% 40%', 'IMG-11': '70% 60%' },
+  // Los espacios toman la proporción real de cada imagen. imagenes_pos solo si una pieza de formato fijo necesita otro punto focal.
+  imagenes_pos: {},
 
   contacto: { lineas: ['horizonweb.cl', 'WhatsApp +56 9 7696 2659', 'Rancagua · Región de O’Higgins'] }
 };
@@ -344,10 +344,16 @@ window.MARCA = {
 </script><script>window.MARCA.imagenes = Object.assign({"IMG-01":"img/IMG-01.jpg","IMG-02":"img/IMG-02.jpg","IMG-03":"img/IMG-03.jpg","IMG-04":"img/IMG-04.jpg","IMG-05":"img/IMG-05.jpg","IMG-06":"img/IMG-06.jpg","IMG-07":"img/IMG-07.jpg","IMG-08":"img/IMG-08.jpg","IMG-09":"img/IMG-09.jpg","IMG-10":"img/IMG-10.jpg","IMG-11":"img/IMG-11.jpg","IMG-12":"img/IMG-12.jpg","IMG-13":"img/IMG-13.jpg","IMG-14":"img/IMG-14.jpg","IMG-15":"img/IMG-15.jpg","IMG-16":"img/IMG-16.jpg","IMG-17":"img/IMG-17.jpg","IMG-18":"img/IMG-18.jpg","IMG-19":"img/IMG-19.jpg","IMG-20":"img/IMG-20.jpg"}, window.MARCA.imagenes || {});</script>
 <div id="doc"></div>
 <script>
-(function(){
+(async function(){
 const M = window.MARCA;
 if(!M){document.body.innerHTML='<p style="padding:40px;font:20px sans-serif">Falta marca.js. Arma el manual con: node scripts/marca-pdf.js &lt;carpeta&gt;</p>';return;}
 const IM = M.imagenes || {};
+/* Proporción real de cada imagen: cada espacio se arma a su medida, sin recortar */
+const RATIO = {};
+await Promise.all([...new Set([...Object.values(IM), ...(M.fotografia||[]).map(f=>f.img)].filter(s=>s && !/^IMG-/.test(s)))]
+  .map(src => new Promise(r => { const i = new Image(); i.onload = () => { RATIO[src] = i.naturalWidth / i.naturalHeight; r(); }; i.onerror = r; i.src = src; })));
+const DEF_RATIO = {'IMG-11':3/4,'IMG-12':3/4,'IMG-13':4/5,'IMG-14':9/16,'IMG-19':9/16};
+const ar = id => RATIO[IM[id] || id] || DEF_RATIO[id] || 16/9;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico = id => `<svg class="ico" aria-hidden="true"><use href="#${id}"/></svg>`;
 const OK = `<span class="mk ok">${ico('i-check')}</span>`, NO = `<span class="mk no">${ico('i-x')}</span>`;
@@ -383,6 +389,12 @@ const img = (id, cls='', style='') => {
   const pos = (M.imagenes_pos||{})[id];
   return src ? `<div class="ph ${cls}" style="background-image:url('${esc(src)}');${pos?`background-position:${pos};`:''}${style}"></div>`
              : `<div class="ph empty ${cls}" style="${style}"><b>${esc(id)}</b><span>${esc(SLOTS[id]||'')}</span></div>`;
+};
+
+const imgFit = (id, style='') => {
+  const src = IM[id];
+  if (!src) return img(id, '', style);
+  return `<div class="ph" style="${style}"><div style="position:absolute;inset:-40px;background:url('${esc(src)}') center/cover;filter:blur(30px) brightness(.75)"></div><div style="position:absolute;inset:0;background:url('${esc(src)}') center/contain no-repeat"></div></div>`;
 };
 
 /* Color: RGB y contraste WCAG */
@@ -442,9 +454,10 @@ add('idx', `<div class="hd"><span class="cap">Índice</span><span class="doc">${
 
 const sep = c => {
   const cap = CAPS[c];
-  add('dark sep', `<div class="name"><div class="lbl">Capítulo ${c}</div><h1>${esc(cap.t)}</h1></div>
+  const r = ar(cap.img), w = Math.round(Math.min(800, 600*r)), h = Math.round(w/r);
+  add('dark sep', `<div class="name" style="max-width:${1728-w-48}px"><div class="lbl">Capítulo ${c}</div><h1>${esc(cap.t)}</h1></div>
   <div class="secs">${SECNAMES[c].map((s,i)=>`<div><b>${c}.${i+1}</b>${esc(s)}</div>`).join('')}</div>
-  ${img(cap.img)}<div class="big g">${c}.0</div>
+  ${img(cap.img,'',`width:${w}px;height:${h}px`)}<div class="big g">${c}.0</div>
   <div class="dots">${CAPS.slice(1).map(k=>`<i class="${k.n===c?'on':''}"></i>`).join('')}</div>`);
 };
 
@@ -469,12 +482,13 @@ add('imp', `${head(1,0)}<div class="q">${frase}</div>
   <div class="sub"><div class="num" style="margin:0"><b style="font-size:40px">1.1</b><span>La frase completa</span></div><p>${esc(E.posicionamiento)}</p></div>${foot()}`);
 const C = E.cliente;
 content(1,1, `<h2>Le hablamos a una persona, no a todo el mundo.</h2><p>Todo lo que diseñamos y escribimos se piensa para este cliente. Si una pieza no le habla a esta persona, se rehace.</p>`,
-  `<div class="card" style="display:grid;grid-template-columns:420px 1fr;gap:40px;padding:28px;width:100%;height:640px">
-     ${img('IMG-10','', 'height:100%')}
-     <div style="display:flex;flex-direction:column;gap:26px;padding:20px 12px 12px 0">
+  (()=>{ const r = ar('IMG-10'), w = r >= 1 ? 600 : Math.round(560*r), h = Math.round(w/r);
+  return `<div class="card" style="display:grid;grid-template-columns:${w}px 1fr;gap:44px;padding:28px;width:100%">
+     <div style="display:flex;flex-direction:column;gap:28px">${img('IMG-10','',`width:${w}px;height:${h}px`)}
+       <p style="font-size:34px;line-height:1.2;font-weight:800;letter-spacing:-.03em">${esc(C.frase)}</p></div>
+     <div style="display:flex;flex-direction:column;gap:30px;padding:16px 12px 12px 0">
        ${[['Quién es',C.quien],['Qué le duele',C.dolor],['Qué quiere lograr',C.quiere]].map(([k,v])=>`<div><div class="lbl acc" style="margin-bottom:8px">${k}</div><p style="font-size:23px;line-height:1.45;font-weight:600">${esc(v)}</p></div>`).join('')}
-       <p style="margin-top:auto;font-size:34px;line-height:1.2;font-weight:800;letter-spacing:-.03em">${esc(C.frase)}</p>
-     </div></div>`);
+     </div></div>`; })());
 content(1,2, `<h2>Cinco palabras para decidir.</h2><p>Si dudas entre dos opciones (un color, una foto, una frase), elige la que se parezca más a estas palabras.</p>`,
   `<div style="width:100%;border-top:1px solid var(--line2)">${E.palabras.map((w,i)=>`<div style="display:grid;grid-template-columns:90px 420px 1fr;align-items:center;gap:24px;padding:26px 0;border-bottom:1px solid var(--line2)">
      <span class="lbl acc" style="font-size:16px">0${i+1}</span><span style="font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1">${esc(w.p)}</span><span style="font-size:20px;line-height:1.45;color:var(--ink2)">${esc(w.d)}</span></div>`).join('')}</div>`);
@@ -506,7 +520,7 @@ content(2,2, `<h2>Que se lea en cualquier tamaño.</h2><p>Bajo estos tamaños el
      ${[[LP,L.minimos[0].px*2,'Recomendado'],[LS,L.minimos[1].px*3,'Recomendado'],[LP,L.minimos[0].px,'Mínimo'],[LS,L.minimos[1].px,'Mínimo']].map(([v,w,t],i)=>`<div style="display:flex;flex-direction:column;gap:12px"><div class="tile ink" style="flex:1">${logoImg(v,(v===LP?`width:${w}px`:`width:${w}px`)+';max-width:none;max-height:none')}</div><span class="lbl">${t} · ${w} px</span></div>`).join('')}
    </div>`);
 content(2,3, `<h2>Sobre qué va.</h2><p>${logoDark?esc(L.regla):'El logo va sobre los fondos de la marca o sobre fotos con suficiente contraste.'}</p><p>Sobre una foto, oscurécela o elige una zona tranquila de la imagen.</p>`,
-  `<div class="grid" style="grid-template-columns:repeat(3,1fr)">${L.fondos.map(f=>{const src=f.img&&(IM[f.img]||'');const bg=f.img?(src?`linear-gradient(${f.overlay},${f.overlay}),url('${esc(src)}') center/cover`:`linear-gradient(${f.overlay},${f.overlay}),var(--ink3)`):f.css;return `<div><div class="tile" style="height:520px;background:${bg}">${f.img&&!src?`<b style="position:absolute;left:20px;bottom:18px;font:500 16px var(--mono);color:var(--acc)">${esc(f.img)}</b>`:''}${logoImg(LP,'width:78%;max-width:none')}</div><div class="cap-row">${f.ok?OK:NO}<div><h4>${esc(f.nombre)}</h4></div></div></div>`}).join('')}</div>`);
+  `<div class="grid" style="grid-template-columns:repeat(3,1fr)">${L.fondos.map((f,_,all)=>{const fi=all.find(x=>x.img);const TH=fi?Math.min(600,Math.round(365/ar(fi.img))):520;const src=f.img&&(IM[f.img]||'');const bg=f.img?(src?`linear-gradient(${f.overlay},${f.overlay}),url('${esc(src)}') center/cover`:`linear-gradient(${f.overlay},${f.overlay}),var(--ink3)`):f.css;return `<div><div class="tile" style="height:${TH}px;background:${bg}">${f.img&&!src?`<b style="position:absolute;left:20px;bottom:18px;font:500 16px var(--mono);color:var(--acc)">${esc(f.img)}</b>`:''}${logoImg(LP,'width:78%;max-width:none')}</div><div class="cap-row">${f.ok?OK:NO}<div><h4>${esc(f.nombre)}</h4></div></div></div>`}).join('')}</div>`);
 const MAL = {
   'bg-claro': ['background:var(--bg2);border:1px solid var(--line2)', ''],
   'recolor': ['background:var(--ink)', 'filter:brightness(0) invert(1) sepia(1) saturate(7) hue-rotate(-18deg)'],
@@ -596,11 +610,13 @@ content(5,2, `<h2>El mensaje también es marca.</h2><p>Las primeras respuestas p
 /* 6 · FOTOGRAFÍA */
 sep(6);
 content(6,0, `<h2>Fotos reales, ordenadas y con luz.</h2><p>Las imágenes de esta página marcan el estilo. En publicaciones se usan fotos reales del negocio y de sus clientes, con permiso.</p>`,
-  `<div class="grid" style="grid-template-columns:repeat(3,1fr)">${M.fotografia.map((f,i)=>`<div style="display:flex;flex-direction:column;gap:18px">${img(f.img,'','height:560px')}<div><div class="lbl acc" style="margin-bottom:8px">Regla ${i+1}</div><h4 style="font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px">${esc(f.titulo)}</h4><p style="font-size:16px;line-height:1.45;color:var(--ink2)">${esc(f.texto)}</p></div></div>`).join('')}</div>`);
+  `<div style="width:100%;display:flex;flex-direction:column;gap:24px">${M.fotografia.map((f,i)=>{const r=ar(f.img),h=Math.round(Math.min(240,440/r)),w=Math.round(h*r);return `<div style="display:grid;grid-template-columns:440px 1fr;gap:40px;align-items:center">
+     <div style="display:flex;justify-content:flex-end">${img(f.img,'',`width:${w}px;height:${h}px`)}</div>
+     <div><div class="lbl acc" style="margin-bottom:8px">Regla ${i+1}</div><h4 style="font-size:30px;font-weight:800;letter-spacing:-.025em;margin-bottom:8px">${esc(f.titulo)}</h4><p style="font-size:19px;line-height:1.5;color:var(--ink2);max-width:520px">${esc(f.texto)}</p></div></div>`}).join('')}</div>`);
 content(6,1, `<h2>Con el celular basta.</h2><p>No necesitas cámara. Necesitas estos cinco hábitos.</p>`,
-  `<div style="display:grid;grid-template-columns:1fr 400px;gap:56px;width:100%;align-items:center">
+  `<div style="display:grid;grid-template-columns:1fr 400px;gap:56px;width:100%;align-items:center">${''/* pantalla 372 px de ancho */}
      <ol style="list-style:none;border-top:1px solid var(--line2)">${(M.fotografia_celular||[]).map((p,i)=>`<li style="display:grid;grid-template-columns:70px 1fr;gap:16px;padding:26px 0;border-bottom:1px solid var(--line2);font-size:25px;font-weight:600;line-height:1.35"><span class="lbl acc" style="font-size:18px">0${i+1}</span>${esc(p)}</li>`).join('')}</ol>
-     <div style="width:400px;height:780px;border-radius:54px;background:var(--ink);padding:14px"><div style="width:100%;height:100%;border-radius:42px;overflow:hidden;position:relative">${img('IMG-19','','position:absolute;inset:0;border-radius:0')}
+     <div style="width:400px;height:${Math.round(Math.min(752,372/ar('IMG-19')))+28}px;border-radius:54px;background:var(--ink);padding:14px"><div style="width:100%;height:100%;border-radius:42px;overflow:hidden;position:relative">${img('IMG-19','','position:absolute;inset:0;border-radius:0')}
        ${IM['IMG-19']?'':`<div style="position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 33.33% 0/1.5px 100% no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 66.66% 0/1.5px 100% no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 0 33.33%/100% 1.5px no-repeat,linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.5)) 0 66.66%/100% 1.5px no-repeat"></div>
        <span style="position:absolute;left:50%;bottom:30px;width:70px;height:70px;margin-left:-35px;border-radius:50%;border:5px solid #fff"></span>`}</div></div></div>`);
 
@@ -613,13 +629,13 @@ const post1 = `<div style="width:1080px;height:1350px;background:var(--bg);paddi
    <div style="font:500 30px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--acc)">${esc(A.post.etiqueta)}</div>
    <div style="margin-top:auto;font-weight:800;font-size:132px;line-height:.98;letter-spacing:-.045em">${esc(A.post.titulo)}<br><span class="g">${esc(A.post.titulo2)}</span></div>
    <div style="margin-top:80px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:32px;color:var(--ink2)">Desliza →</span>${sello(110)}</div></div>`;
-const post2 = `<div style="width:1080px;height:1350px;position:relative;background:var(--ink)">${img('IMG-13','','position:absolute;inset:0;border-radius:0')}
+const post2 = `<div style="width:1080px;height:1350px;position:relative;background:var(--ink)">${imgFit('IMG-13','position:absolute;inset:0;border-radius:0')}
    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,22,38,0) 40%,rgba(26,22,38,.85) 100%)"></div>
    <div style="position:absolute;left:96px;right:96px;bottom:96px;color:#fff"><div style="font-weight:800;font-size:96px;line-height:1;letter-spacing:-.04em;margin-bottom:56px">Así se ve un negocio que responde a tiempo.</div>${sello(110)}</div></div>`;
 content(7,0, `<h2>Post de Instagram.</h2><p>Dos tipos: frase sobre crema y foto con texto abajo. El sello del logo siempre sobre tinta.</p>`+
   spec([['Medida','1080 × 1350 px (4:5)'],['Formato','JPG o PNG'],['Margen','96 px a cada lado'],['Grilla','Lo clave dentro del cuadrado central']]),
   `<div style="display:flex;gap:24px">${sc(1080,1350,.51,post1,'border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(26,22,38,.12)')}${sc(1080,1350,.51,post2,'border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(26,22,38,.12)')}</div>`);
-const story = `<div style="width:1080px;height:1920px;position:relative;background:var(--deep);color:#fff">${img('IMG-14','','position:absolute;inset:0;border-radius:0;opacity:.55')}
+const story = `<div style="width:1080px;height:1920px;position:relative;background:var(--deep);color:#fff">${imgFit('IMG-14','position:absolute;inset:0;border-radius:0;opacity:.55')}
    <div style="position:absolute;left:0;right:0;top:0;height:250px;background:repeating-linear-gradient(135deg,rgba(242,105,12,.35) 0 14px,rgba(242,105,12,.12) 14px 28px);border-bottom:3px dashed #F2690C"></div>
    <div style="position:absolute;left:0;right:0;bottom:0;height:250px;background:repeating-linear-gradient(135deg,rgba(242,105,12,.35) 0 14px,rgba(242,105,12,.12) 14px 28px);border-top:3px dashed #F2690C"></div>
    <div style="position:absolute;left:96px;top:110px;font:500 34px var(--mono);color:#fff">250 px libres</div><div style="position:absolute;left:96px;bottom:110px;font:500 34px var(--mono);color:#fff">250 px libres</div>
@@ -636,8 +652,8 @@ content(7,2, `<h2>Foto de perfil y destacadas.</h2><p>El perfil usa el símbolo,
      <div style="display:flex;gap:44px">${(A.destacadas||[]).map(([i,t])=>`<div style="text-align:center"><div style="width:150px;height:150px;border-radius:50%;background:var(--deep);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 5px var(--bg),0 0 0 7px var(--line2)"><svg class="ico" style="width:58px;height:58px" aria-hidden="true"><use href="#${i}"/></svg></div><div style="margin-top:18px;font-size:18px;font-weight:600">${esc(t)}</div></div>`).join('')}</div></div>`);
 content(7,3, `<h2>Catálogo de WhatsApp y Google.</h2><p>Un ítem por servicio, con la misma ilustración de fondo y el precio a la vista. En Google, el símbolo como logo y una portada real.</p>`+
   spec([['Catálogo','1080 × 1080 px por servicio, JPG'],['Google · logo','720 × 720 px o más'],['Google · portada','1024 × 576 px o más']]),
-  `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%">${(A.catalogo||[]).map(c=>`<div style="background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden">${img(c.img,'','height:300px;border-radius:0;background-size:contain')}<div style="padding:20px 22px"><div style="font-size:21px;font-weight:800;letter-spacing:-.02em">${esc(c.nombre)}</div><div style="font-size:15px;color:var(--ink2);margin:4px 0 12px">${esc(c.detalle)}</div><div style="font:500 20px var(--mono);color:var(--acc)">${esc(c.precio)}</div></div></div>`).join('')}
-    <div style="grid-column:1/4;display:grid;grid-template-columns:200px 1fr;gap:24px;height:250px"><div class="tile ink">${logoImg(LS,'width:58%')}</div>${img('IMG-18','','height:250px')}</div></div>`);
+  `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%">${(A.catalogo||[]).map(c=>`<div style="background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden">${img(c.img,'',`height:${Math.round(365/ar(c.img))}px;border-radius:0`)}<div style="padding:20px 22px"><div style="font-size:21px;font-weight:800;letter-spacing:-.02em">${esc(c.nombre)}</div><div style="font-size:15px;color:var(--ink2);margin:4px 0 12px">${esc(c.detalle)}</div><div style="font:500 20px var(--mono);color:var(--acc)">${esc(c.precio)}</div></div></div>`).join('')}
+    ${(()=>{const H=340,W=Math.min(1144-H-24,Math.round(H*ar('IMG-18')));return `<div style="grid-column:1/4;display:grid;grid-template-columns:${H}px ${W}px;gap:24px;height:${Math.round(W/ar('IMG-18'))}px"><div class="tile ink">${logoImg(LS,'width:58%')}</div>${img('IMG-18','',`height:${Math.round(W/ar('IMG-18'))}px`)}</div>`})()}</div>`);
 const T = A.tarjeta, CW = 1063, CH = 591;
 const cardF = `<div style="width:${CW}px;height:${CH}px;background:var(--deep);display:flex;align-items:center;justify-content:center">${logoImg(LP,'width:56%')}</div>`;
 const cardB = `<div style="width:${CW}px;height:${CH}px;background:var(--bg);padding:70px 80px;display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:center">
@@ -670,7 +686,7 @@ content(8,1, `<h2>Desde la entrega, los cuidas tú.</h2><p>${esc(AR.respaldo)}</
   `<div class="grid" style="grid-template-columns:repeat(3,1fr)">${(AR.pasos||[]).map(([t,d],i)=>`<div class="card" style="height:480px;display:flex;flex-direction:column"><span style="font:800 110px/1 var(--sans);letter-spacing:-.05em" class="g">0${i+1}</span><h4 style="margin-top:auto;font-size:32px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px">${esc(t)}</h4><p style="font-size:19px;line-height:1.5;color:var(--ink2)">${esc(d)}</p></div>`).join('')}</div>`);
 
 /* CIERRE */
-add('dark end', `${img('IMG-20','', 'position:absolute;right:96px;top:72px;width:620px;height:560px;border-radius:28px')}${logoImg(LP,'position:absolute;left:96px;top:120px;width:420px')}
+add('dark end', `${img('IMG-20','', `position:absolute;right:96px;top:72px;width:${Math.round(Math.min(680,560*ar('IMG-20')))}px;height:${Math.round(Math.min(680,560*ar('IMG-20'))/ar('IMG-20'))}px;border-radius:28px`)}${logoImg(LP,'position:absolute;left:96px;top:120px;width:420px')}
   <h1>¿Dudas con una pieza? Pregunta antes de publicarla.</h1>
   <div class="lines">${M.contacto.lineas.map(esc).join('<br>')}</div>
   <div class="sello">${esc(DOC)}<br>${esc(M.version||'')}</div>`);
