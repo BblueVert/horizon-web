@@ -23,12 +23,26 @@ Regla HORIZON: **se arregla primero el tramo más roto, no el más visible.** Un
 ### Tramo 0 · Claridad: quién eres y para quién
 - **La pregunta:** ¿por qué te elige un cliente a ti y no al de la esquina?
 - **Señales de que está roto:** cuesta explicar qué haces en una frase. El Instagram, el letrero y el WhatsApp parecen de tres negocios distintos. Compites solo por precio.
-- **Cómo lo resolvemos:**
-  - Una sola frase de propuesta y un cliente principal (no "todo el mundo").
-  - Un tono de voz definido: cómo hablas y cómo no.
-  - Una identidad simple y coherente (logo, 2 colores, 2 tipografías) aplicada en todos lados.
-  - **Una sola prioridad del año.** Si todo es prioridad, nada lo es.
-- **Dónde se ve en HORIZON:** el co-branding del portal (cada cliente con su color y su letra) y la landing 2026.
+- **Cómo lo resolvemos (6 pasos, una tarde):**
+  1. **Tu cliente principal.** Quién fue tu mejor cliente este mes, qué le dolía, qué quería lograr y qué frase te dijo. Uno, no "todo el mundo".
+  2. **Tu cancha.** 3 negocios que te quitan clientes y 1 de otro rubro que admiras. Se ubican en un mapa de 2 ejes del rubro (ej. kine: genérico ↔ especialista × consulta ↔ domicilio; estética: express ↔ experiencia × precio bajo ↔ premium). Se busca el espacio vacío.
+  3. **Tu frase.** *Para [cliente] que [problema], [negocio] es [qué eres] que [beneficio], a diferencia de [alternativa], porque [prueba].* Sin prueba no hay frase: valores genéricos ("pasión, calidad") no cuentan.
+  4. **Tu voz.** 5 escalas de opuestos (cercano ↔ formal, con humor ↔ serio…), 3 frases reales tuyas reescritas en "no decimos → sí decimos" y una lista corta de "somos / no somos".
+  5. **Tu identidad mínima.** 2 colores, 2 tipografías y el tipo de logo. **Prueba de la grilla:** pon tu logo junto al de 8 negocios del rubro; si no se distingue, no sirve (las barberías, por ejemplo, casi todas usan negro, dorado y estilo vintage).
+  6. **Tu prioridad del año y prueba de coherencia.** Una sola prioridad. ¿Instagram, letrero y WhatsApp parecen del mismo negocio?
+- **La identidad mínima útil para una PyME:**
+  - Logo en 3 versiones (completo, corto y símbolo para la foto de perfil), en color, blanco y negro.
+  - Un margen de respeto explicado simple.
+  - 2 colores de marca y 1–2 neutros, cada uno con su uso.
+  - 2 tipografías gratuitas.
+  - 5 reglas de "esto no".
+  - Estilo de foto en 3 reglas.
+  - Tono de voz.
+  - Plantillas del día a día ya armadas: posts, stories, catálogo de WhatsApp, tarjeta con QR, letrero, portada de Google.
+  - Lo demás (Pantone, acabados de imprenta, sistemas de ilustración) es para marcas grandes.
+- **Dónde se ve en HORIZON:** el co-branding del portal (cada cliente con su color y su letra), la landing 2026 y la identidad del Plan 01: **estrategia antes del diseño, 2 rutas visuales para elegir y preguntas guiadas para decidir sin gusto personal**.
+
+- **En el diagnóstico (puntaje rápido):** ¿lo explicas en una frase? ¿Tus 3 canales se ven del mismo negocio? ¿Te distingues en la grilla del rubro?
 
 ### Tramo 1 · Que te encuentren
 - **La pregunta:** si alguien te busca hoy, ¿te encuentra y entiende en 10 segundos qué haces, cuánto cuesta y cómo pedir hora?
@@ -77,11 +91,11 @@ Regla HORIZON: **se arregla primero el tramo más roto, no el más visible.** Un
 
 | Paso | Qué pasa | Qué nunca hacemos |
 |---|---|---|
-| 1 · Diagnóstico (30 min, gratis) | Vemos en qué tramo se te escapan clientes. Antes de la reunión te llega un video corto revisando tu web y redes | Proponer sin haber mirado tu negocio |
-| 2 · Propuesta | Plan, alcance por escrito (qué incluye y qué no), plazo y precio | Alcance de palabra |
+| 1 · Diagnóstico (30 min, gratis) | Antes, te llega un video corto revisando tu web y redes. En la reunión, en este orden: cómo funciona hoy tu negocio → qué quieres lograr y **para cuándo** → en qué tramo se te escapan clientes → cómo trabajamos → **rango de inversión dicho en voz alta**. Si no calza, te mostramos una opción más chica o un recurso gratis. Antes de cortar te decimos **qué día te llega la propuesta**, y llega antes | Proponer sin haber mirado tu negocio. Dejarte sin un paso siguiente |
+| 2 · Propuesta | Hasta 3 opciones que se suman: lo mínimo que arregla tu tramo más roto → lo recomendado (marcado) → lo completo. Cada una con objetivo, qué incluye y qué no, plazo e inversión. Si aceptas dentro de la vigencia, tu fecha de inicio queda reservada | Alcance de palabra. Urgencia falsa |
 | 3 · Inicio | 50% de anticipo desde tu portal y orden de inicio | Partir sin anticipo ni alcance firmado |
-| 4 · Construcción | Avances en tu portal; 2 rondas de cambios con preguntas guiadas | Feedback sin preguntas ("¿te gusta?") |
-| 5 · Entrega | Al pagar el saldo se libera todo, ordenado: accesos, archivos editables y video de uso | Entregar sin acta ni archivos ordenados |
+| 4 · Construcción | Avances en tu portal. 2 rondas de cambios con preguntas guiadas; una ronda extra tiene precio conocido de antemano. Si pasan varios días sin tu respuesta, el proyecto se pausa y se retoma según agenda | Feedback sin preguntas ("¿te gusta?") |
+| 5 · Entrega | Al pagar el saldo se libera todo, ordenado: accesos, archivos editables, video de uso y una guía para respaldarlos. Desde ahí los custodias tú | Entregar sin acta ni archivos ordenados |
 | 6 · Soporte | Primer mes incluido, después mes a mes, sin permanencia | Amarrar con contratos largos |
 
 ---
@@ -112,11 +126,11 @@ Cada producto digital es **un tramo del método en versión "hazlo tú"**. Regla
 
 | Tramo | Producto digital (hazlo tú) | Servicio (lo hacemos por ti) |
 |---|---|---|
-| 0 · Claridad | Tu marca en 1 hoja · Test de personalidad de marca · Kit de identidad en Canva | Plan 01 (identidad aplicada) |
+| 0 · Claridad | Tu marca en 1 hoja (los 6 pasos) · Test de personalidad con escalas · Mapa de tu competencia · Kit de identidad en Canva (diseño propio) | Plan 01 (identidad aplicada) |
 | 1 · Que te encuentren | Google Business en 1 día · Bio y destacadas por rubro · Kit de reseñas · ¿Dónde se rompe tu marca? | Plan 01 |
 | 2 · Responder | **Kit Responde y Agenda** · Respuestas por rubro · Asistente de respuestas con IA | Plan 01 (chatbot) · Plan 04 |
 | 3 · Agendar | Políticas de agenda · Cartel QR · Link de reservas autoservicio | Plan 02 |
-| 4 · Cobrar | Guion de cobro · Mercado Pago para servicios · Gift cards y packs | Plan 02 |
+| 4 · Cobrar | Guion de cobro · Mercado Pago para servicios · Cotiza sin regalar tu trabajo · Reglas claras (abono, cancelación, inasistencia) · Gift cards y packs | Plan 02 |
 | 5 · Entregar y volver | Clientes que no vuelven · Membresías para servicios | Plan 02 · Plan 03 |
 | Medir | Planilla de consultas perdidas · Auditoría con puntaje · Informe de ventas perdidas | Diagnóstico gratis |
 
