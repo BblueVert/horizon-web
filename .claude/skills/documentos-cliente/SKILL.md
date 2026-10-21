@@ -1,6 +1,6 @@
 ---
 name: documentos-cliente
-description: Genera los documentos formales de un cliente HORIZON (propuesta comercial, contrato de prestación de servicios con anexo de alcance, orden de inicio, acta de entrega) en HTML imprimible y PDF, a partir de la ficha del cliente. Usar cuando pidan "contrato", "propuesta", "cotización formal", "acta de entrega", "orden de inicio" o "documentos para el cliente".
+description: Genera los documentos formales de un cliente HORIZON (propuesta comercial, contrato de prestación de servicios con anexo de alcance, orden de inicio, acta de entrega, manual de identidad) en HTML imprimible y PDF, a partir de la ficha del cliente. Usar cuando pidan "contrato", "propuesta", "cotización formal", "acta de entrega", "orden de inicio", "manual de marca/identidad" o "documentos para el cliente".
 ---
 
 # Documentos de cliente
@@ -18,6 +18,7 @@ description: Genera los documentos formales de un cliente HORIZON (propuesta com
 | Contrato + Anexo A (alcance) | `estructuras/contrato.md` | Al cerrar |
 | Orden de inicio | `estructuras/orden-inicio.md` | En el kickoff |
 | Acta de entrega | `estructuras/acta-entrega.md` | Al entregar el proyecto |
+| Manual de identidad (16:9) | `estructuras/manual-identidad.md` | Entrega de identidad del Plan 01 · se arma con `node scripts/marca-pdf.js <carpeta>` |
 
 ## Pasos
 1. Lee la ficha, `datos-horizon.md`, `datos-privados.md` (si existe) y `condiciones.md`. Si la ficha no existe, pide los datos mínimos (razón social o nombre, RUT, plan, monto).

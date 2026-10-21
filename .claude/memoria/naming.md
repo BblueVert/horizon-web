@@ -1,6 +1,7 @@
 # Convenciones de nombres
 
 - Marca: **HORIZON** en mayúsculas en títulos y UI; "Horizon" aceptable en texto corrido.
+- Paleta HORIZON = **un atardecer**: amarillo `#FBE396` → naranja `#F2690C` → rojo `#CC3253` → rosa `#C4467A` → violeta `#7B3FA0` → noche `#1E1744`, más neutros tinta, crema y arena. Amarillo y rojo vienen de la O del logo. Manual completo: `Identidad/manual/` (`node scripts/marca-pdf.js Identidad/manual`).
 - Logo (manual de marca): solo la versión original `Identidad/Logo HORIZON.svg` (letras blancas + O en degradado) y siempre sobre fondo oscuro. **Prohibido** recolorear las letras o bordes a negro o usarlo sobre fondo claro.
 - Páginas públicas: `Pages/<slug>.html` o `Pages/<slug>/index.html`, slug en minúsculas con guiones.
 - OPS: `OPS/<modulo>.html` + `api/ops/<modulo>.js`, ruta pública `/ops/<modulo>`.
