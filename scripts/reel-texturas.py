@@ -62,7 +62,9 @@ elif a.textura == 'digicam':
         v = f'{llenar(W, H)},{base},scale={W}:{H},' + sello.format(fs=52, m=64)
 elif a.textura == 'analogo':
     # Negros apagados, tono cálido, grano de rollo, parpadeo, leve vaivén del cuadro y viñeta fuerte
-    base = ("curves=all='0/0.09 0.5/0.52 1/0.93':r='0/0.1 1/0.97':b='0/0.06 1/0.86',"
+    # El verde baja un poco junto con el azul: si solo baja el azul, el tono se va a verde oliva
+    base = ("curves=all='0/0.09 0.5/0.52 1/0.93':r='0/0.11 0.5/0.54 1/0.98':g='0/0.08 0.5/0.48 1/0.9':b='0/0.06 0.5/0.44 1/0.84',"
+            'colorbalance=rs=0.03:gs=-0.02:rm=0.04:gm=-0.02:bm=-0.02:rh=0.03:gh=-0.01:bh=-0.03,'
             'eq=saturation=0.86:contrast=1.04:brightness=0.01:eval=frame,'
             "eq=brightness='0.018*(random(1)-0.5)':eval=frame,"
             'gblur=sigma=0.6,noise=alls=20:allf=t+u,vignette=PI/4.2')
