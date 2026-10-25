@@ -20,3 +20,4 @@ Sitio, CRM interno (OPS), portal de clientes y SaaS vertical de **HORIZON**: sis
 @.claude/memoria/contenido.md
 @.claude/memoria/repo-map.md
 @.claude/memoria/casos.md
+@.claude/memoria/prompts-audiovisuales.md

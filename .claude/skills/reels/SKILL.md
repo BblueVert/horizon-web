@@ -19,6 +19,7 @@ description: Escribe guiones de reels para Instagram/TikTok de HORIZON (hook, de
 - Música original con `scripts/reel-musica.py` (un `cue.json` por video, sincronizado a los cortes). Distinta en cada reel, misma línea sonora.
 - Portada propia diseñada para ese video.
 - Ver reglas de video en `.claude/memoria/contenido.md`.
+- Todo prompt o brief audiovisual sigue el estándar de `.claude/memoria/prompts-audiovisuales.md`.
 
 ## Entrega
 - 3 hooks alternativos + 1 guion completo.
