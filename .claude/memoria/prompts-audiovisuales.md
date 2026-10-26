@@ -44,3 +44,6 @@ Referencia: el prompt del anuncio conceptual de Duolingo ("The Path"), en `CONTE
 - Locución y textos en **tuteo chileno**, nunca voseo (el prompt de referencia está en voseo rioplatense: eso no se copia).
 - Solo datos reales; lo ilustrativo se marca como ejemplo.
 - Antes de prometer render 3D, motor o voz sintética, verificar qué está disponible en la sesión (hoy no hay Blender instalado) y decirlo.
+
+## Lecciones aprendidas
+- **Una pieza, un tema** (26-oct-2026). Benja descartó una versión que sumaba el caso Fitt (pantallas del prototipo y fusión de paletas HORIZON × Fitt) a la animación "La línea del horizonte". Se sintió como dos videos pegados. Prefirió la original: un solo tema, fluida, directo al grano y más dirigida al espectador. Si un caso o una segunda marca no cabe dentro de la idea central sin cambiar el tema, va en **otra pieza**, no se fusiona.
