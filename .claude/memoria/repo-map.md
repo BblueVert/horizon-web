@@ -6,6 +6,7 @@
 | `OPS/` + `api/ops/` | CRM interno y su API | Herramienta del equipo, login en `/ops/login` |
 | `api/` | Endpoints públicos (leads, agenda, portal, recursos, SaaS) | Funciones Vercel; `server.js` las monta en local |
 | `verticales/peluquerias/` | SaaS Binks Barber | Producto vertical, Supabase SaaS |
+| `verticales/minimarket/` | Agente de pedidos por WhatsApp para minimarket (Baileys + DeepSeek, detalle y mayorista) | Servicio Node aparte con su propio Supabase; no corre en Vercel |
 | `verticales/_core/` | Config compartida de verticales | Reutilizable para próximos nichos |
 | `shared/` | Íconos (`hz-icons.js`) | Compartido entre módulos |
 | `Identidad/` | Logos, og-image, logos de partners | Activos de marca |
