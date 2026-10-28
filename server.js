@@ -18,6 +18,7 @@ const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
 const recursos    = require('./api/recursos');
 const pagos       = require('./api/pagos');
+const demos       = require('./api/demos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -141,6 +142,8 @@ app.get('/api/recursos',  recursos);
 app.post('/api/recursos', recursos);
 app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 app.post('/api/pagos', pagos);   // pago desde el portal + webhook de Mercado Pago (?webhook=1)
+app.get('/api/demos',  demos);   // demos express de agentes WhatsApp (DEMOS_TOKEN)
+app.post('/api/demos', demos);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
 const opsPages = {

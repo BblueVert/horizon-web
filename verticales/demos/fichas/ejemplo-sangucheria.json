@@ -1,0 +1,60 @@
+{
+  "slug": "ejemplo-sangucheria",
+  "nombre": "Sanguchería El Rincón",
+  "rubro": "restaurante",
+  "flujo": "pedidos",
+  "asistente": "Rincón",
+  "descripcion": "Sanguchería de barrio en Rancagua (negocio ficticio de ejemplo). Churrascos, lomitos y completos, con retiro y delivery propio.",
+  "tono": "Cercano y rápido, como el que atiende en la caja. Recomienda la promo cuando calza.",
+  "saludo": "¡Hola! Soy Rincón, el asistente de Sanguchería El Rincón 🥪 ¿Qué se te antoja hoy?",
+  "locales": [
+    { "nombre": "Local centro", "direccion": "Calle Ejemplo 123", "comuna": "Rancagua", "horario": "lunes a sábado 12:00 a 23:00, domingo 12:00 a 17:00" }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Sándwiches",
+      "items": [
+        { "nombre": "Churrasco italiano", "precio": 6990, "descripcion": "Palta, tomate y mayo casera en marraqueta o frica" },
+        { "nombre": "Lomito completo", "precio": 7490, "descripcion": "Chucrut, tomate y mayo" },
+        { "nombre": "Barros Luco", "precio": 6490 },
+        { "nombre": "Ave palta", "precio": 5990 }
+      ]
+    },
+    {
+      "categoria": "Completos",
+      "items": [
+        { "nombre": "Completo italiano", "precio": 2990, "variantes": [{ "nombre": "XL", "precio": 3790 }] },
+        { "nombre": "As italiano", "precio": 4990 }
+      ]
+    },
+    {
+      "categoria": "Promos",
+      "items": [
+        { "nombre": "Promo 2 churrascos italianos + bebida 1,5 L", "precio": 14990 },
+        { "nombre": "Promo familiar 4 completos + papas grandes", "precio": 13990 }
+      ]
+    },
+    {
+      "categoria": "Acompañamientos y bebidas",
+      "items": [
+        { "nombre": "Papas fritas", "precio": 2990, "variantes": [{ "nombre": "grandes", "precio": 4490 }] },
+        { "nombre": "Bebida lata", "precio": 1290 },
+        { "nombre": "Jugo natural del día", "precio": null }
+      ]
+    }
+  ],
+  "entrega": { "retiro": true, "delivery": true, "zonas": "Rancagua centro y oriente", "costo": "$1.990, gratis sobre $20.000", "minimo": 8000, "apps": ["PedidosYa"] },
+  "pagos": ["efectivo", "transferencia", "débito y crédito al recibir"],
+  "faq": [
+    { "p": "¿Tienen opción vegetariana?", "r": "Sí: el churrasco y el lomito se pueden pedir con hamburguesa de lentejas, mismo precio." },
+    { "p": "¿Cuánto demora el delivery?", "r": "Entre 30 y 45 minutos según la hora." }
+  ],
+  "reglas": [
+    "Siempre pregunta si es para retiro o delivery antes de cerrar.",
+    "En pan, ofrece marraqueta o frica.",
+    "Si piden más de 10 sándwiches, es pedido grande: toma los datos y di que el local llama para coordinar."
+  ],
+  "datos_pedido": ["nombre", "retiro o delivery", "dirección si es delivery", "medio de pago"],
+  "derivar_a": "Di que el encargado le escribe en unos minutos por este mismo chat.",
+  "fuentes": ["ficha de ejemplo, datos inventados"]
+}

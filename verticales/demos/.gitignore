@@ -1,0 +1,7 @@
+.env
+.wa-sesion/
+datos/
+node_modules/
+# Fichas de prospectos: no van al repo (es público). Solo los ejemplos.
+fichas/*.json
+!fichas/ejemplo-*.json

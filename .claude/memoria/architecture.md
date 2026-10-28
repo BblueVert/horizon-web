@@ -22,6 +22,7 @@
 ## WhatsApp
 - Consultoría: **+56 9 7696 2659** (todas las páginas HORIZON). El +56 9 4651 3068 es personal: solo queda en las demos de Binks Barber y en landings viejas de otros repos.
 - El mismo número de la consultoría se usa **a veces** para demos en vivo de Mesa Cero (repo `mesa-cero`): bot con el kit Baileys `mesa-cero-whatsapp-bot` (fuera de los repos) → webhook n8n `wa-mesacero-v2`. Mientras el kit está vinculado, el bot responde **todos** los chats, también los de prospectos de HORIZON. Benja avisa antes de cada demo; al terminar, desvincular el dispositivo en WhatsApp.
+- **Horizon Pruebas:** número de demos en terreno, con el bot `verticales/demos` (skill `demo-express`). Solo responde los chats conectados a una demo (link `wa.me/...?text=...(demo: <slug>)` o `#demo <slug>`); el resto queda en silencio.
 
 ## Portal del cliente y pagos
 - El portal (`/c/<portal_token>`) nace al agendar: `api/schedule-meet.js` define el token antes de crear el evento y el link va en la invitación de Calendar (la descripción es para el cliente; los datos internos van a OPS y a `extendedProperties.private`). Antes de tener proyecto, el portal muestra el brief pre-diagnóstico.
