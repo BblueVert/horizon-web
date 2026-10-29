@@ -1,0 +1,40 @@
+# HORIZON
+
+> HORIZON diseña y construye sistemas digitales para negocios de servicio (PyMEs) en Rancagua, Chile: página web, CRM, automatización y agentes de inteligencia artificial que responden, agendan y hacen seguimiento a los clientes por WhatsApp, Instagram y la web. Fundada y dirigida por Benjamín Yañez, diseñador digital.
+
+HORIZON no vende solo páginas web: arma el sistema completo que capta, atiende y vende por el negocio, para que el dueño deje de depender de responder todo a mano. Trabaja con negocios de servicio como kinesiología, barberías y peluquerías, gimnasios, restaurantes y locales de comida, y tiendas. Atiende en Rancagua y alrededores, y de forma remota en todo Chile.
+
+## Servicios y precios (CLP, + boleta de honorarios)
+
+- [Plan 01 · Presencia Digital](https://horizonweb.cl/plan-01): página web profesional, Google Business, WhatsApp y chatbot básico. Implementación $490.000, 3–4 semanas. Soporte mensual desde $120.000.
+- [Plan 02 · Ecosistema Digital](https://horizonweb.cl/plan-02): web más sistema de reservas, tienda o caja, CRM y dashboard. Implementación $990.000, 4–5 semanas. Soporte mensual desde $200.000.
+- [Plan 03 · Sistema con IA](https://horizonweb.cl/plan-03): todo el Plan 02 más agente de IA, automatizaciones con n8n y Meta Ads. Implementación $1.990.000, 5–6 semanas. Soporte mensual desde $350.000.
+- [Plan 04 · Agente IA Personalizado](https://horizonweb.cl/plan-04): empleado virtual 24/7 en WhatsApp, Instagram y web, solo o sumado a otro plan. Implementación desde $1.490.000, 2–3 semanas. Soporte mensual $290.000.
+- [Todos los servicios](https://horizonweb.cl/servicios)
+
+El primer mes de soporte va incluido; después es mes a mes, sin permanencia.
+
+## Qué diferencia a HORIZON
+
+- Un solo responsable: el mismo diseñador diseña, construye y atiende al cliente, sin vendedores intermedios.
+- Sistemas a medida del negocio, no plantillas: la web, el CRM, las automatizaciones y la IA se conectan entre sí.
+- Cada cliente tiene un portal propio donde ve el avance del proyecto, paga su presupuesto por ítem y recibe la entrega final.
+- Diagnóstico gratuito de 30 minutos antes de cotizar.
+
+## Casos
+
+- [VitalKine](https://vitalkine.com): kinesiología a domicilio en Rancagua. Sitio a medida con reservas propias y SEO local (Plan 02).
+- [Floremané](https://floremane.cl): identidad, packaging y e-commerce editorial de carteras de cuero italiano (HORIZON × GO).
+- [VitalFit](https://vitalfit-landing-alpha.vercel.app): landing de gimnasio en Rancagua.
+
+## Contacto
+
+- [Agendar diagnóstico gratuito (30 min)](https://horizonweb.cl/agendar)
+- WhatsApp: +56 9 7696 2659
+- Instagram: @horizon.webs
+- Sitio: https://horizonweb.cl
+
+## Opcional
+
+- [Recursos gratuitos para negocios](https://horizonweb.cl/recursos): mini-auditoría digital, prompts, checklist de Google y contexto para tu IA.
+- [Política de privacidad](https://horizonweb.cl/privacidad)
