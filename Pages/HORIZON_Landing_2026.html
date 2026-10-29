@@ -28,6 +28,12 @@
     setTimeout(function () { if (!window.gsap) document.documentElement.classList.remove('anim'); }, 2500);
   }
 </script>
+<script>
+  window.va = function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 <style>
 :root {
   --grad-deep: radial-gradient(120% 90% at 100% 100%, rgba(242,105,12,.55), transparent 55%), linear-gradient(155deg, #1E1744 0%, #34276E 30%, #5A2F8C 58%, #9A3A84 82%, #C4467A 100%);
