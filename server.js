@@ -34,11 +34,11 @@ app.use((req, res, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com",
+      "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com https://va.vercel-scripts.com",
       "frame-src 'none'",
       "frame-ancestors 'none'",
     ].join('; ')
@@ -164,7 +164,7 @@ Object.entries(opsPages).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
 });
 
-// ── Verticales SaaS ──────────────────────────────────────────────────────────
+// ── Verticales SaaS ──────────────────────────────��───────────────────────────
 const saasPages = {
   '/saas/login':                      'verticales/peluquerias/login.html',
   '/verticales/peluquerias/login':    'verticales/peluquerias/login.html',
