@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { crearEstado } from '../src/estado.js';
 import { crearConversacion } from '../src/conversacion.js';
 import { validarFicha, codigoDemo, linkDemo, slugDe } from '../src/ficha.js';
-import { construirPrompt, interpretar, avisoDueno } from '../src/agente.js';
+import { construirPrompt, interpretar, avisoDueno, extrasConfirmacion } from '../src/agente.js';
 
 const ejemplo = JSON.parse(readFileSync(new URL('../fichas/ejemplo-sangucheria.json', import.meta.url), 'utf8'));
 const silencioso = { error() {}, warn() {}, log() {} };
@@ -65,7 +65,8 @@ test('pedido confirmado: aviso "así le llega al dueño" y se registra', async (
   await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'demo ejemplo-sangucheria' });
   const out = await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'sí, confirmo' });
   assert.equal(llamadas[1].historial.length, 2, 'lleva el historial');
-  assert.match(out[1].texto, /Así le llegaría este aviso al dueño[\s\S]*Nuevo pedido[\s\S]*Total: \$15\.970[\s\S]*\+56911112222/);
+  assert.match(out[1].texto, /Tu código de retiro: \*R-\d{4}\*/);
+  assert.match(out[2].texto, /Así le llegaría este aviso al dueño[\s\S]*Nuevo pedido[\s\S]*Código: R-\d{4}[\s\S]*Total: \$15\.970[\s\S]*\+56911112222/);
   assert.equal(acciones[0].tipo, 'pedido');
   assert.equal(estado.historial(CLIENTE).length, 4);
 });
@@ -116,8 +117,44 @@ test('prompt: incluye catálogo con precios, precio a confirmar y tuteo', () => 
 });
 
 test('interpretar: JSON, texto suelto y acción inválida', () => {
-  assert.deepEqual(interpretar('{"respuestas":["a","b"],"accion":null}'), { respuestas: ['a', 'b'], accion: null });
-  assert.deepEqual(interpretar('hola sin json'), { respuestas: ['hola sin json'], accion: null });
+  assert.deepEqual(interpretar('{"respuestas":["a","b"],"accion":null}'), { respuestas: ['a', 'b'], ubicacion: false, accion: null });
+  assert.deepEqual(interpretar('hola sin json'), { respuestas: ['hola sin json'], ubicacion: false, accion: null });
+  assert.equal(interpretar('{"respuestas":["Estamos en..."],"ubicacion":true}').ubicacion, true);
   assert.equal(interpretar('{"respuestas":["a"],"accion":{"tipo":"otra"}}').accion, null);
   assert.match(avisoDueno(ejemplo, { tipo: 'reserva', resumen: 'Mesa para 4', datos: {} }, '569'), /\*Nueva reserva\* · Sanguchería El Rincón/);
+});
+
+test('abono por WhatsApp: link de pago con el 30% y código de reserva', () => {
+  const ficha = { ...ejemplo, slug: 'estetica', nombre: 'Studio Lumière', flujo: 'reservas', color: '#B4527A', pago_online: { activo: true, porcentaje: 30 } };
+  const { mensajes, accion } = extrasConfirmacion(ficha, { tipo: 'reserva', resumen: 'Pestañas pelo a pelo, viernes 11:00', datos: { total: 25000, hora: 'viernes 11:00' } }, '56976962659', () => 0.5);
+  assert.equal(accion.codigo, 'A-5500');
+  assert.equal(accion.pago, 7500);
+  const url = new URL(mensajes[0].split('\n')[1]);
+  assert.equal(url.pathname, '/pago-demo');
+  assert.equal(url.searchParams.get('m'), '7500');
+  assert.equal(url.searchParams.get('w'), '56976962659');
+  assert.match(mensajes[0], /abona el 30% \(\$7\.500\)/);
+  assert.match(mensajes[1], /código de reserva: \*A-5500\* · viernes 11:00/);
+});
+
+test('pedido con delivery: link por el total y sin código de retiro', () => {
+  const ficha = { ...ejemplo, pago_online: { activo: true } };
+  const { mensajes } = extrasConfirmacion(ficha, { tipo: 'pedido', resumen: 'x', datos: { total: 14990, entrega: 'delivery' } }, '569');
+  assert.equal(mensajes.length, 1);
+  assert.match(mensajes[0], /pagar \$14\.990/);
+});
+
+test('ubicación: pin nativo si hay coordenadas, link de Maps si no', async () => {
+  const conPin = { ...ejemplo, slug: 'con-pin', locales: [{ nombre: 'Centro', direccion: 'Calle 1', comuna: 'Rancagua', lat: -34.17, lng: -70.74 }] };
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const fichas = new Map([[conPin.slug, conPin], [ejemplo.slug, ejemplo]]);
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => fichas.get(s) || null, todas: () => [...fichas.values()] },
+    responder: async () => ({ respuestas: ['Estamos en Calle 1'], ubicacion: true, accion: null }), log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  const a = await conv.entrante({ jid: 'a@s.whatsapp.net', telefono: '1', texto: 'demo con-pin' });
+  assert.deepEqual(a[1].ubicacion, { lat: -34.17, lng: -70.74, nombre: 'Sanguchería El Rincón · Centro', direccion: 'Calle 1, Rancagua' });
+  const b = await conv.entrante({ jid: 'b@s.whatsapp.net', telefono: '2', texto: 'demo ejemplo-sangucheria' });
+  assert.match(b[1].texto, /^📍 https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=Calle%20Ejemplo%20123/);
 });

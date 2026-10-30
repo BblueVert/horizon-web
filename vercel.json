@@ -16,6 +16,7 @@
     { "source": "/agendar", "destination": "/Pages/agendar/index.html" },
     { "source": "/privacidad", "destination": "/Pages/privacidad.html" },
     { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" },
+    { "source": "/pago-demo", "destination": "/Pages/pago-demo/index.html" },
     { "source": "/c/:token", "destination": "/Pages/portal/index.html" },
     { "source": "/api/ops/tasks/:id", "destination": "/api/ops/tasks?id=:id" },
     { "source": "/ops", "destination": "/OPS/index.html" },

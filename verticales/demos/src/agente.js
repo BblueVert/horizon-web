@@ -3,6 +3,7 @@
 // un agente "de verdad" (ej. verticales/minimarket) separa entender de calcular.
 
 import { config } from './config.js';
+import { mapaDe } from './ficha.js';
 
 const dinero = (n) => '$' + Math.round(Number(n)).toLocaleString('es-CL');
 
@@ -19,7 +20,7 @@ function catalogoTexto(ficha) {
 
 function locales(ficha) {
   return (ficha.locales || []).map(l =>
-    `- ${[l.nombre, l.direccion, l.comuna].filter(Boolean).join(', ')}${l.horario ? ` · ${l.horario}` : ''}${l.telefono ? ` · ${l.telefono}` : ''}`).join('\n');
+    `- ${[l.nombre, l.direccion, l.comuna].filter(Boolean).join(', ')}${l.horario ? ` · ${l.horario}` : ''}${l.telefono ? ` · ${l.telefono}` : ''}${l.referencia ? ` · ${l.referencia}` : ''} · mapa: ${mapaDe(l)}`).join('\n');
 }
 
 const OBJETIVO = {
@@ -41,7 +42,9 @@ export function construirPrompt(ficha) {
     ficha.horario && `Horario: ${ficha.horario}`,
     (ficha.catalogo || []).length && `Catálogo (precios en CLP):\n${catalogoTexto(ficha)}`,
     (e.retiro || e.delivery) && `Entrega: ${[e.retiro && 'retiro en local', e.delivery && 'delivery'].filter(Boolean).join(' y ')}${e.zonas ? `. Zonas: ${e.zonas}` : ''}${e.costo ? `. Costo: ${e.costo}` : ''}${e.minimo ? `. Mínimo: ${dinero(e.minimo)}` : ''}${(e.apps || []).length ? `. También en ${e.apps.join(', ')}` : ''}.`,
-    r.activo && `Reservas: piden ${(r.datos || ['nombre', 'día', 'hora']).join(', ')}.${r.notas ? ` ${r.notas}` : ''}`,
+    r.activo && `Reservas: piden ${(r.datos || ['nombre', 'día', 'hora']).join(', ')}.${r.horarios ? ` Horas disponibles: ${r.horarios}.` : ''}${r.notas ? ` ${r.notas}` : ''}`,
+    ficha.pago_online?.activo && `Pago por WhatsApp: al confirmar, el sistema le manda al cliente un link de pago ${ficha.pago_online.porcentaje ? `por el abono del ${ficha.pago_online.porcentaje}%` : 'por el total'}. Avísale que le llega el link; nunca escribas un link tú.`,
+    ficha.flujo === 'pedidos' && e.retiro && 'Retiro: pregunta a qué hora pasa. Al confirmar, el sistema le manda un código de retiro para que lo entreguen sin esperar.',
     (ficha.pagos || []).length && `Medios de pago: ${ficha.pagos.join(', ')}.`,
     (ficha.faq || []).length && `Preguntas frecuentes:\n${ficha.faq.map(f => `- ${f.p} → ${f.r}`).join('\n')}`,
     (ficha.reglas || []).length && `Cómo funciona la atención (respétalo):\n${ficha.reglas.map(x => `- ${x}`).join('\n')}`,
@@ -55,10 +58,12 @@ export function construirPrompt(ficha) {
 - Usa SOLO la información de arriba. Nunca inventes productos, precios, promociones, horarios ni direcciones. Si algo no está o dice "precio a confirmar", di que lo confirmas con el local.
 - Calcula totales solo con precios que estén en el catálogo, y muéstralos en el resumen.
 - Si preguntan si eres un bot o una persona: eres un asistente virtual de prueba que preparó HORIZON para mostrar cómo atendería ${ficha.nombre}.
+- Si preguntan dónde están o cómo llegar, responde la dirección y pon "ubicacion": true (el sistema envía el pin del mapa).
+- Si el cliente dice que ya pagó, agradécele y confírmale que quedó listo.
 - "accion" va SOLO cuando el cliente confirmó explícitamente un resumen que le mostraste en un mensaje anterior. Si no, "accion": null.
 
 Responde SIEMPRE con un JSON (sin markdown):
-{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar", "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero o null, "otros": "..."}}}`);
+{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "ubicacion": false, "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar", "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero en CLP o null, "entrega": "retiro" | "delivery" | null, "hora": "...", "otros": "..."}}}`);
 
   return bloques.join('\n\n');
 }
@@ -93,7 +98,7 @@ export function interpretar(raw) {
     out = JSON.parse(String(raw || '{}').replace(/```json/g, '').replace(/```/g, '').trim());
   } catch {
     // Si no vino JSON, se usa el texto tal cual como respuesta.
-    return { respuestas: raw ? [String(raw).trim()] : [], accion: null };
+    return { respuestas: raw ? [String(raw).trim()] : [], ubicacion: false, accion: null };
   }
   const respuestas = (Array.isArray(out.respuestas) ? out.respuestas : [out.respuestas])
     .filter(x => typeof x === 'string' && x.trim()).map(x => x.trim()).slice(0, 3);
@@ -101,7 +106,7 @@ export function interpretar(raw) {
   const accion = a && ['pedido', 'reserva', 'consulta', 'derivar'].includes(a.tipo)
     ? { tipo: a.tipo, resumen: String(a.resumen || '').slice(0, 500), datos: a.datos && typeof a.datos === 'object' ? a.datos : {} }
     : null;
-  return { respuestas, accion };
+  return { respuestas, ubicacion: out.ubicacion === true, accion };
 }
 
 export function avisoDueno(ficha, accion, telefono) {
@@ -110,11 +115,43 @@ export function avisoDueno(ficha, accion, telefono) {
   const lineas = [
     `🔔 *${titulo}* · ${ficha.nombre}`,
     accion.resumen,
+    accion.codigo && `Código: ${accion.codigo}`,
     d.cliente && `Cliente: ${d.cliente}`,
+    d.hora && `Hora: ${d.hora}`,
+    d.entrega && `Entrega: ${d.entrega}`,
     d.detalle && `Detalle: ${d.detalle}`,
     Number.isFinite(d.total) && `Total: ${dinero(d.total)}`,
+    accion.pago && `Pago: link enviado por ${dinero(accion.pago)}`,
     d.otros && d.otros,
     telefono && `WhatsApp: +${telefono}`,
   ];
   return lineas.filter(Boolean).join('\n');
+}
+
+// Lo que agrega el sistema después de una confirmación: código, link de pago.
+export function extrasConfirmacion(ficha, accion, numero, azar = Math.random) {
+  if (!['pedido', 'reserva'].includes(accion.tipo)) return { mensajes: [], accion };
+  const d = accion.datos || {};
+  const codigo = `${accion.tipo === 'pedido' ? 'R' : 'A'}-${String(Math.floor(1000 + azar() * 9000))}`;
+  const mensajes = [];
+  let pago = null;
+  const po = ficha.pago_online;
+  const total = Number(d.total);
+  if (po?.activo && Number.isFinite(total) && total > 0) {
+    pago = po.porcentaje ? Math.round((total * po.porcentaje) / 100 / 10) * 10 : Math.round(total);
+    const url = new URL(config.pagoDemoUrl);
+    url.search = new URLSearchParams({
+      n: ficha.nombre, m: String(pago), d: accion.resumen || d.detalle || '', r: codigo,
+      w: String(numero || ''), ...(ficha.color ? { c: ficha.color } : {}), ...(po.porcentaje ? { a: String(po.porcentaje) } : {}),
+    }).toString();
+    mensajes.push(po.porcentaje
+      ? `💳 Para dejarlo reservado, abona el ${po.porcentaje}% (${dinero(pago)}) aquí:\n${url}`
+      : `💳 Puedes pagar ${dinero(pago)} aquí mismo:\n${url}`);
+  }
+  if (accion.tipo === 'pedido' && d.entrega !== 'delivery') {
+    mensajes.push(`🧾 Tu código de retiro: *${codigo}*${d.hora ? ` · ${d.hora}` : ''}\nMuéstralo en caja y te lo entregamos al tiro, sin fila.`);
+  } else if (accion.tipo === 'reserva') {
+    mensajes.push(`📅 Tu código de reserva: *${codigo}*${d.hora ? ` · ${d.hora}` : ''}. Te recordamos un día antes.`);
+  }
+  return { mensajes, accion: { ...accion, codigo, pago } };
 }

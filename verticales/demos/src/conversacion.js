@@ -3,7 +3,8 @@
 
 import { config } from './config.js';
 import { codigoDemo, linkDemo } from './ficha.js';
-import { responder as responderIA, avisoDueno } from './agente.js';
+import { responder as responderIA, avisoDueno, extrasConfirmacion } from './agente.js';
+import { mapaDe } from './ficha.js';
 import { responderMotor as motorReal } from './motores.js';
 
 const AYUDA = [
@@ -32,13 +33,27 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     }
     estado.agregarTurno(jid, texto, JSON.stringify(r));
     const salida = r.respuestas.map(t => ({ jid, texto: t }));
+    if (r.ubicacion) salida.push(...ubicacion(jid, ficha));
     if (r.accion) {
+      const extras = extrasConfirmacion(ficha, r.accion, numero);
+      r.accion = extras.accion;
+      salida.push(...extras.mensajes.map(t => ({ jid, texto: t })));
       const aviso = avisoDueno(ficha, r.accion, telefono);
       if (['chat', 'ambos'].includes(config.bot.aviso)) salida.push({ jid, texto: `📲 _Así le llegaría este aviso al dueño de ${ficha.nombre}:_\n\n${aviso}` });
       if (['yo', 'ambos'].includes(config.bot.aviso) && jid !== yo) salida.push(...aYo(aviso));
       registrarAccion({ slug: ficha.slug, telefono, ...r.accion }).catch(e => log.warn('[demo] no se registró la acción:', e.message));
     }
     return salida;
+  }
+
+  // Pin de WhatsApp si el local tiene coordenadas; si no, link de Google Maps.
+  function ubicacion(jid, ficha) {
+    const l = (ficha.locales || [])[0];
+    if (!l) return [];
+    if (Number.isFinite(l.lat) && Number.isFinite(l.lng)) {
+      return [{ jid, ubicacion: { lat: l.lat, lng: l.lng, nombre: l.nombre ? `${ficha.nombre} · ${l.nombre}` : ficha.nombre, direccion: [l.direccion, l.comuna].filter(Boolean).join(', ') } }];
+    }
+    return [{ jid, texto: `📍 ${mapaDe(l)}` }];
   }
 
   // Mensaje de un cliente/prospecto (o tuyo en tu propio chat, si lo conectaste a una demo).

@@ -18,7 +18,8 @@ Lanza en el mismo turno 3–4 búsquedas (WebSearch `standard`):
 Después lee las 1–2 páginas con más datos (sitio propio > carta en PDF > app de delivery > Instagram > Google). Si no hay nada en internet, sigue con lo que dictó Benja.
 
 ## 3. Arma la ficha
-Formato en `verticales/demos/FICHA.md` (ejemplo: `verticales/demos/fichas/ejemplo-sangucheria.json`).
+Formato en `verticales/demos/FICHA.md`. **Parte de la demo de su rubro** (`verticales/demos/fichas/rubro-<estetica|barberia|pasteleria|cafeteria|floreria|veterinaria>.json`) y reemplaza nombre, dirección, `lat`/`lng`, horario, servicios y precios por los reales; si no hay de su rubro, usa `fichas/ejemplo-sangucheria.json`. Saca `notas_internas` de la demo ficticia.
+- `pago_online` y `color` (de su logo o Instagram) muestran el pago por WhatsApp; coordenadas del local = pin de mapa nativo.
 - `flujo`: comida/tienda → `pedidos` · peluquería/clínica/estética/mesas → `reservas` · resto → `consultas`.
 - Lo que dictó Benja sobre cómo funciona el negocio y su gente va a `reglas`, `tono` y `descripcion`. Lo que dijo de las personas (dueño, problemas, sensaciones) va a `notas_internas`, nunca al bot.
 - **Precios:** solo los encontrados. Sin fuente → `"precio": null`. Si vienen de una app de delivery, anótalo en `fuentes` y `notas_internas` ("precios PedidosYa, suelen ser más altos").

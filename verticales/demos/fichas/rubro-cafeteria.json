@@ -1,0 +1,125 @@
+{
+  "slug": "cafeteria",
+  "nombre": "Café Esquina Norte",
+  "rubro": "cafeteria",
+  "flujo": "pedidos",
+  "asistente": "Norte",
+  "color": "#6B4A2F",
+  "descripcion": "Cafetería de especialidad chica, atendida por sus dueños. Pide por WhatsApp y retira sin fila.",
+  "tono": "Cálido y rápido, como el barista de confianza.",
+  "saludo": "¡Hola! ☕ Soy Norte, de Café Esquina Norte. ¿Te dejo algo listo para retirar?",
+  "locales": [
+    {
+      "nombre": "Café",
+      "direccion": "Independencia 610",
+      "comuna": "Rancagua",
+      "horario": "lunes a viernes 8:00 a 19:00, sábado 9:00 a 14:00",
+      "lat": -34.1702,
+      "lng": -70.7391
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Café",
+      "items": [
+        {
+          "nombre": "Americano",
+          "precio": 2200,
+          "variantes": [
+            {
+              "nombre": "grande",
+              "precio": 2700
+            }
+          ]
+        },
+        {
+          "nombre": "Cortado",
+          "precio": 2500
+        },
+        {
+          "nombre": "Capuccino",
+          "precio": 3200
+        },
+        {
+          "nombre": "Latte",
+          "precio": 3200,
+          "descripcion": "leche vegetal +$500"
+        },
+        {
+          "nombre": "Mocaccino",
+          "precio": 3500
+        },
+        {
+          "nombre": "Té o infusión",
+          "precio": 1800
+        }
+      ]
+    },
+    {
+      "categoria": "Para comer",
+      "items": [
+        {
+          "nombre": "Sándwich ave palta en ciabatta",
+          "precio": 4500
+        },
+        {
+          "nombre": "Tostado jamón queso",
+          "precio": 3900
+        },
+        {
+          "nombre": "Croissant",
+          "precio": 2500
+        },
+        {
+          "nombre": "Trozo de queque",
+          "precio": 2200
+        },
+        {
+          "nombre": "Brownie",
+          "precio": 2500
+        }
+      ]
+    },
+    {
+      "categoria": "Promos",
+      "items": [
+        {
+          "nombre": "Desayuno: café + tostado",
+          "precio": 4900,
+          "descripcion": "hasta las 11:00"
+        },
+        {
+          "nombre": "Once: café + trozo de queque",
+          "precio": 4000
+        }
+      ]
+    }
+  ],
+  "entrega": {
+    "retiro": true,
+    "delivery": false
+  },
+  "pago_online": {
+    "activo": true
+  },
+  "pagos": [
+    "débito",
+    "crédito",
+    "efectivo",
+    "transferencia"
+  ],
+  "reglas": [
+    "Pregunta la hora de retiro y deja el pedido listo 5 minutos antes.",
+    "Ofrece algo para comer si solo pide café."
+  ],
+  "datos_pedido": [
+    "nombre",
+    "pedido",
+    "hora de retiro"
+  ],
+  "derivar_a": "Di que en la barra le responden en un momento.",
+  "notas_internas": "Negocio ficticio de demostración (HORIZON). Antes de mostrarlo a un negocio real, cambia nombre, dirección y precios por los suyos.",
+  "fuentes": [
+    "demo por rubro: datos de ejemplo, no de un negocio real"
+  ]
+}

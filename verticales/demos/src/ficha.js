@@ -60,3 +60,11 @@ export function codigoDemo(texto) {
   const m = String(texto || '').match(/\bdemo[:\s]+([a-z0-9][a-z0-9-]{1,40})\b/i);
   return m ? m[1].toLowerCase() : null;
 }
+
+// Link de Google Maps de un local: el que trae la ficha, o una búsqueda por dirección.
+export function mapaDe(local = {}) {
+  if (local.mapa) return local.mapa;
+  if (Number.isFinite(local.lat) && Number.isFinite(local.lng)) return `https://www.google.com/maps/search/?api=1&query=${local.lat},${local.lng}`;
+  const q = [local.direccion, local.comuna, 'Chile'].filter(Boolean).join(', ');
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+}

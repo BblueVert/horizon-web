@@ -29,6 +29,8 @@ export const config = {
     modelo: process.env.LLM_MODELO || 'deepseek-v4-flash',
   },
   motores: motores(process.env.MOTORES),
+  // Pantalla de pago simulado (Pages/pago-demo en horizon-web). No cobra nada.
+  pagoDemoUrl: process.env.PAGO_DEMO_URL || 'https://www.horizonweb.cl/pago-demo',
   motorToken: process.env.AGENTE_TOKEN || '',
   bot: {
     carpetaSesion: process.env.WA_CARPETA_SESION || './.wa-sesion',

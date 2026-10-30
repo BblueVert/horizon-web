@@ -122,6 +122,7 @@ const rewrites = {
   '/agendar':         '/Pages/agendar/index.html',
   '/privacidad':      '/Pages/privacidad.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
+  '/pago-demo':       '/Pages/pago-demo/index.html',   // pago simulado de las demos WhatsApp (verticales/demos)
 };
 
 Object.entries(rewrites).forEach(([from, to]) => {

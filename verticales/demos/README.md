@@ -20,6 +20,26 @@ Tú (celular, Claude)             Vercel                    Tu equipo (bot)     
 
 Puedes tener varias demos a la vez: cada chat habla con la suya.
 
+## Demos por rubro (listas, a un mensaje)
+
+Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#demo <slug>` en tu chat contigo mismo o comparte el link (`#demos`).
+
+| Slug | Negocio | Muestra |
+|---|---|---|
+| `estetica` | Studio Lumière (uñas, pestañas, cejas) | Reserva con hora + abono 30% por link + código de reserva |
+| `barberia` | Barbería Don Fígaro | Reserva con barbero + pago opcional |
+| `pasteleria` | Pastelería Dulce Abril | Encargo de torta 48 h + abono 50% + retiro o despacho |
+| `cafeteria` | Café Esquina Norte | Pedido para retirar sin fila: hora + pago + código de retiro |
+| `floreria` | Florería Rosa Blanca | Pedido con despacho, mensaje de tarjeta y pago |
+| `veterinaria` | Veterinaria Patitas | Reserva de consulta/vacuna y derivación de urgencias |
+
+En todas: precios y servicios, ubicación con **pin de WhatsApp**, horario, y al confirmar el aviso *"así le llega al dueño"*. Para un negocio real, Claude parte de la de su rubro y cambia nombre, dirección y precios (`fichas/rubro-*.json`).
+
+**Al confirmar un pedido o reserva el cliente recibe:**
+1. 💳 Link de pago (total o abono) → pantalla `/pago-demo` con el color del negocio → "Pago recibido" → *Volver a WhatsApp* con "Listo, ya pagué ✅ (R-1234)".
+2. 🧾 Código de retiro (`R-1234`) o 📅 de reserva (`A-1234`).
+3. 📲 El aviso que le llegaría al dueño.
+
 ## Comandos (desde el teléfono de Horizon Pruebas)
 
 | Dónde | Comando | Qué hace |

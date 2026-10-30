@@ -13,11 +13,13 @@ Ejemplo completo: `fichas/ejemplo-sangucheria.json`.
 | `descripcion` | no | 1–3 líneas: qué venden, a quién, qué los hace distintos |
 | `tono` | no | Cómo habla el negocio ("cercano y rápido", "formal y tranquilo") |
 | `saludo` | no | Primer mensaje sugerido |
-| `locales[]` | no | `{ nombre, direccion, comuna, horario, telefono }` |
+| `locales[]` | no | `{ nombre, direccion, comuna, horario, telefono, referencia, lat, lng, mapa }`. Con `lat`/`lng` el bot manda el **pin nativo de WhatsApp**; sin ellas, un link de Google Maps |
 | `horario` | no | Si es igual para todos los locales |
 | `catalogo[]` | no | `{ categoria, items: [{ nombre, precio, descripcion, variantes: [{ nombre, precio }] }] }` |
 | `entrega` | no | `{ retiro, delivery, zonas, costo, minimo, apps }` |
-| `reservas` | no | `{ activo, datos: ["nombre","servicio","día","hora"], notas }` |
+| `reservas` | no | `{ activo, datos: ["nombre","servicio","día","hora"], horarios, notas }` |
+| `pago_online` | no | `{ activo: true }` = link de pago por el total · `{ activo: true, porcentaje: 30 }` = abono. Pantalla simulada `/pago-demo`, no cobra |
+| `color` | no | Hex del negocio (`#B4527A`) para la pantalla de pago |
 | `pagos[]` | no | Medios de pago |
 | `faq[]` | no | `{ p, r }` preguntas típicas con su respuesta |
 | `reglas[]` | no | Cómo funciona el negocio y la atención ("siempre ofrece bebida", "reservas con 24 h") |
