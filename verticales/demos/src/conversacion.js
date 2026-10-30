@@ -90,6 +90,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
   let numero = '';    // número vinculado (para los links)
 
   const aYo = (texto) => (yo ? [{ jid: yo, texto }] : []);
+  const avisosFalla = new Map(); // slug → último aviso de falla a tu chat
 
   async function turno(jid, telefono, textoEscrito, ficha, audio) {
     // Los audios los transcribe e interpreta el motor (flujo n8n); la IA genérica solo lee texto.
@@ -101,7 +102,13 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
         : await responder(ficha, estado.historial(jid), textoEscrito);
     } catch (e) {
       log.error(`[demo ${ficha.slug}] ${ficha.motor ? `motor ${ficha.motor}` : 'IA'} falló:`, e.message);
-      return [{ jid, texto: 'Perdona, se me cruzó algo. ¿Me lo repites?' }];
+      // A tu chat llega el motivo real (máx. 1 aviso cada 5 min por demo) para no adivinar en terreno.
+      const aviso = Date.now() - (avisosFalla.get(ficha.slug) || 0) > 5 * 60000 && jid !== yo;
+      if (aviso) avisosFalla.set(ficha.slug, Date.now());
+      return [
+        { jid, texto: 'Perdona, se me cruzó algo. ¿Me lo repites?' },
+        ...(aviso ? aYo(`⚠️ La demo *${ficha.slug}* no pudo responder (${ficha.motor ? `motor ${ficha.motor}` : 'IA por n8n demo-ia'}): ${String(e.message).slice(0, 200)}`) : []),
+      ];
     }
     const texto = r.transcripcion || textoEscrito; // en un audio, lo que dijo el cliente
     estado.agregarTurno(jid, texto, JSON.stringify(r));
