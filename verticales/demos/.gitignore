@@ -6,3 +6,5 @@ node_modules/
 fichas/*.json
 !fichas/ejemplo-*.json
 !fichas/rubro-*.json
+# Imágenes de carta por demo (fichas/cartas/<slug>/*.jpg): material de prospectos, no va al repo
+fichas/cartas/
