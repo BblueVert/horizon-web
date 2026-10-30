@@ -52,3 +52,25 @@ test('ficha con motor no pasa por la IA genérica; el resto sí', async () => {
   assert.deepEqual(usados, ['mesa-cero:Hola', 'ia']);
   assert.equal(a[0].texto, 'n8n');
 });
+
+test('IA de las fichas por rubro pasa por n8n (sin clave en el bot)', async () => {
+  let recibido;
+  const srv = createServer((req, res) => {
+    let b = ''; req.on('data', c => (b += c)); req.on('end', () => {
+      recibido = JSON.parse(b);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ content: '{"respuestas":["¡Hola! ☕ ¿Te dejo algo listo?"],"ubicacion":false,"accion":null}' }));
+    });
+  });
+  await new Promise(r => srv.listen(0, r));
+  config.llm.via = 'n8n';
+  config.llm.n8nUrl = `http://localhost:${srv.address().port}/webhook/demo-ia`;
+  const { responder } = await import('../src/agente.js');
+  const ficha = JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../fichas/rubro-cafeteria.json', import.meta.url), 'utf8'));
+  const r = await responder(ficha, [], 'hola');
+  srv.close();
+  assert.equal(recibido.messages[0].role, 'system');
+  assert.match(recibido.messages[0].content, /Café Esquina Norte/);
+  assert.deepEqual(recibido.messages.at(-1), { role: 'user', content: 'hola' });
+  assert.deepEqual(r.respuestas, ['¡Hola! ☕ ¿Te dejo algo listo?']);
+});

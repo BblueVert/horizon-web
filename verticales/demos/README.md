@@ -69,6 +69,14 @@ WhatsApp deja vincular varios dispositivos, pero si dos bots quedan conectados a
 
 Para pasarte: en WhatsApp de Horizon Pruebas → Dispositivos vinculados → **cierra la sesión del kit de Mesa Cero**, y deja solo "HORIZON Demos". El n8n local sigue igual. URLs de motores en `MOTORES` (`.env`).
 
+## Antes de salir a terreno (el bot solo corre cuando lo necesitas)
+
+1. Prende el computador → Docker → n8n (como siempre).
+2. Levanta el bot de demos (en el mismo Docker o `npm start`). La sesión de WhatsApp queda guardada: no hay que escanear el QR cada vez.
+3. Te llega "🤖 Bot de demos conectado" a tu chat contigo mismo → listo para salir.
+
+Toda la IA pasa por tu n8n: las demos de Mesa Cero por `wa-mesacero-v2` y las por rubro por `demo-ia` (`n8n/demo-ia.json`), con la **misma credencial DeepSeek** que ya tienes. El bot no tiene clave propia. Al volver, apaga el bot si quieres; los chats en demo siguen asignados 72 h.
+
 ## Instalación (una vez)
 
 1. **Supabase** (proyecto principal HORIZON): corre `supabase-migration-015-demos.sql` en el SQL Editor.
@@ -80,7 +88,7 @@ Para pasarte: en WhatsApp de Horizon Pruebas → Dispositivos vinculados → **c
    ```bash
    cd verticales/demos
    npm install
-   cp .env.example .env   # DEMOS_TOKEN y DEEPSEEK_API_KEY
+   cp .env.example .env   # DEMOS_TOKEN (la IA va por n8n: importa y activa n8n/demo-ia.json)
    npm start              # escanea el QR con el WhatsApp de Horizon Pruebas
    ```
    Te llega "🤖 Bot de demos conectado" a tu chat contigo mismo.

@@ -27,6 +27,11 @@ export const config = {
     baseUrl: process.env.LLM_BASE_URL || 'https://api.deepseek.com',
     apiKey: process.env.DEEPSEEK_API_KEY || '',
     modelo: process.env.LLM_MODELO || 'deepseek-v4-flash',
+    // Por defecto la IA pasa por el n8n local (workflow n8n/demo-ia.json), que ya tiene
+    // la credencial DeepSeek de Mesa Cero: el bot no necesita clave propia.
+    // LLM_VIA=deepseek + DEEPSEEK_API_KEY para llamar directo sin n8n.
+    via: process.env.LLM_VIA || 'n8n',
+    n8nUrl: process.env.LLM_N8N_URL || 'http://localhost:5678/webhook/demo-ia',
   },
   motores: motores(process.env.MOTORES),
   // Pantalla de pago simulado (Pages/pago-demo en horizon-web). No cobra nada.
