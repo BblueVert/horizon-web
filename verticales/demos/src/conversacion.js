@@ -10,7 +10,7 @@ import { responderMotor as motorReal } from './motores.js';
 const AYUDA = [
   '*Comandos del bot de demos* (escríbelos desde este teléfono):',
   '• #demos → lista de demos con su link · #demos recargar → vuelve a leer las fichas',
-  '• #demo <slug> → en un chat: conecta ese chat a la demo (aquí mismo, para probarla tú)',
+  '• #<slug> o #demo <slug> → conecta ese chat a la demo (ej. #cafeteria, #tia-julia; aquí mismo para probarla tú)',
   '• #demo off → desconecta el chat · #demo off todos → todos',
   '• #bot off / #bot on → silencia o reactiva el bot en un chat',
 ].join('\n');
@@ -91,7 +91,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     const tl = t.toLowerCase();
 
     if (tl === '#demos' || tl === '#ayuda') {
-      const lista = fichas.todas().map(f => `• *${f.nombre}* (${f.slug})\n  ${linkDemo(numero, f)}`).join('\n');
+      const lista = fichas.todas().map(f => `• *#${f.slug}* · ${f.nombre}\n  ${linkDemo(numero, f)}`).join('\n');
       const activos = estado.activos().length;
       return aYo(`${lista || 'No hay demos cargadas.'}\n\nChats en demo ahora: ${activos}\n\n${AYUDA}`);
     }
@@ -105,7 +105,8 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (tl === '#bot off') { estado.pausar(jid, 'siempre'); return aYo('Bot silenciado en ese chat. #bot on para reactivarlo.'); }
     if (tl === '#bot on') { estado.pausar(jid, null); return aYo('Bot reactivado en ese chat.'); }
 
-    const m = tl.match(/^#demo\s+([a-z0-9][a-z0-9-]{1,40})$/);
+    // "#demo cafeteria" o el atajo "#cafeteria"
+    const m = tl.match(/^#demo\s+([a-z0-9][a-z0-9-]{1,40})$/) || (fichas.obtener(tl.slice(1)) && tl.match(/^#([a-z0-9][a-z0-9-]{1,40})$/));
     if (m) {
       const ficha = fichas.obtener(m[1]);
       if (!ficha) return aYo(`No tengo la demo "${m[1]}". Escribe #demos para ver las disponibles.`);

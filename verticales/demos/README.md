@@ -45,7 +45,7 @@ En todas: precios y servicios, ubicación con **pin de WhatsApp**, horario, y al
 | Dónde | Comando | Qué hace |
 |---|---|---|
 | Tu chat contigo mismo | `#demos` | Lista de demos con su link + ayuda |
-| Tu chat contigo mismo | `#demo <slug>` | Conecta tu propio chat: pruebas la demo haciendo de cliente |
+| Tu chat contigo mismo | `#<slug>` o `#demo <slug>` | Conecta tu propio chat: pruebas la demo haciendo de cliente (ej. `#cafeteria`, `#tia-julia`) |
 | Tu chat contigo mismo | `#demos recargar` | Vuelve a leer `fichas/` y la API |
 | Cualquier chat | `#demo <slug>` | Conecta ese chat a una demo (el otro ve el comando; mejor usar el link) |
 | Cualquier chat | `#demo off` · `#demo off todos` | Desconecta |

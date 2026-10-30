@@ -158,3 +158,11 @@ test('ubicación: pin nativo si hay coordenadas, link de Maps si no', async () =
   const b = await conv.entrante({ jid: 'b@s.whatsapp.net', telefono: '2', texto: 'demo ejemplo-sangucheria' });
   assert.match(b[1].texto, /^📍 https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=Calle%20Ejemplo%20123/);
 });
+
+test('atajo #slug activa la demo; un hashtag cualquiera no hace nada', async () => {
+  const { conv, estado } = armar();
+  await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#ejemplo-sangucheria' });
+  assert.equal(estado.demoDe(YO), 'ejemplo-sangucheria');
+  await conv.delLocal({ jid: CLIENTE, telefono: '569', texto: '#felizcumple' });
+  assert.equal(estado.demoDe(CLIENTE), null);
+});
