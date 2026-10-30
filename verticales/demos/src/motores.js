@@ -15,7 +15,7 @@ export async function responderMotor(nombre, telefono, mensaje, ficha = {}, audi
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(config.motorToken ? { 'x-agente-token': config.motorToken } : {}) },
-    body: JSON.stringify({ phone: telefono, telefono, mensaje, canal: 'whatsapp', tenantSlug: ficha.tenant || ficha.slug, ...(audio ? { audioBase64: audio.base64, audioMime: audio.mime } : {}) }),
+    body: JSON.stringify({ phone: telefono, telefono, mensaje, canal: 'whatsapp', tenantSlug: ficha.tenant || ficha.slug, ...(ficha.cartaEnImagen ? { cartaEnImagen: true } : {}), ...(audio ? { audioBase64: audio.base64, audioMime: audio.mime } : {}) }),
     signal: AbortSignal.timeout(audio ? 150000 : 45000),
   });
   const data = await res.json().catch(() => ({}));
