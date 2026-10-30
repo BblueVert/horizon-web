@@ -403,3 +403,19 @@ test('atajo #slug activa la demo; un hashtag cualquiera no hace nada', async () 
   await conv.delLocal({ jid: '56933334444@s.whatsapp.net', telefono: '569', texto: '#felizcumple' });
   assert.equal(estado.demoDe('56933334444@s.whatsapp.net'), null);
 });
+
+test('si la IA falla, a tu chat llega el motivo (una vez cada 5 min)', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const fichas = new Map([[ejemplo.slug, ejemplo]]);
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => fichas.get(s) || null, todas: () => [...fichas.values()] },
+    responder: async () => { throw new Error('n8n demo-ia respondió 404 (¿está activo el workflow?)'); }, log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  const a = await conv.entrante({ jid: CLIENTE, telefono: '1', texto: 'demo ejemplo-sangucheria' });
+  assert.match(a[0].texto, /se me cruzó algo/);
+  assert.equal(a[1].jid, YO);
+  assert.match(a[1].texto, /ejemplo-sangucheria.*404/);
+  const b = await conv.entrante({ jid: CLIENTE, telefono: '1', texto: 'hola' });
+  assert.equal(b.length, 1, 'no repite el aviso');
+});
