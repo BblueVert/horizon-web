@@ -43,8 +43,11 @@ export function crearEstado(ruta = join(config.bot.carpetaDatos, 'estado.json'))
       if (!c) return;
       c.historial.push({ role: 'user', content: usuario }, { role: 'assistant', content: asistente });
       c.historial = c.historial.slice(-config.bot.historial);
+      c.ultimo = Date.now();
       guardar();
     },
+    // Sin mensajes hace más de `min` minutos (o sin demo): una demo activada desde tu chat puede tomarlo.
+    inactivo(jid, min) { const c = chats[jid]; return !c || Date.now() - (c.ultimo || c.asignadoEn || 0) > min * 60000; },
     pausar(jid, hasta) { if (chats[jid]) { chats[jid].pausaHasta = hasta; guardar(); } },
     enPausa(jid) {
       const h = chats[jid]?.pausaHasta;

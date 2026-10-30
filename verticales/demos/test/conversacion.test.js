@@ -112,6 +112,29 @@ test('#slug en tu chat activa la demo para el próximo número nuevo (una sola v
   assert.deepEqual(otro, []);
 });
 
+test('tu chat contigo mismo nunca responde como demo, aunque haya quedado conectado de antes', async () => {
+  const { conv, estado, llamadas } = armar();
+  estado.asignar(YO, 'ejemplo-sangucheria', '56900000001'); // conexión vieja guardada
+  assert.deepEqual(await conv.delLocal({ jid: YO, telefono: '56900000001', texto: 'hola' }), []);
+  assert.deepEqual(await conv.entrante({ jid: YO, telefono: '56900000001', texto: 'hola' }), []);
+  await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#ejemplo-sangucheria' });
+  assert.equal(estado.demoDe(YO), null);
+  assert.equal(llamadas.length, 0);
+});
+
+test('la demo activada la toma tu número personal aunque tuviera una demo vieja sin uso', async () => {
+  const { conv, estado } = armar();
+  const ahora = Date.now;
+  try {
+    estado.asignar(CLIENTE, 'otra-demo-vieja', '56911112222');
+    Date.now = () => ahora() + 31 * 60000; // 31 min después, sin mensajes en ese chat
+    await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#ejemplo-sangucheria' });
+    const out = await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'hola' });
+    assert.equal(estado.demoDe(CLIENTE), 'ejemplo-sangucheria');
+    assert.equal(out[0].jid, CLIENTE);
+  } finally { Date.now = ahora; }
+});
+
 test('#demo off en tu chat desactiva la demo pendiente', async () => {
   const { conv, estado } = armar();
   await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#demo ejemplo-sangucheria' });

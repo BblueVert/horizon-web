@@ -57,8 +57,9 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     return [{ jid, texto: `📍 ${mapaDe(l)}` }];
   }
 
-  // Mensaje de un cliente/prospecto (o tuyo en tu propio chat, si lo conectaste a una demo).
+  // Mensaje de un cliente/prospecto. Tu chat contigo mismo nunca hace de demo: ahí solo llegan avisos.
   async function entrante({ jid, telefono, texto }) {
+    if (jid === yo) return [];
     let slug = estado.demoDe(jid);
     const codigo = codigoDemo(texto);
 
@@ -76,8 +77,9 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       return salida;
     }
 
-    // Demo activada desde tu chat (#slug): la toma el primer chat nuevo que escribe.
-    if (!slug && jid !== yo && estado.armada()) {
+    // Demo activada desde tu chat (#slug): la toma el primer chat que escribe sin una demo en curso
+    // (sin demo, o con una que lleva 30 min sin mensajes, como tu número personal de una prueba anterior).
+    if ((!slug || estado.inactivo(jid, 30)) && estado.armada()) {
       const ficha = fichas.obtener(estado.armada());
       if (ficha) {
         estado.tomarArmada();
@@ -132,6 +134,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       if (!ficha) return aYo(`No tengo la demo "${m[1]}". Escribe #demos para ver las disponibles.`);
       // En tu chat: no responde aquí, queda activada para el próximo número que escriba.
       if (jid === yo) {
+        estado.soltar(yo); // por si quedó conectado a una demo de antes
         estado.armar(ficha.slug, config.bot.armadaMin);
         return aYo(`✅ Demo activada: *${ficha.nombre}*\nEscríbele a este WhatsApp desde otro número (o comparte el link) en los próximos ${config.bot.armadaMin} min: ese chat queda conectado a la demo.\n${linkDemo(numero, ficha)}`);
       }
@@ -141,8 +144,8 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       return salida;
     }
 
-    // En tu propio chat, si está conectado a una demo, tú haces de cliente.
-    if (jid === yo) return estado.demoDe(jid) ? entrante({ jid, telefono, texto: t }) : [];
+    // Tu chat contigo mismo no responde como demo: pruébala escribiéndole desde otro número.
+    if (jid === yo) return [];
 
     // Alguien del local respondió a mano en un chat de demo: el bot se calla un rato.
     if (estado.demoDe(jid) && !estado.enPausa(jid)) estado.pausar(jid, Date.now() + config.bot.pausaHumanoMin * 60000);
