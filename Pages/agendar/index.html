@@ -132,12 +132,6 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
 @media (max-width: 359px) { .opts.row, .frame ul { grid-template-columns: 1fr; } }
 </style>
 <script defer src="/_vercel/insights/script.js"></script>
-<script>
-  window.va = function () {
-    (window.vaq = window.vaq || []).push(arguments);
-  };
-</script>
-<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 <a href="#main" class="skip">Saltar al contenido</a>
@@ -271,6 +265,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
             <div class="field"><label for="telefono">WhatsApp</label><input id="telefono" name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 xxxx xxxx" maxlength="20" required></div>
           </div>
           <div class="field"><label for="email">Email <small>(ahí llega la invitación)</small></label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+          <div class="field"><label for="negocio">Tu negocio <small>(rubro, ciudad, web o Instagram)</small></label><input id="negocio" name="negocio" autocomplete="organization" maxlength="120" placeholder="Ej: Barbería en Rancagua · @tubarberia"></div>
           <div class="field">
             <label for="planSel">Plan de interés <small>(opcional)</small></label>
             <select id="planSel" name="plan">
@@ -435,7 +430,7 @@ legend small { display: block; font-weight: 500; font-size: 13px; color: var(--i
     if (err) return setStatus(st, 'error', err);
     btn.disabled = true; btn.firstChild.textContent = 'Agendando… ';
     post({ nombre: nombre, telefono: telefono, email: email, fecha: selDate, hora: selHora,
-           plan: $('planSel').value, contexto: $('contexto').value.trim(), source: window._source,
+           plan: $('planSel').value, negocio: $('negocio').value.trim(), contexto: $('contexto').value.trim(), source: window._source,
            presupuesto: calif.presupuesto, volumen: calif.volumen, decisor: calif.decisor })
       .then(function (d) {
         var meet = d.meetLink || '';
