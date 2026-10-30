@@ -1,0 +1,85 @@
+{
+  "slug": "barberia",
+  "nombre": "Barbería Don Fígaro",
+  "rubro": "barberia",
+  "flujo": "reservas",
+  "asistente": "Fígaro",
+  "color": "#1F4E5F",
+  "descripcion": "Barbería de barrio con 2 sillones. Cortes clásicos y modernos, barba con toalla caliente.",
+  "tono": "Relajado y directo, buena onda.",
+  "saludo": "¡Buena! 💈 Soy Fígaro, de Barbería Don Fígaro. ¿Te agendo una hora?",
+  "locales": [
+    {
+      "nombre": "Barbería",
+      "direccion": "Calle Estado 455",
+      "comuna": "Rancagua",
+      "horario": "lunes a sábado 10:00 a 20:00",
+      "lat": -34.1689,
+      "lng": -70.7421
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Servicios",
+      "items": [
+        {
+          "nombre": "Corte de pelo",
+          "precio": 8000,
+          "descripcion": "40 min"
+        },
+        {
+          "nombre": "Corte + barba",
+          "precio": 12000,
+          "descripcion": "60 min"
+        },
+        {
+          "nombre": "Perfilado de barba",
+          "precio": 6000,
+          "descripcion": "30 min"
+        },
+        {
+          "nombre": "Corte niño (hasta 12 años)",
+          "precio": 7000
+        },
+        {
+          "nombre": "Diseño / líneas",
+          "precio": 2000
+        }
+      ]
+    }
+  ],
+  "reservas": {
+    "activo": true,
+    "datos": [
+      "nombre",
+      "servicio",
+      "día",
+      "hora"
+    ],
+    "horarios": "cada 40 minutos entre 10:00 y 19:20",
+    "notas": "Si no hay hora, ofrece la siguiente disponible."
+  },
+  "pago_online": {
+    "activo": true
+  },
+  "pagos": [
+    "efectivo",
+    "débito",
+    "crédito",
+    "transferencia"
+  ],
+  "reglas": [
+    "Pregunta si prefiere a alguno de los barberos: Nico o Seba.",
+    "Los sábados se llenan: recomiéndale agendar con anticipación."
+  ],
+  "datos_pedido": [
+    "nombre",
+    "servicio",
+    "día y hora"
+  ],
+  "derivar_a": "Di que el barbero le escribe entre cortes.",
+  "notas_internas": "Negocio ficticio de demostración (HORIZON). Antes de mostrarlo a un negocio real, cambia nombre, dirección y precios por los suyos.",
+  "fuentes": [
+    "demo por rubro: datos de ejemplo, no de un negocio real"
+  ]
+}

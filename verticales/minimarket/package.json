@@ -1,0 +1,24 @@
+{
+  "name": "horizon-minimarket-agente",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agente de pedidos por WhatsApp para minimarket (detalle y mayorista) con puente Baileys",
+  "type": "module",
+  "scripts": {
+    "agente": "node src/servidor.js",
+    "puente": "node src/puente.js",
+    "start": "node src/iniciar.js",
+    "simular": "node scripts/simular.js",
+    "seed": "node scripts/generar-seed.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "7.0.0-rc14",
+    "dotenv": "^17.2.3",
+    "pino": "^10.4.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

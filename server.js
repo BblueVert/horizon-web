@@ -18,6 +18,7 @@ const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
 const recursos    = require('./api/recursos');
 const pagos       = require('./api/pagos');
+const demos       = require('./api/demos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -121,6 +122,7 @@ const rewrites = {
   '/agendar':         '/Pages/agendar/index.html',
   '/privacidad':      '/Pages/privacidad.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
+  '/pago-demo':       '/Pages/pago-demo/index.html',   // pago simulado de las demos WhatsApp (verticales/demos)
 };
 
 Object.entries(rewrites).forEach(([from, to]) => {
@@ -141,6 +143,8 @@ app.get('/api/recursos',  recursos);
 app.post('/api/recursos', recursos);
 app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 app.post('/api/pagos', pagos);   // pago desde el portal + webhook de Mercado Pago (?webhook=1)
+app.get('/api/demos',  demos);   // demos express de agentes WhatsApp (DEMOS_TOKEN)
+app.post('/api/demos', demos);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
 const opsPages = {

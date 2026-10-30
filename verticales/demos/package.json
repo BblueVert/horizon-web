@@ -1,0 +1,25 @@
+{
+  "name": "horizon-demos-whatsapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demos express de agentes de WhatsApp para prospectos de HORIZON (número Horizon Pruebas, puente Baileys)",
+  "type": "module",
+  "scripts": {
+    "start": "node src/bot.js",
+    "simular": "node scripts/simular.js",
+    "validar": "node scripts/validar.js",
+    "publicar": "node scripts/publicar.js",
+    "test": "node --test test/*.test.js",
+    "fichas-mesa-cero": "node scripts/fichas-mesa-cero.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "7.0.0-rc14",
+    "dotenv": "^17.2.3",
+    "pino": "^10.4.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Pago — demo</title>
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="/Identidad/Logo%20ISO.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Pantalla de pago SIMULADO para las demos de agentes de WhatsApp (verticales/demos).
+   No cobra ni pide datos de tarjeta. Clara y neutra a propósito: toma el color del
+   negocio (?c=#hex), igual que el portal del cliente. */
+:root { --marca: #1A1626; --ink: #1A1626; --ink2: #5C566B; --line: #E7E3EC; --bg: #F6F5F8; --ok: #1E8E5A; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+.card { width: 100%; max-width: 420px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(26, 22, 38, .06); }
+.neg { display: flex; align-items: center; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.avatar { width: 44px; height: 44px; border-radius: 12px; background: var(--marca); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; flex: none; }
+.neg strong { display: block; font-size: 16px; }
+.neg small { color: var(--ink2); font-size: 13px; }
+.monto { padding: 22px 0 6px; }
+.monto small { color: var(--ink2); font-size: 13px; font-weight: 600; }
+.monto .n { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; margin-top: 4px; }
+.det { font-size: 14px; color: var(--ink2); line-height: 1.45; }
+.ref { font: 500 12px 'DM Mono', monospace; color: var(--ink2); margin-top: 10px; }
+.metodos { display: grid; gap: 10px; margin: 22px 0; }
+.metodo { display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--line); border-radius: 14px; padding: 14px; cursor: pointer; font-weight: 600; font-size: 15px; }
+.metodo input { accent-color: var(--marca); width: 18px; height: 18px; }
+.metodo:has(input:checked) { border-color: var(--marca); }
+.btn { width: 100%; border: 0; border-radius: 14px; padding: 16px; font: 700 16px 'Plus Jakarta Sans', sans-serif; background: var(--marca); color: #fff; cursor: pointer; text-decoration: none; display: block; text-align: center; }
+.btn[disabled] { opacity: .6; cursor: progress; }
+.ok { text-align: center; padding: 10px 0 4px; }
+.ok .check { width: 64px; height: 64px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; margin: 4px auto 14px; font-size: 34px; }
+.ok h1 { font-size: 22px; }
+.ok p { color: var(--ink2); font-size: 14px; margin: 8px 0 20px; line-height: 1.45; }
+.aviso { max-width: 420px; text-align: center; font-size: 12px; color: var(--ink2); margin-top: 16px; line-height: 1.5; }
+.sello { display: inline-block; margin-top: 8px; font: 500 11px 'DM Mono', monospace; letter-spacing: .08em; color: #fff; background: #1A1626; padding: 5px 10px; border-radius: 99px; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: no-preference) { .ok .check { animation: pop .35s ease-out; } @keyframes pop { from { transform: scale(.6); opacity: 0; } } }
+</style>
+</head>
+<body>
+<main class="card" id="pagar">
+  <div class="neg">
+    <div class="avatar" id="inicial">·</div>
+    <div><strong id="negocio">Negocio</strong><small>Pago por WhatsApp</small></div>
+  </div>
+  <div class="monto">
+    <small id="concepto">Total a pagar</small>
+    <div class="n" id="monto">$0</div>
+  </div>
+  <p class="det" id="detalle"></p>
+  <p class="ref" id="ref"></p>
+  <div class="metodos" role="radiogroup" aria-label="Medio de pago">
+    <label class="metodo"><input type="radio" name="m" checked> Tarjeta de débito o crédito</label>
+    <label class="metodo"><input type="radio" name="m"> Transferencia</label>
+  </div>
+  <button class="btn" id="btnPagar" type="button">Pagar</button>
+</main>
+
+<main class="card" id="listo" hidden>
+  <div class="ok">
+    <div class="check" aria-hidden="true">✓</div>
+    <h1>Pago recibido</h1>
+    <p id="okTxt">Listo, te llega la confirmación por WhatsApp.</p>
+    <a class="btn" id="volver" href="#">Volver a WhatsApp</a>
+  </div>
+</main>
+
+<p class="aviso">Demostración: este pago es simulado, no se cobra nada ni se piden datos de tarjeta.<br><span class="sello">DEMO · HORIZON</span></p>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var negocio = (q.get('n') || 'Tu negocio').slice(0, 80);
+  var monto = Math.max(0, Math.round(Number(q.get('m')) || 0));
+  var detalle = (q.get('d') || '').slice(0, 200);
+  var ref = (q.get('r') || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 20);
+  var wa = (q.get('w') || '').replace(/\D/g, '').slice(0, 15);
+  var abono = Math.round(Number(q.get('a')) || 0);
+  var color = q.get('c') || '';
+  if (/^#[0-9a-fA-F]{6}$/.test(color)) document.documentElement.style.setProperty('--marca', color);
+
+  var plata = '$' + monto.toLocaleString('es-CL');
+  document.title = 'Pago ' + negocio + ' — demo';
+  document.getElementById('negocio').textContent = negocio;
+  document.getElementById('inicial').textContent = negocio.trim().charAt(0).toUpperCase() || '·';
+  document.getElementById('monto').textContent = plata;
+  document.getElementById('concepto').textContent = abono ? 'Abono del ' + abono + '% para confirmar' : 'Total a pagar';
+  document.getElementById('detalle').textContent = detalle;
+  document.getElementById('ref').textContent = ref ? 'Código ' + ref : '';
+  document.getElementById('btnPagar').textContent = 'Pagar ' + plata;
+
+  var volver = document.getElementById('volver');
+  if (wa) volver.href = 'https://wa.me/' + wa + '?text=' + encodeURIComponent('Listo, ya pagué ✅' + (ref ? ' (' + ref + ')' : ''));
+  else volver.hidden = true;
+
+  document.getElementById('btnPagar').addEventListener('click', function () {
+    var b = this;
+    b.disabled = true;
+    b.textContent = 'Procesando…';
+    setTimeout(function () {
+      document.getElementById('pagar').hidden = true;
+      document.getElementById('listo').hidden = false;
+      document.getElementById('okTxt').textContent = plata + ' a ' + negocio + (ref ? ' · ' + ref : '') + '. Vuelve al chat para terminar.';
+    }, 1400);
+  });
+})();
+</script>
+</body>
+</html>

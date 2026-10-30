@@ -1,0 +1,99 @@
+{
+  "slug": "floreria",
+  "nombre": "Florería Rosa Blanca",
+  "rubro": "tienda",
+  "flujo": "pedidos",
+  "asistente": "Rosa",
+  "color": "#7A3E6C",
+  "descripcion": "Florería con despacho el mismo día. Ramos, arreglos y coronas.",
+  "tono": "Amable y atenta al detalle de la ocasión.",
+  "saludo": "¡Hola! 💐 Soy Rosa, de Florería Rosa Blanca. ¿Para qué ocasión buscas flores?",
+  "locales": [
+    {
+      "nombre": "Florería",
+      "direccion": "Av. San Martín 230",
+      "comuna": "Rancagua",
+      "horario": "lunes a sábado 9:00 a 19:00, domingo 10:00 a 14:00",
+      "lat": -34.1661,
+      "lng": -70.7377
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Flores",
+      "items": [
+        {
+          "nombre": "Ramo 12 rosas",
+          "precio": 25000
+        },
+        {
+          "nombre": "Ramo 24 rosas",
+          "precio": 42000
+        },
+        {
+          "nombre": "Ramo mixto de temporada",
+          "precio": 18000
+        },
+        {
+          "nombre": "Arreglo en caja con rosas",
+          "precio": 30000
+        },
+        {
+          "nombre": "Rosa individual",
+          "precio": 2500
+        },
+        {
+          "nombre": "Corona de condolencias",
+          "precio": 45000
+        }
+      ]
+    },
+    {
+      "categoria": "Extras",
+      "items": [
+        {
+          "nombre": "Chocolates",
+          "precio": 6000
+        },
+        {
+          "nombre": "Globo",
+          "precio": 4000
+        },
+        {
+          "nombre": "Tarjeta con mensaje",
+          "precio": 0
+        }
+      ]
+    }
+  ],
+  "entrega": {
+    "retiro": true,
+    "delivery": true,
+    "zonas": "Rancagua y Machalí, mismo día pidiendo antes de las 14:00",
+    "costo": "$3.000"
+  },
+  "pago_online": {
+    "activo": true
+  },
+  "pagos": [
+    "transferencia",
+    "débito",
+    "crédito"
+  ],
+  "reglas": [
+    "Pregunta la ocasión, para quién es, la dirección de entrega y el mensaje de la tarjeta.",
+    "Si es sorpresa, no llamar al destinatario antes."
+  ],
+  "datos_pedido": [
+    "nombre de quien envía",
+    "producto",
+    "dirección y nombre de quien recibe",
+    "mensaje de la tarjeta",
+    "día de entrega"
+  ],
+  "derivar_a": "Di que la florista le escribe para afinar el detalle.",
+  "notas_internas": "Negocio ficticio de demostración (HORIZON). Antes de mostrarlo a un negocio real, cambia nombre, dirección y precios por los suyos.",
+  "fuentes": [
+    "demo por rubro: datos de ejemplo, no de un negocio real"
+  ]
+}
