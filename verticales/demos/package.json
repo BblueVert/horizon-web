@@ -9,7 +9,8 @@
     "simular": "node scripts/simular.js",
     "validar": "node scripts/validar.js",
     "publicar": "node scripts/publicar.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "fichas-mesa-cero": "node scripts/fichas-mesa-cero.js"
   },
   "engines": {
     "node": ">=20"

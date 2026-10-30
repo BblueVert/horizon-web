@@ -6,13 +6,15 @@
 
 import { config } from './config.js';
 
-export async function responderMotor(nombre, telefono, mensaje) {
+// Para mesa-cero, "tenant" (o el slug) dice qué negocio de Supabase responde:
+// cada chat puede ser un restaurante distinto sin reiniciar nada.
+export async function responderMotor(nombre, telefono, mensaje, ficha = {}) {
   const url = config.motores[nombre];
   if (!url) throw new Error(`motor "${nombre}" sin URL (agrega MOTORES en .env)`);
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(config.motorToken ? { 'x-agente-token': config.motorToken } : {}) },
-    body: JSON.stringify({ phone: telefono, telefono, mensaje, canal: 'whatsapp' }),
+    body: JSON.stringify({ phone: telefono, telefono, mensaje, canal: 'whatsapp', tenantSlug: ficha.tenant || ficha.slug }),
     signal: AbortSignal.timeout(45000),
   });
   const data = await res.json().catch(() => ({}));

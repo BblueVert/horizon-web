@@ -24,7 +24,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     let r;
     try {
       r = ficha.motor
-        ? await responderMotor(ficha.motor, telefono, texto)
+        ? await responderMotor(ficha.motor, telefono, texto, ficha)
         : await responder(ficha, estado.historial(jid), texto);
     } catch (e) {
       log.error(`[demo ${ficha.slug}] ${ficha.motor ? `motor ${ficha.motor}` : 'IA'} falló:`, e.message);

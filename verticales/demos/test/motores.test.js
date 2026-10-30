@@ -22,10 +22,11 @@ test('motor: habla el formato del kit de Mesa Cero ({phone, mensaje} → {replyC
   });
   await new Promise(r => srv.listen(0, r));
   config.motores['n8n-falso'] = `http://localhost:${srv.address().port}/webhook/wa-mesacero-v2`;
-  const r = await responderMotor('n8n-falso', '56911112222', 'hola');
+  const r = await responderMotor('n8n-falso', '56911112222', 'hola', { slug: 'mc-cafe-haiti', tenant: 'cafe-haiti' });
   srv.close();
   assert.equal(recibido.phone, '56911112222');
   assert.equal(recibido.mensaje, 'hola');
+  assert.equal(recibido.tenantSlug, 'cafe-haiti', 'cada chat le dice a n8n qué negocio es');
   assert.deepEqual(r, { respuestas: ['¡Hola! Bienvenido a Tía Julia', '¿Qué te gustaría pedir?'], accion: null });
 });
 

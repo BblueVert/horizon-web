@@ -45,6 +45,8 @@ WhatsApp deja vincular varios dispositivos, pero si dos bots quedan conectados a
 | `"motor": "mesa-cero"` (`fichas/ejemplo-motor-mesa-cero.json`, slug `tia-julia`) | Flujo n8n `wa-mesacero-v2` con la carta real (`{phone, mensaje}` → `{replyChunks}`, igual que el kit) |
 | `"motor": "minimarket"` (`fichas/ejemplo-motor-minimarket.json`) | `verticales/minimarket` (`npm run agente`) |
 
+**Los 14 restaurantes de Mesa Cero a la vez, sin reiniciar:** `npm run fichas-mesa-cero` crea una ficha por tenant (`tia-julia`, `mc-cafe-haiti`, `mc-sra-fang`, `mc-magari`…). Cada chat le manda a n8n su `tenantSlug`, así que un chat puede estar en Café Haití y otro en Torino al mismo tiempo. Requiere el cambio de 1 nodo en n8n (`Parse Message`, ver `mesa-cero/_workflows-n8n/README.md`, 30-oct).
+
 Para pasarte: en WhatsApp de Horizon Pruebas → Dispositivos vinculados → **cierra la sesión del kit de Mesa Cero**, y deja solo "HORIZON Demos". El n8n local sigue igual. URLs de motores en `MOTORES` (`.env`).
 
 ## Instalación (una vez)
