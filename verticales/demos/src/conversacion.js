@@ -155,6 +155,8 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
   async function entrante({ jid, telefono, texto, audio }) {
     if (jid === yo) return [];
     let slug = estado.demoDe(jid);
+    // Si la demo del chat se dio de baja (activa: false), el chat queda libre: si no, se quedaba mudo.
+    if (slug && !fichas.obtener(slug)) { estado.soltar(jid); slug = null; }
     const codigo = codigoDemo(texto);
 
     if (codigo && codigo !== slug) {
