@@ -6,6 +6,16 @@ import { codigoDemo, linkDemo } from './ficha.js';
 import { responder as responderIA, avisoDueno, extrasConfirmacion } from './agente.js';
 import { mapaDe } from './ficha.js';
 import { responderMotor as motorReal } from './motores.js';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+
+// Imágenes de la carta de una demo: fichas/cartas/<slug>/*.jpg|png|webp, en orden de nombre.
+function cartaLocal(slug) {
+  const dir = join(config.bot.carpetaFichas, 'cartas', slug);
+  try { return readdirSync(dir).filter(f => /\.(jpe?g|png|webp)$/i.test(f)).sort().map(f => join(dir, f)); } catch { return []; }
+}
+// "¿me mandas la carta?", "el menú", "qué tienen": se responde y además se mandan las imágenes.
+const PIDE_CARTA = /\b(carta|men[uú]|qu[eé] (tienen|venden|hay))\b/i;
 
 const AYUDA = [
   '*Comandos del bot de demos* (escríbelos desde este teléfono):',
@@ -16,7 +26,7 @@ const AYUDA = [
   '• #bot off / #bot on → silencia o reactiva el bot en un chat',
 ].join('\n');
 
-export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, log = console }) {
+export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, cartaDe = cartaLocal, log = console }) {
   let yo = null;      // jid del chat contigo mismo
   let numero = '';    // número vinculado (para los links)
 
@@ -35,6 +45,10 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     estado.agregarTurno(jid, texto, JSON.stringify(r));
     const salida = r.respuestas.map(t => ({ jid, texto: t }));
     if (r.ubicacion) salida.push(...ubicacion(jid, ficha));
+    if (PIDE_CARTA.test(texto)) {
+      const imagenes = cartaDe(ficha.slug);
+      imagenes.forEach((imagen, i) => salida.push({ jid, imagen, texto: i === 0 ? `📋 Carta de ${ficha.nombre}` : '' }));
+    }
     if (r.accion) {
       const extras = extrasConfirmacion(ficha, r.accion, numero);
       r.accion = extras.accion;

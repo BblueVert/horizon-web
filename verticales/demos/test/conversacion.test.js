@@ -135,6 +135,22 @@ test('la demo activada la toma tu número personal aunque tuviera una demo vieja
   } finally { Date.now = ahora; }
 });
 
+test('si piden la carta, además de la respuesta llegan las imágenes de la carta', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => (s === ejemplo.slug ? ejemplo : null), todas: () => [ejemplo] },
+    responder: async () => ({ respuestas: ['¡Claro! Te mando la carta'], accion: null }),
+    cartaDe: slug => (slug === ejemplo.slug ? ['/c/1.jpg', '/c/2.jpg'] : []), log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  estado.asignar(CLIENTE, ejemplo.slug, '569');
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: '¿me mandas la carta?' });
+  assert.deepEqual(out.filter(m => m.imagen).map(m => m.imagen), ['/c/1.jpg', '/c/2.jpg']);
+  assert.match(out.find(m => m.imagen).texto, /Carta de Sanguchería El Rincón/);
+  const otro = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'quiero un churrasco' });
+  assert.equal(otro.filter(m => m.imagen).length, 0);
+});
+
 test('#demo off en tu chat desactiva la demo pendiente', async () => {
   const { conv, estado } = armar();
   await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#demo ejemplo-sangucheria' });

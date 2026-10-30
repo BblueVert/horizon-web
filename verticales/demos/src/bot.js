@@ -8,6 +8,7 @@ import makeWASocket, {
   jidDecode, jidNormalizedUser, normalizeMessageContent,
 } from '@whiskeysockets/baileys';
 import qrcode from 'qrcode-terminal';
+import { readFileSync } from 'node:fs';
 import pino from 'pino';
 import { config } from './config.js';
 import { crearFichas } from './fichas.js';
@@ -43,20 +44,22 @@ function encolar(jid, tarea) {
   actual.finally(() => { if (colas.get(jid) === actual) colas.delete(jid); });
 }
 
-async function enviar(jid, texto, ubicacion) {
+async function enviar(jid, texto, ubicacion, imagen) {
   if (!sock) return;
   await sock.sendPresenceUpdate('composing', jid).catch(() => {});
-  await esperar(ubicacion ? 900 : Math.min(3000, 600 + texto.length * 20));
-  const contenido = ubicacion
-    ? { location: { degreesLatitude: ubicacion.lat, degreesLongitude: ubicacion.lng, name: ubicacion.nombre, address: ubicacion.direccion } }
-    : { text: texto };
+  await esperar(ubicacion || imagen ? 900 : Math.min(3000, 600 + texto.length * 20));
+  const contenido = imagen
+    ? { image: readFileSync(imagen), ...(texto ? { caption: texto } : {}) }
+    : ubicacion
+      ? { location: { degreesLatitude: ubicacion.lat, degreesLongitude: ubicacion.lng, name: ubicacion.nombre, address: ubicacion.direccion } }
+      : { text: texto };
   const m = await sock.sendMessage(jid, contenido);
   if (m?.key?.id) enviadosPorBot.add(m.key.id);
   if (enviadosPorBot.size > 5000) enviadosPorBot.clear();
 }
 
 function enviarTodo(mensajes) {
-  for (const { jid, texto, ubicacion } of mensajes) encolar(jid, () => enviar(jid, texto, ubicacion));
+  for (const { jid, texto, ubicacion, imagen } of mensajes) encolar(jid, () => enviar(jid, texto, ubicacion, imagen));
 }
 
 function telefonoDe(key) {
