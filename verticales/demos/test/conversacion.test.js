@@ -151,6 +151,110 @@ test('si piden la carta, además de la respuesta llegan las imágenes de la cart
   assert.equal(otro.filter(m => m.imagen).length, 0);
 });
 
+test('si pregunta por una parte de la carta, llega solo esa imagen y las recomendaciones de la IA', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const carta = ['/c/1-sushiburger.jpg', '/c/2-rolls.jpg', '/c/3-promociones.jpg', '/c/4-sushipleto.jpg'];
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => (s === ejemplo.slug ? ejemplo : null), todas: () => [ejemplo] },
+    responder: async () => ({ respuestas: ['Te recomiendo el 21 y el 26'], accion: null }),
+    cartaDe: slug => (slug === ejemplo.slug ? carta : []), log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  estado.asignar(CLIENTE, ejemplo.slug, '569');
+  const texto = 'quisiera pedir un roll con champiñón y otro con salmón, qué tienen disponible';
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '569', texto });
+  assert.deepEqual(out.filter(m => m.imagen).map(m => m.imagen), ['/c/2-rolls.jpg']);
+  assert.ok(out.some(m => m.texto === 'Te recomiendo el 21 y el 26'));
+  assert.ok(out.findIndex(m => m.imagen) < out.findIndex(m => m.texto === 'Te recomiendo el 21 y el 26'));
+  const promos = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'me mandas la carta de promos?' });
+  assert.deepEqual(promos.filter(m => m.imagen).map(m => m.imagen), ['/c/3-promociones.jpg']);
+  const toda = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'mándame la carta completa' });
+  assert.equal(toda.filter(m => m.imagen).length, 4);
+  assert.ok(!toda.some(m => m.texto === 'Te recomiendo el 21 y el 26'));
+  const sushi = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'qué tienen con salmón' });
+  assert.equal(sushi.filter(m => m.imagen).length, 0);
+  const sinTilde = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'me gustaría pedir unos rolls que tienen disponibles' });
+  assert.deepEqual(sinTilde.filter(m => m.imagen).map(m => m.imagen), ['/c/2-rolls.jpg']);
+  const siguiente = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'Y de sushi burgers' });
+  assert.deepEqual(siguiente.filter(m => m.imagen).map(m => m.imagen), ['/c/1-sushiburger.jpg']);
+  assert.ok(siguiente.some(m => m.texto === 'Te recomiendo el 21 y el 26'));
+  const juntos = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'unos rolls que tienen\nY de sushi burgers' });
+  assert.equal(juntos.filter(m => m.imagen).length, 2);
+  for (const pedido of ['la sushiburger clásica mediana', 'y un roll de pollo', 'y de pollo']) {
+    const nada = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: pedido });
+    assert.equal(nada.filter(m => m.imagen).length, 0, pedido);
+  }
+});
+
+test('un audio lo responde el motor y la carta se decide por lo que dijo el cliente', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const conMotor = { ...ejemplo, motor: 'mesa-cero' };
+  let recibido = null;
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => (s === ejemplo.slug ? conMotor : null), todas: () => [conMotor] },
+    responderMotor: async (_m, _t, _x, _f, audio) => { recibido = audio; return { respuestas: ['Te recomiendo el 21'], accion: null, transcripcion: 'qué rolls tienen' }; },
+    cartaDe: () => ['/c/1-sushiburger.jpg', '/c/2-rolls.jpg'], log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  estado.asignar(CLIENTE, ejemplo.slug, '569');
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: '', audio: { base64: 'QUJD', mime: 'audio/ogg' } });
+  assert.equal(recibido.base64, 'QUJD');
+  assert.deepEqual(out.filter(m => m.imagen).map(m => m.imagen), ['/c/2-rolls.jpg']);
+  assert.ok(out.some(m => m.texto === 'Te recomiendo el 21'));
+});
+
+test('un reclamo avisa al dueño si tiene número; si no, a tu chat, y nunca al cliente', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const conMotor = { ...ejemplo, motor: 'mesa-cero' };
+  let destino = null;
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => (s === ejemplo.slug ? conMotor : null), todas: () => [conMotor] },
+    responderMotor: async () => ({ respuestas: ['Qué lata, cuéntame qué pasó'], accion: null, avisoDueno: '🚨 Reclamo', avisoDestino: destino }),
+    cartaDe: () => [], log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  estado.asignar(CLIENTE, ejemplo.slug, '569');
+  const aTuChat = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'llegó frío' });
+  assert.deepEqual(aTuChat.filter(m => m.texto === '🚨 Reclamo').map(m => m.jid), [YO]);
+  destino = '56911111111';
+  const alDueno = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'y faltó un roll' });
+  assert.deepEqual(alDueno.filter(m => m.texto === '🚨 Reclamo').map(m => m.jid), ['56911111111@s.whatsapp.net']);
+  assert.ok(!alDueno.some(m => m.jid === CLIENTE && m.texto === '🚨 Reclamo'));
+});
+
+test('sin motor, un audio pide que lo escriban en vez de quedar sin respuesta', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => (s === ejemplo.slug ? ejemplo : null), todas: () => [ejemplo] },
+    responder: async () => { throw new Error('no debe llamar a la IA'); }, log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  estado.asignar(CLIENTE, ejemplo.slug, '569');
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: '', audio: { base64: 'QUJD', mime: 'audio/ogg' } });
+  assert.match(out[0].texto, /escribes/);
+});
+
+test('reconoce la carta con tildes, manda imágenes en vez del texto de la IA, y no se dispara al pedir', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => (s === ejemplo.slug ? ejemplo : null), todas: () => [ejemplo] },
+    responder: async () => ({ respuestas: ['TEXTO DE LA IA'], accion: null }),
+    cartaDe: slug => (slug === ejemplo.slug ? ['/c/1.jpg'] : []), log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  estado.asignar(CLIENTE, ejemplo.slug, '569');
+  for (const texto of ['Mándame el menú completo', 'Tienes las imágenes del menú', 'me pasas la foto?', 'qué hay']) {
+    const out = await conv.entrante({ jid: CLIENTE, telefono: '569', texto });
+    assert.equal(out.filter(m => m.imagen).length, 1, texto);
+    assert.ok(!out.some(m => m.texto === 'TEXTO DE LA IA'), texto);
+  }
+  for (const texto of ['quiero el 20 de la carta', 'qué tienen de postre', 'quiero sushi', 'fotografía no']) {
+    const out = await conv.entrante({ jid: CLIENTE, telefono: '569', texto });
+    assert.equal(out.filter(m => m.imagen).length, 0, texto);
+    assert.ok(out.some(m => m.texto === 'TEXTO DE LA IA'), texto);
+  }
+});
+
 test('#demo off en tu chat desactiva la demo pendiente', async () => {
   const { conv, estado } = armar();
   await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#demo ejemplo-sangucheria' });

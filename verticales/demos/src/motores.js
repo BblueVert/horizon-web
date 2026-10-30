@@ -8,17 +8,22 @@ import { config } from './config.js';
 
 // Para mesa-cero, "tenant" (o el slug) dice qué negocio de Supabase responde:
 // cada chat puede ser un restaurante distinto sin reiniciar nada.
-export async function responderMotor(nombre, telefono, mensaje, ficha = {}) {
+// Un audio ({ base64, mime }) va tal cual: lo transcribe e interpreta el motor, que devuelve "transcripcion".
+export async function responderMotor(nombre, telefono, mensaje, ficha = {}, audio = null) {
   const url = config.motores[nombre];
   if (!url) throw new Error(`motor "${nombre}" sin URL (agrega MOTORES en .env)`);
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(config.motorToken ? { 'x-agente-token': config.motorToken } : {}) },
-    body: JSON.stringify({ phone: telefono, telefono, mensaje, canal: 'whatsapp', tenantSlug: ficha.tenant || ficha.slug }),
-    signal: AbortSignal.timeout(45000),
+    body: JSON.stringify({ phone: telefono, telefono, mensaje, canal: 'whatsapp', tenantSlug: ficha.tenant || ficha.slug, ...(audio ? { audioBase64: audio.base64, audioMime: audio.mime } : {}) }),
+    signal: AbortSignal.timeout(audio ? 150000 : 45000),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok && !Array.isArray(data.replyChunks)) throw new Error(`motor ${nombre} respondió ${res.status}`);
   const respuestas = (Array.isArray(data.replyChunks) ? data.replyChunks : []).filter(t => typeof t === 'string' && t.trim());
-  return { respuestas, accion: null };
+  return {
+    respuestas, accion: null,
+    ...(data.transcripcion ? { transcripcion: String(data.transcripcion) } : {}),
+    ...(data.avisoDueno ? { avisoDueno: String(data.avisoDueno), avisoDestino: data.avisoDestino ? String(data.avisoDestino) : null } : {}),
+  };
 }

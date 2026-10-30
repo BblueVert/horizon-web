@@ -7,15 +7,39 @@ import { responder as responderIA, avisoDueno, extrasConfirmacion } from './agen
 import { mapaDe } from './ficha.js';
 import { responderMotor as motorReal } from './motores.js';
 import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 
 // Imágenes de la carta de una demo: fichas/cartas/<slug>/*.jpg|png|webp, en orden de nombre.
 function cartaLocal(slug) {
   const dir = join(config.bot.carpetaFichas, 'cartas', slug);
   try { return readdirSync(dir).filter(f => /\.(jpe?g|png|webp)$/i.test(f)).sort().map(f => join(dir, f)); } catch { return []; }
 }
-// "¿me mandas la carta?", "el menú", "qué tienen": se responde y además se mandan las imágenes.
-const PIDE_CARTA = /\b(carta|men[uú]|qu[eé] (tienen|venden|hay))\b/i;
+// "¿me mandas la carta?", "el menú", "qué tienen", "las fotos": se mandan las imágenes.
+// \b no sirve con tildes ("menú" no calzaba). "el 20 de la carta" o "qué tienen de postre" no la piden.
+const PIDE_CARTA = /(?<![\p{L}\p{N}])(carta|men[uú]|im[aá]gen(es)?|fotos?|qu[eé] (\p{L}+ )?(tienen|venden|hay))(?![\p{L}\p{N}])/iu;
+const SIGUE_PREGUNTANDO = /^\s*(y\s+(de|las?|los?)|de)\s/i; // "y de sushi burgers", "y las promos"
+const PREGUNTA_ACOTADA =/qu[eé] (tienen|venden|hay)\s+(de|con|sin|para)(?![\p{L}])/iu; // "qué tienen de postre" no es toda la carta
+const sinTildes = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+// Si nombra una parte ("rolls", "promos"), solo esa imagen: la que tiene esa palabra en su nombre de archivo.
+function imagenesDelTema(texto, imagenes) {
+  const elegidas = new Set();
+  for (const palabra of sinTildes(texto).split(/[^a-z0-9]+/)) {
+    const raiz = palabra.replace(/s$/, '');
+    if (raiz.length < 4) continue;
+    const calzan = imagenes.filter(f => sinTildes(basename(f).replace(/\.\w+$/, '')).includes(raiz));
+    if (calzan.length === 1) elegidas.add(calzan[0]);
+  }
+  return imagenes.filter(f => elegidas.has(f));
+}
+// { imagenes, completa }: completa = toda la carta, va en vez del texto de la IA.
+function cartaPedida(texto, imagenes) {
+  if (/\d/.test(texto)) return { imagenes: [], completa: false };
+  const tema = imagenesDelTema(texto, imagenes);
+  const pide = PIDE_CARTA.test(texto);
+  if (!pide && !(SIGUE_PREGUNTANDO.test(texto) && tema.length)) return { imagenes: [], completa: false };
+  if (tema.length) return { imagenes: tema, completa: false };
+  return PREGUNTA_ACOTADA.test(texto) ? { imagenes: [], completa: false } : { imagenes, completa: imagenes.length > 0 };
+}
 
 const AYUDA = [
   '*Comandos del bot de demos* (escríbelos desde este teléfono):',
@@ -32,22 +56,31 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
 
   const aYo = (texto) => (yo ? [{ jid: yo, texto }] : []);
 
-  async function turno(jid, telefono, texto, ficha) {
+  async function turno(jid, telefono, textoEscrito, ficha, audio) {
+    // Los audios los transcribe e interpreta el motor (flujo n8n); la IA genérica solo lee texto.
+    if (audio && !ficha.motor) return [{ jid, texto: 'Por ahora solo puedo leer mensajes escritos. ¿Me lo escribes? 🙏' }];
     let r;
     try {
       r = ficha.motor
-        ? await responderMotor(ficha.motor, telefono, texto, ficha)
-        : await responder(ficha, estado.historial(jid), texto);
+        ? await responderMotor(ficha.motor, telefono, textoEscrito, ficha, audio)
+        : await responder(ficha, estado.historial(jid), textoEscrito);
     } catch (e) {
       log.error(`[demo ${ficha.slug}] ${ficha.motor ? `motor ${ficha.motor}` : 'IA'} falló:`, e.message);
       return [{ jid, texto: 'Perdona, se me cruzó algo. ¿Me lo repites?' }];
     }
+    const texto = r.transcripcion || textoEscrito; // en un audio, lo que dijo el cliente
     estado.agregarTurno(jid, texto, JSON.stringify(r));
-    const salida = r.respuestas.map(t => ({ jid, texto: t }));
+    // Toda la carta va en vez del texto de la IA; una parte va antes de sus recomendaciones.
+    const { imagenes, completa } = cartaPedida(texto, cartaDe(ficha.slug));
+    const fotos = imagenes.map((imagen, i) => ({ jid, imagen, texto: i === 0 ? `📋 Carta de ${ficha.nombre}` : '' }));
+    const salida = completa
+      ? [{ jid, texto: '¡Altiro! Te mando la carta 👇' }, ...fotos]
+      : [...fotos, ...r.respuestas.map(t => ({ jid, texto: t }))];
     if (r.ubicacion) salida.push(...ubicacion(jid, ficha));
-    if (PIDE_CARTA.test(texto)) {
-      const imagenes = cartaDe(ficha.slug);
-      imagenes.forEach((imagen, i) => salida.push({ jid, imagen, texto: i === 0 ? `📋 Carta de ${ficha.nombre}` : '' }));
+    if (completa) salida.push({ jid, texto: 'Cuéntame qué te tinca 🙂' });
+    // Reclamo: le llega al dueño del local; sin su número configurado, a tu chat (demos con prospectos).
+    if (r.avisoDueno) {
+      salida.push(...(r.avisoDestino ? [{ jid: `${r.avisoDestino}@s.whatsapp.net`, texto: r.avisoDueno }] : aYo(r.avisoDueno)));
     }
     if (r.accion) {
       const extras = extrasConfirmacion(ficha, r.accion, numero);
@@ -72,7 +105,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
   }
 
   // Mensaje de un cliente/prospecto. Tu chat contigo mismo nunca hace de demo: ahí solo llegan avisos.
-  async function entrante({ jid, telefono, texto }) {
+  async function entrante({ jid, telefono, texto, audio }) {
     if (jid === yo) return [];
     let slug = estado.demoDe(jid);
     const codigo = codigoDemo(texto);
@@ -98,7 +131,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       if (ficha) {
         estado.tomarArmada();
         estado.asignar(jid, ficha.slug, telefono);
-        const salida = await turno(jid, telefono, texto, ficha);
+        const salida = await turno(jid, telefono, texto, ficha, audio);
         salida.push(...aYo(`▶️ +${telefono} empezó la demo de ${ficha.nombre}.`));
         return salida;
       }
@@ -111,7 +144,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (!slug || estado.enPausa(jid)) return [];
     const ficha = fichas.obtener(slug);
     if (!ficha) return [];
-    return turno(jid, telefono, texto, ficha);
+    return turno(jid, telefono, texto, ficha, audio);
   }
 
   // Mensaje escrito desde el teléfono vinculado (Benja o alguien de HORIZON).

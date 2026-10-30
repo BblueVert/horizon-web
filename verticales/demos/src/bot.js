@@ -5,7 +5,7 @@
 import makeWASocket, {
   Browsers, DisconnectReason, fetchLatestBaileysVersion, useMultiFileAuthState,
   isJidGroup, isJidBroadcast, isJidNewsletter, isJidStatusBroadcast, isLidUser,
-  jidDecode, jidNormalizedUser, normalizeMessageContent,
+  jidDecode, jidNormalizedUser, normalizeMessageContent, downloadMediaMessage,
 } from '@whiskeysockets/baileys';
 import qrcode from 'qrcode-terminal';
 import { readFileSync } from 'node:fs';
@@ -78,11 +78,33 @@ function esChatPropio(jid) {
   return [u.id, u.lid].filter(Boolean).some(x => jidNormalizedUser(x) === jidNormalizedUser(jid));
 }
 
+// Audio de un cliente: se entrega al motor, que lo transcribe e interpreta en el flujo de n8n.
+const MAX_SEGUNDOS_AUDIO = 180;
+function alRecibirAudio(m, jid, nota) {
+  const telefono = telefonoDe(m.key);
+  encolar(jid, async () => {
+    await sock.readMessages([m.key]).catch(() => {});
+    if (Number(nota.seconds) > MAX_SEGUNDOS_AUDIO) {
+      return enviarTodo([{ jid, texto: 'Ese audio está muy largo para mí 😅 ¿Me lo resumes en uno más corto o me lo escribes?' }]);
+    }
+    try {
+      const datos = await downloadMediaMessage(m, 'buffer', {});
+      await sock.sendPresenceUpdate('composing', jid).catch(() => {});
+      enviarTodo(await conv.entrante({ jid, telefono, texto: '', audio: { base64: datos.toString('base64'), mime: nota.mimetype || 'audio/ogg' } }));
+    } catch (e) {
+      console.error('[bot] audio:', e.message);
+      enviarTodo([{ jid, texto: 'No pude escuchar tu audio 😕 ¿Me lo mandas de nuevo o me lo escribes?' }]);
+    }
+  });
+}
+
 function alRecibir(m) {
   const jid = m.key.remoteJid;
   if (!jid || !m.message) return;
   if (isJidGroup(jid) || isJidBroadcast(jid) || isJidNewsletter(jid) || isJidStatusBroadcast(jid)) return;
   if (m.key.fromMe && enviadosPorBot.has(m.key.id)) return;
+  const nota = normalizeMessageContent(m.message)?.audioMessage;
+  if (nota && !m.key.fromMe) return alRecibirAudio(m, jid, nota);
   const texto = textoDe(m);
   if (!texto) return;
   const telefono = telefonoDe(m.key);
@@ -95,11 +117,10 @@ function alRecibir(m) {
   }
 
   // Mensajes de clientes: se juntan los que llegan seguidos.
-  const b = buffers.get(jid) || { textos: [], claves: [], timer: null };
+  const b = buffers.get(jid) || { textos: [], claves: [], timer: null, desde: Date.now() };
   b.textos.push(texto.trim());
   b.claves.push(m.key);
-  clearTimeout(b.timer);
-  b.timer = setTimeout(() => {
+  b.responder = () => {
     buffers.delete(jid);
     encolar(jid, async () => {
       await sock.readMessages(b.claves).catch(() => {});
@@ -107,8 +128,26 @@ function alRecibir(m) {
       if (salida.length) await sock.sendPresenceUpdate('composing', jid).catch(() => {});
       enviarTodo(salida);
     });
-  }, config.bot.esperaAgruparMs);
+  };
   buffers.set(jid, b);
+  programarRespuesta(b);
+  sock.presenceSubscribe(jid).catch(() => {}); // para saber si sigue escribiendo
+}
+
+// Espera normal; si el cliente sigue escribiendo o grabando, se alarga hasta un tope.
+const MAX_ESPERA_ESCRIBIENDO_MS = 45000;
+function programarRespuesta(b, espera = config.bot.esperaAgruparMs) {
+  clearTimeout(b.timer);
+  const queda = MAX_ESPERA_ESCRIBIENDO_MS - (Date.now() - b.desde);
+  b.timer = setTimeout(b.responder, Math.max(0, Math.min(espera, queda)));
+}
+
+function alCambiarPresencia({ id, presences }) {
+  const b = buffers.get(id);
+  if (!b) return;
+  const estado = Object.values(presences || {})[0]?.lastKnownPresence;
+  if (estado === 'composing' || estado === 'recording') programarRespuesta(b, 15000); // WhatsApp no avisa siempre que dejó de escribir
+  else if (estado === 'paused') programarRespuesta(b);
 }
 
 let intentos = 0;
@@ -117,8 +156,9 @@ let fichasIniciadas = false;
 async function conectar() {
   const { state, saveCreds } = await useMultiFileAuthState(config.bot.carpetaSesion);
   const { version } = await fetchLatestBaileysVersion().catch(() => ({ version: undefined }));
-  sock = makeWASocket({ version, auth: state, logger, browser: Browsers.macOS('HORIZON Demos'), markOnlineOnConnect: false, syncFullHistory: false });
+  sock = makeWASocket({ version, auth: state, logger, browser: Browsers.macOS('HORIZON Demos'), markOnlineOnConnect: false, syncFullHistory: false, generateHighQualityLinkPreview: true });
   sock.ev.on('creds.update', saveCreds);
+  sock.ev.on('presence.update', alCambiarPresencia);
 
   sock.ev.on('connection.update', ({ connection, lastDisconnect, qr }) => {
     if (qr) {
