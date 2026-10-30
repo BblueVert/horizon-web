@@ -419,3 +419,15 @@ test('si la IA falla, a tu chat llega el motivo (una vez cada 5 min)', async () 
   const b = await conv.entrante({ jid: CLIENTE, telefono: '1', texto: 'hola' });
   assert.equal(b.length, 1, 'no repite el aviso');
 });
+
+test('si la demo del chat se dio de baja, el chat toma la demo activada desde tu chat', async () => {
+  const { conv, estado } = armar([{ respuestas: ['hola sanguchería'], accion: null }, { respuestas: ['hola minimarket'], accion: null }]);
+  await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'demo ejemplo-sangucheria' });
+  // la ficha desaparece (se dio de baja) y Benja activa otra desde su chat
+  estado.asignar(CLIENTE, 'dada-de-baja', '569');
+  estado.agregarTurno(CLIENTE, 'hola', '{}');
+  estado.armar('ejemplo-sangucheria', 60);
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'hola' });
+  assert.equal(estado.demoDe(CLIENTE), 'ejemplo-sangucheria');
+  assert.ok(out.length > 0, 'responde en vez de quedar mudo');
+});
