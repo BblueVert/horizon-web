@@ -10,8 +10,9 @@ import { responderMotor as motorReal } from './motores.js';
 const AYUDA = [
   '*Comandos del bot de demos* (escríbelos desde este teléfono):',
   '• #demos → lista de demos con su link · #demos recargar → vuelve a leer las fichas',
-  '• #<slug> o #demo <slug> → conecta ese chat a la demo (ej. #cafeteria, #tia-julia; aquí mismo para probarla tú)',
-  '• #demo off → desconecta el chat · #demo off todos → todos',
+  `• #<slug> o #demo <slug> aquí → deja la demo activada: el próximo número nuevo que le escriba a este WhatsApp (en ${config.bot.armadaMin} min) queda conectado a ella (ej. #cafeteria, #tia-julia)`,
+  '• #<slug> en el chat de un cliente → conecta ese chat a la demo',
+  '• #demo off → desconecta el chat (aquí: desactiva la demo pendiente) · #demo off todos → todos',
   '• #bot off / #bot on → silencia o reactiva el bot en un chat',
 ].join('\n');
 
@@ -75,6 +76,18 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       return salida;
     }
 
+    // Demo activada desde tu chat (#slug): la toma el primer chat nuevo que escribe.
+    if (!slug && jid !== yo && estado.armada()) {
+      const ficha = fichas.obtener(estado.armada());
+      if (ficha) {
+        estado.tomarArmada();
+        estado.asignar(jid, ficha.slug, telefono);
+        const salida = await turno(jid, telefono, texto, ficha);
+        salida.push(...aYo(`▶️ +${telefono} empezó la demo de ${ficha.nombre}.`));
+        return salida;
+      }
+    }
+
     if (!slug && config.bot.porDefecto && fichas.obtener(config.bot.porDefecto)) {
       estado.asignar(jid, config.bot.porDefecto, telefono);
       slug = config.bot.porDefecto;
@@ -93,7 +106,9 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (tl === '#demos' || tl === '#ayuda') {
       const lista = fichas.todas().map(f => `• *#${f.slug}* · ${f.nombre}\n  ${linkDemo(numero, f)}`).join('\n');
       const activos = estado.activos().length;
-      return aYo(`${lista || 'No hay demos cargadas.'}\n\nChats en demo ahora: ${activos}\n\n${AYUDA}`);
+      const armada = estado.armada() ? fichas.obtener(estado.armada()) : null;
+      const pendiente = armada ? `\nActivada para el próximo número: *${armada.nombre}*` : '';
+      return aYo(`${lista || 'No hay demos cargadas.'}\n\nChats en demo ahora: ${activos}${pendiente}\n\n${AYUDA}`);
     }
     if (tl === '#demos recargar') {
       fichas.cargarLocales?.();
@@ -101,6 +116,11 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       return aYo(`Fichas recargadas: ${fichas.todas().length} demos.`);
     }
     if (tl === '#demo off todos') return aYo(`Listo, desconecté ${estado.soltarTodos()} chats de sus demos.`);
+    if (tl === '#demo off' && jid === yo) {
+      const habia = estado.desarmar();
+      estado.soltar(jid);
+      return aYo(habia ? 'Listo, desactivé la demo pendiente.' : 'No había ninguna demo pendiente.');
+    }
     if (tl === '#demo off') { estado.soltar(jid); return aYo('Chat desconectado de la demo.'); }
     if (tl === '#bot off') { estado.pausar(jid, 'siempre'); return aYo('Bot silenciado en ese chat. #bot on para reactivarlo.'); }
     if (tl === '#bot on') { estado.pausar(jid, null); return aYo('Bot reactivado en ese chat.'); }
@@ -110,6 +130,11 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (m) {
       const ficha = fichas.obtener(m[1]);
       if (!ficha) return aYo(`No tengo la demo "${m[1]}". Escribe #demos para ver las disponibles.`);
+      // En tu chat: no responde aquí, queda activada para el próximo número que escriba.
+      if (jid === yo) {
+        estado.armar(ficha.slug, config.bot.armadaMin);
+        return aYo(`✅ Demo activada: *${ficha.nombre}*\nEscríbele a este WhatsApp desde otro número (o comparte el link) en los próximos ${config.bot.armadaMin} min: ese chat queda conectado a la demo.\n${linkDemo(numero, ficha)}`);
+      }
       estado.asignar(jid, ficha.slug, telefono);
       const salida = await turno(jid, telefono, 'Hola', ficha);
       if (jid !== yo) salida.push(...aYo(`Chat conectado a la demo de ${ficha.nombre}.`));

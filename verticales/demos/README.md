@@ -22,7 +22,7 @@ Puedes tener varias demos a la vez: cada chat habla con la suya.
 
 ## Demos por rubro (listas, a un mensaje)
 
-Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#demo <slug>` en tu chat contigo mismo o comparte el link (`#demos`).
+Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#<slug>` en tu chat contigo mismo y escríbele a Horizon Pruebas desde otro número (o comparte el link de `#demos`).
 
 | Slug | Negocio | Muestra |
 |---|---|---|
@@ -45,10 +45,10 @@ En todas: precios y servicios, ubicación con **pin de WhatsApp**, horario, y al
 | Dónde | Comando | Qué hace |
 |---|---|---|
 | Tu chat contigo mismo | `#demos` | Lista de demos con su link + ayuda |
-| Tu chat contigo mismo | `#<slug>` o `#demo <slug>` | Conecta tu propio chat: pruebas la demo haciendo de cliente (ej. `#cafeteria`, `#tia-julia`) |
+| Tu chat contigo mismo | `#<slug>` o `#demo <slug>` | Activa la demo (ej. `#cafeteria`, `#tia-julia`): te confirma en tu chat y el **próximo número nuevo** que le escriba al bot en 60 min (`DEMO_ARMADA_MIN`) queda conectado a ella. Una sola vez; te avisa "▶️ +569… empezó la demo" |
 | Tu chat contigo mismo | `#demos recargar` | Vuelve a leer `fichas/` y la API |
 | Cualquier chat | `#demo <slug>` | Conecta ese chat a una demo (el otro ve el comando; mejor usar el link) |
-| Cualquier chat | `#demo off` · `#demo off todos` | Desconecta |
+| Cualquier chat | `#demo off` · `#demo off todos` | Desconecta (en tu chat: desactiva la demo pendiente) |
 | Cualquier chat | `#bot off` / `#bot on` | Silencia o reactiva el bot ahí |
 
 Si escribes a mano en un chat de demo, el bot se calla 30 min en ese chat.

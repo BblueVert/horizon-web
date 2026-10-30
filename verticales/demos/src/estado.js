@@ -7,14 +7,18 @@ import { config } from './config.js';
 
 export function crearEstado(ruta = join(config.bot.carpetaDatos, 'estado.json')) {
   let chats = {};
-  try { if (existsSync(ruta)) chats = JSON.parse(readFileSync(ruta, 'utf8')).chats || {}; } catch {}
+  // Demo "armada" desde tu chat: la toma el próximo chat nuevo que escriba (una sola vez).
+  let armada = null;
+  try {
+    if (existsSync(ruta)) ({ chats = {}, armada = null } = JSON.parse(readFileSync(ruta, 'utf8')));
+  } catch {}
   let timer = null;
 
   function guardar() {
     clearTimeout(timer);
     timer = setTimeout(() => {
       mkdirSync(config.bot.carpetaDatos, { recursive: true });
-      writeFileSync(ruta, JSON.stringify({ chats }, null, 1));
+      writeFileSync(ruta, JSON.stringify({ chats, armada }, null, 1));
     }, 500);
   }
 
@@ -50,5 +54,13 @@ export function crearEstado(ruta = join(config.bot.carpetaDatos, 'estado.json'))
       return false;
     },
     activos() { return Object.entries(chats).filter(([, c]) => c.slug && !vencido(c)); },
+    armar(slug, minutos) { armada = { slug, hasta: Date.now() + minutos * 60000 }; guardar(); },
+    armada() {
+      if (armada && Date.now() > armada.hasta) { armada = null; guardar(); }
+      return armada?.slug || null;
+    },
+    // Entrega la demo armada a quien la pide y la desarma (la toma un solo chat).
+    tomarArmada() { const s = this.armada(); if (s) { armada = null; guardar(); } return s; },
+    desarmar() { const habia = !!armada; armada = null; guardar(); return habia; },
   };
 }
