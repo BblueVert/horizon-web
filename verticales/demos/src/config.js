@@ -3,6 +3,20 @@ import 'dotenv/config';
 
 const num = (v, d) => (v === undefined || v === '' ? d : Number(v));
 
+// MOTORES="mesa-cero=http://...,minimarket=http://..." — agentes reales que atienden
+// las fichas con "motor". Por defecto, los dos que corren en el mismo equipo.
+function motores(v) {
+  const base = {
+    'mesa-cero': 'http://localhost:5678/webhook/wa-mesacero-v2',
+    minimarket: 'http://localhost:3100/mensaje',
+  };
+  for (const par of String(v || '').split(',').map(s => s.trim()).filter(Boolean)) {
+    const i = par.indexOf('=');
+    if (i > 0) base[par.slice(0, i).trim()] = par.slice(i + 1).trim();
+  }
+  return base;
+}
+
 export const config = {
   api: {
     url: (process.env.DEMOS_API || 'https://www.horizonweb.cl/api/demos').replace(/\/$/, ''),
@@ -14,6 +28,8 @@ export const config = {
     apiKey: process.env.DEEPSEEK_API_KEY || '',
     modelo: process.env.LLM_MODELO || 'deepseek-v4-flash',
   },
+  motores: motores(process.env.MOTORES),
+  motorToken: process.env.AGENTE_TOKEN || '',
   bot: {
     carpetaSesion: process.env.WA_CARPETA_SESION || './.wa-sesion',
     carpetaDatos: process.env.DEMOS_CARPETA_DATOS || './datos',

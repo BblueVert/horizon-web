@@ -21,6 +21,8 @@ export function validarFicha(f) {
   if (!RUBROS.includes(f.rubro)) errores.push(`"rubro" debe ser uno de: ${RUBROS.join(', ')}`);
   if (!FLUJOS.includes(f.flujo)) errores.push(`"flujo" debe ser: ${FLUJOS.join(' | ')}`);
 
+  if (f.motor !== undefined && !SLUG.test(String(f.motor))) errores.push('"motor" debe ser un nombre como "mesa-cero" o "minimarket"');
+
   const catalogo = Array.isArray(f.catalogo) ? f.catalogo : [];
   let items = 0;
   let sinPrecio = 0;
@@ -36,11 +38,11 @@ export function validarFicha(f) {
     });
   });
 
-  if (!items) avisos.push('catálogo vacío: el agente solo podrá responder consultas generales');
+  if (!items && !f.motor) avisos.push('catálogo vacío: el agente solo podrá responder consultas generales');
   if (sinPrecio) avisos.push(`${sinPrecio} de ${items} productos/servicios sin precio: el agente dirá que lo confirma el local`);
   if (!Array.isArray(f.locales) || !f.locales.length) avisos.push('sin locales/dirección');
   if (!f.horario && !(f.locales || []).some(l => l.horario)) avisos.push('sin horario');
-  if (!Array.isArray(f.fuentes) || !f.fuentes.length) avisos.push('sin fuentes: anota de dónde salió la información');
+  if (!f.motor && (!Array.isArray(f.fuentes) || !f.fuentes.length)) avisos.push('sin fuentes: anota de dónde salió la información');
   const tamano = JSON.stringify(f).length;
   if (tamano > 60_000) errores.push(`ficha muy grande (${Math.round(tamano / 1000)} KB, máx. 60 KB): resume el catálogo`);
   else if (tamano > 30_000) avisos.push(`ficha grande (${Math.round(tamano / 1000)} KB): cada mensaje cuesta más`);

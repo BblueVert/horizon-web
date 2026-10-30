@@ -27,7 +27,8 @@ const res = await fetch(config.api.url, {
 const data = await res.json().catch(() => ({}));
 if (!res.ok) { console.error(`La API respondió ${res.status}: ${data.error || ''} ${data.detalle || ''}`); process.exit(1); }
 
-const numero = data.bot?.numero || process.env.DEMO_NUMERO || '';
+// Horizon Pruebas = número de la consultoría (+56 9 7696 2659), el mismo del agente de Mesa Cero.
+const numero = data.bot?.numero || process.env.DEMO_NUMERO || '56976962659';
 const visto = data.bot?.visto_at ? Math.round((Date.now() - Date.parse(data.bot.visto_at)) / 1000) : null;
 console.log(`publicada: ${ficha.slug}`);
 if (visto === null) console.log('bot: nunca se ha conectado (¿está corriendo npm start en el equipo?)');

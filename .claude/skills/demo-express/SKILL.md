@@ -5,7 +5,7 @@ description: Arma en minutos un agente demo de WhatsApp para un negocio que Benj
 
 # Demo express
 
-Benja va manejando o caminando, a ~5 minutos del local. Objetivo: **demo funcionando en el número Horizon Pruebas antes de que entre**. Velocidad primero, sin inventar nada.
+Benja va manejando o caminando, a ~5 minutos del local. Objetivo: **demo funcionando en el número Horizon Pruebas (+56 9 7696 2659, el de la consultoría y Mesa Cero) antes de que entre**. Velocidad primero, sin inventar nada.
 
 ## 1. Arranque (respuesta inmediata, 1 línea)
 Confirma qué entendiste: nombre del negocio, comuna y rubro. Si falta el nombre o la comuna, pregunta **solo eso**. Lo demás lo buscas tú.
@@ -34,6 +34,8 @@ npm run publicar -- ../../CONTENIDO/demos/<slug>.json --qr ../../CONTENIDO/demos
 ```
 - `publicar` necesita `DEMOS_TOKEN` en el entorno. Si no está: dile a Benja que falta configurarlo (ver `verticales/demos/README.md`) y mándale el JSON con SendUserFile para que lo copie a `fichas/` del bot y escriba `#demos recargar`.
 - Si dice `bot: SIN CONEXIÓN` o `nunca se ha conectado`: avísale primero, antes que todo lo demás. La ficha queda guardada y el bot la toma apenas se conecte.
+
+Si es una sanguchería o restaurante que encaja con Mesa Cero y Benja quiere mostrar el agente real con carta de Tía Julia, no armes ficha: el link de la demo `tia-julia` ya existe (motor `mesa-cero`).
 
 ## 5. Entrega (corto, se lee en el celular)
 Envía el QR con SendUserFile y responde con este formato:

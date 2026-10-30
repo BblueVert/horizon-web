@@ -4,6 +4,7 @@
 import { config } from './config.js';
 import { codigoDemo, linkDemo } from './ficha.js';
 import { responder as responderIA, avisoDueno } from './agente.js';
+import { responderMotor as motorReal } from './motores.js';
 
 const AYUDA = [
   '*Comandos del bot de demos* (escríbelos desde este teléfono):',
@@ -13,7 +14,7 @@ const AYUDA = [
   '• #bot off / #bot on → silencia o reactiva el bot en un chat',
 ].join('\n');
 
-export function crearConversacion({ estado, fichas, responder = responderIA, registrarAccion = async () => {}, log = console }) {
+export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, log = console }) {
   let yo = null;      // jid del chat contigo mismo
   let numero = '';    // número vinculado (para los links)
 
@@ -22,9 +23,11 @@ export function crearConversacion({ estado, fichas, responder = responderIA, reg
   async function turno(jid, telefono, texto, ficha) {
     let r;
     try {
-      r = await responder(ficha, estado.historial(jid), texto);
+      r = ficha.motor
+        ? await responderMotor(ficha.motor, telefono, texto)
+        : await responder(ficha, estado.historial(jid), texto);
     } catch (e) {
-      log.error(`[demo ${ficha.slug}] IA falló:`, e.message);
+      log.error(`[demo ${ficha.slug}] ${ficha.motor ? `motor ${ficha.motor}` : 'IA'} falló:`, e.message);
       return [{ jid, texto: 'Perdona, se me cruzó algo. ¿Me lo repites?' }];
     }
     estado.agregarTurno(jid, texto, JSON.stringify(r));

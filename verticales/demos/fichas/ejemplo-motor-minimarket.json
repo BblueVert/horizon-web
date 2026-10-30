@@ -1,0 +1,9 @@
+{
+  "slug": "minimarket-la-esquina",
+  "nombre": "Minimarket La Esquina",
+  "rubro": "minimarket",
+  "flujo": "pedidos",
+  "motor": "minimarket",
+  "descripcion": "Demo del agente de minimarket (verticales/minimarket): 168 productos, precios detalle/mayorista/caja y stock. Requiere `npm run agente` en ese proyecto.",
+  "fuentes": ["verticales/minimarket/db/catalogo.json"]
+}

@@ -1,6 +1,6 @@
 # Demos express de agentes WhatsApp
 
-Para mostrarle a un negocio **su propio agente funcionando** en el número **Horizon Pruebas**, armado en minutos mientras vas llegando al local. No hay que dejar nada listo: cada demo es una ficha JSON.
+Para mostrarle a un negocio **su propio agente funcionando** en el número **Horizon Pruebas (+56 9 7696 2659)** —el mismo de la consultoría y del agente de Mesa Cero—, armado en minutos mientras vas llegando al local. No hay que dejar nada listo: cada demo es una ficha JSON.
 
 ```
 Tú (celular, Claude)             Vercel                    Tu equipo (bot)                 WhatsApp
@@ -33,7 +33,19 @@ Puedes tener varias demos a la vez: cada chat habla con la suya.
 
 Si escribes a mano en un chat de demo, el bot se calla 30 min en ese chat.
 
-**Chats sin demo no se responden.** Así el número puede seguir usándose normal. Ojo: si en el mismo número está vinculado otro bot (ej. el kit de Mesa Cero), los dos responden: desvincula el que no uses.
+**Chats sin demo no se responden.** Es el número de la consultoría (está en todas las páginas de HORIZON): los prospectos que escriben sin link no reciben respuesta del bot y los atiendes tú. Deja `DEMO_POR_DEFECTO` vacío.
+
+## Un solo puente para todo el número (Mesa Cero incluido)
+
+WhatsApp deja vincular varios dispositivos, pero si dos bots quedan conectados al mismo número, **los dos responden cada chat**. Por eso este bot reemplaza al kit `mesa-cero-whatsapp-bot`:
+
+| Ficha | Quién responde |
+|---|---|
+| Sin `motor` (las que arma Claude) | IA genérica con la ficha |
+| `"motor": "mesa-cero"` (`fichas/ejemplo-motor-mesa-cero.json`, slug `tia-julia`) | Flujo n8n `wa-mesacero-v2` con la carta real (`{phone, mensaje}` → `{replyChunks}`, igual que el kit) |
+| `"motor": "minimarket"` (`fichas/ejemplo-motor-minimarket.json`) | `verticales/minimarket` (`npm run agente`) |
+
+Para pasarte: en WhatsApp de Horizon Pruebas → Dispositivos vinculados → **cierra la sesión del kit de Mesa Cero**, y deja solo "HORIZON Demos". El n8n local sigue igual. URLs de motores en `MOTORES` (`.env`).
 
 ## Instalación (una vez)
 
