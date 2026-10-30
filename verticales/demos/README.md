@@ -22,7 +22,7 @@ Puedes tener varias demos a la vez: cada chat habla con la suya.
 
 ## Demos por rubro (listas, a un mensaje)
 
-Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#demo <slug>` en tu chat contigo mismo o comparte el link (`#demos`).
+Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#<slug>` en tu chat contigo mismo y escríbele a Horizon Pruebas desde otro número (o comparte el link de `#demos`).
 
 | Slug | Negocio | Muestra |
 |---|---|---|
@@ -45,10 +45,10 @@ En todas: precios y servicios, ubicación con **pin de WhatsApp**, horario, y al
 | Dónde | Comando | Qué hace |
 |---|---|---|
 | Tu chat contigo mismo | `#demos` | Lista de demos con su link + ayuda |
-| Tu chat contigo mismo | `#demo <slug>` | Conecta tu propio chat: pruebas la demo haciendo de cliente |
+| Tu chat contigo mismo | `#<slug>` o `#demo <slug>` | Activa la demo (ej. `#cafeteria`, `#tia-julia`): te confirma en tu chat y el **próximo número nuevo** que le escriba al bot en 60 min (`DEMO_ARMADA_MIN`) queda conectado a ella. Una sola vez; te avisa "▶️ +569… empezó la demo" |
 | Tu chat contigo mismo | `#demos recargar` | Vuelve a leer `fichas/` y la API |
 | Cualquier chat | `#demo <slug>` | Conecta ese chat a una demo (el otro ve el comando; mejor usar el link) |
-| Cualquier chat | `#demo off` · `#demo off todos` | Desconecta |
+| Cualquier chat | `#demo off` · `#demo off todos` | Desconecta (en tu chat: desactiva la demo pendiente) |
 | Cualquier chat | `#bot off` / `#bot on` | Silencia o reactiva el bot ahí |
 
 Si escribes a mano en un chat de demo, el bot se calla 30 min en ese chat.
@@ -65,9 +65,17 @@ WhatsApp deja vincular varios dispositivos, pero si dos bots quedan conectados a
 | `"motor": "mesa-cero"` (`fichas/ejemplo-motor-mesa-cero.json`, slug `tia-julia`) | Flujo n8n `wa-mesacero-v2` con la carta real (`{phone, mensaje}` → `{replyChunks}`, igual que el kit) |
 | `"motor": "minimarket"` (`fichas/ejemplo-motor-minimarket.json`) | `verticales/minimarket` (`npm run agente`) |
 
-**Los 14 restaurantes de Mesa Cero a la vez, sin reiniciar:** `npm run fichas-mesa-cero` crea una ficha por tenant (`tia-julia`, `mc-cafe-haiti`, `mc-sra-fang`, `mc-magari`…). Cada chat le manda a n8n su `tenantSlug`, así que un chat puede estar en Café Haití y otro en Torino al mismo tiempo. Requiere el cambio de 1 nodo en n8n (`Parse Message`, ver `mesa-cero/_workflows-n8n/README.md`, 30-oct).
+**Los 14 restaurantes de Mesa Cero a la vez, sin reiniciar:** `npm run fichas-mesa-cero` crea una ficha por tenant con el slug del tenant (`tia-julia`, `cafe-haiti`, `sra-fang`, `magari`, `que-rolls`…: en WhatsApp, `#magari`). Cada chat le manda a n8n su `tenantSlug`, así que un chat puede estar en Café Haití y otro en Torino al mismo tiempo. Requiere el cambio de 1 nodo en n8n (`Parse Message`, ver `mesa-cero/_workflows-n8n/README.md`, 30-oct).
 
 Para pasarte: en WhatsApp de Horizon Pruebas → Dispositivos vinculados → **cierra la sesión del kit de Mesa Cero**, y deja solo "HORIZON Demos". El n8n local sigue igual. URLs de motores en `MOTORES` (`.env`).
+
+## Antes de salir a terreno (el bot solo corre cuando lo necesitas)
+
+1. Prende el computador → Docker → n8n (como siempre).
+2. Levanta el bot de demos (en el mismo Docker o `npm start`). La sesión de WhatsApp queda guardada: no hay que escanear el QR cada vez.
+3. Te llega "🤖 Bot de demos conectado" a tu chat contigo mismo → listo para salir.
+
+Toda la IA pasa por tu n8n: las demos de Mesa Cero por `wa-mesacero-v2` y las por rubro por `demo-ia` (`n8n/demo-ia.json`), con la **misma credencial DeepSeek** que ya tienes. El bot no tiene clave propia. Al volver, apaga el bot si quieres; los chats en demo siguen asignados 72 h.
 
 ## Instalación (una vez)
 
@@ -80,7 +88,7 @@ Para pasarte: en WhatsApp de Horizon Pruebas → Dispositivos vinculados → **c
    ```bash
    cd verticales/demos
    npm install
-   cp .env.example .env   # DEMOS_TOKEN y DEEPSEEK_API_KEY
+   cp .env.example .env   # DEMOS_TOKEN (la IA va por n8n: importa y activa n8n/demo-ia.json)
    npm start              # escanea el QR con el WhatsApp de Horizon Pruebas
    ```
    Te llega "🤖 Bot de demos conectado" a tu chat contigo mismo.

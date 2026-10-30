@@ -1,0 +1,116 @@
+{
+  "name": "Demos HORIZON - IA (fichas por rubro)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "demo-ia",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "d1",
+      "name": "Webhook Demo IA",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "62f1467d-c504-4064-b523-1a002f22eee2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'deepseek-v4-flash', max_tokens: 900, temperature: 0.4, thinking: { type: 'disabled' }, response_format: { type: 'json_object' }, messages: $json.body.messages }) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "d2",
+      "name": "Call DeepSeek",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9HT7vqnmpuz4aU8s",
+          "name": "Mesa Cero - DeepSeek API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ content: $json.choices[0].message.content, usage: $json.usage }) }}",
+        "options": {}
+      },
+      "id": "d3",
+      "name": "Respond Content",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Demos HORIZON — IA\nLo llama el bot de demos (horizon-web/verticales/demos) para las fichas sin motor (rubro-*, las que arma Claude). Recibe { messages } ya armados con la ficha del negocio y devuelve { content }.\n\nUsa la misma credencial DeepSeek de Mesa Cero: si al importar no queda enlazada, elígela en 'Call DeepSeek'. Activar el workflow."
+      },
+      "id": "d4",
+      "name": "Leer",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -260
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Demo IA": {
+      "main": [
+        [
+          {
+            "node": "Call DeepSeek",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call DeepSeek": {
+      "main": [
+        [
+          {
+            "node": "Respond Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

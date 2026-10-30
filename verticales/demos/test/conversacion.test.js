@@ -93,11 +93,32 @@ test('#demos lista las demos con su link en tu chat', async () => {
   assert.match(m.texto, /Sanguchería El Rincón[\s\S]*https:\/\/wa\.me\/56900000001\?text=/);
 });
 
-test('en tu propio chat puedes probar la demo haciendo de cliente', async () => {
-  const { conv, llamadas } = armar();
-  await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#demo ejemplo-sangucheria' });
-  await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '¿tienen promo?' });
+test('#slug en tu chat activa la demo para el próximo número nuevo (una sola vez), sin responder en tu chat', async () => {
+  const { conv, estado, llamadas } = armar();
+  const [ok] = await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#ejemplo-sangucheria' });
+  assert.equal(ok.jid, YO);
+  assert.match(ok.texto, /Demo activada: \*Sanguchería El Rincón\*/);
+  assert.equal(estado.demoDe(YO), null);
+  assert.equal(llamadas.length, 0);
+
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: '¿tienen promo?' });
+  assert.equal(estado.demoDe(CLIENTE), 'ejemplo-sangucheria');
   assert.equal(llamadas.at(-1).mensaje, '¿tienen promo?');
+  assert.equal(out[0].jid, CLIENTE);
+  assert.match(out.at(-1).texto, /\+56911112222 empezó la demo/);
+
+  // Ya la tomó un chat: el siguiente número nuevo no se responde
+  const otro = await conv.entrante({ jid: '56933334444@s.whatsapp.net', telefono: '56933334444', texto: 'hola' });
+  assert.deepEqual(otro, []);
+});
+
+test('#demo off en tu chat desactiva la demo pendiente', async () => {
+  const { conv, estado } = armar();
+  await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#demo ejemplo-sangucheria' });
+  const [m] = await conv.delLocal({ jid: YO, telefono: '56900000001', texto: '#demo off' });
+  assert.match(m.texto, /desactivé la demo pendiente/);
+  assert.equal(estado.armada(), null);
+  assert.deepEqual(await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'hola' }), []);
 });
 
 test('ficha: validación, código del link y slug', () => {
@@ -157,4 +178,12 @@ test('ubicación: pin nativo si hay coordenadas, link de Maps si no', async () =
   assert.deepEqual(a[1].ubicacion, { lat: -34.17, lng: -70.74, nombre: 'Sanguchería El Rincón · Centro', direccion: 'Calle 1, Rancagua' });
   const b = await conv.entrante({ jid: 'b@s.whatsapp.net', telefono: '2', texto: 'demo ejemplo-sangucheria' });
   assert.match(b[1].texto, /^📍 https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=Calle%20Ejemplo%20123/);
+});
+
+test('atajo #slug activa la demo; un hashtag cualquiera no hace nada', async () => {
+  const { conv, estado } = armar();
+  await conv.delLocal({ jid: CLIENTE, telefono: '569', texto: '#ejemplo-sangucheria' });
+  assert.equal(estado.demoDe(CLIENTE), 'ejemplo-sangucheria');
+  await conv.delLocal({ jid: '56933334444@s.whatsapp.net', telefono: '569', texto: '#felizcumple' });
+  assert.equal(estado.demoDe('56933334444@s.whatsapp.net'), null);
 });

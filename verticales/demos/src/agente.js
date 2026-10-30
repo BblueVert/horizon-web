@@ -69,17 +69,31 @@ Responde SIEMPRE con un JSON (sin markdown):
 }
 
 export async function responder(ficha, historial, mensaje) {
-  if (!config.llm.apiKey) throw new Error('Falta DEEPSEEK_API_KEY en .env');
+  const messages = [
+    { role: 'system', content: construirPrompt(ficha) },
+    ...historial,
+    { role: 'user', content: mensaje },
+  ];
+
+  if (config.llm.via === 'n8n') {
+    const res = await fetch(config.llm.n8nUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: ficha.slug, messages }),
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!res.ok) throw new Error(`n8n demo-ia respondió ${res.status} (¿está activo el workflow?)`);
+    const data = await res.json().catch(() => ({}));
+    return interpretar(data.content);
+  }
+
+  if (!config.llm.apiKey) throw new Error('LLM_VIA=deepseek necesita DEEPSEEK_API_KEY en .env');
   const res = await fetch(`${config.llm.baseUrl}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.llm.apiKey}` },
     body: JSON.stringify({
       model: config.llm.modelo,
-      messages: [
-        { role: 'system', content: construirPrompt(ficha) },
-        ...historial,
-        { role: 'user', content: mensaje },
-      ],
+      messages,
       thinking: { type: 'disabled' },
       response_format: { type: 'json_object' },
       temperature: 0.4,

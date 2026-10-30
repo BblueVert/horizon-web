@@ -14,7 +14,7 @@ const TENANTS = [
 
 mkdirSync(config.bot.carpetaFichas, { recursive: true });
 for (const [tenant, nombre] of TENANTS) {
-  const slug = tenant === 'tia-julia' ? tenant : `mc-${tenant}`;
+  const slug = tenant; // #magari, #sra-fang… (no chocan con las demos por rubro)
   writeFileSync(`${config.bot.carpetaFichas}/${slug}.json`, JSON.stringify({
     slug, nombre, rubro: 'restaurante', flujo: 'pedidos', motor: 'mesa-cero', tenant,
     descripcion: `Demo Mesa Cero con la carta real de ${nombre} (tenant "${tenant}" en Supabase).`,
