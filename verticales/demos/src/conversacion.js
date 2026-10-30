@@ -21,16 +21,51 @@ const SIGUE_PREGUNTANDO = /^\s*(y\s+(de|las?|los?)|de)\s/i; // "y de sushi burge
 const PREGUNTA_ACOTADA =/qu[eé] (tienen|venden|hay)\s+(de|con|sin|para)(?![\p{L}])/iu; // "qué tienen de postre" no es toda la carta
 const sinTildes = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 // Si nombra una parte ("rolls", "promos"), solo esa imagen: la que tiene esa palabra en su nombre de archivo.
+// Dictado o escrito de otra forma ("roles", "jan rol") sigue siendo roll; a los demás nombres se les perdona una letra.
+const ES_ROLL = /^(rol|rols|role|roles|rolls?|rool|rools|rolo|rolos|rollo|rollos|rulo|rulos|handrolls?|jandrol|jandroll)$/;
+function aUnaLetra(a, b) {
+  if (Math.abs(a.length - b.length) > 1) return false;
+  let i = 0, j = 0, cambios = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) { i++; j++; continue; }
+    if (++cambios > 1) return false;
+    if (a.length > b.length) i++;
+    else if (b.length > a.length) j++;
+    else { i++; j++; }
+  }
+  return cambios + (a.length - i) + (b.length - j) <= 1;
+}
 function imagenesDelTema(texto, imagenes) {
   const elegidas = new Set();
   for (const palabra of sinTildes(texto).split(/[^a-z0-9]+/)) {
-    const raiz = palabra.replace(/s$/, '');
+    const raiz = ES_ROLL.test(palabra) ? 'roll' : palabra.replace(/s$/, '');
     if (raiz.length < 4) continue;
-    const calzan = imagenes.filter(f => sinTildes(basename(f).replace(/\.\w+$/, '')).includes(raiz));
+    const calzan = imagenes.filter(f => {
+      const nombre = sinTildes(basename(f).replace(/\.\w+$/, ''));
+      return nombre.includes(raiz) || (raiz.length >= 5 && nombre.split(/[^a-z]+/).some(p => aUnaLetra(raiz, p.replace(/s$/, ''))));
+    });
     if (calzan.length === 1) elegidas.add(calzan[0]);
   }
   return imagenes.filter(f => elegidas.has(f));
 }
+// Si ya va la imagen, no se repite la carta por escrito: la IA a veces la transcribe entera.
+const MAX_LARGO_CON_FOTO = 280;
+function textoConFotos(imagenes, respuestas) {
+  if (!imagenes.length) return respuestas;
+  const cortas = respuestas.filter(t => t.length <= MAX_LARGO_CON_FOTO);
+  return cortas.length === respuestas.length && cortas.length ? cortas : ['¿Buscas algún ingrediente en particular o te recomiendo alguno? 😊'];
+}
+// "Te mando la carta" va antes de la imagen; el resto del mensaje, después.
+const ANUNCIA_CARTA = /\b(te\s+(mando|env[ií]o|paso|dejo)|ah[ií]\s+(te\s+)?va|aqu[ií]\s+(te\s+)?(va|tienes))\b.*(?<![\p{L}])(carta|men[uú]|imagen)(?![\p{L}])/iu;
+function conAnuncioPrimero(fotos, mensajes) {
+  if (!fotos.length || !mensajes.length) return [...fotos, ...mensajes];
+  const [primero, ...resto] = mensajes;
+  return primero.texto.length <= 80 && !/\d/.test(primero.texto) && ANUNCIA_CARTA.test(primero.texto)
+    ? [primero, ...fotos, ...resto]
+    : [...fotos, ...mensajes];
+}
+const nombreSeccion = (f) => basename(f).replace(/\.\w+$/, '').replace(/^\d+[-_ ]*/, '').replace(/[-_]+/g, ' ');
+const unirConY = (l) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y ${l[l.length - 1]}` : l[0]);
 // { imagenes, completa }: completa = toda la carta, va en vez del texto de la IA.
 function cartaPedida(texto, imagenes) {
   if (/\d/.test(texto)) return { imagenes: [], completa: false };
@@ -62,7 +97,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     let r;
     try {
       r = ficha.motor
-        ? await responderMotor(ficha.motor, telefono, textoEscrito, ficha, audio)
+        ? await responderMotor(ficha.motor, telefono, textoEscrito, { ...ficha, cartaEnImagen: cartaDe(ficha.slug).length > 0 }, audio)
         : await responder(ficha, estado.historial(jid), textoEscrito);
     } catch (e) {
       log.error(`[demo ${ficha.slug}] ${ficha.motor ? `motor ${ficha.motor}` : 'IA'} falló:`, e.message);
@@ -75,9 +110,14 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     const fotos = imagenes.map((imagen, i) => ({ jid, imagen, texto: i === 0 ? `📋 Carta de ${ficha.nombre}` : '' }));
     const salida = completa
       ? [{ jid, texto: '¡Altiro! Te mando la carta 👇' }, ...fotos]
-      : [...fotos, ...r.respuestas.map(t => ({ jid, texto: t }))];
+      : conAnuncioPrimero(fotos, textoConFotos(imagenes, r.respuestas).map(t => ({ jid, texto: t })));
     if (r.ubicacion) salida.push(...ubicacion(jid, ficha));
     if (completa) salida.push({ jid, texto: 'Cuéntame qué te tinca 🙂' });
+    // Mandó solo una parte: al final, en corto, lo demás que hay (sale de las imágenes de la carta).
+    if (imagenes.length && !completa) {
+      const resto = cartaDe(ficha.slug).filter(f => !imagenes.includes(f)).map(nombreSeccion);
+      if (resto.length) salida.push({ jid, texto: `Además tenemos ${unirConY(resto)}. Si quieres te mando esa carta también 😊` });
+    }
     // Reclamo: le llega al dueño del local; sin su número configurado, a tu chat (demos con prospectos).
     if (r.avisoDueno) {
       salida.push(...(r.avisoDestino ? [{ jid: `${r.avisoDestino}@s.whatsapp.net`, texto: r.avisoDueno }] : aYo(r.avisoDueno)));
