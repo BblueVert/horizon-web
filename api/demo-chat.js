@@ -32,7 +32,7 @@ async function fichaWeb(slug) {
   return ok;
 }
 
-// Persona y reglas de atención del agente de Mesa Cero (n8n wa-mesacero-v2, nodo "Armar consulta a la IA"),
+// Persona y reglas de atención del agente de Qué Rolls / Mesa Cero (n8n wa-mesacero-v2, nodo "Armar consulta a la IA"),
 // adaptadas a pastelería/cafetería. Mandan sobre las reglas genéricas de agente.js.
 const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 function ahoraChile() {
@@ -78,6 +78,74 @@ Después muestra un resumen corto con el total de lo que sí tiene precio y preg
 - Reclamos (llegó mal, faltó algo): muestra empatía, pregunta lo que falte de a una cosa, di que quedó registrado y que el equipo se va a comunicar. No prometas devoluciones ni descuentos ni le vendas más mientras no se resuelva. "accion" tipo "derivar".
 - Si el mensaje no tiene nada que ver con el local, una línea amable diciendo que solo ayudas con pedidos y consultas de ${negocio}.
 - Nunca inventes productos, precios, rellenos, promociones, tiempos ni costos de envío. Si no está, "eso te lo confirmo con Andrea".`;
+}
+
+// ── Capas del flujo Qué Rolls (n8n wa-mesacero-v2, v4): Reglas → IA (+reintento) → Verificar → Corregir → Respuesta final ──
+const norm = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+// "Reglas": respuestas fijas sin IA.
+function reglaFija(texto) {
+  const n = norm(texto);
+  if (!n) return ['Por ahora solo leo mensajes de texto 🙂 ¿Me lo escribes?'];
+  if (/^\/?(reiniciar|empezar de nuevo|nueva conversacion|borrar conversacion)[.!]*$/.test(n)) return ['Listo, empecemos de nuevo 🙂 ¿Qué te gustaría pedir?'];
+  if (/(no quiero (recibir )?(mas )?mensajes|no me escriban|^(stop|baja)[.!]*$)/.test(n)) return ['Listo, no te escribiremos más. Si algún día quieres pedir, aquí estamos.'];
+  return null;
+}
+// "Verificar respuesta" + "Corregir respuesta": precios = carta o totales, sin links inventados,
+// una sola pregunta por turno, sin voseo, sin "de los más vendidos", largo máximo.
+const VOSEO = { 'querés': 'quieres', 'tenés': 'tienes', 'podés': 'puedes', 'sabés': 'sabes', 'decime': 'dime', 'mirá': 'mira', 'contame': 'cuéntame' };
+const SIN_DATOS = /(de|una de|uno de) (los|las) (que )?m[aá]s (sale|salen|pedid|vendid)/i;
+function preciosDe(ficha, historial, accion) {
+  const base = [];
+  for (const c of ficha.catalogo || []) for (const it of c.items || []) {
+    if (Number.isFinite(it.precio)) base.push(it.precio);
+    for (const v of it.variantes || []) if (Number.isFinite(v.precio)) base.push(v.precio);
+  }
+  const validos = new Set(base);
+  // Totales: sumas de hasta 4 precios que ya aparecieron en la conversación (cantidades incluidas).
+  const vistos = [...new Set(historial.map(m => m.content).join(' ').match(/\$\s?\d{1,3}(?:[.,]\d{3})+/g) || [])].map(s => Number(s.replace(/\D/g, ''))).filter(n => validos.has(n));
+  const sumar = (i, acc, k) => { if (k > 4) return; for (let j = i; j < vistos.length; j++) for (let q = 1; q <= 3; q++) { const s = acc + vistos[j] * q; validos.add(s); sumar(j + 1, s, k + 1); } };
+  sumar(0, 0, 1);
+  for (const p of base) for (let q = 2; q <= 6; q++) validos.add(p * q);
+  if (accion?.datos && Number.isFinite(Number(accion.datos.total))) validos.add(Number(accion.datos.total));
+  return validos;
+}
+function verificarYCorregir(ficha, historial, out) {
+  const validos = preciosDe(ficha, historial, out.accion);
+  const l = (ficha.locales || [])[0];
+  const mapa = l?.direccion ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent([l.direccion, l.comuna, 'Chile'].filter(Boolean).join(', ')) : null;
+  let chunks = (out.respuestas || []).map(s => String(s).replace(/(?<![\p{L}])(querés|tenés|podés|sabés|decime|mirá|contame)(?![\p{L}])/giu, m => { const r = VOSEO[m.toLowerCase()] || m; return m[0] === m[0].toUpperCase() ? r[0].toUpperCase() + r.slice(1) : r; }).trim()).filter(Boolean);
+  const sinInventar = chunks.filter(s => !SIN_DATOS.test(s)); if (sinInventar.length) chunks = sinInventar;
+  const fuera = new Set(), problemas = [];
+  chunks = chunks.map((c, i) => {
+    for (const m of c.matchAll(/\$\s?(\d{1,3}(?:[.,]\d{3})+|\d+)/g)) {
+      if (!validos.has(Number(m[1].replace(/[.,]/g, '')))) { fuera.add(i); problemas.push('precio_inventado ' + m[0]); }
+    }
+    const limpio = c.replace(/https?:\/\/\S+/g, u => (u.replace(/[.,;:!?)]+$/, '') === mapa ? u : (problemas.push('link ' + u), ''))).replace(/[ \t]{2,}/g, ' ').trim();
+    return limpio !== c && limpio.length < 15 ? '' : limpio;
+  });
+  const conPregunta = chunks.map((c, i) => (/\?\s*\S{0,3}$/.test(c) ? i : -1)).filter(i => i >= 0);
+  if (conPregunta.length > 1) { conPregunta.slice(0, -1).forEach(i => fuera.add(i)); problemas.push('varias_preguntas'); }
+  chunks = chunks.filter((c, i) => c && !fuera.has(i)).slice(0, 4);
+  if (chunks.join('\n').length > 1500) chunks = chunks.slice(0, 3);
+  if (!chunks.length) chunks = ['Déjame confirmarte bien ese dato 🙏 ¿Me cuentas qué te gustaría pedir?'];
+  if (problemas.length) console.warn('demo-chat corrigió:', problemas.join(', '));
+  return { ...out, respuestas: chunks };
+}
+// "Respuesta final": aviso fijo de alergias y no repetir una respuesta casi igual a la anterior.
+function respuestaFinal(mensaje, historial, out) {
+  const chunks = [...out.respuestas];
+  if (/al[eé]rg|intoleran|cel[ií]ac/i.test(mensaje)) chunks.splice(Math.max(0, chunks.length - 1), 0, 'Ojo: esto es lo que lista la carta. Por tu alergia, confírmalo directo con Andrea antes de pedir 🙏');
+  const palabras = (s) => new Set(norm(s).split(/[^a-z0-9]+/).filter(x => x.length > 2));
+  const ultima = [...historial].reverse().find(m => m.role === 'assistant');
+  let previa = ''; try { previa = (JSON.parse(ultima?.content || '{}').respuestas || []).join('\n\n'); } catch { previa = ultima?.content || ''; }
+  const nueva = chunks.join('\n\n'), A = palabras(previa), B = palabras(nueva);
+  const parecido = A.size && B.size ? [...B].filter(x => A.has(x)).length / new Set([...A, ...B]).size : 0;
+  const cifras = (s) => [...new Set(String(s).match(/\d[\d.]*/g) || [])].sort().join();
+  if (nueva.length > 120 && parecido >= 0.8 && cifras(previa) === cifras(nueva) && !out.accion && !/Total/.test(nueva)) {
+    const pregunta = [...chunks].reverse().find(c => /\?\s*\S{0,3}$/.test(c));
+    return { ...out, respuestas: ['Sí, es lo que te acabo de pasar 😊', ...(pregunta ? [pregunta.length > 200 ? '¿Me cuentas qué necesitas?' : pregunta] : [])] };
+  }
+  return { ...out, respuestas: chunks };
 }
 
 let agente;
@@ -139,7 +207,6 @@ module.exports = async function handler(req, res) {
   if (!ficha) return res.status(404).json({ error: 'Demo no encontrada' });
 
   const mensaje = String(body.mensaje || '').trim().slice(0, 600);
-  if (!mensaje) return res.status(400).json({ error: 'Mensaje vacío' });
   const historial = (Array.isArray(body.historial) ? body.historial : [])
     .filter(m => m && ['user', 'assistant'].includes(m.role) && typeof m.content === 'string')
     .slice(-20)
@@ -148,7 +215,17 @@ module.exports = async function handler(req, res) {
   try {
     const { construirPrompt, interpretar, extrasConfirmacion, avisoDueno } = await cargarAgente();
     const messages = [{ role: 'system', content: construirPrompt(ficha) + '\n\n' + personaWeb(ficha) }, ...historial, { role: 'user', content: mensaje + '\n\n(Responde solo el JSON.)' }];
-    const out = interpretar(await llamarIA(ficha, messages));
+    const fija = reglaFija(mensaje);
+    if (fija) return res.status(200).json({ respuestas: fija, accion: null, extras: [], aviso: null });
+    const esJSON = (raw) => { try { return Array.isArray(JSON.parse(String(raw || '').replace(/```json|```/g, '').trim()).respuestas); } catch { return false; } };
+    let raw = await llamarIA(ficha, messages);
+    // "Reintentar IA": si no vino un JSON con respuestas, una vez más con instrucción estricta.
+    if (!esJSON(raw)) {
+      const raw2 = await llamarIA(ficha, [...messages, { role: 'assistant', content: String(raw || '').slice(0, 800) }, { role: 'user', content: 'Tu respuesta anterior no era un JSON válido. Responde SOLO el JSON con el formato pedido, sin texto extra.' }]);
+      if (esJSON(raw2) || !String(raw || '').trim()) raw = raw2;
+    }
+    let out = interpretar(raw);
+    out = respuestaFinal(mensaje, historial, verificarYCorregir(ficha, historial, out));
     let extras = [], aviso = null;
     if (out.accion) {
       const r = extrasConfirmacion(ficha, out.accion, '');
