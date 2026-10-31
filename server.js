@@ -149,6 +149,7 @@ app.get('/api/demos',  demos);   // demos express de agentes WhatsApp (DEMOS_TOK
 app.post('/api/demos', demos);
 app.get('/api/demo-chat',  demoChat); // chat web de las demos (mismo motor n8n demo-ia)
 app.post('/api/demo-chat', demoChat);
+app.options('/api/demo-chat', demoChat);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
 const opsPages = {
