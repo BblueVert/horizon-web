@@ -9,12 +9,28 @@
 //   → { respuestas: [], extras: [], aviso: string|null }
 //   GET  /api/demo-chat?slug=cafe-boutique → carta y datos del local para la web
 
-const { rateLimit, getIp } = require('./shared');
+const { rateLimit, getIp, httpsRequest } = require('./shared');
 
-// Solo fichas publicadas a propósito como demo web.
-const FICHAS = {
-  'cafe-boutique': require('../verticales/demos/fichas/cafe-boutique.json'),
-};
+// Las fichas de prospectos no van al repo (es público): se leen de demo_fichas (Supabase),
+// las mismas que publica /api/demos para el bot. Solo responden las marcadas con "web": true.
+const SLUG = /^[a-z0-9][a-z0-9-]{1,40}$/;
+const cache = new Map();
+async function fichaWeb(slug) {
+  if (!SLUG.test(slug)) return null;
+  const c = cache.get(slug);
+  if (c && Date.now() - c.t < 60_000) return c.f;
+  const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SB_URL || !SB_KEY) {
+    // En local (server.js) sin Supabase: la ficha de la carpeta fichas/ (no se versiona).
+    try { const f = JSON.parse(require('fs').readFileSync(require('path').join(process.cwd(), 'verticales/demos/fichas', slug + '.json'), 'utf8')); return f.web === true ? f : null; } catch { return null; }
+  }
+  const r = await httpsRequest('GET', `${SB_URL}/rest/v1/demo_fichas?slug=eq.${slug}&activa=eq.true&select=ficha`,
+    { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY });
+  const f = r.status === 200 ? (JSON.parse(r.body || '[]')[0] || {}).ficha : null;
+  const ok = f && f.web === true ? f : null;
+  cache.set(slug, { f: ok, t: Date.now() });
+  return ok;
+}
 
 let agente;
 async function cargarAgente() {
@@ -56,7 +72,7 @@ async function llamarIA(ficha, messages) {
 module.exports = async function handler(req, res) {
   // GET ?slug= → datos públicos de la ficha para pintar la web (carta, local, saludo).
   if (req.method === 'GET') {
-    const f = FICHAS[String((req.query && req.query.slug) || '')];
+    const f = await fichaWeb(String((req.query && req.query.slug) || '')).catch(() => null);
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
     const { nombre, saludo, color, catalogo, locales, reservas } = f;
     res.setHeader('Cache-Control', 'public, max-age=300');
@@ -66,7 +82,7 @@ module.exports = async function handler(req, res) {
   if (rateLimit(getIp(req), 60_000, 20)) return res.status(429).json({ error: 'Vas muy rápido, espera un poco' });
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-  const ficha = FICHAS[String(body.slug || '')];
+  const ficha = await fichaWeb(String(body.slug || '')).catch(() => null);
   if (!ficha) return res.status(404).json({ error: 'Demo no encontrada' });
 
   const mensaje = String(body.mensaje || '').trim().slice(0, 600);

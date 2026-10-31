@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Cake Boutique · Café Boutique — demo</title>
+<title>Cake Boutique · demo</title>
+<link rel="icon" href="/Pages/demo-cafe-boutique/logo.png">
 <meta name="description" content="Demo preparada por HORIZON para Andrea Escobar Cake Boutique: web con carta y asistente de WhatsApp.">
 <meta name="theme-color" content="#F4C6E0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +27,8 @@ a { color: inherit; }
 /* Barra */
 header { position: sticky; top: 0; z-index: 20; background: rgba(251, 246, 242, .92); backdrop-filter: blur(10px); border-bottom: 1px solid #EBDDE4; }
 header .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
-.logo { text-decoration: none; line-height: 1; }
+.logo { text-decoration: none; line-height: 1; display: flex; align-items: center; gap: 10px; }
+.logo img { width: 44px; height: 44px; border-radius: 50%; }
 .logo b { display: block; font-family: 'Anton', sans-serif; font-size: 24px; letter-spacing: .04em; font-weight: 400; }
 .logo small { font-family: 'Yellowtail', cursive; font-size: 15px; color: var(--ink2); }
 nav { display: flex; gap: 22px; font-weight: 500; font-size: 15px; }
@@ -69,7 +71,10 @@ section { padding: 80px 0; }
 .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media (max-width: 760px) { .items { grid-template-columns: 1fr; } }
 .item { background: #fff; border-radius: 18px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: start; border: 1px solid #F0E3EA; }
+.item { min-width: 0; }
 .item b { font-size: 16px; }
+.item .vars { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.item .vars span { background: var(--ink); color: #fff; border-radius: 999px; padding: 4px 11px; font-size: 13px; font-weight: 700; }
 .item .precio { font-weight: 700; white-space: nowrap; }
 .item p { grid-column: 1 / -1; font-size: 14px; color: var(--ink2); }
 .item .pedir { grid-column: 1 / -1; justify-self: start; margin-top: 6px; background: var(--rosa2); color: var(--ink); border: 0; border-radius: 999px; padding: 6px 14px; font: 700 13px 'DM Sans', sans-serif; cursor: pointer; }
@@ -150,8 +155,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <header>
   <div class="wrap">
-    <a class="logo" href="#inicio"><b>CAKE BOUTIQUE</b><small>por Andrea Escobar</small></a>
-    <nav><a href="#carta">Carta</a><a href="#box">Box desayuno</a><a href="#cumple">Cumpleaños</a><a href="#donde">Dónde estamos</a></nav>
+    <a class="logo" href="#inicio"><img src="/Pages/demo-cafe-boutique/logo.png" alt="" width="44" height="44"><span><b>CAKE BOUTIQUE</b><small>por Andrea Escobar</small></span></a>
+    <nav><a href="#carta">Tortas y carta</a><a href="#box">Box desayuno</a><a href="#cumple">Cumpleaños</a><a href="#donde">Dónde estamos</a></nav>
     <button class="btn wa" data-abrir><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>Pedir<span class="largo">&nbsp;por WhatsApp</span></button>
   </div>
 </header>
@@ -160,11 +165,11 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 <div class="hero" id="inicio">
   <div class="wrap">
     <div>
-      <h1>Café Boutique<span>Café de especialidad y pastelería en Rancagua</span></h1>
-      <p>Lattes, matcha, salados horneados por nosotros y tortas para celebrar. Pide en barra y te lo llevamos a la mesa, o encárgalo por WhatsApp y pasas a buscarlo.</p>
+      <h1>Cake Boutique<span>Pastelería y café de especialidad en Rancagua</span></h1>
+      <p>Tortas con diseño para cada celebración, lattes, matcha y salados horneados por nosotros. Encarga tu torta por WhatsApp en un minuto, retírala o te la llevamos.</p>
       <div class="ctas">
-        <a class="btn dark" href="#carta">Ver la carta</a>
-        <button class="btn line" data-pedir="Hola, quiero encargar un box de desayuno">Encargar un box de desayuno</button>
+        <button class="btn dark" data-pedir="Hola, quiero encargar una torta">Encargar una torta</button>
+        <a class="btn line" href="#carta">Ver tortas y carta</a>
       </div>
     </div>
     <div>
@@ -180,8 +185,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <section id="carta">
   <div class="wrap">
-    <h2 class="titulo">Nuestra carta</h2>
-    <p class="bajada">Toca "Pedir" en cualquier producto y te atiende nuestro asistente de WhatsApp.</p>
+    <h2 class="titulo">Tortas y carta</h2>
+    <p class="bajada">Precios de tortas con diseño simple. Toca "Pedir" en cualquier producto y te atiende nuestro asistente de WhatsApp.</p>
     <div class="tabs" role="tablist" id="tabs"></div>
     <div class="items" id="items"></div>
     <div class="notas">
@@ -189,6 +194,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <span>Cualquier preparación sin café o descafeinada</span>
       <span>Leche de avena o almendras +$700</span>
       <span>Tostadas sin gluten (no aptas para celíacos)</span>
+      <span>Tortas: imágenes comestibles, flores no</span>
+      <span>Otro diseño: +$8.000 aprox.</span>
     </div>
   </div>
 </section>
@@ -255,12 +262,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 <button class="fab" id="fab" aria-label="Abrir chat de WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg><span class="dot"></span></button>
 
 <div class="chat" id="chat" role="dialog" aria-label="Chat de WhatsApp con Cake Boutique">
-  <header><div class="av">AE</div><div><b>Cake Boutique</b><small id="estado">en línea</small></div><button class="cerrar" id="cerrar" aria-label="Cerrar chat">×</button></header>
+  <header><div class="av"><img src="/Pages/demo-cafe-boutique/logo.png" alt="" style="width:40px;height:40px;border-radius:50%"></div><div><b>Cake Boutique</b><small id="estado">en línea</small></div><button class="cerrar" id="cerrar" aria-label="Cerrar chat">×</button></header>
   <div class="msgs" id="msgs">
     <div class="aviso-demo">Demo de asistente con IA preparada por HORIZON. Pruébalo como si fueras una clienta: pide, encarga o reserva.</div>
     <div class="typing" id="typing"><i></i><i></i><i></i></div>
   </div>
   <div class="sugeridas" id="sugeridas">
+    <button>Quiero encargar una torta</button>
     <button>¿Qué me recomiendas?</button>
     <button>Quiero un box de desayuno</button>
     <button>Reservar mi cumpleaños</button>
@@ -287,9 +295,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     function mostrar(i) {
       [].forEach.call(tabs.children, function (b, j) { b.setAttribute('aria-selected', j === i); });
       items.innerHTML = cats[i].items.map(function (it) {
-        var precio = (it.variantes || []).length ? it.variantes.map(function (v) { return v.nombre + ' ' + dinero(v.precio); }).join(' · ') : dinero(it.precio);
-        var agregado = /^Agrega/.test(cats[i].categoria);
+        var vars = (it.variantes || []).length; var precio = vars ? 'desde ' + dinero(Math.min.apply(null, it.variantes.map(function (v) { return v.precio; }))) : (it.precio == null ? 'A cotizar' : dinero(it.precio));
+        var agregado = /^Agrega/.test(cats[i].categoria) || /^(Capas|Diseño con|Mini botella|Agregar)/.test(it.nombre);
         return '<div class="item"><b>' + esc(it.nombre) + '</b><span class="precio">' + (agregado ? '+' : '') + esc(precio) + '</span>' +
+          (vars ? '<div class="vars">' + it.variantes.map(function (v) { return '<span>' + esc(v.nombre) + ' ' + dinero(v.precio) + '</span>'; }).join('') + '</div>' : '') +
           (it.descripcion ? '<p>' + esc(it.descripcion) + '</p>' : '') +
           (agregado ? '' : '<button class="pedir" data-pedir="Hola, quiero pedir ' + esc(it.nombre) + '">Pedir</button>') + '</div>';
       }).join('');
