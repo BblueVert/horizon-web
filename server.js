@@ -19,6 +19,7 @@ const portal      = require('./api/portal');
 const recursos    = require('./api/recursos');
 const pagos       = require('./api/pagos');
 const demos       = require('./api/demos');
+const demoChat    = require('./api/demo-chat');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -122,7 +123,8 @@ const rewrites = {
   '/agendar':         '/Pages/agendar/index.html',
   '/privacidad':      '/Pages/privacidad.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
-  '/pago-demo':       '/Pages/pago-demo/index.html',   // pago simulado de las demos WhatsApp (verticales/demos)
+  '/pago-demo':       '/Pages/pago-demo/index.html',
+  '/demo/cafe-boutique': '/Pages/demo-cafe-boutique/index.html', // demo web + agente para Andrea Escobar Cake Boutique   // pago simulado de las demos WhatsApp (verticales/demos)
 };
 
 Object.entries(rewrites).forEach(([from, to]) => {
@@ -145,6 +147,8 @@ app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 app.post('/api/pagos', pagos);   // pago desde el portal + webhook de Mercado Pago (?webhook=1)
 app.get('/api/demos',  demos);   // demos express de agentes WhatsApp (DEMOS_TOKEN)
 app.post('/api/demos', demos);
+app.get('/api/demo-chat',  demoChat); // chat web de las demos (mismo motor n8n demo-ia)
+app.post('/api/demo-chat', demoChat);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
 const opsPages = {

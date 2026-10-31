@@ -20,6 +20,10 @@ Tú (celular, Claude)             Vercel                    Tu equipo (bot)     
 
 Puedes tener varias demos a la vez: cada chat habla con la suya.
 
+## Demo web con el chat incrustado
+
+Para mandarle a un negocio **una web suya con el agente adentro**, simulando WhatsApp: `/demo/<slug>` (ej. `/demo/cafe-boutique`, Andrea Escobar Cake Boutique). La carta de la web y el agente salen de la misma ficha de `fichas/`. El chat llama a `/api/demo-chat`, que arma el mismo prompt del bot y pasa por el workflow n8n `demo-ia` (`DEMO_IA_URL`, o el host de `N8N_WEBHOOK_URL`); sin n8n público, va directo a DeepSeek con `DEEPSEEK_API_KEY`. Al confirmar muestra el link de pago simulado, el código y *"Así le llega este aviso"* al dueño. Para sumar otra: agrega la ficha al mapa `FICHAS` de `api/demo-chat.js`, copia la página y su ruta en `vercel.json` y `server.js`.
+
 ## Demos por rubro (listas, a un mensaje)
 
 Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#<slug>` en tu chat contigo mismo y escríbele a Horizon Pruebas desde otro número (o comparte el link de `#demos`).
