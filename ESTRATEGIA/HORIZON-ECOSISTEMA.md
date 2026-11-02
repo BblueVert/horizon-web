@@ -41,8 +41,8 @@ El producto principal, vendido a cualquier PyME de servicio (ver `HORIZON-BUYER-
 | 03 · Sistema con IA | Sistema de IA personalizado: Plan 02 + agente IA + n8n + Meta Ads | $1.990.000 CLP | 5–6 semanas | $350.000 Mantenimiento + Ads · $490.000 Sistema completo + IA |
 | 04 · Agente IA Personalizado | Empleado virtual 24/7 en WhatsApp, Instagram y web; solo o sumado a otro plan | desde $1.490.000 CLP | 2–3 semanas | $290.000 |
 
-- Todos los precios + boleta de honorarios. El primer mes de soporte va incluido; luego es mes a mes, sin permanencia.
-- **Programa Fundadores** (3 negocios): mismo precio, sin descuento. Beneficios: segundo mes de soporte sin costo, valor del soporte congelado 12 meses, sesión de resultados a los 60 días y atención prioritaria por WhatsApp. A cambio: testimonio en video, permiso para mostrar el caso, encuesta a los 30 días y reseña voluntaria.
+- Todos los precios + boleta de honorarios. El primer mes de soporte va incluido y empieza a contar desde la entrega; luego es mes a mes, sin permanencia. El soporte se cobra el día 1 o el 15, el más cercano a cumplirse cada mes desde la entrega.
+- **Programa Fundadores** (3 negocios): 50% de descuento en la implementación (Plan 01 $245.000 · Plan 02 $495.000 · Plan 03 $995.000 · Plan 04 desde $745.000). El soporte se cobra igual que a todos, desde el mes 2 y a precio normal. Beneficios: valor del soporte congelado 12 meses, sesión de resultados a los 60 días y atención prioritaria por WhatsApp. A cambio: testimonio en video, permiso para mostrar el caso, encuesta a los 30 días y reseña voluntaria.
 - Ya no se ofrecen como servicios aparte: Auditoría + Contenido, Contenido Mensual, Gestión de Ads (15% del spend) e Identidad Visual. La auditoría y Meta Ads quedan dentro del Plan 03.
 - Claves internas en la BD de leads (OPS): `plan01` = Plan 01, `plan02` = Plan 02, `plan04` = Plan 03 Sistema con IA, `plan05` = Plan 04 Agente IA, `plan03` = plan anterior "Negocio Activo".
 
