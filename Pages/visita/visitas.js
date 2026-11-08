@@ -20,5 +20,29 @@ window.HZ_VISITAS = {
     web: 'https://horizon-propuestas.vercel.app/cake-boutique/',
     chat: 'cafe-boutique',
     sugerencias: ['¿Qué tortas tienen?', 'Quiero una torta para 15 personas el sábado', '¿Hasta qué hora atienden?']
+  },
+  'hospital-burgers': {
+    nombre: 'Hospital Burgers',
+    rubro: 'Smash burgers · Rancagua',
+    color: '#D62828',
+    web: null,
+    chat: 'hospital-burgers',
+    sugerencias: ['¿Qué hamburguesas tienen?', 'Quiero una Hospital Smoke para retiro', '¿Hasta qué hora atienden?']
+  },
+  'clinica-dental-recreo': {
+    nombre: 'Clínica Dental Recreo',
+    rubro: 'Clínica dental · Rancagua',
+    color: '#B08D57',
+    web: null,
+    chat: 'clinica-dental-recreo',
+    sugerencias: ['¿La evaluación es gratis?', 'Me duele una muela, ¿me pueden atender hoy?', 'Quiero agendar una limpieza']
+  },
+  'medic-center-dental': {
+    nombre: 'Medic Center · Clínica Dental',
+    rubro: 'Clínica dental · Rancagua',
+    color: '#2E9E7A',
+    web: null,
+    chat: 'medic-center-dental',
+    sugerencias: ['¿Cuánto cuesta una limpieza?', 'Tengo dolor, ¿me pueden ver hoy?', 'Quiero agendar una evaluación']
   }
 };
