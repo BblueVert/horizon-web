@@ -36,6 +36,15 @@ module.exports = async function handler(req, res) {
     hooks_respuestas: {},
   };
 
+  // Radiografía de terreno (/terreno/radiografia): respuestas, recomendación y decisión del dueño.
+  const rx = cleanRadiografia(body.radiografia);
+  if (rx) {
+    lead.hooks_respuestas = { radiografia: rx };
+    lead.plan      = rx.elegido === 'pro' ? 'terreno-pro' : 'terreno-esencial';
+    lead.status    = rx.decision === 'partimos' ? 'propuesta' : 'contactado';
+    lead.prioridad = rx.decision === 'partimos' ? 'Alta' : (rx.recomendado === 'no' ? 'Baja' : 'Media');
+  }
+
   const SB_URL = process.env.SUPABASE_URL;
   const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
@@ -72,3 +81,32 @@ module.exports = async function handler(req, res) {
 
   return res.status(200).json({ ok: true, id: lead.id });
 };
+
+function cleanRadiografia(rx) {
+  if (!rx || typeof rx !== 'object' || Array.isArray(rx)) return null;
+  const pick = (v, ok, def) => (ok.includes(v) ? v : def);
+  const num = (v, max) => {
+    const n = Math.round(Number(v));
+    return Number.isFinite(n) && n >= 0 ? Math.min(n, max) : 0;
+  };
+  const respuestas = {};
+  if (rx.respuestas && typeof rx.respuestas === 'object') {
+    Object.keys(rx.respuestas).slice(0, 12).forEach(k => {
+      const key = sanitize(k, 20).replace(/[^a-z0-9_]/gi, '');
+      if (key) respuestas[key] = sanitize(rx.respuestas[k], 80);
+    });
+  }
+  return {
+    respuestas,
+    ticket:      num(rx.ticket, 10000000),
+    escape_mes:  num(rx.escape_mes, 100000000),
+    puntos_e:    num(rx.puntos_e, 50),
+    puntos_p:    num(rx.puntos_p, 50),
+    recomendado: pick(rx.recomendado, ['esencial', 'pro', 'no'], 'esencial'),
+    elegido:     pick(rx.elegido, ['esencial', 'pro'], 'esencial'),
+    decision:    pick(rx.decision, ['partimos', 'lo-pienso'], 'lo-pienso'),
+    mejoras:     Array.isArray(rx.mejoras) ? rx.mejoras.slice(0, 10).map(m => sanitize(m, 200)) : [],
+    resumen:     sanitize(rx.resumen, 2000),
+    fecha:       new Date().toISOString(),
+  };
+}

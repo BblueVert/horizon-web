@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Radiografía de tu negocio — HORIZON</title>
+<meta name="description" content="8 preguntas para ver qué se le escapa a tu negocio y qué pack de HORIZON te conviene.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1A1626">
+<link rel="icon" href="/Identidad/Logo%20ISO.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/hz-light.css">
+<style>
+  /* Radiografía en terreno: se usa en el celular de Benja, una pantalla por paso. Esencial = naranja (Plan 01), Pro = violeta (Plan 04). */
+  :root { --e: #F2690C; --et: #FFE2CC; --p: #7B3FA0; --pt: #ECE3FF; }
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+  .rx-top { background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 10; padding-top: env(safe-area-inset-top, 0px); }
+  .rx-top .wrap { height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .rx-top .logo img { height: 22px; width: auto; }
+  .rx-top .step { font: 500 12px var(--mono); letter-spacing: .06em; color: #B9B3CC; }
+  .bar { height: 4px; background: rgba(255,255,255,.12); }
+  .bar i { display: block; height: 100%; width: 0; background: var(--grad); transition: width .35s; }
+
+  main { flex: 1; }
+  .scr { max-width: 600px; margin: 0 auto; padding: 28px max(20px, env(safe-area-inset-right, 0px)) 40px max(20px, env(safe-area-inset-left, 0px)); display: grid; gap: 18px; }
+  .kicker { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+  .scr h1 { font-weight: 800; font-size: clamp(28px, 7.5vw, 40px); line-height: 1.08; letter-spacing: -.03em; text-wrap: balance; }
+  .scr h2 { font-weight: 800; font-size: 22px; letter-spacing: -.02em; line-height: 1.2; text-wrap: balance; }
+  .scr p.lead { font-size: 16.5px; }
+
+  .field { display: grid; gap: 6px; }
+  .field label { font-weight: 700; font-size: 14px; }
+  .field input { font: 500 17px var(--font); padding: 15px 16px; border-radius: 14px; border: 1.5px solid var(--line2); background: var(--surface); color: var(--ink); width: 100%; }
+  .field input:focus { outline: none; border-color: var(--acc); }
+  .field small { color: var(--ink3); font-size: 13px; }
+
+  .opts { display: grid; gap: 10px; }
+  .opt { text-align: left; font: 600 16.5px/1.35 var(--font); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line2); border-radius: 16px; padding: 17px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: border-color .15s, background .15s, transform .1s; }
+  .opt:hover { border-color: var(--ink3); }
+  .opt:active { transform: scale(.99); }
+  .opt.sel { border-color: var(--acc); background: #FFF6EF; }
+  .opt .ico { width: 18px; height: 18px; color: var(--ink3); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font: 600 15px var(--font); padding: 11px 14px; border-radius: 12px; border: 1.5px solid var(--line2); background: var(--surface); color: var(--ink); cursor: pointer; }
+  .chip.sel { border-color: var(--acc); background: #FFF6EF; }
+
+  .nav-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .link { background: none; border: 0; font: 600 14px var(--font); color: var(--ink2); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; padding: 8px 0; }
+  .link .ico { width: 16px; height: 16px; }
+  .btn { width: 100%; justify-content: space-between; }
+  .btn-p { background: var(--p); color: #fff; box-shadow: 0 10px 24px -12px rgba(123,63,160,.7); }
+
+  /* Resultado */
+  .leak { border-radius: 20px; padding: 20px; background: var(--grad-deep); color: #fff; display: grid; gap: 10px; }
+  .leak small { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #E4DDF5; }
+  .leak .big { font-weight: 800; font-size: clamp(34px, 10vw, 52px); letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+  .leak .big span { display: block; margin-top: 6px; font-size: 15px; font-weight: 600; letter-spacing: 0; color: #E4DDF5; }
+  .leak ul { list-style: none; display: grid; gap: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.18); }
+  .leak li { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: #F1ECF9; }
+  .leak li b { font-family: var(--mono); font-weight: 500; white-space: nowrap; }
+  .leak p { font-size: 12.5px; color: #CFC6E6; }
+
+  .packs { display: grid; gap: 12px; }
+  .pk { position: relative; text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; padding: 16px 16px 14px; display: grid; gap: 4px; cursor: pointer; font: inherit; color: inherit; }
+  .pk.e { --c: var(--e); --ct: var(--et); } .pk.p { --c: var(--p); --ct: var(--pt); }
+  .pk .nm { font-weight: 800; font-size: 22px; letter-spacing: -.02em; color: var(--c); }
+  .pk .cl { font-size: 14px; font-weight: 600; color: var(--ink2); }
+  .pk .pr { font-size: 14.5px; color: var(--ink); }
+  .pk .pr b { font-size: 18px; }
+  .pk .badge { position: absolute; top: 14px; right: 14px; font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 8px; border-radius: 99px; background: var(--c); color: #fff; }
+  .pk.rec { border-color: var(--c); box-shadow: 0 14px 30px -20px var(--c); }
+  .pk.chosen { background: color-mix(in srgb, var(--ct) 45%, var(--surface)); }
+  .pk .chk { font: 500 12px var(--mono); color: var(--c); }
+
+  .why { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; display: grid; gap: 10px; }
+  .why ol { list-style: none; display: grid; gap: 10px; counter-reset: m; }
+  .why li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; font-size: 14.5px; counter-increment: m; }
+  .why li::before { content: counter(m); width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font: 500 12px var(--mono); background: var(--bg2); color: var(--ink2); }
+  .why li em { font-style: normal; font: 500 10.5px var(--mono); letter-spacing: .05em; text-transform: uppercase; margin-left: 6px; padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
+  .why li em.e { background: var(--et); color: #9A3D06; } .why li em.p { background: var(--pt); color: var(--p); }
+  .notyet { border-radius: 18px; padding: 16px 18px; background: var(--bg2); border: 1px dashed var(--line2); font-size: 15px; }
+
+  .err { background: #FDE8E8; color: #9B1C1C; border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+  .ok-ic { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: var(--mint); color: var(--ok); }
+  .ok-ic .ico { width: 28px; height: 28px; }
+  .wa-btn { background: #25D366; color: #fff; box-shadow: 0 10px 24px -12px rgba(37,211,102,.8); }
+  .note { font-size: 13.5px; color: var(--ink3); }
+</style>
+</head>
+<body>
+<header class="rx-top">
+  <div class="wrap">
+    <a href="/terreno" class="logo" aria-label="HORIZON, packs"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="114" height="22"></a>
+    <span class="step" id="stepLbl">Radiografía</span>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+</header>
+
+<main id="app" aria-live="polite"></main>
+
+<script>
+(function () {
+  var SPRITE = '/shared/hz-sprite.svg#';
+  var PACK = {
+    esencial: { nm: 'Esencial', cl: 'Atiende y agenda', impl: 290000, mes: 99000 },
+    pro:      { nm: 'Pro', cl: 'Llena la agenda y hace volver', impl: 490000, mes: 149000 }
+  };
+  // [clave, texto, puntos Esencial, puntos Pro]
+  var Q = [
+    { id: 'q1', t: 'En un día normal, ¿cuántos mensajes te llegan por WhatsApp o Instagram?', o: [['menos5', 'Menos de 5', 0, 0], ['5a20', 'Entre 5 y 20', 1, 0], ['mas20', 'Más de 20', 1, 1]] },
+    { id: 'q2', t: 'Cuando estás atendiendo y te escriben, ¿qué pasa con ese mensaje?', o: [['tiro', 'Respondo al tiro', 0, 0], ['horas', 'Respondo horas después', 1, 0], ['algunos', 'Algunos se quedan sin responder', 2, 0]] },
+    { id: 'q3', t: '¿Te escriben de noche o el fin de semana?', o: [['nunca', 'Casi nunca', 0, 0], ['aveces', 'A veces', 1, 0], ['todos', 'Todos los días', 2, 0]] },
+    { id: 'q4', t: '¿Cómo tomas hoy las horas o los pedidos?', o: [['sistema', 'Con un sistema', 0, 0], ['whatsapp', 'Por WhatsApp, a mano', 1, 0], ['cuaderno', 'En un cuaderno o de memoria', 2, 0]] },
+    { id: 'q5', t: 'De cada 10 personas que te preguntan precio, ¿cuántas terminan reservando o comprando?', o: [['casitodas', 'Casi todas', 0, 0], ['mitad', 'Como la mitad', 0, 1], ['pocas', 'Pocas', 0, 2], ['nose', 'No sé', 0, 2]] },
+    { id: 'q6', t: '¿Te pasa que reservan y no llegan?', o: [['nunca', 'Casi nunca', 0, 0], ['1a2', '1 o 2 veces por semana', 0, 1], ['varias', 'Varias veces por semana', 0, 2], ['sinhoras', 'No trabajo con horas', 0, 0]] },
+    { id: 'q7', t: '¿Tus clientes vuelven solos?', o: [['mayoria', 'Sí, la mayoría', 0, 0], ['algunos', 'Algunos', 0, 1], ['unavez', 'Vienen una vez y no los veo más', 0, 2], ['unicavez', 'Mi negocio es de una sola vez', 0, 0]] },
+    { id: 'q8', t: '¿Sabes cuánto vendiste el mes pasado y de dónde llegaron tus clientes?', o: [['exacto', 'Sí, exacto', 0, 0], ['masomenos', 'Más o menos', 0, 1], ['noidea', 'No tengo idea', 0, 2]] }
+  ];
+  var TICKETS = [10000, 20000, 30000, 50000];
+  var TOTAL_STEPS = Q.length + 3; // intro + 8 + ticket + resultado
+
+  var st;
+  function reset() { st = { scr: 'intro', i: 0, negocio: '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', decision: null, err: '' }; }
+  reset();
+
+  var app = document.getElementById('app');
+  var bar = document.getElementById('bar');
+  var stepLbl = document.getElementById('stepLbl');
+
+  function ico(n) { return '<svg class="ico"><use href="' + SPRITE + n + '"/></svg>'; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function clp(n) { return '$' + Math.round(n).toLocaleString('es-CL'); }
+  function opt(qid, key) { var q = Q.filter(function (x) { return x.id === qid; })[0]; return q.o.filter(function (o) { return o[0] === key; })[0]; }
+
+  function calc() {
+    var r = st.r, e = 0, p = 0;
+    Q.forEach(function (q) { var o = opt(q.id, r[q.id]); if (o) { e += o[2]; p += o[3]; } });
+    var vol = { menos5: 3, '5a20': 12, mas20: 25 }[r.q1] || 0;
+    var frac = ({ tiro: 0, horas: 0.05, algunos: 0.1 }[r.q2] || 0) + ({ nunca: 0, aveces: 0.03, todos: 0.06 }[r.q3] || 0);
+    var perdidas = Math.round(vol * 6 * frac);
+    var noshow = { nunca: 0, '1a2': 1.5, varias: 3, sinhoras: 0 }[r.q6] || 0;
+    var t = st.ticket || 0;
+    var escAt = perdidas * 4 * 0.3 * t;
+    var escNs = noshow * 4 * t;
+    var total = Math.round((escAt + escNs) / 10000) * 10000;
+    var rec = (r.q1 === 'menos5' && e + p < 2) ? 'no' : (p >= 4 ? 'pro' : 'esencial');
+    var m = [];
+    m.push(['Ficha de Google completa y una web con botón directo a tu WhatsApp, para que te encuentren y te escriban.', 'e']);
+    if (r.q2 !== 'tiro') m.push(['Responder en menos de un minuto, también mientras atiendes, con un agente que conoce tus precios y horarios.', 'e']);
+    if (r.q3 === 'aveces' || r.q3 === 'todos') m.push(['Atender de noche y el fin de semana, y dejar agendado lo que hoy se pierde.', 'e']);
+    if (r.q4 !== 'sistema') m.push(['Pasar las horas y pedidos a un panel: todo en un solo lugar y no en el chat o el cuaderno.', 'e']);
+    if (r.q5 && r.q5 !== 'casitodas') m.push(['Volver a escribirle a quien preguntó y no reservó, al día siguiente y a los 3 días.', 'p']);
+    if (r.q6 === '1a2' || r.q6 === 'varias') m.push(['Mandar un recordatorio el día antes para bajar las inasistencias.', 'p']);
+    if (r.q7 === 'algunos' || r.q7 === 'unavez') m.push(['Escribirle cada mes a los clientes que no vuelven hace 30 a 60 días.', 'p']);
+    if (r.q8 && r.q8 !== 'exacto') m.push(['Medir cuántas consultas llegan, cuántas se agendan y de dónde viene cada cliente.', 'p']);
+    return { e: e, p: p, perdidas: perdidas, noshow: noshow, escAt: escAt, escNs: escNs, total: total, rec: rec, mejoras: m };
+  }
+
+  function resumen(c) {
+    var pk = PACK[st.elegido || (c.rec === 'pro' ? 'pro' : 'esencial')];
+    var L = [];
+    L.push('Hola ' + (st.nombre || '') + ', soy Benja de HORIZON. Te dejo la radiografía de ' + (st.negocio || 'tu negocio') + '.');
+    L.push('');
+    if (c.total > 0) {
+      L.push('Lo que se te escapa hoy: cerca de ' + clp(c.total) + ' al mes');
+      if (c.perdidas) L.push('- ' + c.perdidas + ' consultas por semana sin respuesta a tiempo');
+      if (c.noshow) L.push('- ' + String(c.noshow).replace('.', ',') + ' personas por semana que reservan y no llegan');
+      L.push('');
+    }
+    L.push('Plan de acción:');
+    c.mejoras.forEach(function (m, i) { L.push((i + 1) + '. ' + m[0]); });
+    L.push('');
+    if (c.rec === 'no') {
+      L.push('Por ahora no te recomiendo invertir en un sistema. Con estos pasos ya puedes ordenar mucho. Cuando te escriban más, conversamos.');
+    } else {
+      L.push('Te recomiendo el Pack ' + pk.nm + ': ' + clp(pk.impl) + ' de implementación y ' + clp(pk.mes) + ' al mes desde el mes 2.');
+      L.push(st.decision === 'partimos' ? 'Hoy te llegan a tu correo la cotización formal y el contrato.' : 'Cualquier duda, me escribes por acá.');
+    }
+    return L.join('\n');
+  }
+
+  function progress(n) { bar.style.width = Math.round(n / TOTAL_STEPS * 100) + '%'; }
+
+  function render() {
+    var h = '';
+    if (st.scr === 'intro') {
+      progress(0); stepLbl.textContent = 'Radiografía';
+      h = '<section class="scr">' +
+        '<span class="kicker">Radiografía de tu negocio · 2 minutos</span>' +
+        '<h1>8 preguntas para ver qué se le escapa a tu negocio</h1>' +
+        '<p class="lead">Respondes tocando la opción que más se parece a tu día. Al final ves cuánto se te puede estar escapando al mes y qué te conviene.</p>' +
+        '<div class="field"><label for="negocio">¿Cómo se llama tu negocio?</label><input id="negocio" autocomplete="organization" value="' + esc(st.negocio) + '" placeholder="Ej: Kine Activa"></div>' +
+        '<button class="btn btn-acc" data-act="start">Empezar ' + ico('i-arrow') + '</button>' +
+        '</section>';
+    } else if (st.scr === 'q') {
+      var q = Q[st.i];
+      progress(st.i + 1); stepLbl.textContent = 'Pregunta ' + (st.i + 1) + ' de ' + Q.length;
+      h = '<section class="scr">' +
+        '<span class="kicker">Pregunta ' + (st.i + 1) + ' de ' + Q.length + '</span>' +
+        '<h1>' + esc(q.t) + '</h1>' +
+        '<div class="opts">' + q.o.map(function (o) {
+          return '<button class="opt' + (st.r[q.id] === o[0] ? ' sel' : '') + '" data-act="ans" data-k="' + o[0] + '"><span>' + esc(o[1]) + '</span>' + ico('i-chev-r') + '</button>';
+        }).join('') + '</div>' +
+        '<div class="nav-row"><button class="link" data-act="back">' + ico('i-chev-l') + 'Atrás</button></div>' +
+        '</section>';
+    } else if (st.scr === 'ticket') {
+      progress(Q.length + 1); stepLbl.textContent = 'Último dato';
+      h = '<section class="scr">' +
+        '<span class="kicker">Último dato</span>' +
+        '<h1>¿Cuánto gasta en promedio un cliente cada vez que viene?</h1>' +
+        '<div class="chips">' + TICKETS.map(function (t) { return '<button class="chip' + (st.ticket === t ? ' sel' : '') + '" data-act="tk" data-v="' + t + '">' + clp(t) + '</button>'; }).join('') + '</div>' +
+        '<div class="field"><label for="ticket">U otro monto</label><input id="ticket" inputmode="numeric" placeholder="Ej: 25000" value="' + (st.ticket && TICKETS.indexOf(st.ticket) < 0 ? st.ticket : '') + '"><small>Solo se usa para calcular cuánto se te escapa al mes.</small></div>' +
+        '<button class="btn btn-acc" data-act="toRes">Ver mi resultado ' + ico('i-arrow') + '</button>' +
+        '<div class="nav-row"><button class="link" data-act="back">' + ico('i-chev-l') + 'Atrás</button></div>' +
+        '</section>';
+    } else if (st.scr === 'res') {
+      var c = calc();
+      if (!st.elegido) st.elegido = c.rec === 'pro' ? 'pro' : 'esencial';
+      progress(TOTAL_STEPS); stepLbl.textContent = 'Tu resultado';
+      var leak = c.total > 0 ?
+        '<div class="leak"><small>' + esc(st.negocio || 'Tu negocio') + ' · hoy</small>' +
+        '<p class="big">≈ ' + clp(c.total) + ' <span>al mes</span></p>' +
+        '<ul>' +
+          (c.perdidas ? '<li><span>Consultas sin respuesta a tiempo</span><b>' + c.perdidas + ' / sem</b></li>' : '') +
+          (c.noshow ? '<li><span>Reservan y no llegan</span><b>' + String(c.noshow).replace('.', ',') + ' / sem</b></li>' : '') +
+          '<li><span>Tu ticket promedio</span><b>' + clp(st.ticket) + '</b></li>' +
+        '</ul>' +
+        '<p>Cálculo a la baja con tus respuestas: suponemos que 3 de cada 10 consultas perdidas habrían reservado. Es una estimación, no una promesa.</p></div>' :
+        '<div class="notyet">Con tus respuestas no vemos una fuga grande en la atención. Igual hay cosas que se pueden ordenar: revisa tu plan de acción.</div>';
+
+      var packs = '';
+      if (c.rec !== 'no') {
+        packs = '<h2>' + (c.rec === 'pro' ? 'Te recomiendo el Pack Pro' : 'Te recomiendo el Pack Esencial') + '</h2>' +
+          '<div class="packs">' + ['esencial', 'pro'].map(function (k) {
+            var pk = PACK[k];
+            return '<button class="pk ' + (k === 'pro' ? 'p' : 'e') + (c.rec === k ? ' rec' : '') + (st.elegido === k ? ' chosen' : '') + '" data-act="pick" data-k="' + k + '">' +
+              (c.rec === k ? '<span class="badge">Recomendado para ti</span>' : '') +
+              '<span class="nm">' + pk.nm + '</span><span class="cl">' + pk.cl + '</span>' +
+              '<span class="pr"><b>' + clp(pk.impl) + '</b> implementación · ' + clp(pk.mes) + ' / mes</span>' +
+              (st.elegido === k ? '<span class="chk">Elegido</span>' : '') +
+              '</button>';
+          }).join('') + '</div>';
+      } else {
+        packs = '<div class="notyet"><strong>Por ahora no te recomiendo invertir en un sistema.</strong> Te llegan pocos mensajes y lo estás manejando bien. Con el plan de acción ya puedes ordenar mucho, y cuando te escriban más, conversamos.</div>';
+      }
+
+      var why = '<div class="why"><h2>Tu plan de acción</h2><ol>' + c.mejoras.map(function (m) {
+        return '<li><span>' + esc(m[0]) + (c.rec !== 'no' ? '<em class="' + m[1] + '">' + (m[1] === 'e' ? 'Esencial y Pro' : 'Pro') + '</em>' : '') + '</span></li>';
+      }).join('') + '</ol></div>';
+
+      h = '<section class="scr">' +
+        '<span class="kicker">Tu resultado</span>' +
+        '<h1>Esto es lo que se le escapa hoy a ' + esc(st.negocio || 'tu negocio') + '</h1>' +
+        leak + packs + why +
+        '<button class="btn btn-acc" data-act="toDatos">' + (c.rec === 'no' ? 'Quiero mi radiografía' : 'Continuar') + ' ' + ico('i-arrow') + '</button>' +
+        '<div class="nav-row"><button class="link" data-act="back">' + ico('i-chev-l') + 'Cambiar respuestas</button><a class="link" href="/terreno" target="_blank" rel="noopener">Comparar packs ' + ico('i-ext') + '</a></div>' +
+        '</section>';
+    } else if (st.scr === 'datos') {
+      var c2 = calc();
+      var pk2 = PACK[st.elegido];
+      stepLbl.textContent = 'Tus datos';
+      h = '<section class="scr">' +
+        '<span class="kicker">Para mandarte tu radiografía</span>' +
+        '<h1>¿A dónde te la mando?</h1>' +
+        '<p class="lead">Te llega tu resultado y el plan de acción, compres o no compres.</p>' +
+        '<div class="field"><label for="nombre">Tu nombre</label><input id="nombre" autocomplete="name" value="' + esc(st.nombre) + '"></div>' +
+        '<div class="field"><label for="tel">WhatsApp</label><input id="tel" inputmode="tel" autocomplete="tel" placeholder="9 1234 5678" value="' + esc(st.tel) + '"></div>' +
+        '<div class="field"><label for="email">Correo</label><input id="email" type="email" inputmode="email" autocomplete="email" value="' + esc(st.email) + '"><small>Ahí te llegan la cotización formal y el contrato si partimos.</small></div>' +
+        (st.err ? '<p class="err">' + esc(st.err) + '</p>' : '') +
+        (c2.rec === 'no' ?
+          '<button class="btn btn-acc" data-act="send" data-d="lo-pienso">Mandarme la radiografía ' + ico('i-arrow') + '</button>' :
+          '<button class="btn ' + (st.elegido === 'pro' ? 'btn-p' : 'btn-acc') + '" data-act="send" data-d="partimos">Partimos con el ' + pk2.nm + ' ' + ico('i-arrow') + '</button>' +
+          '<button class="btn btn-ghost" data-act="send" data-d="lo-pienso">Lo voy a pensar</button>') +
+        '<div class="nav-row"><button class="link" data-act="back">' + ico('i-chev-l') + 'Volver al resultado</button></div>' +
+        '</section>';
+    } else if (st.scr === 'sending') {
+      h = '<section class="scr"><h1>Guardando…</h1></section>';
+    } else if (st.scr === 'listo') {
+      var c3 = calc();
+      var phone = normPhone(st.tel);
+      var wa = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(resumen(c3));
+      stepLbl.textContent = 'Listo';
+      h = '<section class="scr">' +
+        '<span class="ok-ic">' + ico('i-check') + '</span>' +
+        '<h1>' + (st.decision === 'partimos' ? '¡Partimos, ' + esc(st.nombre.split(' ')[0]) + '!' : '¡Listo, ' + esc(st.nombre.split(' ')[0]) + '!') + '</h1>' +
+        '<p class="lead">' + (st.decision === 'partimos' ?
+          'Hoy te llegan a ' + esc(st.email) + ' la cotización formal y el contrato del Pack ' + PACK[st.elegido].nm + '. Con la firma y el anticipo partimos.' :
+          'Te mando tu radiografía por WhatsApp ahora. Mañana te escribo para resolver cualquier duda.') + '</p>' +
+        (st.err ? '<p class="err">' + esc(st.err) + '</p>' : '') +
+        '<a class="btn wa-btn" href="' + wa + '" target="_blank" rel="noopener">Enviar radiografía por WhatsApp ' + ico('i-arrow') + '</a>' +
+        '<p class="note">Se abre WhatsApp con el mensaje listo para ' + esc(st.tel) + '.</p>' +
+        '<div class="nav-row"><button class="link" data-act="restart">' + ico('i-plus') + 'Nueva radiografía</button></div>' +
+        '</section>';
+    }
+    app.innerHTML = h;
+    window.scrollTo(0, 0);
+  }
+
+  function normPhone(t) {
+    var d = String(t || '').replace(/\D/g, '');
+    if (d.indexOf('56') === 0) return d;
+    if (d.length === 9 && d[0] === '9') return '56' + d;
+    if (d.length === 8) return '569' + d;
+    return d;
+  }
+
+  function readDatos() {
+    var n = document.getElementById('nombre'), t = document.getElementById('tel'), e = document.getElementById('email');
+    if (n) st.nombre = n.value.trim();
+    if (t) st.tel = t.value.trim();
+    if (e) st.email = e.value.trim();
+  }
+
+  function send(decision) {
+    readDatos();
+    st.decision = decision;
+    if (!st.nombre) { st.err = 'Falta tu nombre.'; return render(); }
+    if (normPhone(st.tel).length < 11) { st.err = 'Revisa el WhatsApp: debe tener 9 dígitos, partiendo con 9.'; return render(); }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(st.email)) { st.err = 'Revisa el correo.'; return render(); }
+    st.err = '';
+    var c = calc();
+    var payload = {
+      nombre: st.nombre, email: st.email, empresa: st.negocio, telefono: '+' + normPhone(st.tel),
+      mensaje: 'Radiografía en terreno. Recomendado: ' + c.rec + '. Elegido: ' + st.elegido + '. Decisión: ' + decision + '. Se le escapan ≈ ' + clp(c.total) + '/mes.',
+      fuente: 'terreno', origen: 'terreno-radiografia',
+      radiografia: {
+        respuestas: st.r, ticket: st.ticket, escape_mes: c.total, puntos_e: c.e, puntos_p: c.p,
+        recomendado: c.rec, elegido: st.elegido, decision: decision,
+        mejoras: c.mejoras.map(function (m) { return m[0]; }), resumen: resumen(c)
+      }
+    };
+    st.scr = 'sending'; render();
+    fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (r) { if (!r.ok) throw new Error('status ' + r.status); })
+      .catch(function () { st.err = 'No se pudo guardar en OPS (sin señal o error del servidor). Manda igual la radiografía por WhatsApp y anota el lead a mano.'; })
+      .then(function () { st.scr = 'listo'; render(); });
+  }
+
+  app.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-act]'); if (!b) return;
+    var a = b.getAttribute('data-act');
+    if (a === 'start') { st.negocio = document.getElementById('negocio').value.trim(); st.scr = 'q'; st.i = 0; }
+    else if (a === 'ans') { st.r[Q[st.i].id] = b.getAttribute('data-k'); if (st.i < Q.length - 1) st.i++; else st.scr = 'ticket'; }
+    else if (a === 'tk') { st.ticket = Number(b.getAttribute('data-v')); document.getElementById('ticket').value = ''; }
+    else if (a === 'toRes') {
+      var v = Number(String(document.getElementById('ticket').value).replace(/\D/g, ''));
+      if (v > 0) st.ticket = v;
+      if (!st.ticket) { alertTicket(); return; }
+      st.elegido = null; st.scr = 'res';
+    }
+    else if (a === 'pick') { st.elegido = b.getAttribute('data-k'); }
+    else if (a === 'toDatos') { st.scr = 'datos'; }
+    else if (a === 'send') { send(b.getAttribute('data-d')); return; }
+    else if (a === 'restart') { reset(); }
+    else if (a === 'back') {
+      if (st.scr === 'q') { if (st.i > 0) st.i--; else st.scr = 'intro'; }
+      else if (st.scr === 'ticket') { st.scr = 'q'; st.i = Q.length - 1; }
+      else if (st.scr === 'res') { st.scr = 'ticket'; }
+      else if (st.scr === 'datos') { readDatos(); st.err = ''; st.scr = 'res'; }
+    }
+    render();
+  });
+
+  function alertTicket() {
+    var f = document.getElementById('ticket');
+    f.focus(); f.style.borderColor = '#C2410C';
+    f.placeholder = 'Elige un monto o escríbelo';
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

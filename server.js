@@ -119,6 +119,7 @@ const rewrites = {
   '/terreno':         '/Pages/terreno/index.html',
   '/terreno/esencial': '/Pages/terreno/esencial.html',
   '/terreno/pro':     '/Pages/terreno/pro.html',
+  '/terreno/radiografia': '/Pages/terreno/radiografia.html',
   '/servicios':       '/Pages/servicios.html',
   '/recursos':        '/Pages/recursos/index.html',
   // /crm redirige al pipeline unificado en OPS

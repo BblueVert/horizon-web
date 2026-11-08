@@ -60,13 +60,13 @@ Eso es **~30 contactos por semana**, o **6 por día hábil**. Se reparte en tres
 | **Cada mes** | Ajuste del agente con las preguntas reales | Ajuste del agente + **reporte de resultados** en 15 minutos |
 | **Cómo se ve en la demo** | Le pide una hora al agente y la ve en el panel | Lo mismo, y además le muestras el recordatorio, el mensaje de seguimiento y el dashboard |
 | **La frase para venderlo** | "Ninguna consulta sin respuesta, y la hora queda agendada aunque estés atendiendo." | "Llenas la agenda y los clientes vuelven, sin perseguir a nadie." |
-| **Implementación** | **$290.000** (al firmar $145.000) | **$590.000** (al firmar $295.000) |
+| **Implementación** | **$290.000** (al firmar $145.000) | **$490.000** (al firmar $245.000) |
 | **Mensualidad (desde el mes 2)** | **$99.000** | **$149.000** |
 | **Plazo** | 2–3 semanas | 3–4 semanas |
 
 Por qué el Pro vale la diferencia, en números del propio negocio: si le recupera 2 horas al mes que se iban por inasistencias y 2 clientes que no volvían, con un ticket de $20.000 ya son $80.000/mes. El cálculo se hace en el diagnóstico con su ticket real, no con este ejemplo.
 
-**La escalera (cómo el cliente llega solo al Pro).** El panel del Esencial cuenta las **consultas que no terminaron en hora o pedido** y las horas a las que la gente no llegó. En la sesión de resultados de los 60 días se le muestra ese número con su ticket real, y el Pro aparece como la solución a lo que él mismo ve. Al subir paga solo la diferencia de implementación ($300.000) y la mensualidad pasa de $99.000 a $149.000. Requisito de producto: ese contador tiene que existir en el panel del Esencial desde el día 1.
+**La escalera (cómo el cliente llega solo al Pro).** El panel del Esencial cuenta las **consultas que no terminaron en hora o pedido** y las horas a las que la gente no llegó. En la sesión de resultados de los 60 días se le muestra ese número con su ticket real, y el Pro aparece como la solución a lo que él mismo ve. Al subir paga solo la diferencia de implementación ($200.000) y la mensualidad pasa de $99.000 a $149.000. Requisito de producto: ese contador tiene que existir en el panel del Esencial desde el día 1.
 
 Versión visual (recorrido del sistema, packs y escalera): https://claude.ai/artifact/AeKHHJCQszGfQMBkyauPcc (privada).
 
@@ -93,7 +93,7 @@ Reglas:
 - Con presupuesto "todavía no" no se agenda; queda como lead frío.
 - **Fuera de foco hasta enero:** agente suelto, contenido mensual, identidad visual, ads sueltos y venta activa de Binks Barber.
 
-**Mezcla esperada de los 5 (hipótesis):** 3 × Esencial + 2 × Pro ≈ **$2.050.000** en implementación (al firmar en diciembre ≈ **$1.025.000**; el saldo, al entregar en enero) y **≈ $595.000/mes** de mensualidades desde el mes 2. Es menos plata que la landing, a propósito: el objetivo de diciembre son 5 casos reales funcionando, con testimonio. Con esos casos, los precios de 2027 suben.
+**Mezcla esperada de los 5 (hipótesis):** 3 × Esencial + 2 × Pro ≈ **$1.850.000** en implementación (al firmar en diciembre ≈ **$925.000**; el saldo, al entregar en enero) y **≈ $595.000/mes** de mensualidades desde el mes 2. Es menos plata que la landing, a propósito: el objetivo de diciembre son 5 casos reales funcionando, con testimonio. Con esos casos, los precios de 2027 suben.
 
 **Revisión al 22 de noviembre:** si con 6–8 diagnósticos nadie firma ni el Esencial, el problema no es el precio sino la confianza o la apertura (ver sección 6). Si cierran fácil y nadie pregunta el precio, es señal de que está bajo: subir el Esencial para los clientes 4 y 5.
 
