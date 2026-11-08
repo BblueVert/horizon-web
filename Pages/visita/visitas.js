@@ -7,7 +7,7 @@ window.HZ_VISITAS = {
     nombre: 'Qué Rolls',
     rubro: 'Sushi · Rancagua',
     color: '#D7263D',
-    web: 'https://horizon-propuestas.vercel.app/que-rolls/',
+    web: 'https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app/que-rolls/',
     chat: null,
     chatEnWeb: true,
     panel: 'https://mesa-cero.vercel.app/panel/que-rolls',
@@ -17,7 +17,7 @@ window.HZ_VISITAS = {
     nombre: 'Andrea Escobar Cake Boutique',
     rubro: 'Pastelería y café · Rancagua',
     color: '#B5838D',
-    web: 'https://horizon-propuestas.vercel.app/cake-boutique/',
+    web: 'https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app/cake-boutique/',
     chat: 'cafe-boutique',
     sugerencias: ['¿Qué tortas tienen?', 'Quiero una torta para 15 personas el sábado', '¿Hasta qué hora atienden?']
   },

@@ -42,7 +42,7 @@ app.use((req, res, next) => {
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
       "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com https://va.vercel-scripts.com https://cdn.vercel-insights.com https://vitals.vercel-insights.com",
-      "frame-src https://horizon-propuestas.vercel.app",
+      "frame-src https://horizon-propuestas.vercel.app https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app",
       "frame-ancestors 'none'",
     ].join('; ')
   );
