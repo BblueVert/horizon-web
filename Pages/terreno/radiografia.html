@@ -179,13 +179,16 @@
         '<p>Cálculo a la baja con tus respuestas: 3 de cada 10 mensajes perdidos habrían comprado, el seguimiento recupera 1 de cada 20 que no compran y el recordatorio salva la mitad de los que no llegan. Es una estimación, no una promesa.</p></div>' :
         '<div class="notyet">Con tus respuestas no vemos una fuga grande. Igual hay cosas que se pueden ordenar: revisa tu plan de acción.</div>';
 
-      var razon = c.rec === 'pro' ?
-        '<p class="lead">El Pro te cuesta cerca de ' + clp(c.extraPro) + ' más al mes y recupera cerca de ' + clp(c.pro) + '.' + (c.porque.length ? ' Porque respondiste ' + c.porque.join(', ') + '.' : '') + '</p>' :
-        (c.rec === 'esencial' ? '<p class="lead">Lo que más se te escapa está en la atención, y eso lo resuelve el agente.' + (c.porque.length ? ' Respondiste ' + c.porque.join(', ') + '.' : '') + ' El Pro recuperaría además cerca de ' + clp(c.pro) + ' al mes: hoy no alcanza a pagar lo que cuesta de más (' + clp(c.extraPro) + ').</p>' : '');
+      // Lo que vemos: lecturas cruzadas de sus respuestas, de la más pesada a la más liviana.
+      var razon = (c.lecturas && c.lecturas.length ? '<div class="why"><h2>Lo que vemos en tu negocio</h2><ol>' + c.lecturas.slice(0, 4).map(function (x) {
+          return '<li><span>' + esc(x[0]) + '<em class="' + x[1] + '">' + (x[1] === 'e' ? 'Lo resuelve el agente' : 'Lo resuelve el Pro') + '</em></span></li>';
+        }).join('') + '</ol></div>' : '') +
+        (c.rec === 'pro' ? '<p class="lead">Por eso te recomiendo el Pro: lo que más pesa está después de la conversación, y eso no lo arregla solo responder rápido.</p>' :
+         c.rec === 'esencial' ? '<p class="lead">Por eso te recomiendo el Esencial: lo que más pesa está en la atención, y eso lo resuelve el agente. El Pro es el paso siguiente cuando eso esté andando.</p>' : '');
 
       var packs = '';
       if (c.rec !== 'no') {
-        packs = '<h2>' + (c.rec === 'pro' ? 'Te recomiendo el Pack Pro' : 'Te recomiendo el Pack Esencial') + '</h2>' + razon +
+        packs = razon + '<h2>' + (c.rec === 'pro' ? 'Te recomiendo el Pack Pro' : 'Te recomiendo el Pack Esencial') + '</h2>' +
           '<div class="packs">' + ['esencial', 'pro'].map(function (k) {
             var pk = PACK[k];
             return '<button class="pk ' + (k === 'pro' ? 'p' : 'e') + (c.rec === k ? ' rec' : '') + (st.elegido === k ? ' chosen' : '') + '" data-act="pick" data-k="' + k + '">' +
@@ -196,7 +199,7 @@
               '</button>';
           }).join('') + '</div>';
       } else {
-        packs = '<div class="notyet"><strong>Por ahora no te recomiendo invertir en un sistema.</strong> Todo lo que se recuperaría no alcanza a pagar la mensualidad. Con el plan de acción ya puedes ordenar mucho, y cuando te escriban más, conversamos.</div>';
+        packs = razon + '<div class="notyet"><strong>Por ahora no te recomiendo invertir en un sistema.</strong> Te llega poco y lo atiendes bien: el desafío hoy es que te encuentren más personas. Con el plan de acción ya puedes ordenar mucho, y cuando te escriban más, conversamos.</div>';
       }
 
       var why = '<div class="why"><h2>Tu plan de acción</h2><ol>' + c.mejoras.map(function (m) {

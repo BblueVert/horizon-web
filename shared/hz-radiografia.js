@@ -2,13 +2,11 @@
    recomendación del pack y resumen. La usan /terreno/radiografia y /visita/<negocio>.
    Precios de terreno: fuente de verdad en ESTRATEGIA/HORIZON-ACELERADORA-NOV-DIC-2026.md.
 
-   Cómo decide:
-   - Las preguntas 1 a 4 miden la ATENCIÓN (responder, horario, cómo se anota). Eso lo resuelve el agente,
-     que es el mismo en los dos packs. Con eso se calcula "lo que recupera el agente".
-   - Las preguntas 5 a 8 miden lo que pasa DESPUÉS de la conversación (quien no compra, quien no llega,
-     quien no vuelve, si sabe sus números). Eso lo resuelve solo el Pro: "lo que recupera además el Pro".
-   - Se recomienda el Pro si lo que recupera además el Pro es al menos el doble de lo que cuesta de más.
-   - "Todavía no" si todo lo que se recupera no alcanza a pagar la mensualidad del Esencial. */
+   Cómo decide: no suma puntos. Cruza las respuestas y saca lecturas del negocio
+   ("te escriben harto y no alcanzas", "ticket bajo y no vuelven"...). Cada lectura apunta a lo que
+   resuelve el agente (los dos packs) o a lo que resuelve el Pro (después de la conversación).
+   El Pro se recomienda cuando lo que pesa está después de la conversación y no es solo efecto de
+   responder tarde. "Todavía no" si llega poco y se atiende bien. La plata que se escapa acompaña. */
 (function () {
   var PACK = {
     esencial: { nm: 'Esencial', cl: 'Atiende y agenda', impl: 290000, mes: 99000 },
@@ -22,7 +20,7 @@
   var MODELOS = {
     general: {
       nm: 'Otro negocio',
-      unidad: 'cliente',
+      unidad: 'cliente', gente: 'clientes', tomado: 'reservas ya tomadas',
       q: {
         q1: ['En un día normal, ¿cuántos mensajes te llegan por WhatsApp o Instagram?', ['Menos de 5', 'Entre 5 y 20', 'Más de 20']],
         q2: ['Cuando estás atendiendo y te escriben, ¿qué pasa con ese mensaje?', ['Respondo al tiro', 'Respondo horas después', 'Algunos se quedan sin responder']],
@@ -38,7 +36,7 @@
     },
     pasteleria: {
       nm: 'Pastelería o café',
-      unidad: 'encargo',
+      unidad: 'encargo', gente: 'clientes', tomado: 'encargos ya tomados',
       q: {
         q1: ['En un día normal, ¿cuántos mensajes te llegan preguntando por tortas, encargos o precios?', ['Menos de 5', 'Entre 5 y 20', 'Más de 20']],
         q2: ['Cuando estás en la cocina o atendiendo el mesón y te escriben, ¿qué pasa con ese mensaje?', ['Respondo al tiro', 'Lo respondo horas después', 'Algunos se me quedan sin responder']],
@@ -54,7 +52,7 @@
     },
     comida: {
       nm: 'Comida (hamburguesas, sushi, delivery)',
-      unidad: 'pedido',
+      unidad: 'pedido', gente: 'clientes', tomado: 'pedidos ya hechos',
       q: {
         q1: ['En un día normal, ¿cuántos pedidos o consultas te llegan por WhatsApp o Instagram?', ['Menos de 5', 'Entre 5 y 20', 'Más de 20']],
         q2: ['En la hora punta, con la cocina a full, si alguien escribe para pedir, ¿qué pasa con ese mensaje?', ['Lo respondemos al tiro', 'Lo respondemos tarde, cuando se calma', 'Algunos se quedan sin responder']],
@@ -70,7 +68,7 @@
     },
     clinica: {
       nm: 'Clínica o servicio con hora',
-      unidad: 'paciente',
+      unidad: 'paciente', gente: 'pacientes', tomado: 'horas ya agendadas',
       q: {
         q1: ['En un día normal, ¿cuántos mensajes o llamadas te llegan pidiendo hora o preguntando precios?', ['Menos de 5', 'Entre 5 y 20', 'Más de 20']],
         q2: ['Cuando recepción está atendiendo o el profesional está con un paciente y escriben, ¿qué pasa con ese mensaje?', ['Se responde al tiro', 'Se responde horas después', 'Algunos se quedan sin responder']],
@@ -132,13 +130,54 @@
     var base = { menos5: 1, '5a20': 2, mas20: 4 }[r.q1] || 0;
     var vuelven = ({ algunos: 0.5, unavez: 1 }[r.q7] || 0) * base * t;
     var pro = seguimiento + recordatorio + vuelven;
-    var rec = (agente + pro < PACK.esencial.mes) ? 'no' : (pro >= 2 * EXTRA_PRO ? 'pro' : 'esencial');
 
-    // Por qué: las respuestas que pesaron, con sus palabras.
+    // ── Interpretación cruzada: cada respuesta se lee junto a las otras, no suma puntos. ──
+    var U = M.unidad;
+    var chips = M.ticket[2];
+    var volumen = r.q1 === 'menos5' ? 'bajo' : (r.q1 === 'mas20' ? 'alto' : 'medio');
+    var ticketNivel = t < chips[1] ? 'bajo' : (t >= chips[2] ? 'alto' : 'medio');
+    var tarde = r.q2 === 'horas' || r.q2 === 'algunos';
+    var fueraHora = r.q3 === 'aveces' || r.q3 === 'todos';
+    var manual = r.q4 === 'whatsapp' || r.q4 === 'cuaderno';
+    var cierraPoco = r.q5 === 'pocas' || r.q5 === 'nose' || r.q5 === 'mitad';
+    var noLlegan = r.q6 === 'varias' || r.q6 === '1a2';
+    var noVuelven = r.q7 === 'unavez' || r.q7 === 'algunos';
+    var unaVez = r.q7 === 'unicavez';
+    var aCiegas = r.q8 === 'noidea' || (r.q8 === 'masomenos' && volumen === 'alto');
+    var L = [];   // [lectura, 'e' (lo resuelve el agente) | 'p' (lo resuelve el Pro), peso]
+    // Atención: lo resuelve el agente, que está en los dos packs.
+    if (volumen === 'alto' && tarde) L.push(['Te escriben harto y no alcanzas a responder a tiempo: no te faltan clientes, te falta capacidad para atenderlos.', 'e', 3]);
+    else if (volumen === 'medio' && tarde) L.push(['Con un volumen manejable igual se te atrasan las respuestas: algo de tu día no te deja responder al tiro.', 'e', 2]);
+    else if (volumen === 'bajo' && tarde) L.push(['Te escriben pocas personas y aun así algunas esperan: con tan pocas, cada ' + U + ' que se enfría duele.', 'e', 2]);
+    if (fueraHora && r.q2 === 'tiro') L.push(['En horario respondes bien, pero lo que llega de noche o el fin de semana espera hasta el otro día.', 'e', 2]);
+    else if (fueraHora) L.push(['Además te escriben fuera de horario: ahí la espera es aún más larga.', 'e', 1]);
+    if (manual && volumen !== 'bajo') L.push(['Anotar cada ' + U + ' a mano con este volumen es justo donde se cruzan, se olvidan o se repiten.', 'e', 1]);
+    if (volumen === 'bajo' && !tarde) L.push(['Atiendes bien lo poco que llega: tu desafío es que te encuentren más personas, no atenderlas.', 'e', 2]);
+    if (unaVez) L.push(['Tu venta es de una sola vez, así que traer de vuelta clientes pesa poco: lo importante es no perder a nadie en la primera conversación.', 'e', 2]);
+    if (ticketNivel === 'alto' && volumen === 'bajo' && !cierraPoco) L.push(['Pocos ' + M.gente + ' de alto valor que compran cuando te contactan: el foco es que te encuentren y te escriban.', 'e', 2]);
+    // Después de la conversación: lo resuelve el Pro.
+    if (cierraPoco && tarde) L.push(['Muchos preguntan y no compran, y en parte es porque la respuesta llega tarde: al responder al tiro, eso ya mejora.', 'e', 1]);
+    else if (cierraPoco) L.push(['Respondes rápido y aun así muchos no compran: el problema está después de la respuesta, en el seguimiento.', 'p', 3]);
+    if (cierraPoco && ticketNivel === 'alto') L.push(['Con un ' + U + ' de este valor, cada persona que pregunta y no vuelve a escribir es plata grande: vale la pena ir a buscarla.', 'p', 2]);
+    if (noLlegan) L.push(['Hay ' + M.tomado + ' que no se concretan' + (manual ? ', y sin confirmación ni recordatorio es lo esperable' : '') + '.', 'p', r.q6 === 'varias' ? 3 : 2]);
+    if (noVuelven && ticketNivel === 'bajo') L.push(['Con un ticket bajo, tu negocio vive de que la gente vuelva. Si no vuelven, hay que ir a buscarlos.', 'p', 3]);
+    else if (noVuelven) L.push(['Muchos ' + M.gente + ' no vuelven solos: hay ventas que hoy no ocurren solo porque nadie les recuerda que existes.', 'p', 2]);
+    if (aCiegas) L.push(volumen === 'alto' ? ['Con este volumen, no saber de dónde llegan tus ' + M.gente + ' es invertir a ciegas en Instagram, promos o apps.', 'p', 2] : ['No sabes bien de dónde llegan tus ' + M.gente + ': no hay cómo saber qué te funciona.', 'p', 1]);
+
+    // Decisión: el Pro conviene cuando lo que pesa está DESPUÉS de la conversación
+    // y no es solo consecuencia de responder tarde. "Todavía no" si llega poco y se atiende bien.
+    var pesoE = 0, pesoP = 0;
+    L.forEach(function (x) { if (x[1] === 'e') pesoE += x[2]; else pesoP += x[2]; });
+    var rec;
+    if (volumen === 'bajo' && !tarde && pesoP < 3) rec = 'no';
+    else if (pesoP >= 4 && pesoP >= pesoE - 1) rec = 'pro';
+    else rec = 'esencial';
+    L.sort(function (a, b) { return b[2] - a[2]; });
+    var lecturas = L.map(function (x) { return [x[0], x[1]]; });
     var porque = [];
     function dijo(id) { var e = etiqueta(m, id, r[id]); if (e) porque.push('«' + e + '»'); }
-    if (rec === 'pro') { if (r.q6 === 'varias' || r.q6 === '1a2') dijo('q6'); if (r.q7 === 'unavez' || r.q7 === 'algunos') dijo('q7'); if (r.q5 && r.q5 !== 'casitodas') dijo('q5'); if (r.q8 === 'noidea') dijo('q8'); }
-    else if (rec === 'esencial') { if (r.q2 !== 'tiro') dijo('q2'); if (r.q3 === 'todos' || r.q3 === 'aveces') dijo('q3'); if (r.q4 !== 'sistema') dijo('q4'); }
+    if (rec === 'pro') { if (noLlegan) dijo('q6'); if (noVuelven) dijo('q7'); if (cierraPoco && !tarde) dijo('q5'); }
+    else if (rec === 'esencial') { if (tarde) dijo('q2'); if (fueraHora) dijo('q3'); if (manual) dijo('q4'); }
 
     var mj = [];
     mj.push(['Ficha de Google completa y una web con botón directo a tu WhatsApp, para que te encuentren y te escriban.', 'e']);
@@ -153,7 +192,7 @@
     return {
       perdidas: perdidas, noshow: noshow,
       agente: redondo(agente), pro: redondo(pro), extraPro: redondo(EXTRA_PRO),
-      total: redondo(agente + pro), rec: rec, porque: porque.slice(0, 3), mejoras: mj,
+      total: redondo(agente + pro), rec: rec, porque: porque.slice(0, 3), lecturas: lecturas, mejoras: mj,
       // compatibilidad con el puntaje anterior (se guarda en OPS)
       e: 0, p: 0
     };
@@ -169,6 +208,11 @@
       L.push('Lo que se te escapa hoy: cerca de ' + clp(c.total) + ' al mes');
       if (c.agente) L.push('- ' + clp(c.agente) + ' por mensajes que se responden tarde o no se responden');
       if (c.pro) L.push('- ' + clp(c.pro) + ' por quienes preguntan y no compran, no llegan o no vuelven');
+      L.push('');
+    }
+    if (c.lecturas && c.lecturas.length) {
+      L.push('Lo que vemos en tu negocio:');
+      c.lecturas.slice(0, 3).forEach(function (x) { L.push('- ' + x[0]); });
       L.push('');
     }
     L.push('Plan de acción:');
