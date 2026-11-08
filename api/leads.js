@@ -1,6 +1,6 @@
 'use strict';
 
-const { sanitize, sanitizeEmail, rateLimit, getIp, httpsPost, uid } = require('./shared');
+const { sanitize, sanitizeEmail, rateLimit, getIp, httpsPost, httpsRequest, uid } = require('./shared');
 const { enviarCorreo } = require('./_correo');
 
 module.exports = async function handler(req, res) {
@@ -63,7 +63,11 @@ module.exports = async function handler(req, res) {
         },
         lead
       );
-      if (r.status >= 400) {
+      // Radiografía de alguien que ya es lead (mismo correo): se actualiza su ficha en vez de fallar.
+      if (r.status === 409 && rx) {
+        const ok = await actualizarLead(SB_URL, SB_KEY, lead);
+        if (!ok) return res.status(503).json({ error: 'Error al guardar el lead' });
+      } else if (r.status >= 400) {
         console.error('[leads] Supabase error status:', r.status, r.body);
         return res.status(503).json({ error: 'Error al guardar el lead' });
       }
@@ -185,4 +189,32 @@ function correoRadiografia(lead, rx, portal) {
   </div>
 </div></body></html>`;
   return { subject, text, html };
+}
+
+// Lead existente (mismo correo): conserva su id y su portal, suma la radiografía y sube la etapa
+// solo si avanza (nunca baja un lead que ya está en arranque, activo o cerrado).
+async function actualizarLead(SB_URL, SB_KEY, lead) {
+  const h = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
+  try {
+    const g = await httpsRequest('GET', `${SB_URL}/rest/v1/leads?email=eq.${encodeURIComponent(lead.email)}&select=id,status,portal_token,hooks_respuestas,nota&limit=1`, h);
+    const prev = (JSON.parse(g.body || '[]'))[0];
+    if (!prev) return false;
+    const ORDEN = ['new', 'contactado', 'propuesta', 'arranque', 'activo', 'cerrado'];
+    const sube = ORDEN.indexOf(lead.status) > ORDEN.indexOf(prev.status);
+    const patch = {
+      nombre: lead.nombre, empresa: lead.empresa || undefined, telefono: lead.telefono || undefined,
+      plan: lead.plan, origen: lead.origen, prioridad: lead.prioridad,
+      nota: [prev.nota, lead.nota].filter(Boolean).join(' | ').slice(0, 2000),
+      hooks_respuestas: { ...(prev.hooks_respuestas && typeof prev.hooks_respuestas === 'object' ? prev.hooks_respuestas : {}), radiografia: lead.hooks_respuestas.radiografia },
+    };
+    if (sube) patch.status = lead.status;
+    if (!prev.portal_token) patch.portal_token = lead.portal_token; else lead.portal_token = prev.portal_token;
+    lead.id = prev.id;
+    const r = await httpsRequest('PATCH', `${SB_URL}/rest/v1/leads?id=eq.${prev.id}`, { ...h, Prefer: 'return=minimal' }, patch);
+    if (r.status >= 300) { console.error('[leads] update error:', r.status, r.body); return false; }
+    return true;
+  } catch (e) {
+    console.error('[leads] update error:', e.message);
+    return false;
+  }
 }
