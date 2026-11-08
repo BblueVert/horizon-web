@@ -1,5 +1,5 @@
 # HORIZON — Aceleradora 0 → 5 clientes
-> Versión 1.1 · 8 noviembre 2026 (v1.4: packs Esencial y Pro diferenciados por resultado) · Del lunes 9 de noviembre al jueves 31 de diciembre de 2026 (8 semanas).
+> Versión 1.1 · 8 noviembre 2026 (v1.5: mismo agente completo en ambos packs; se diferencian por el sistema alrededor) · Del lunes 9 de noviembre al jueves 31 de diciembre de 2026 (8 semanas).
 > Reemplaza la sección 3 (semana a semana) de `HORIZON-PLAN-DE-ACCION-2026.md`, que suponía 13 clientes a diciembre partiendo en septiembre. Hoy el punto de partida real es **0 clientes nuevos firmados**, y este plan parte desde ahí.
 
 ---
@@ -43,30 +43,30 @@ Eso es **~30 contactos por semana**, o **6 por día hábil**. Se reparte en tres
 
 > **Propuesta v1, a confirmar por Benja antes del lunes.** Son montos de trabajo, no validados: se ajustan con los primeros 6–8 diagnósticos.
 
-**Cómo se diferencian.** El código base es el mismo para los dos; lo que cambia es **el trabajo que hace el sistema por el dueño**. No se diferencian por "más funciones", sino por el resultado:
+**Cómo se diferencian.** El código base es el mismo para los dos, y **el agente es el mismo en los dos**: responde y además agenda la hora o toma el pedido, porque ese es el trabajo principal de un agente. Lo que cambia es el sistema que trabaja alrededor del agente:
 
-- **Esencial = no pierdes ninguna consulta.** El sistema atiende.
-- **Pro = las consultas se convierten en clientes, y los clientes vuelven.** El sistema vende y hace el seguimiento.
+- **Esencial = el agente atiende y agenda.** Ninguna consulta sin respuesta y cada hora o pedido queda tomado.
+- **Pro = además, el sistema persigue, recuerda y hace volver.** Lo que el agente no cerró en la conversación, el sistema lo sigue trabajando solo.
 
-| | **1 · Esencial: "Atiende"** | **2 · Pro: "Vende y hace volver"** |
+| | **1 · Esencial: "Atiende y agenda"** | **2 · Pro: "Llena la agenda y hace volver"** |
 |---|---|---|
-| **Para quién** | Negocio al que le escriben y no alcanza a responder, o que no aparece en Google | Negocio que vive de citas, reservas o pedidos repetidos (kine, estética, talleres, comida, clases) |
+| **Para quién** | Negocio al que le escriben y no alcanza a responder ni a agendar | Negocio que vive de clientes que repiten (kine, estética, talleres, comida, clases) o al que la gente deja plantado |
 | **Web + Google Business** | Sí | Sí |
-| **Agente IA en WhatsApp** | **Responde** 24/7 con la info del negocio (precios, horarios, servicios), toma nombre y necesidad, y avisa al dueño cuando hay un interesado | **Cierra:** además de responder, **agenda la hora o toma el pedido** directo en el calendario |
-| **Después de la consulta** | El lead queda guardado en el panel; el dueño hace el seguimiento | **Seguimiento automático** a quien preguntó y no agendó (al día siguiente y a los 3 días) |
-| **Citas y reservas** | — | **Confirmación y recordatorio** el día antes (menos gente que no llega) |
+| **Agente IA en WhatsApp** | **Completo:** responde 24/7 con la info del negocio, **agenda la hora o toma el pedido** y confirma en el momento. Avisa al dueño si algo necesita a una persona. | **El mismo agente completo** |
+| **Panel** | Leads y agenda/pedidos en un solo lugar | Lo mismo + **CRM con historial de cada cliente** y **dashboard con números**: consultas, horas agendadas, inasistencias, de dónde llega cada cliente |
+| **Quien preguntó y no agendó** | Queda en el panel; el dueño decide si le escribe | **Seguimiento automático** al día siguiente y a los 3 días |
+| **Citas y reservas** | Confirmación al agendar | Confirmación + **recordatorio el día antes** (menos gente que no llega) |
 | **Clientes antiguos** | — | **Reactivación mensual:** mensaje a quienes no vuelven hace 30–60 días |
-| **Panel** | Lista de leads con su estado | Dashboard con números: consultas, horas agendadas, inasistencias, de dónde llega cada cliente |
-| **Cada mes** | Ajuste del agente con las preguntas reales | Ajuste del agente + reporte de resultados en 15 minutos |
-| **Cómo se ve en la demo** | Le escribe al agente de su negocio y ve caer su consulta en el panel | Le pide una hora al agente, la ve en el calendario y le llega el recordatorio |
-| **La frase para venderlo** | "Ninguna consulta más sin respuesta, aunque estés atendiendo." | "Llenas la agenda sin perseguir a nadie." |
+| **Cada mes** | Ajuste del agente con las preguntas reales | Ajuste del agente + **reporte de resultados** en 15 minutos |
+| **Cómo se ve en la demo** | Le pide una hora al agente y la ve en el panel | Lo mismo, y además le muestras el recordatorio, el mensaje de seguimiento y el dashboard |
+| **La frase para venderlo** | "Ninguna consulta sin respuesta, y la hora queda agendada aunque estés atendiendo." | "Llenas la agenda y los clientes vuelven, sin perseguir a nadie." |
 | **Implementación** | **$290.000** (al firmar $145.000) | **$590.000** (al firmar $295.000) |
 | **Mensualidad (desde el mes 2)** | **$99.000** | **$149.000** |
 | **Plazo** | 2–3 semanas | 3–4 semanas |
 
 Por qué el Pro vale la diferencia, en números del propio negocio: si le recupera 2 horas al mes que se iban por inasistencias y 2 clientes que no volvían, con un ticket de $20.000 ya son $80.000/mes. El cálculo se hace en el diagnóstico con su ticket real, no con este ejemplo.
 
-Cómo se arma con el mismo código: el Esencial es la base (web + agente + panel). El Pro activa los módulos de agenda, seguimiento, recordatorios, reactivación y dashboard. Se entrega más rápido que un proyecto a medida y el cliente siente que compró algo distinto, porque el resultado es distinto.
+Cómo se arma con el mismo código: el Esencial es la base (web + agente completo + panel con agenda). El Pro activa los módulos de seguimiento, recordatorios, reactivación, CRM con historial y dashboard. Se entrega más rápido que un proyecto a medida y el cliente siente que compró algo distinto, porque el resultado es distinto.
 
 - **Precio piso:** estos montos no se rebajan en la mesa. Si no le alcanza, se baja de pack (Pro → Esencial), no se hace descuento.
 - **Mes 1 de mensualidad incluido**, mes a mes y sin permanencia (igual que hoy).
@@ -80,9 +80,9 @@ Cómo se arma con el mismo código: el Esencial es la base (web + agente + panel
 
 | Lo que dice el dueño | Pack |
 |---|---|
-| "No alcanzo a responder", "me escriben de noche", "no tengo web o no me encuentran" | **1 · Esencial** |
-| "La gente me deja plantado", "se me cruzan las horas", "los clientes vienen una vez y no vuelven" | **2 · Pro** |
-| Las dos cosas | **Pro**, y si el presupuesto no da, Esencial con el Pro escrito como siguiente paso (se paga la diferencia de implementación al subir) |
+| "No alcanzo a responder", "se me pierden las horas por WhatsApp", "no me encuentran en Google" | **1 · Esencial** |
+| "La gente me deja plantado", "los clientes vienen una vez y no vuelven", "no sé cuánto vendo ni de dónde llegan" | **2 · Pro** |
+| Las dos cosas y el presupuesto no da | **Esencial**, con el Pro escrito como siguiente paso (al subir se paga la diferencia de implementación) |
 | Pide publicidad, automatizaciones a medida o algo más grande | Se cotiza aparte después del diagnóstico. No se abre con eso. |
 
 Reglas:
