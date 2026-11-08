@@ -75,7 +75,9 @@ async function enviarCorreo({ to, subject, html, text, cc }) {
       '--' + borde + '--',
     ].filter(l => l !== null).join('\r\n').replace('<me>', '<' + (process.env.CORREO_REMITENTE || 'soportebinks@gmail.com') + '>');
     const r = await jsonPost('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', token, { raw: b64url(mime) });
-    if (r.status >= 300) return 'error: gmail ' + r.status + ' ' + r.body.slice(0, 160);
+    var fuente = process.env.GMAIL_REFRESH_TOKEN ? 'GMAIL_REFRESH_TOKEN' : 'GOOGLE_REFRESH_TOKEN';
+    if (r.status === 403) return 'error: el token de ' + fuente + ' no tiene permiso para mandar correos (gmail.send)';
+    if (r.status >= 300) return 'error: gmail ' + r.status + ' con ' + fuente + ' ' + r.body.slice(0, 120);
     return 'enviado';
   } catch (e) {
     return 'error: ' + e.message;
