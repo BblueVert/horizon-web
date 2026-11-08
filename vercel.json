@@ -24,6 +24,7 @@
     { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" },
     { "source": "/pago-demo", "destination": "/Pages/pago-demo/index.html" },
     { "source": "/demo/cafe-boutique", "destination": "/Pages/demo-cafe-boutique/index.html" },
+    { "source": "/c/:token/:doc", "destination": "/api/documentos?t=:token&doc=:doc" },
     { "source": "/c/:token", "destination": "/Pages/portal/index.html" },
     { "source": "/api/ops/tasks/:id", "destination": "/api/ops/tasks?id=:id" },
     { "source": "/ops", "destination": "/OPS/index.html" },

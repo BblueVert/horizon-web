@@ -127,6 +127,7 @@ function cleanRadiografia(rx) {
     elegido:     pick(rx.elegido, ['esencial', 'pro'], 'esencial'),
     decision:    pick(rx.decision, ['partimos', 'lo-pienso'], 'lo-pienso'),
     mejoras:     Array.isArray(rx.mejoras) ? rx.mejoras.slice(0, 10).map(m => sanitize(m, 200)) : [],
+    lecturas:    Array.isArray(rx.lecturas) ? rx.lecturas.slice(0, 8).map(m => sanitize(m, 300)) : [],
     resumen:     sanitize(rx.resumen, 2000),
     conversacion: sanitize(rx.conversacion, 2000),
     notas:       sanitize(rx.notas, 1000),
@@ -162,8 +163,8 @@ function correoRadiografia(lead, rx, portal) {
     'Tu plan de acción:', ...mejoras.map((m, i) => `${i + 1}. ${m}`), '',
     rx.recomendado === 'no' ? 'Por ahora no te recomiendo invertir en un sistema: con estos pasos ya puedes ordenar mucho.' :
       `Pack ${pk.nm}: ${clp(pk.impl)} de implementación (50% al firmar: ${clp(pk.impl / 2)}) y ${clp(pk.mes)} al mes desde el mes 2. Valores + boleta de honorarios.`,
-    parte ? 'Próximos pasos: te envío el contrato para firmar, pagas el 50% desde tu portal y partimos con el kickoff en 48 horas.' : 'Cualquier duda, respóndeme este correo o escríbeme por WhatsApp al +56 9 7696 2659.',
-    portal && parte ? `Tu portal de cliente: ${portal}` : '', '',
+    parte ? 'Próximos pasos: revisas la propuesta y el contrato, pagas el 50% desde tu portal y partimos con el kickoff en 48 horas.' : 'Cualquier duda, respóndeme este correo o escríbeme por WhatsApp al +56 9 7696 2659.',
+    portal && parte ? `Propuesta: ${portal}/propuesta\nContrato: ${portal}/contrato\nTu portal de cliente: ${portal}` : '', '',
     'Benja · HORIZON', 'horizonweb.cl',
   ].filter(l => l !== null).join('\n');
 
@@ -184,7 +185,7 @@ function correoRadiografia(lead, rx, portal) {
       ${fila('Implementación (pago único)', clp(pk.impl))}${fila('50% al firmar', clp(pk.impl / 2))}${fila('50% antes de la entrega', clp(pk.impl / 2))}${fila('Mensualidad desde el mes 2', clp(pk.mes) + ' / mes')}
     </table>
     <p style="font-size:12px;color:#9C96AB;margin:0 0 18px">Valores + boleta de honorarios. Mes a mes, sin permanencia. Propuesta válida por 15 días.</p>`}
-    ${parte ? `<h2 style="font-size:17px;margin:0 0 8px">Próximos pasos</h2><ol style="margin:0 0 18px;padding-left:20px;font-size:14.5px;line-height:1.5"><li>Te envío el contrato para firmar.</li><li>Pagas el 50% de inicio desde tu portal, con Mercado Pago.</li><li>Kickoff en 48 horas. El avance lo ves en tu portal.</li></ol>${portal ? `<p style="margin:0 0 18px"><a href="${h(portal)}" style="display:inline-block;background:#F2690C;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:12px">Ir a mi portal</a></p>` : ''}` : '<p style="font-size:14.5px;margin:0 0 18px">Cualquier duda, responde este correo o escríbeme por WhatsApp al +56 9 7696 2659.</p>'}
+    ${parte ? `<h2 style="font-size:17px;margin:0 0 8px">Próximos pasos</h2><ol style="margin:0 0 18px;padding-left:20px;font-size:14.5px;line-height:1.5"><li>Revisas la propuesta y el contrato (botones de abajo).</li><li>Pagas el 50% de inicio desde tu portal, con Mercado Pago.</li><li>Kickoff en 48 horas. El avance lo ves en tu portal.</li></ol>${portal ? `<p style="margin:0 0 10px;font-size:14.5px">Tus documentos, listos para revisar y guardar en PDF:</p><p style="margin:0 0 18px"><a href="${h(portal)}/propuesta" style="display:inline-block;background:#1A1626;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ver propuesta</a><a href="${h(portal)}/contrato" style="display:inline-block;background:#1A1626;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ver contrato</a><a href="${h(portal)}" style="display:inline-block;background:#F2690C;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ir a mi portal</a></p>` : ''}` : '<p style="font-size:14.5px;margin:0 0 18px">Cualquier duda, responde este correo o escríbeme por WhatsApp al +56 9 7696 2659.</p>'}
     <p style="font-size:14.5px;margin:0">Benja<br><span style="color:#9C96AB">HORIZON · Rancagua · horizonweb.cl</span></p>
   </div>
 </div></body></html>`;

@@ -283,7 +283,7 @@
       mensaje: 'Radiografía en terreno. Recomendado: ' + c.rec + '. Elegido: ' + st.elegido + '. Decisión: ' + decision + '. Se le escapan ≈ ' + clp(c.total) + '/mes.' + (st.notas ? ' Notas: ' + st.notas : ''),
       fuente: 'terreno', origen: SLUG ? 'terreno-visita' : 'terreno-radiografia',
       radiografia: {
-        respuestas: st.r, ticket: st.ticket, escape_mes: c.total, agente_mes: c.agente, pro_mes: c.pro, modelo: st.modelo,
+        respuestas: st.r, ticket: st.ticket, escape_mes: c.total, agente_mes: c.agente, pro_mes: c.pro, modelo: st.modelo, lecturas: (c.lecturas || []).map(function (x) { return x[0]; }),
         recomendado: c.rec, elegido: st.elegido, decision: decision,
         mejoras: c.mejoras.map(function (m) { return m[0]; }), resumen: resumen(c),
         negocio_slug: SLUG, notas: st.notas,

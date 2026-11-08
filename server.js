@@ -10,6 +10,7 @@ const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 const opsData     = require('./api/ops/dashboard');
 const opsLeads    = require('./api/ops/leads');
 const opsDemos    = require('./api/ops/demos');
+const documentos  = require('./api/documentos');
 const promoteLead = require('./api/ops/promote-lead');
 const tasks       = require('./api/ops/tasks');
 const agente      = require('./api/ops/agente');
@@ -145,6 +146,7 @@ app.get('/recursos/*', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/r
 
 // Portal con token dinámico
 app.get(['/visita', '/visita/:slug'], (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/index.html')));
+app.get('/c/:token/:doc', (req, res) => { req.query = { ...req.query, t: req.params.token, doc: req.params.doc }; return documentos(req, res); });
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
 app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
 app.get('/api/recursos',  recursos);
