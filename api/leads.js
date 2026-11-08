@@ -127,6 +127,7 @@ function cleanRadiografia(rx) {
     elegido:     pick(rx.elegido, ['esencial', 'pro'], 'esencial'),
     decision:    pick(rx.decision, ['partimos', 'lo-pienso'], 'lo-pienso'),
     mejoras:     Array.isArray(rx.mejoras) ? rx.mejoras.slice(0, 10).map(m => sanitize(m, 200)) : [],
+    color:       /^#[0-9a-f]{6}$/i.test(String(rx.color || '')) ? String(rx.color) : '',
     lecturas:    Array.isArray(rx.lecturas) ? rx.lecturas.slice(0, 8).map(m => sanitize(m, 300)) : [],
     resumen:     sanitize(rx.resumen, 2000),
     conversacion: sanitize(rx.conversacion, 2000),
