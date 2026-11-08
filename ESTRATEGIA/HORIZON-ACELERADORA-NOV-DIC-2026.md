@@ -66,6 +66,10 @@ Eso es **~30 contactos por semana**, o **6 por día hábil**. Se reparte en tres
 
 Por qué el Pro vale la diferencia, en números del propio negocio: si le recupera 2 horas al mes que se iban por inasistencias y 2 clientes que no volvían, con un ticket de $20.000 ya son $80.000/mes. El cálculo se hace en el diagnóstico con su ticket real, no con este ejemplo.
 
+**La escalera (cómo el cliente llega solo al Pro).** El panel del Esencial cuenta las **consultas que no terminaron en hora o pedido** y las horas a las que la gente no llegó. En la sesión de resultados de los 60 días se le muestra ese número con su ticket real, y el Pro aparece como la solución a lo que él mismo ve. Al subir paga solo la diferencia de implementación ($300.000) y la mensualidad pasa de $99.000 a $149.000. Requisito de producto: ese contador tiene que existir en el panel del Esencial desde el día 1.
+
+Versión visual (recorrido del sistema, packs y escalera): https://claude.ai/artifact/AeKHHJCQszGfQMBkyauPcc (privada).
+
 Cómo se arma con el mismo código: el Esencial es la base (web + agente completo + panel con agenda). El Pro activa los módulos de seguimiento, recordatorios, reactivación, CRM con historial y dashboard. Se entrega más rápido que un proyecto a medida y el cliente siente que compró algo distinto, porque el resultado es distinto.
 
 - **Precio piso:** estos montos no se rebajan en la mesa. Si no le alcanza, se baja de pack (Pro → Esencial), no se hace descuento.
