@@ -39,7 +39,13 @@ const encHeader = s => '=?UTF-8?B?' + Buffer.from(s).toString('base64') + '?=';
 // → 'enviado' | 'sin-configurar' | 'error: <detalle>'
 async function enviarCorreo({ to, subject, html, text, cc }) {
   const refresh = process.env.GMAIL_REFRESH_TOKEN || process.env.GOOGLE_REFRESH_TOKEN;
-  if (!refresh || !process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !to) return 'sin-configurar';
+  // Solo nombres de variables, nunca valores.
+  var faltan = [];
+  if (!refresh) faltan.push('GMAIL_REFRESH_TOKEN');
+  if (!process.env.GOOGLE_CLIENT_ID) faltan.push('GOOGLE_CLIENT_ID');
+  if (!process.env.GOOGLE_CLIENT_SECRET) faltan.push('GOOGLE_CLIENT_SECRET');
+  if (faltan.length) return 'sin-configurar: falta ' + faltan.join(', ');
+  if (!to) return 'sin-configurar: falta el correo del cliente';
   try {
     const t = await formPost('https://oauth2.googleapis.com/token', {
       client_id: process.env.GOOGLE_CLIENT_ID, client_secret: process.env.GOOGLE_CLIENT_SECRET,
