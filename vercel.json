@@ -35,6 +35,7 @@
     { "source": "/ops/agente",        "destination": "/OPS/agente.html" },
     { "source": "/ops/deep-work",     "destination": "/OPS/deep-work.html" },
     { "source": "/ops/leads-activos", "destination": "/OPS/leads-activos.html" },
+    { "source": "/ops/demos",         "destination": "/OPS/demos.html" },
     { "source": "/ops/objetivos",     "destination": "/OPS/objetivos.html" },
     { "source": "/ops/agenda",        "destination": "/OPS/agenda.html" },
     { "source": "/ops/tareas",          "destination": "/OPS/tareas.html" },

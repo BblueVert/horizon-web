@@ -9,6 +9,7 @@ const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 // OPS modules — required at startup so errors surface immediately
 const opsData     = require('./api/ops/dashboard');
 const opsLeads    = require('./api/ops/leads');
+const opsDemos    = require('./api/ops/demos');
 const promoteLead = require('./api/ops/promote-lead');
 const tasks       = require('./api/ops/tasks');
 const agente      = require('./api/ops/agente');
@@ -167,6 +168,7 @@ const opsPages = {
   '/ops/agente':          'OPS/agente.html',
   '/ops/deep-work':       'OPS/deep-work.html',
   '/ops/leads-activos':   'OPS/leads-activos.html',
+  '/ops/demos':           'OPS/demos.html',
   '/ops/objetivos':       'OPS/objetivos.html',
   '/ops/agenda':          'OPS/agenda.html',
   '/ops/tareas':          'OPS/tareas.html',
@@ -197,6 +199,7 @@ app.all('/api/saas/mp/:action', mpHandler);
 // OPS API endpoints
 app.get('/api/ops/dashboard',     opsData);
 app.get('/api/ops/leads',         opsLeads);
+app.get('/api/ops/demos',         opsDemos);
 app.post('/api/ops/promote-lead', promoteLead);
 app.get('/api/ops/tasks',         tasks);
 app.post('/api/ops/tasks',        tasks);

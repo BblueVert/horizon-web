@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Panel de demos</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.dm-sel{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.dm-sel a{font-size:13px;font-weight:600;padding:8px 12px;border-radius:99px;border:1px solid var(--border2);color:var(--text2);text-decoration:none;background:var(--card);}
+.dm-sel a.on{background:var(--text);color:var(--card);border-color:var(--text);}
+.dm-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.dm-kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+.dm-kpi small{display:block;font-family:var(--fm);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);}
+.dm-kpi b{font-size:26px;font-variant-numeric:tabular-nums;color:var(--text);}
+.dm-list{display:grid;gap:10px;}
+.dm-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:grid;gap:6px;}
+.dm-item.new{border-color:var(--h1);box-shadow:0 0 0 3px rgba(242,105,12,.15);}
+.dm-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;}
+.dm-top b{font-size:15px;color:var(--text);}
+.dm-meta{font-family:var(--fm);font-size:12px;color:var(--text3);}
+.dm-res{font-size:14px;color:var(--text);}
+.dm-kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13px;}
+.dm-kv dt{color:var(--text3);} .dm-kv dd{margin:0;color:var(--text);font-weight:600;}
+.dm-live{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:12px;color:var(--text3);}
+.dm-live i{width:8px;height:8px;border-radius:50%;background:#16A34A;animation:dmP 1.6s infinite;}
+@keyframes dmP{50%{opacity:.3}}
+@media(max-width:900px){.dm-kpis{grid-template-columns:repeat(2,1fr);}}
+@media (prefers-reduced-motion: reduce){.dm-live i{animation:none}}
+</style>
+<script src="/shared/hz-icons.js"></script>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title" id="dmTitle">Panel de demos</div>
+        <div class="ops-page-sub"><span class="dm-live"><i></i>En vivo · pedidos, reservas y consultas que llegan por WhatsApp y por la web</span></div>
+      </div>
+    </div>
+    <div class="ops-content">
+      <div class="dm-sel" id="dmSel"></div>
+      <div id="dmBody"><div class="ops-loading"><div class="ops-spinner"></div>Cargando…</div></div>
+    </div>
+  </main>
+</div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const TIPO = { pedido: 'Pedido', reserva: 'Reserva', consulta: 'Consulta', derivar: 'Pide hablar con alguien' };
+const BADGE = { pedido: 'badge-green', reserva: 'badge-green', consulta: 'badge-gray', derivar: 'badge-gray' };
+let slug = new URLSearchParams(location.search).get('slug') || '';
+let vistos = null;
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function hora(iso){const d=new Date(iso);return d.toLocaleDateString('es-CL',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});}
+function canal(t){return !t||t==='web'?'Web (chat)':'WhatsApp +'+String(t).replace(/\D/g,'').replace(/^(\d{2})(\d)(\d{4})(\d{4})$/,'$1 $2 $3 $4');}
+
+async function api(q){
+  const r = await fetch('/api/ops/demos'+q,{headers:await opsAuthHeaders()});
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+async function cargarLista(){
+  const {fichas} = await api('');
+  if(!slug && fichas.length) slug = fichas[0].slug;
+  document.getElementById('dmSel').innerHTML = fichas.filter(f=>f.activa).map(f=>`<a href="?slug=${f.slug}" class="${f.slug===slug?'on':''}">${esc(f.nombre)}</a>`).join('');
+}
+async function cargar(){
+  if(!slug){document.getElementById('dmBody').innerHTML='<div class="ops-empty"><div class="ops-empty-text">No hay demos publicadas.</div></div>';return;}
+  const {ficha, acciones} = await api('?slug='+encodeURIComponent(slug));
+  document.getElementById('dmTitle').textContent = ficha ? ficha.nombre : 'Panel de demos';
+  const hoy = new Date().toDateString();
+  const deHoy = acciones.filter(a=>new Date(a.created_at).toDateString()===hoy);
+  const cuenta = t => deHoy.filter(a=>a.tipo===t).length;
+  const nuevos = vistos ? new Set(acciones.filter(a=>!vistos.has(a.id)).map(a=>a.id)) : new Set();
+  vistos = new Set(acciones.map(a=>a.id));
+  document.getElementById('dmBody').innerHTML =
+    `<div class="dm-kpis">
+      <div class="dm-kpi"><small>Hoy</small><b>${deHoy.length}</b></div>
+      <div class="dm-kpi"><small>Pedidos</small><b>${cuenta('pedido')}</b></div>
+      <div class="dm-kpi"><small>Reservas</small><b>${cuenta('reserva')}</b></div>
+      <div class="dm-kpi"><small>Consultas</small><b>${cuenta('consulta')+cuenta('derivar')}</b></div>
+    </div>` +
+    (acciones.length ? '<div class="dm-list">'+acciones.map(a=>{
+      const d=a.datos||{};
+      return `<div class="dm-item${nuevos.has(a.id)?' new':''}">
+        <div class="dm-top"><b>${esc(d.cliente||'Cliente')}</b><span class="badge ${BADGE[a.tipo]||'badge-gray'}">${TIPO[a.tipo]||a.tipo}</span></div>
+        <div class="dm-meta">${hora(a.created_at)} · ${esc(canal(a.telefono))}${a.codigo?' · '+esc(a.codigo):''}</div>
+        ${a.resumen?`<div class="dm-res">${esc(a.resumen)}</div>`:''}
+        <dl class="dm-kv">${d.detalle?`<dt>Detalle</dt><dd>${esc(d.detalle)}</dd>`:''}${d.hora?`<dt>Hora</dt><dd>${esc(d.hora)}</dd>`:''}${d.entrega?`<dt>Entrega</dt><dd>${esc(d.entrega)}</dd>`:''}${Number.isFinite(d.total)?`<dt>Total</dt><dd>$${Number(d.total).toLocaleString('es-CL')}</dd>`:''}${d.otros?`<dt>Otros</dt><dd>${esc(d.otros)}</dd>`:''}</dl>
+      </div>`;}).join('')+'</div>'
+    : '<div class="ops-empty"><div class="ops-empty-text">Todavía no hay pedidos en esta demo. Haz uno por WhatsApp o por el chat de la web y aparece aquí solo.</div></div>');
+}
+(async()=>{
+  const s = await opsRequireAuth(); if(!s) return;
+  try { await cargarLista(); await cargar(); } catch(e){ document.getElementById('dmBody').innerHTML='<div class="ops-empty"><div class="ops-empty-text">No se pudo cargar ('+esc(e.message)+').</div></div>'; }
+  setInterval(()=>cargar().catch(()=>{}), 5000);
+})();
+</script>
+<script src="/shared/analytics.js"></script>
+</body>
+</html>

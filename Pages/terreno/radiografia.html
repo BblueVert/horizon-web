@@ -239,6 +239,7 @@
         (st.err ? '<p class="err">' + esc(st.err) + '</p>' : '') +
         '<a class="btn wa-btn" href="' + wa + '" target="_blank" rel="noopener">Enviar radiografía por WhatsApp ' + ico('i-arrow') + '</a>' +
         '<p class="note">Se abre WhatsApp con el mensaje listo para ' + esc(st.tel) + '.</p>' +
+        (st.correo === 'enviado' ? '<p class="note">El correo con su radiografía' + (st.decision === 'partimos' ? ' y la cotización' : '') + ' ya salió a ' + esc(st.email) + '.</p>' : (st.correo ? '<p class="err">El correo no salió (' + esc(st.correo) + '). Mándale la radiografía por WhatsApp.</p>' : '')) +
         (st.portal ? '<a class="link" href="' + esc(st.portal) + '" target="_blank" rel="noopener">Ver su portal de cliente ' + ico('i-ext') + '</a>' : '') +
         '<div class="nav-row"><button class="link" data-act="restart">' + ico('i-plus') + 'Nueva radiografía</button></div>' +
         '</section>';
@@ -278,7 +279,7 @@
     };
     st.scr = 'sending'; render();
     fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error('status ' + r.status); st.portal = j.portal || ''; }); })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error('status ' + r.status); st.portal = j.portal || ''; st.correo = j.correo || ''; }); })
       .catch(function () { st.err = 'No se pudo guardar en OPS (sin señal o error del servidor). Manda igual la radiografía por WhatsApp y anota el lead a mano.'; })
       .then(function () { st.scr = 'listo'; render(); });
   }

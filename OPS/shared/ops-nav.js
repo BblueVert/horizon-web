@@ -6,6 +6,7 @@
     { href:'/ops/pipeline',     label:'Pipeline',      icon:'pipeline'   },
     { href:'/ops/proyectos',    label:'Proyectos',     icon:'projects'   },
     { href:'/ops/agente',       label:'Agente IA',     icon:'agent'      },
+    { href:'/ops/demos',        label:'Panel demos',   icon:'pipeline'   },
     { href:'/ops/recursos',     label:'Recursos',      icon:'recursos'   },
     { section: 'SAAS' },
     { href:'/ops/saas-clientes',  label:'Clientes SaaS',  icon:'saas'     },

@@ -1,6 +1,7 @@
 'use strict';
 
 const { sanitize, sanitizeEmail, rateLimit, getIp, httpsPost, uid } = require('./shared');
+const { enviarCorreo } = require('./_correo');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://horizonweb.cl');
@@ -82,7 +83,17 @@ module.exports = async function handler(req, res) {
   }
 
   const SITE = (process.env.SITE_URL || 'https://www.horizonweb.cl').replace(/\/$/, '');
-  return res.status(200).json({ ok: true, id: lead.id, portal: lead.portal_token ? `${SITE}/c/${lead.portal_token}` : undefined });
+  const portal = lead.portal_token ? `${SITE}/c/${lead.portal_token}` : undefined;
+
+  // Radiografía de terreno: le llega por correo su diagnóstico y plan de acción (y la cotización si partió).
+  let correo;
+  if (rx) {
+    const c = correoRadiografia(lead, rx, portal);
+    correo = await enviarCorreo({ to: lead.email, subject: c.subject, html: c.html, text: c.text, cc: process.env.CORREO_COPIA || undefined });
+    if (correo !== 'enviado') console.warn('[leads] correo radiografía:', correo);
+  }
+
+  return res.status(200).json({ ok: true, id: lead.id, portal, correo });
 };
 
 function cleanRadiografia(rx) {
@@ -120,4 +131,55 @@ function cleanRadiografia(rx) {
     negocio_slug: sanitize(rx.negocio_slug, 60),
     fecha:       new Date().toISOString(),
   };
+}
+
+// Precios de terreno: misma fuente que shared/hz-radiografia.js (ESTRATEGIA/HORIZON-ACELERADORA-NOV-DIC-2026.md).
+const PACKS = {
+  esencial: { nm: 'Esencial', impl: 290000, mes: 99000, incluye: ['Web del negocio + ficha de Google Business', 'Agente IA en WhatsApp: responde 24/7, agenda y toma pedidos', 'Panel con cada consulta, hora y pedido', 'Primer mes de mensualidad incluido'] },
+  pro:      { nm: 'Pro', impl: 490000, mes: 149000, incluye: ['Todo lo del Pack Esencial', 'Seguimiento automático a quien preguntó y no agendó', 'Recordatorio el día antes y mensaje a clientes que no vuelven', 'CRM con historial y dashboard con reporte mensual', 'Primer mes de mensualidad incluido'] },
+};
+const clp = n => '$' + Math.round(n).toLocaleString('es-CL');
+const h = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function correoRadiografia(lead, rx, portal) {
+  const pk = PACKS[rx.elegido] || PACKS.esencial;
+  const parte = rx.decision === 'partimos' && rx.recomendado !== 'no';
+  const negocio = lead.empresa || 'tu negocio';
+  const nombre = String(lead.nombre || '').split(' ')[0];
+  const subject = parte ? `Tu cotización HORIZON · Pack ${pk.nm} para ${negocio}` : `Tu radiografía HORIZON · ${negocio}`;
+  const mejoras = rx.mejoras || [];
+
+  const text = [
+    `Hola ${nombre}:`, '',
+    rx.escape_mes ? `Con tus respuestas, a ${negocio} se le escapan cerca de ${clp(rx.escape_mes)} al mes (estimación a la baja, no una promesa).` : `Gracias por responder la radiografía de ${negocio}.`, '',
+    'Tu plan de acción:', ...mejoras.map((m, i) => `${i + 1}. ${m}`), '',
+    rx.recomendado === 'no' ? 'Por ahora no te recomiendo invertir en un sistema: con estos pasos ya puedes ordenar mucho.' :
+      `Pack ${pk.nm}: ${clp(pk.impl)} de implementación (50% al firmar: ${clp(pk.impl / 2)}) y ${clp(pk.mes)} al mes desde el mes 2. Valores + boleta de honorarios.`,
+    parte ? 'Próximos pasos: te envío el contrato para firmar, pagas el 50% desde tu portal y partimos con el kickoff en 48 horas.' : 'Cualquier duda, respóndeme este correo o escríbeme por WhatsApp al +56 9 7696 2659.',
+    portal && parte ? `Tu portal de cliente: ${portal}` : '', '',
+    'Benja · HORIZON', 'horizonweb.cl',
+  ].filter(l => l !== null).join('\n');
+
+  const fila = (k, v) => `<tr><td style="padding:6px 0;color:#5F5970">${k}</td><td style="padding:6px 0;text-align:right;font-weight:700;color:#1A1626">${v}</td></tr>`;
+  const html = `<!doctype html><html><body style="margin:0;background:#FFFBF6;font-family:Helvetica,Arial,sans-serif;color:#1A1626">
+<div style="max-width:560px;margin:0 auto;padding:24px 16px">
+  <div style="background:#1A1626;border-radius:16px 16px 0 0;padding:18px 22px;color:#fff;font-weight:800;letter-spacing:3px">HORIZON</div>
+  <div style="background:#fff;border:1px solid #F0E7DC;border-top:0;border-radius:0 0 16px 16px;padding:22px">
+    <p style="margin:0 0 6px;font-size:13px;color:#9C96AB;text-transform:uppercase;letter-spacing:1px">${parte ? 'Cotización' : 'Radiografía'} · ${h(negocio)}</p>
+    <h1 style="margin:0 0 14px;font-size:24px;line-height:1.2">Hola ${h(nombre)}, ${parte ? 'partimos.' : 'aquí está tu radiografía.'}</h1>
+    ${rx.escape_mes ? `<div style="background:#34276E;color:#fff;border-radius:14px;padding:16px 18px;margin:0 0 18px"><div style="font-size:12px;color:#E4DDF5;text-transform:uppercase;letter-spacing:1px">Se te escapa hoy</div><div style="font-size:32px;font-weight:800">≈ ${clp(rx.escape_mes)} al mes</div><div style="font-size:12px;color:#CFC6E6">Estimación a la baja con tus respuestas. No es una promesa.</div></div>` : ''}
+    <h2 style="font-size:17px;margin:0 0 8px">Tu plan de acción</h2>
+    <ol style="margin:0 0 18px;padding-left:20px;font-size:14.5px;line-height:1.5">${mejoras.map(m => `<li style="margin:0 0 6px">${h(m)}</li>`).join('')}</ol>
+    ${rx.recomendado === 'no' ? '<p style="font-size:14.5px">Por ahora no te recomiendo invertir en un sistema: con estos pasos ya puedes ordenar mucho. Cuando te escriban más, conversamos.</p>' : `
+    <h2 style="font-size:17px;margin:0 0 8px">${parte ? 'Cotización' : 'Te recomiendo'}: Pack ${pk.nm}</h2>
+    <ul style="margin:0 0 10px;padding-left:20px;font-size:14px;line-height:1.5">${pk.incluye.map(x => `<li>${h(x)}</li>`).join('')}</ul>
+    <table style="width:100%;border-collapse:collapse;font-size:14.5px;border-top:1px solid #F0E7DC;margin:0 0 6px">
+      ${fila('Implementación (pago único)', clp(pk.impl))}${fila('50% al firmar', clp(pk.impl / 2))}${fila('50% antes de la entrega', clp(pk.impl / 2))}${fila('Mensualidad desde el mes 2', clp(pk.mes) + ' / mes')}
+    </table>
+    <p style="font-size:12px;color:#9C96AB;margin:0 0 18px">Valores + boleta de honorarios. Mes a mes, sin permanencia. Propuesta válida por 15 días.</p>`}
+    ${parte ? `<h2 style="font-size:17px;margin:0 0 8px">Próximos pasos</h2><ol style="margin:0 0 18px;padding-left:20px;font-size:14.5px;line-height:1.5"><li>Te envío el contrato para firmar.</li><li>Pagas el 50% de inicio desde tu portal, con Mercado Pago.</li><li>Kickoff en 48 horas. El avance lo ves en tu portal.</li></ol>${portal ? `<p style="margin:0 0 18px"><a href="${h(portal)}" style="display:inline-block;background:#F2690C;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:12px">Ir a mi portal</a></p>` : ''}` : '<p style="font-size:14.5px;margin:0 0 18px">Cualquier duda, responde este correo o escríbeme por WhatsApp al +56 9 7696 2659.</p>'}
+    <p style="font-size:14.5px;margin:0">Benja<br><span style="color:#9C96AB">HORIZON · Rancagua · horizonweb.cl</span></p>
+  </div>
+</div></body></html>`;
+  return { subject, text, html };
 }

@@ -231,6 +231,14 @@ module.exports = async function handler(req, res) {
       const r = extrasConfirmacion(ficha, out.accion, '');
       extras = r.mensajes;
       aviso = avisoDueno(ficha, r.accion, null);
+      // Queda en el panel de demos de OPS (/ops/demos), igual que lo que llega por el bot de WhatsApp.
+      const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (SB_URL && SB_KEY && ['pedido', 'reserva', 'consulta', 'derivar'].includes(r.accion.tipo)) {
+        await httpsRequest('POST', `${SB_URL}/rest/v1/demo_acciones`,
+          { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          { slug: ficha.slug, telefono: 'web', tipo: r.accion.tipo, resumen: String(r.accion.resumen || '').slice(0, 2000),
+            datos: { ...(r.accion.datos || {}), codigo: r.accion.codigo || null } }).catch(e => console.error('demo-chat acción:', e.message));
+      }
     }
     return res.status(200).json({ respuestas: out.respuestas, accion: out.accion, extras, aviso });
   } catch (e) {
