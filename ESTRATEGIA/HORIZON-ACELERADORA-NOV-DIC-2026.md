@@ -1,5 +1,5 @@
 # HORIZON — Aceleradora 0 → 5 clientes
-> Versión 1.1 · 8 noviembre 2026 (foco en 2 servicios: Agente IA y Sistema digital) · Del lunes 9 de noviembre al jueves 31 de diciembre de 2026 (8 semanas).
+> Versión 1.1 · 8 noviembre 2026 (v1.2: el agente siempre va integrado a un sistema digital) · Del lunes 9 de noviembre al jueves 31 de diciembre de 2026 (8 semanas).
 > Reemplaza la sección 3 (semana a semana) de `HORIZON-PLAN-DE-ACCION-2026.md`, que suponía 13 clientes a diciembre partiendo en septiembre. Hoy el punto de partida real es **0 clientes nuevos firmados**, y este plan parte desde ahí.
 
 ---
@@ -10,7 +10,7 @@
 
 - "Cliente" = contrato firmado + anticipo pagado por el portal (Mercado Pago). Un "sí, hagámoslo" sin anticipo no cuenta.
 - Fecha tope 18 de diciembre, no el 31: desde el 21 los dueños de PyME están en ventas de Navidad, cierres de año y vacaciones. Lo que no se firmó el 18, se firma en enero.
-- **Foco en 2 servicios, no en rubros:** el **Agente IA** y el **Sistema digital** (web, CRM, panel de leads). Son los que HORIZON mantiene hoy. Se le venden a cualquier PyME de servicio que tenga el dolor, sea del rubro que sea (sección 2).
+- **Foco en 2 servicios, no en rubros:** el **Sistema digital** (web, CRM, panel de leads) y el **Agente IA**, que **nunca se vende solo**: siempre va montado sobre un sistema que lo soporta. Se le venden a cualquier PyME de servicio que tenga el dolor, sea del rubro que sea (sección 2).
 - Los primeros 3 entran al **Programa Fundadores** (ya definido en `HORIZON-ECOSISTEMA.md`: mismo precio, 2.º mes de soporte sin costo, soporte congelado 12 meses, sesión de resultados a los 60 días; a cambio, testimonio en video y permiso para mostrar el caso). El cierre de los cupos el 18 de diciembre es la urgencia real del plan. No hay que inventar otra.
 
 ---
@@ -35,31 +35,41 @@ Eso es **~30 contactos por semana**, o **6 por día hábil**. Se reparte en tres
 
 ---
 
-## 2. Qué se vende: 2 servicios
+## 2. Qué se vende: sistema digital + agente integrado
 
-No se crean precios nuevos (fuente de verdad: `HORIZON-ECOSISTEMA.md` + landing `#planes`). En estas 8 semanas se venden **solo dos servicios**, más la combinación de ambos. El rubro da lo mismo: lo que se busca es el dolor.
+**Por qué el agente no se vende solo.** HORIZON está partiendo y todavía no tiene autoridad en el mercado: si no se ha cerrado una web con agente a $490.000, nadie va a pagar $1.490.000 por "un bot". El dueño tiene que ver un **sistema** (web que capta, panel donde caen los leads, registro de cada contacto) y al agente como la pieza que lo hace trabajar solo. El precio se lee como "mi sistema de ventas", no como "el agente".
 
-| Servicio | Qué es | Plan | Implementación | Soporte (desde el mes 2) | Plazo | Se vende mostrando |
-|---|---|---|---|---|---|---|
-| **A · Agente IA** | Atiende WhatsApp, Instagram y web 24/7: responde, califica y agenda | Plan 04 | desde $1.490.000 | $290.000 | 2–3 semanas | La demo express del **propio negocio** funcionando en el celular del dueño (`demo-express`) |
-| **B · Sistema digital** | Web que trae consultas + CRM / panel de leads (y reservas, tienda o caja si lo necesita) | Plan 01 (web + Google + WhatsApp) o Plan 02 (web + sistema + CRM + dashboard) | $490.000 / $990.000 | $120.000 / $200.000 | 3–5 semanas | OPS (pipeline) como panel de leads real, el portal demo y los casos en vivo (VitalKine, Floremané) |
-| **A + B · Los dos** | El sistema completo: web + CRM + agente que le carga los leads | Plan 03 | $1.990.000 | $350.000 | 5–6 semanas | Las dos demos juntas: el agente conversa y el lead aparece en el panel |
+Por eso, en estas 8 semanas, **el Plan 04 (Agente IA suelto, desde $1.490.000) sale de la oferta activa**. Sigue publicado en la web, pero no se ofrece en terreno.
 
-**Cómo elegir qué ofrecer primero (en el diagnóstico):**
+No se crean precios nuevos: la landing ya tiene la opción **"Soporte + IA"** en los planes 01 y 02 (`/plan-01`, `/plan-02`). El agente se cobra ahí, como parte de la mensualidad del sistema, y no como un pago grande al inicio.
 
-| Lo que dice el dueño | Servicio |
+| Oferta | Qué incluye | Implementación (50% al firmar) | Mensualidad con IA (desde el mes 2) | Plazo | Para quién |
+|---|---|---|---|---|---|
+| **1 · Sistema Esencial con IA** (Plan 01 + Soporte + IA) | Web + Google Business + WhatsApp + registro automático de contactos + **agente IA atendiendo WhatsApp** | $490.000 | $290.000 | 3–4 semanas | La mayoría. Es la oferta principal. |
+| **2 · Ecosistema con IA** (Plan 02 + Soporte + IA) | Todo lo anterior + reservas, tienda o caja + **CRM / panel de leads con dashboard** + agente | $990.000 | $390.000 | 4–5 semanas | Negocio con agenda, pedidos o caja desordenados |
+| **3 · Sistema con IA completo** (Plan 03) | Plan 02 + agente + automatizaciones n8n + Meta Ads | $1.990.000 | $350.000 / $490.000 | 5–6 semanas | Solo si el dueño tiene presupuesto y lo pide. No se abre con esta. |
+
+**Cómo se presenta en la mesa:** primero el sistema (la web y el panel donde cae cada consulta), después el agente como "el que atiende cuando tú no puedes". La demo va en ese orden: el dueño le escribe al agente de su negocio (`demo-express`) y ve aparecer el lead en el panel. El agente es el gancho de la demo, pero lo que se vende es el sistema.
+
+**Qué ofrecer primero (en el diagnóstico):**
+
+| Lo que dice el dueño | Oferta |
 |---|---|
-| "No alcanzo a responder", "me escriben de noche", "se me pierden mensajes" | **A · Agente IA** |
-| "No sé cuántas consultas me llegan", "anoto en un cuaderno / en el WhatsApp", "no tengo web o no me trae nada" | **B · Sistema digital** |
-| Las dos cosas y tiene presupuesto | **A + B** (Plan 03) |
-| Las dos cosas y el presupuesto no da | Partir con uno (normalmente B · Plan 01 o A) y dejar el otro escrito en la propuesta como fase 2 |
+| "No alcanzo a responder", "me escriben de noche", "no tengo web o no me trae nada" | **1 · Sistema Esencial con IA** |
+| "Se me cruzan las horas", "no sé cuántas consultas me llegan", "anoto todo en un cuaderno" | **2 · Ecosistema con IA** |
+| Quiere crecer con publicidad y tiene presupuesto | **3 · Plan 03** |
+| El presupuesto no da para la mensualidad con IA | El mismo plan con soporte normal ($120.000 / $200.000) y el agente escrito en la propuesta como fase 2. Nunca agente sin sistema. |
+
+**Decisión a confirmar antes del lunes:** en esta oferta, la implementación del plan incluye **dejar el agente andando** (se construye desde la demo express, así que el costo extra es bajo), y el agente se cobra en la mensualidad con IA. Si prefieres cobrar aparte la puesta en marcha del agente, hay que definir ese monto: este plan no lo inventa.
 
 Reglas:
 - Con presupuesto "todavía no" (filtro de `/agendar`) no se agenda; queda como lead frío.
-- No bajar precio para cerrar: si no da para el plan, se ofrece uno más chico, no un descuento.
-- **Fuera de foco hasta enero:** contenido mensual, identidad visual, ads sueltos y venta activa de Binks Barber. Si un peluquero lo pide, se le da el link, pero no cuenta para los 5 ni se le dedica terreno.
+- No bajar precio para cerrar: si no da, se baja de oferta (2 → 1, o con IA → soporte normal), no se hace descuento.
+- **Fuera de foco hasta enero:** Plan 04 suelto, contenido mensual, identidad visual, ads sueltos y venta activa de Binks Barber.
 
-**Mezcla esperada de los 5 (hipótesis):** 2 × Agente IA + 2 × Sistema digital (un Plan 01 y un Plan 02) + 1 × los dos (Plan 03) ≈ **$6.450.000** en contratos. Anticipos cobrados en diciembre ≈ **$3.225.000**; el saldo entra al entregar (enero) y el soporte mensual desde febrero (≈ $1.250.000/mes si los 5 siguen).
+**Mezcla esperada de los 5 (hipótesis):** 3 × Sistema Esencial con IA + 2 × Ecosistema con IA ≈ **$3.450.000** en implementación (anticipos en diciembre ≈ **$1.725.000**; el saldo, al entregar en enero). La mensualidad con IA suma **≈ $1.650.000/mes** desde el mes 2 si los 5 siguen. Es menos al inicio que la versión anterior del plan, pero es una oferta que alguien sin referencias de HORIZON sí puede comprar, y la plata recurrente es mayor.
+
+**Si al 22 de noviembre ni el Sistema Esencial con IA a $490.000 cierra**, el problema ya no es el empaque: es precio o confianza. Ahí se decide (tú, no el plan) entre bajar la implementación para los 3 Fundadores o sumar una garantía. No se decide antes de tener datos de 6–8 diagnósticos reales.
 
 ---
 
@@ -68,10 +78,8 @@ Reglas:
 Dos días de preparación, no más. Todo lo demás se arregla en movimiento.
 
 1. **Lista de red cálida (50 nombres)** en OPS como leads `new` con origen `red-calida`: nombre, negocio, cómo lo conoces. No solo dueños: también el que conoce a un dueño.
-2. **Lista de 60 negocios objetivo** en Google Maps, filtrados **por dolor, no por rubro**: PyMEs de servicio con 4+ estrellas, 50+ reseñas, WhatsApp visible (señal de que les escriben mucho) y sin web o con web que no capta consultas. Marcar en cada uno si apunta a A (agente), B (sistema) o los dos.
-3. **El kit de demo de los 2 servicios:**
-   - A · Agente: 3 demos express pre-armadas (skill `demo-express`) de negocios reales de la lista, para llegar con el agente ya andando.
-   - B · Sistema: un recorrido de 2 minutos por el panel de leads (OPS pipeline con datos de ejemplo) y el portal demo, en el celular, sin depender de wifi.
+2. **Lista de 60 negocios objetivo** en Google Maps, filtrados **por dolor, no por rubro**: PyMEs de servicio con 4+ estrellas, 50+ reseñas, WhatsApp visible (señal de que les escriben mucho) y sin web o con web que no capta consultas. Marcar en cada uno si apunta a la oferta 1 o a la 2.
+3. **Una sola demo, sistema + agente:** 3 demos express pre-armadas (skill `demo-express`) de negocios reales de la lista, y el panel de leads (OPS pipeline con datos de ejemplo) abierto al lado. El dueño le escribe al agente y ve aparecer su consulta en el panel. Ensayarla en el celular, sin depender de wifi.
 4. **Guion de 3 líneas** para la red cálida, en tuteo:
    > "Hola [nombre], estoy armando HORIZON, sistemas para que los negocios de Rancagua no pierdan clientes por WhatsApp. Estoy tomando 3 negocios fundadores este año. ¿Conoces a alguien con un local que ande colapsado respondiendo mensajes? (Si eres tú, mejor todavía.)"
 5. **Tablero semanal** en OPS: puertas, conversaciones, demos mostradas, diagnósticos, propuestas, cierres, anticipos. Se llena cada viernes con números reales.
@@ -120,10 +128,9 @@ Se revisan con el tablero real de OPS, no con la sensación de la semana.
 | Fecha | Señal de alerta | Qué hacer |
 |---|---|---|
 | **Dom 15 nov** | Menos de 2 diagnósticos agendados | El problema está en la apertura, no en el volumen. Cambiar el ángulo (más demo, menos explicación) antes de sumar puertas. |
-| **Dom 22 nov** | Hay diagnósticos pero 0 cierres | Revisar en qué nivel de consciencia llegan (Componente 1). Probablemente se está ofreciendo un plan muy grande: abrir con Plan 01 o Plan 04. |
+| **Dom 22 nov** | Hay diagnósticos pero 0 cierres | Revisar en qué nivel de consciencia llegan (Componente 1). Si piden algo más barato, ofrecer la oferta 1 con soporte normal y el agente como fase 2. Si ni eso cierra, ver la última nota de la sección 2. |
 | **Dom 6 dic** (mitad) | Menos de 2 cierres | La meta pasa a ser **3 clientes al 18 dic + 2 en la primera semana de enero**. Se dejan las puertas nuevas y se trabaja 100% el pipeline que ya existe. |
 | **Dom 6 dic** | 3 o más cierres | Vas por buen camino. Subir el foco en referidos de los clientes ya firmados. |
-| **Dom 22 nov** | Un servicio no genera ningún diagnóstico y el otro sí | No forzar el que no prende: poner el que funciona primero en la apertura y ofrecer el otro como fase 2 o como combo. |
 | Cualquier semana | Se cierra más rápido de lo que se puede implementar | Escalonar los inicios (la orden de inicio fija la fecha) y avisar el plazo real desde la propuesta. |
 
 ---
@@ -133,7 +140,7 @@ Se revisan con el tablero real de OPS, no con la sensación de la semana.
 Cinco implementaciones en paralelo, más INACAP, es el riesgo real del plan.
 
 - **Inicios escalonados:** los clientes 1–2 parten en noviembre, los clientes 3–5 en diciembre o la primera semana de enero. La propuesta lo dice desde el comienzo.
-- **Reutilizar (por eso se venden solo 2 servicios):** cada Agente IA parte de su ficha de `verticales/demos` (la demo express ya es el 60% del trabajo); cada Sistema digital parte de la misma base de web + panel de leads, con el color y los datos del cliente. Repetir 5 veces dos productos es mucho más rápido que hacer 5 proyectos distintos.
+- **Reutilizar (por eso se vende un solo sistema en 2 tamaños):** cada cliente es la misma base de web + panel de leads, con el color y los datos del negocio, más un agente que parte de su ficha de `verticales/demos` (la demo express ya es buena parte del trabajo). Repetir 5 veces el mismo sistema es mucho más rápido que hacer 5 proyectos distintos.
 - **Entregar el 31 de diciembre no es la meta.** La meta es firmar y cobrar el anticipo; la entrega final de los últimos clientes puede caer en enero, con el plazo escrito en el contrato.
 
 ---
@@ -143,7 +150,7 @@ Cinco implementaciones en paralelo, más INACAP, es el riesgo real del plan.
 - Rediseñar el sitio, OPS o el portal. Ya funcionan (registro: `HORIZON-REMODELACION-OCT-2026.md`).
 - Construir productos o verticales nuevos.
 - Bajar precios o inventar descuentos para cerrar.
-- Vender servicios fuera de los 2 del foco (contenido, identidad, ads sueltos, SaaS).
+- Vender el agente sin sistema, o servicios fuera del foco (contenido, identidad, ads sueltos, SaaS).
 - Mandar una tercera pieza de "convencimiento" por DM (Componente 3: 1 pieza + 1 caso, después se propone el diagnóstico).
 
 ---
