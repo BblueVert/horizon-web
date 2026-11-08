@@ -105,14 +105,17 @@
 <script>
 (function () {
   var SPRITE = '/shared/hz-sprite.svg#';
-  var R = window.HZRX, PACK = R.PACK, Q = R.Q, TICKETS = R.TICKETS, clp = R.clp, normPhone = R.normPhone;
+  var R = window.HZRX, PACK = R.PACK, clp = R.clp, normPhone = R.normPhone;
+  var Q = R.preguntas('general'), TICKETS = R.MODELOS.general.ticket[2];
   var TOTAL_STEPS = Q.length + 3; // intro + 8 + ticket + resultado
+  // El tipo de negocio cambia cómo se escriben las preguntas, el ticket y algunos números del cálculo.
+  function usarModelo(m) { st.modelo = R.modelo(m); Q = R.preguntas(st.modelo); TICKETS = R.MODELOS[st.modelo].ticket[2]; }
 
   var st;
   // ?n=<slug> viene desde /visita/<slug>: precarga el nombre del negocio y lo asocia al lead.
   var SLUG = (new URLSearchParams(location.search).get('n') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
   var VIS = SLUG && window.HZ_VISITAS ? window.HZ_VISITAS[SLUG] : null;
-  function reset() { st = { scr: 'intro', i: 0, negocio: VIS ? VIS.nombre : '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', rut: '', razon: '', dir: '', notas: '', portal: '', decision: null, err: '' }; }
+  function reset() { st = { scr: 'intro', i: 0, negocio: VIS ? VIS.nombre : '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', rut: '', razon: '', dir: '', notas: '', portal: '', decision: null, err: '', modelo: R.modelo(VIS && VIS.modelo) }; usarModelo(st.modelo); }
   reset();
 
   var app = document.getElementById('app');
@@ -121,7 +124,7 @@
 
   function ico(n) { return '<svg class="ico"><use href="' + SPRITE + n + '"/></svg>'; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function calc() { return R.calc(st.r, st.ticket); }
+  function calc() { return R.calc(st.r, st.ticket, st.modelo); }
   function resumen(c) { return R.resumen({ nombre: st.nombre, negocio: st.negocio, elegido: st.elegido, decision: st.decision, portal: st.portal }, c); }
 
   function progress(n) { bar.style.width = Math.round(n / TOTAL_STEPS * 100) + '%'; }
@@ -135,6 +138,9 @@
         '<h1>8 preguntas para ver qué se le escapa a tu negocio</h1>' +
         '<p class="lead">Respondes tocando la opción que más se parece a tu día. Al final ves cuánto se te puede estar escapando al mes y qué te conviene.</p>' +
         '<div class="field"><label for="negocio">¿Cómo se llama tu negocio?</label><input id="negocio" autocomplete="organization" value="' + esc(st.negocio) + '" placeholder="Ej: Kine Activa"></div>' +
+        '<div class="field"><label>¿Qué tipo de negocio es?</label><div class="chips">' + Object.keys(R.MODELOS).filter(function (k) { return k !== 'general'; }).concat(['general']).map(function (k) {
+          return '<button class="chip' + (st.modelo === k ? ' sel' : '') + '" data-act="mod" data-m="' + k + '">' + esc(R.MODELOS[k].nm) + '</button>';
+        }).join('') + '</div></div>' +
         '<button class="btn btn-acc" data-act="start">Empezar ' + ico('i-arrow') + '</button>' +
         '</section>';
     } else if (st.scr === 'q') {
@@ -152,7 +158,7 @@
       progress(Q.length + 1); stepLbl.textContent = 'Último dato';
       h = '<section class="scr">' +
         '<span class="kicker">Último dato</span>' +
-        '<h1>¿Cuánto gasta en promedio un cliente cada vez que viene?</h1>' +
+        '<h1>' + esc(R.MODELOS[st.modelo].ticket[0]) + '</h1><p class="lead">' + esc(R.MODELOS[st.modelo].ticket[1]) + '</p>' +
         '<div class="chips">' + TICKETS.map(function (t) { return '<button class="chip' + (st.ticket === t ? ' sel' : '') + '" data-act="tk" data-v="' + t + '">' + clp(t) + '</button>'; }).join('') + '</div>' +
         '<div class="field"><label for="ticket">U otro monto</label><input id="ticket" inputmode="numeric" placeholder="Ej: 25000" value="' + (st.ticket && TICKETS.indexOf(st.ticket) < 0 ? st.ticket : '') + '"><small>Solo se usa para calcular cuánto se te escapa al mes.</small></div>' +
         '<button class="btn btn-acc" data-act="toRes">Ver mi resultado ' + ico('i-arrow') + '</button>' +
@@ -166,16 +172,20 @@
         '<div class="leak"><small>' + esc(st.negocio || 'Tu negocio') + ' · hoy</small>' +
         '<p class="big">≈ ' + clp(c.total) + ' <span>al mes</span></p>' +
         '<ul>' +
-          (c.perdidas ? '<li><span>Consultas sin respuesta a tiempo</span><b>' + c.perdidas + ' / sem</b></li>' : '') +
-          (c.noshow ? '<li><span>Reservan y no llegan</span><b>' + String(c.noshow).replace('.', ',') + ' / sem</b></li>' : '') +
-          '<li><span>Tu ticket promedio</span><b>' + clp(st.ticket) + '</b></li>' +
+          (c.agente ? '<li><span>Mensajes que se responden tarde o se pierden <i style="font-style:normal;opacity:.75">(lo recupera el agente: Esencial y Pro)</i></span><b>' + clp(c.agente) + '</b></li>' : '') +
+          (c.pro ? '<li><span>Quienes preguntan y no compran, no llegan o no vuelven <i style="font-style:normal;opacity:.75">(lo recupera además el Pro)</i></span><b>' + clp(c.pro) + '</b></li>' : '') +
+          '<li><span>Tu ticket por WhatsApp</span><b>' + clp(st.ticket) + '</b></li>' +
         '</ul>' +
-        '<p>Cálculo a la baja con tus respuestas: suponemos que 3 de cada 10 consultas perdidas habrían reservado. Es una estimación, no una promesa.</p></div>' :
-        '<div class="notyet">Con tus respuestas no vemos una fuga grande en la atención. Igual hay cosas que se pueden ordenar: revisa tu plan de acción.</div>';
+        '<p>Cálculo a la baja con tus respuestas: 3 de cada 10 mensajes perdidos habrían comprado, el seguimiento recupera 1 de cada 20 que no compran y el recordatorio salva la mitad de los que no llegan. Es una estimación, no una promesa.</p></div>' :
+        '<div class="notyet">Con tus respuestas no vemos una fuga grande. Igual hay cosas que se pueden ordenar: revisa tu plan de acción.</div>';
+
+      var razon = c.rec === 'pro' ?
+        '<p class="lead">El Pro te cuesta cerca de ' + clp(c.extraPro) + ' más al mes y recupera cerca de ' + clp(c.pro) + '.' + (c.porque.length ? ' Porque respondiste ' + c.porque.join(', ') + '.' : '') + '</p>' :
+        (c.rec === 'esencial' ? '<p class="lead">Lo que más se te escapa está en la atención, y eso lo resuelve el agente.' + (c.porque.length ? ' Respondiste ' + c.porque.join(', ') + '.' : '') + ' El Pro recuperaría además cerca de ' + clp(c.pro) + ' al mes: hoy no alcanza a pagar lo que cuesta de más (' + clp(c.extraPro) + ').</p>' : '');
 
       var packs = '';
       if (c.rec !== 'no') {
-        packs = '<h2>' + (c.rec === 'pro' ? 'Te recomiendo el Pack Pro' : 'Te recomiendo el Pack Esencial') + '</h2>' +
+        packs = '<h2>' + (c.rec === 'pro' ? 'Te recomiendo el Pack Pro' : 'Te recomiendo el Pack Esencial') + '</h2>' + razon +
           '<div class="packs">' + ['esencial', 'pro'].map(function (k) {
             var pk = PACK[k];
             return '<button class="pk ' + (k === 'pro' ? 'p' : 'e') + (c.rec === k ? ' rec' : '') + (st.elegido === k ? ' chosen' : '') + '" data-act="pick" data-k="' + k + '">' +
@@ -186,7 +196,7 @@
               '</button>';
           }).join('') + '</div>';
       } else {
-        packs = '<div class="notyet"><strong>Por ahora no te recomiendo invertir en un sistema.</strong> Te llegan pocos mensajes y lo estás manejando bien. Con el plan de acción ya puedes ordenar mucho, y cuando te escriban más, conversamos.</div>';
+        packs = '<div class="notyet"><strong>Por ahora no te recomiendo invertir en un sistema.</strong> Todo lo que se recuperaría no alcanza a pagar la mensualidad. Con el plan de acción ya puedes ordenar mucho, y cuando te escriban más, conversamos.</div>';
       }
 
       var why = '<div class="why"><h2>Tu plan de acción</h2><ol>' + c.mejoras.map(function (m) {
@@ -270,7 +280,7 @@
       mensaje: 'Radiografía en terreno. Recomendado: ' + c.rec + '. Elegido: ' + st.elegido + '. Decisión: ' + decision + '. Se le escapan ≈ ' + clp(c.total) + '/mes.' + (st.notas ? ' Notas: ' + st.notas : ''),
       fuente: 'terreno', origen: SLUG ? 'terreno-visita' : 'terreno-radiografia',
       radiografia: {
-        respuestas: st.r, ticket: st.ticket, escape_mes: c.total, puntos_e: c.e, puntos_p: c.p,
+        respuestas: st.r, ticket: st.ticket, escape_mes: c.total, agente_mes: c.agente, pro_mes: c.pro, modelo: st.modelo,
         recomendado: c.rec, elegido: st.elegido, decision: decision,
         mejoras: c.mejoras.map(function (m) { return m[0]; }), resumen: resumen(c),
         negocio_slug: SLUG, notas: st.notas,
@@ -287,7 +297,8 @@
   app.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-act]'); if (!b) return;
     var a = b.getAttribute('data-act');
-    if (a === 'start') { st.negocio = document.getElementById('negocio').value.trim(); st.scr = 'q'; st.i = 0; }
+    if (a === 'mod') { st.negocio = document.getElementById('negocio').value.trim(); usarModelo(b.getAttribute('data-m')); st.r = {}; }
+    else if (a === 'start') { st.negocio = document.getElementById('negocio').value.trim(); st.scr = 'q'; st.i = 0; }
     else if (a === 'ans') { st.r[Q[st.i].id] = b.getAttribute('data-k'); if (st.i < Q.length - 1) st.i++; else st.scr = 'ticket'; }
     else if (a === 'tk') { st.ticket = Number(b.getAttribute('data-v')); document.getElementById('ticket').value = ''; }
     else if (a === 'toRes') {

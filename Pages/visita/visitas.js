@@ -4,6 +4,7 @@
    Un negocio nuevo: agrega una entrada. Si no está aquí, la página intenta igual con /api/demo-chat?slug=<slug>. */
 window.HZ_VISITAS = {
   'que-rolls': {
+    modelo: 'comida',
     nombre: 'Qué Rolls',
     rubro: 'Sushi · Rancagua',
     color: '#D7263D',
@@ -14,6 +15,7 @@ window.HZ_VISITAS = {
     sugerencias: ['¿Qué promos tienen hoy?', 'Quiero pedir para retiro', '¿Hacen delivery a mi casa?']
   },
   'cake-boutique': {
+    modelo: 'pasteleria',
     nombre: 'Andrea Escobar Cake Boutique',
     rubro: 'Pastelería y café · Rancagua',
     color: '#B5838D',
@@ -22,6 +24,7 @@ window.HZ_VISITAS = {
     sugerencias: ['¿Qué tortas tienen?', 'Quiero una torta para 15 personas el sábado', '¿Hasta qué hora atienden?']
   },
   'hospital-burgers': {
+    modelo: 'comida',
     nombre: 'Hospital Burgers',
     rubro: 'Smash burgers · Rancagua',
     color: '#D62828',
@@ -30,6 +33,7 @@ window.HZ_VISITAS = {
     sugerencias: ['¿Qué hamburguesas tienen?', 'Quiero una Hospital Smoke para retiro', '¿Hasta qué hora atienden?']
   },
   'clinica-dental-recreo': {
+    modelo: 'clinica',
     nombre: 'Clínica Dental Recreo',
     rubro: 'Clínica dental · Rancagua',
     color: '#B08D57',
@@ -38,6 +42,7 @@ window.HZ_VISITAS = {
     sugerencias: ['¿La evaluación es gratis?', 'Me duele una muela, ¿me pueden atender hoy?', 'Quiero agendar una limpieza']
   },
   'medic-center-dental': {
+    modelo: 'clinica',
     nombre: 'Medic Center · Clínica Dental',
     rubro: 'Clínica dental · Rancagua',
     color: '#2E9E7A',
