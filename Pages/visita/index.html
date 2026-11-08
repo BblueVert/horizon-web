@@ -154,6 +154,16 @@
   .err { background: #FDE8E8; color: #9B1C1C; border-radius: 12px; padding: 12px 14px; font-size: 14px; }
   .wa-btn { background: var(--wa); color: #fff; }
   .note { font-size: 13px; color: var(--ink3); }
+  .hub { display: grid; gap: 10px; }
+  .hc { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center; padding: 16px; border-radius: 18px; background: var(--surface); border: 1.5px solid var(--line2); text-decoration: none; color: var(--ink); }
+  .hc .n { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--bg2); color: var(--acc); }
+  .hc .n .ico { width: 22px; height: 22px; }
+  .hc b { display: block; font-size: 17px; letter-spacing: -.01em; }
+  .hc small { display: block; font-size: 13.5px; color: var(--ink2); line-height: 1.35; margin-top: 2px; }
+  .hc > .ico { width: 18px; height: 18px; color: var(--ink3); }
+  .hc.done { border-color: #BFE8CF; background: #F4FBF6; }
+  .hc.done .n { background: var(--mint); color: var(--ok); }
+  .hc.off { opacity: .5; pointer-events: none; }
   @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
@@ -176,6 +186,7 @@
   var SPRITE = '/shared/hz-sprite.svg#';
   var slug = (location.pathname.split('/').filter(Boolean)[1] || new URLSearchParams(location.search).get('n') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
   var V = (window.HZ_VISITAS || {})[slug] || null;
+  var MODO = new URLSearchParams(location.search).get('paso') || '';
 
   var PASOS = [
     { id: 'web', t: 'Tu web' }, { id: 'agente', t: 'Tu agente' }, { id: 'panel', t: 'Tu panel' },
@@ -191,7 +202,9 @@
   function negocio() { return V ? V.nombre : 'tu negocio'; }
 
   function renderSteps() {
+    var vis = MODO === 'demo' ? [1, 2] : null;
     stepsEl.innerHTML = PASOS.map(function (p, i) {
+      if (vis && vis.indexOf(i) < 0) return '';
       return '<button data-go="' + i + '" class="' + (i === st.paso ? 'on' : (i < st.max || i < st.paso ? 'done' : '')) + '"' + (i > st.max ? ' disabled' : '') + '>' + (i + 1) + '. ' + p.t + '</button>';
     }).join('');
     var on = stepsEl.querySelector('.on'); if (on && on.scrollIntoView) on.scrollIntoView({ inline: 'center', block: 'nearest' });
@@ -248,7 +261,7 @@
     h += '</section>';
     app.innerHTML = h;
     if (V && V.chat) { pintarChat(); }
-    bar(true, st.accion || (V && V.chatEnWeb) ? 'Mira dónde quedó' : 'Ver el panel', 'next');
+    bar(MODO !== 'demo', st.accion || (V && V.chatEnWeb) ? 'Mira dónde quedó' : 'Ver el panel', 'next');
   }
 
   function pintarChat() {
@@ -272,7 +285,7 @@
         if (j.accion) { st.accion = j.accion; st.aviso = j.aviso; st.chat.push({ k: 'sys', t: 'Listo: esto ya quedó en tu panel. Toca "Mira dónde quedó".' }); }
       })
       .catch(function (e) { st.chat.push({ k: 'sys', t: 'El agente no respondió (' + e.message + '). Intenta de nuevo.' }); })
-      .then(function () { st.enviando = false; if (st.paso === 1) { pintarChat(); bar(true, st.accion ? 'Mira dónde quedó' : 'Ver el panel', 'next'); } });
+      .then(function () { st.enviando = false; if (st.paso === 1) { pintarChat(); bar(MODO !== 'demo', st.accion ? 'Mira dónde quedó' : 'Ver el panel', 'next'); } });
   }
 
   function scrPanel() {
@@ -297,7 +310,8 @@
     }
     h += '<div class="hint">' + ico('i-spark') + '<span>Instagram y Google traen al cliente, la web lo convence, el agente lo atiende y el panel lo guarda. Ese es el sistema completo.</span></div></section>';
     app.innerHTML = h;
-    bar(true, '¿Qué necesita tu negocio?', 'next');
+    if (MODO === 'demo') { app.innerHTML += '<section class="scr" style="padding-top:0"><p class="note" style="text-align:center">Listo. Vuelve a la pestaña de la visita para seguir con la radiografía.</p></section>'; bar(true, null); }
+    else bar(true, '¿Qué necesita tu negocio?', 'next');
   }
 
   function scrRx() {
@@ -446,16 +460,47 @@
     stepsEl.innerHTML = ''; bar(false, null);
   }
 
+  // Menú de la visita: cada paso abre en una pestaña nueva y se marca como hecho.
+  function hechos() { try { return JSON.parse(localStorage.getItem('visita:' + slug) || '{}'); } catch (e) { return {}; } }
+  function marcar(k) { try { var h = hechos(); h[k] = 1; localStorage.setItem('visita:' + slug, JSON.stringify(h)); } catch (e) {} }
+  function scrHub() {
+    stepsEl.innerHTML = ''; bar(false, null);
+    if (!V) { app.innerHTML = '<section class="scr"><h1>Cargando…</h1></section>'; return; }
+    var waSlug = V.wa || V.chat || slug;
+    var items = [
+      ['web', 'i-web', 'Su web', 'Así lo encuentra un cliente desde Instagram o Google.', V.web],
+      ['wa', 'i-chat', 'Su agente en WhatsApp', 'Le escribe al agente de verdad, desde su celular o el tuyo.', 'https://wa.me/56976962659?text=' + encodeURIComponent('Hola (demo: ' + waSlug + ')')],
+      V.panel ? ['panel', 'i-panel', 'Su panel', 'Donde cae el pedido que hizo en el chat de la web.', V.panel]
+              : ['panel', 'i-panel', 'Chat y panel', 'Pide algo en el chat y mira cómo queda registrado y cómo le llega el aviso.', '/visita/' + slug + '?paso=demo'],
+      ['rx', 'i-spark', 'Radiografía de su negocio', '8 preguntas: cuánto se le escapa y qué pack le conviene. Aquí se cierra.', '/terreno/radiografia?n=' + slug],
+      ['packs', 'i-layers', 'Comparar los packs', 'Esencial y Pro lado a lado.', '/terreno']
+    ];
+    var h = hechos();
+    app.innerHTML = '<section class="scr"><span class="kicker">Visita · ' + esc(V.rubro || '') + '</span>' +
+      '<h1>' + esc(V.nombre) + '</h1>' +
+      '<p class="lead">Cada paso se abre en una pestaña nueva. Vuelve a esta pestaña para seguir con el siguiente.</p>' +
+      '<div class="hub">' + items.map(function (x, i) {
+        var off = !x[4];
+        return '<a class="hc' + (h[x[0]] ? ' done' : '') + (off ? ' off' : '') + '" data-hub="' + x[0] + '" href="' + (off ? '#' : esc(x[4])) + '" target="_blank" rel="noopener">' +
+          '<span class="n">' + ico(h[x[0]] ? 'i-check' : x[1]) + '</span><span><b>' + (i + 1) + '. ' + x[2] + '</b><small>' + (off ? 'Todavía no tiene. Sigue con el próximo paso.' : x[3]) + '</small></span>' + ico('i-ext') + '</a>';
+      }).join('') + '</div>' +
+      '<div class="nav-row" style="display:flex;justify-content:space-between;gap:12px"><a class="ext" href="/visita">' + ico('i-chev-l') + 'Otro negocio</a><button class="ext" style="background:none;border:0;cursor:pointer" data-act="resetHub">Nueva visita</button></div></section>';
+  }
+
   function render() {
     document.getElementById('biz').textContent = V ? V.nombre : 'Visita HORIZON';
     document.title = (V ? V.nombre + ' · ' : '') + 'Visita HORIZON';
     if (!slug) return scrLista();
+    if (!MODO) return scrHub();
     renderSteps();
     [scrWeb, scrAgente, scrPanel, scrRx, scrPlan, scrCierre][st.paso]();
   }
 
   document.addEventListener('click', function (ev) {
+    var hb = ev.target.closest('[data-hub]');
+    if (hb) { marcar(hb.getAttribute('data-hub')); setTimeout(scrHub, 300); return; }
     var t = ev.target.closest('[data-go],[data-act],[data-sug],[data-ans],[data-tk],[data-pick],[data-dec]'); if (!t) return;
+    if (t.getAttribute('data-act') === 'resetHub') { try { localStorage.removeItem('visita:' + slug); } catch (e) {} scrHub(); return; }
     if (t.hasAttribute('data-go')) { var i = +t.getAttribute('data-go'); if (i <= st.max && !st.guardado) go(i); return; }
     if (t.hasAttribute('data-sug')) { enviar(t.getAttribute('data-sug')); return; }
     if (t.hasAttribute('data-ans')) { st.r[Q[st.qi].id] = t.getAttribute('data-ans'); st.qi++; render(); window.scrollTo(0, 0); return; }
@@ -481,10 +526,11 @@
     if (ev.target.id === 'waF') { ev.preventDefault(); var i = document.getElementById('waI'); enviar(i.value); i.value = ''; }
   });
 
+  if (MODO === 'demo') { st.paso = 1; st.max = 2; }
   // Negocio sin entrada en visitas.js: se intenta con su demo publicada (solo agente).
   if (!V && slug) {
     fetch('/api/demo-chat?slug=' + encodeURIComponent(slug)).then(function (r) { return r.ok ? r.json() : null; }).then(function (f) {
-      if (f) { V = { nombre: f.nombre, rubro: '', color: f.color, web: null, chat: slug, sugerencias: [] }; go(1); }
+      if (f) { V = { nombre: f.nombre, rubro: '', color: f.color, web: null, chat: slug, sugerencias: [] }; render(); }
     }).catch(function () {});
   }
   render();

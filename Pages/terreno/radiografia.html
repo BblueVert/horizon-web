@@ -100,6 +100,7 @@
 
 <main id="app" aria-live="polite"></main>
 
+<script src="/Pages/visita/visitas.js"></script>
 <script src="/shared/hz-radiografia.js"></script>
 <script>
 (function () {
@@ -108,7 +109,10 @@
   var TOTAL_STEPS = Q.length + 3; // intro + 8 + ticket + resultado
 
   var st;
-  function reset() { st = { scr: 'intro', i: 0, negocio: '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', decision: null, err: '' }; }
+  // ?n=<slug> viene desde /visita/<slug>: precarga el nombre del negocio y lo asocia al lead.
+  var SLUG = (new URLSearchParams(location.search).get('n') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  var VIS = SLUG && window.HZ_VISITAS ? window.HZ_VISITAS[SLUG] : null;
+  function reset() { st = { scr: 'intro', i: 0, negocio: VIS ? VIS.nombre : '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', rut: '', razon: '', dir: '', notas: '', portal: '', decision: null, err: '' }; }
   reset();
 
   var app = document.getElementById('app');
@@ -118,7 +122,7 @@
   function ico(n) { return '<svg class="ico"><use href="' + SPRITE + n + '"/></svg>'; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function calc() { return R.calc(st.r, st.ticket); }
-  function resumen(c) { return R.resumen({ nombre: st.nombre, negocio: st.negocio, elegido: st.elegido, decision: st.decision }, c); }
+  function resumen(c) { return R.resumen({ nombre: st.nombre, negocio: st.negocio, elegido: st.elegido, decision: st.decision, portal: st.portal }, c); }
 
   function progress(n) { bar.style.width = Math.round(n / TOTAL_STEPS * 100) + '%'; }
 
@@ -207,6 +211,11 @@
         '<div class="field"><label for="nombre">Tu nombre</label><input id="nombre" autocomplete="name" value="' + esc(st.nombre) + '"></div>' +
         '<div class="field"><label for="tel">WhatsApp</label><input id="tel" inputmode="tel" autocomplete="tel" placeholder="9 1234 5678" value="' + esc(st.tel) + '"></div>' +
         '<div class="field"><label for="email">Correo</label><input id="email" type="email" inputmode="email" autocomplete="email" value="' + esc(st.email) + '"><small>Ahí te llegan la cotización formal y el contrato si partimos.</small></div>' +
+        (c2.rec !== 'no' ? '<p class="kicker" style="margin-top:6px">Solo si partimos hoy, para el contrato</p>' +
+          '<div class="field"><label for="rut">RUT (persona o empresa)</label><input id="rut" value="' + esc(st.rut) + '" placeholder="12.345.678-9"></div>' +
+          '<div class="field"><label for="razon">Razón social (si es empresa)</label><input id="razon" value="' + esc(st.razon) + '"></div>' +
+          '<div class="field"><label for="dir">Dirección del negocio</label><input id="dir" autocomplete="street-address" value="' + esc(st.dir) + '"></div>' : '') +
+        '<div class="field"><label for="notas">Lo que conversamos (opcional)</label><input id="notas" value="' + esc(st.notas) + '" placeholder="Ej: 2 locales, quiere partir después del 15"></div>' +
         (st.err ? '<p class="err">' + esc(st.err) + '</p>' : '') +
         (c2.rec === 'no' ?
           '<button class="btn btn-acc" data-act="send" data-d="lo-pienso">Mandarme la radiografía ' + ico('i-arrow') + '</button>' :
@@ -230,6 +239,7 @@
         (st.err ? '<p class="err">' + esc(st.err) + '</p>' : '') +
         '<a class="btn wa-btn" href="' + wa + '" target="_blank" rel="noopener">Enviar radiografía por WhatsApp ' + ico('i-arrow') + '</a>' +
         '<p class="note">Se abre WhatsApp con el mensaje listo para ' + esc(st.tel) + '.</p>' +
+        (st.portal ? '<a class="link" href="' + esc(st.portal) + '" target="_blank" rel="noopener">Ver su portal de cliente ' + ico('i-ext') + '</a>' : '') +
         '<div class="nav-row"><button class="link" data-act="restart">' + ico('i-plus') + 'Nueva radiografía</button></div>' +
         '</section>';
     }
@@ -242,6 +252,7 @@
     if (n) st.nombre = n.value.trim();
     if (t) st.tel = t.value.trim();
     if (e) st.email = e.value.trim();
+    ['rut', 'razon', 'dir', 'notas'].forEach(function (id) { var x = document.getElementById(id); if (x) st[id] = x.value.trim(); });
   }
 
   function send(decision) {
@@ -250,21 +261,24 @@
     if (!st.nombre) { st.err = 'Falta tu nombre.'; return render(); }
     if (normPhone(st.tel).length < 11) { st.err = 'Revisa el WhatsApp: debe tener 9 dígitos, partiendo con 9.'; return render(); }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(st.email)) { st.err = 'Revisa el correo.'; return render(); }
+    if (decision === 'partimos' && !st.rut) { st.err = 'Para el contrato falta el RUT.'; return render(); }
     st.err = '';
     var c = calc();
     var payload = {
       nombre: st.nombre, email: st.email, empresa: st.negocio, telefono: '+' + normPhone(st.tel),
-      mensaje: 'Radiografía en terreno. Recomendado: ' + c.rec + '. Elegido: ' + st.elegido + '. Decisión: ' + decision + '. Se le escapan ≈ ' + clp(c.total) + '/mes.',
-      fuente: 'terreno', origen: 'terreno-radiografia',
+      mensaje: 'Radiografía en terreno. Recomendado: ' + c.rec + '. Elegido: ' + st.elegido + '. Decisión: ' + decision + '. Se le escapan ≈ ' + clp(c.total) + '/mes.' + (st.notas ? ' Notas: ' + st.notas : ''),
+      fuente: 'terreno', origen: SLUG ? 'terreno-visita' : 'terreno-radiografia',
       radiografia: {
         respuestas: st.r, ticket: st.ticket, escape_mes: c.total, puntos_e: c.e, puntos_p: c.p,
         recomendado: c.rec, elegido: st.elegido, decision: decision,
-        mejoras: c.mejoras.map(function (m) { return m[0]; }), resumen: resumen(c)
+        mejoras: c.mejoras.map(function (m) { return m[0]; }), resumen: resumen(c),
+        negocio_slug: SLUG, notas: st.notas,
+        contrato: decision === 'partimos' ? { rut: st.rut, razon_social: st.razon, direccion: st.dir } : null
       }
     };
     st.scr = 'sending'; render();
     fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-      .then(function (r) { if (!r.ok) throw new Error('status ' + r.status); })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error('status ' + r.status); st.portal = j.portal || ''; }); })
       .catch(function () { st.err = 'No se pudo guardar en OPS (sin señal o error del servidor). Manda igual la radiografía por WhatsApp y anota el lead a mano.'; })
       .then(function () { st.scr = 'listo'; render(); });
   }
