@@ -1,5 +1,5 @@
 # HORIZON — Aceleradora 0 → 5 clientes
-> Versión 1.0 · 8 noviembre 2026 · Del lunes 9 de noviembre al jueves 31 de diciembre de 2026 (8 semanas).
+> Versión 1.1 · 8 noviembre 2026 (foco en 2 servicios: Agente IA y Sistema digital) · Del lunes 9 de noviembre al jueves 31 de diciembre de 2026 (8 semanas).
 > Reemplaza la sección 3 (semana a semana) de `HORIZON-PLAN-DE-ACCION-2026.md`, que suponía 13 clientes a diciembre partiendo en septiembre. Hoy el punto de partida real es **0 clientes nuevos firmados**, y este plan parte desde ahí.
 
 ---
@@ -10,6 +10,7 @@
 
 - "Cliente" = contrato firmado + anticipo pagado por el portal (Mercado Pago). Un "sí, hagámoslo" sin anticipo no cuenta.
 - Fecha tope 18 de diciembre, no el 31: desde el 21 los dueños de PyME están en ventas de Navidad, cierres de año y vacaciones. Lo que no se firmó el 18, se firma en enero.
+- **Foco en 2 servicios, no en rubros:** el **Agente IA** y el **Sistema digital** (web, CRM, panel de leads). Son los que HORIZON mantiene hoy. Se le venden a cualquier PyME de servicio que tenga el dolor, sea del rubro que sea (sección 2).
 - Los primeros 3 entran al **Programa Fundadores** (ya definido en `HORIZON-ECOSISTEMA.md`: mismo precio, 2.º mes de soporte sin costo, soporte congelado 12 meses, sesión de resultados a los 60 días; a cambio, testimonio en video y permiso para mostrar el caso). El cierre de los cupos el 18 de diciembre es la urgencia real del plan. No hay que inventar otra.
 
 ---
@@ -34,21 +35,31 @@ Eso es **~30 contactos por semana**, o **6 por día hábil**. Se reparte en tres
 
 ---
 
-## 2. Qué se vende (la oferta para estas 8 semanas)
+## 2. Qué se vende: 2 servicios
 
-No se crean precios nuevos (fuente de verdad: `HORIZON-ECOSISTEMA.md` + landing `#planes`). Lo que cambia es **qué se pone primero en la mesa**:
+No se crean precios nuevos (fuente de verdad: `HORIZON-ECOSISTEMA.md` + landing `#planes`). En estas 8 semanas se venden **solo dos servicios**, más la combinación de ambos. El rubro da lo mismo: lo que se busca es el dolor.
 
-| Situación del negocio | Qué ofrecer primero | Implementación | Plazo |
-|---|---|---|---|
-| Pierde consultas por WhatsApp / fuera de horario | **Plan 04 · Agente IA** (se vende con la demo-express ya funcionando) | desde $1.490.000 | 2–3 semanas |
-| No tiene web o tiene una que no le trae nada | **Plan 01 · Presencia Digital** (la puerta de entrada más barata) | $490.000 | 3–4 semanas |
-| Tiene reservas / pedidos / caja desordenados | **Plan 02 · Ecosistema Digital** | $990.000 | 4–5 semanas |
-| Restaurante con PedidosYa | Plan 02 con el pitch Mesa Cero | $990.000 | 4–5 semanas |
-| Peluquería / barbería | Binks Barber (SaaS mensual). **No cuenta como uno de los 5**, pero se ofrece igual: suma MRR sin carga de instalación. | — | — |
+| Servicio | Qué es | Plan | Implementación | Soporte (desde el mes 2) | Plazo | Se vende mostrando |
+|---|---|---|---|---|---|---|
+| **A · Agente IA** | Atiende WhatsApp, Instagram y web 24/7: responde, califica y agenda | Plan 04 | desde $1.490.000 | $290.000 | 2–3 semanas | La demo express del **propio negocio** funcionando en el celular del dueño (`demo-express`) |
+| **B · Sistema digital** | Web que trae consultas + CRM / panel de leads (y reservas, tienda o caja si lo necesita) | Plan 01 (web + Google + WhatsApp) o Plan 02 (web + sistema + CRM + dashboard) | $490.000 / $990.000 | $120.000 / $200.000 | 3–5 semanas | OPS (pipeline) como panel de leads real, el portal demo y los casos en vivo (VitalKine, Floremané) |
+| **A + B · Los dos** | El sistema completo: web + CRM + agente que le carga los leads | Plan 03 | $1.990.000 | $350.000 | 5–6 semanas | Las dos demos juntas: el agente conversa y el lead aparece en el panel |
 
-Regla: con presupuesto "todavía no" (filtro de `/agendar`) no se agenda; queda como lead frío. No bajar precio para cerrar: si el presupuesto no da para el plan, se ofrece un plan más chico, no un descuento.
+**Cómo elegir qué ofrecer primero (en el diagnóstico):**
 
-**Mezcla esperada de los 5 (hipótesis):** 2 × Plan 01 + 2 × Plan 02 + 1 × Plan 04 ≈ **$4.450.000** en contratos. Anticipos cobrados en diciembre ≈ **$2.225.000**; el saldo entra al entregar (enero) y el soporte mensual desde febrero (≈ $1.000.000/mes si los 5 siguen).
+| Lo que dice el dueño | Servicio |
+|---|---|
+| "No alcanzo a responder", "me escriben de noche", "se me pierden mensajes" | **A · Agente IA** |
+| "No sé cuántas consultas me llegan", "anoto en un cuaderno / en el WhatsApp", "no tengo web o no me trae nada" | **B · Sistema digital** |
+| Las dos cosas y tiene presupuesto | **A + B** (Plan 03) |
+| Las dos cosas y el presupuesto no da | Partir con uno (normalmente B · Plan 01 o A) y dejar el otro escrito en la propuesta como fase 2 |
+
+Reglas:
+- Con presupuesto "todavía no" (filtro de `/agendar`) no se agenda; queda como lead frío.
+- No bajar precio para cerrar: si no da para el plan, se ofrece uno más chico, no un descuento.
+- **Fuera de foco hasta enero:** contenido mensual, identidad visual, ads sueltos y venta activa de Binks Barber. Si un peluquero lo pide, se le da el link, pero no cuenta para los 5 ni se le dedica terreno.
+
+**Mezcla esperada de los 5 (hipótesis):** 2 × Agente IA + 2 × Sistema digital (un Plan 01 y un Plan 02) + 1 × los dos (Plan 03) ≈ **$6.450.000** en contratos. Anticipos cobrados en diciembre ≈ **$3.225.000**; el saldo entra al entregar (enero) y el soporte mensual desde febrero (≈ $1.250.000/mes si los 5 siguen).
 
 ---
 
@@ -57,8 +68,10 @@ Regla: con presupuesto "todavía no" (filtro de `/agendar`) no se agenda; queda 
 Dos días de preparación, no más. Todo lo demás se arregla en movimiento.
 
 1. **Lista de red cálida (50 nombres)** en OPS como leads `new` con origen `red-calida`: nombre, negocio, cómo lo conoces. No solo dueños: también el que conoce a un dueño.
-2. **Lista de 60 negocios objetivo** en Google Maps, en **2 rubros foco** (no 6). Sugerencia: salud/kinesiología (hay caso real: VitalKine) y comida (hay demo real: Mesa Cero). Filtro: 4+ estrellas, 50+ reseñas, sin web o con web sin reservas, WhatsApp visible.
-3. **3 demos express pre-armadas** (skill `demo-express`) de negocios reales de la lista, para llegar con el agente ya andando.
+2. **Lista de 60 negocios objetivo** en Google Maps, filtrados **por dolor, no por rubro**: PyMEs de servicio con 4+ estrellas, 50+ reseñas, WhatsApp visible (señal de que les escriben mucho) y sin web o con web que no capta consultas. Marcar en cada uno si apunta a A (agente), B (sistema) o los dos.
+3. **El kit de demo de los 2 servicios:**
+   - A · Agente: 3 demos express pre-armadas (skill `demo-express`) de negocios reales de la lista, para llegar con el agente ya andando.
+   - B · Sistema: un recorrido de 2 minutos por el panel de leads (OPS pipeline con datos de ejemplo) y el portal demo, en el celular, sin depender de wifi.
 4. **Guion de 3 líneas** para la red cálida, en tuteo:
    > "Hola [nombre], estoy armando HORIZON, sistemas para que los negocios de Rancagua no pierdan clientes por WhatsApp. Estoy tomando 3 negocios fundadores este año. ¿Conoces a alguien con un local que ande colapsado respondiendo mensajes? (Si eres tú, mejor todavía.)"
 5. **Tablero semanal** en OPS: puertas, conversaciones, demos mostradas, diagnósticos, propuestas, cierres, anticipos. Se llena cada viernes con números reales.
@@ -72,7 +85,7 @@ Dos días de preparación, no más. Todo lo demás se arregla en movimiento.
 |---|---|---|
 | **Lunes** | 9:00–10:00 | Revisar el tablero del viernes. Elegir las 15 puertas de la semana y armar 1–2 demos express nuevas. |
 | | resto | 10 mensajes a red cálida + diagnósticos agendados. |
-| **Mar · Mié · Jue** | 10:00–12:00 y 15:00–18:00 | **Terreno.** 5 puertas por día. Evitar la hora punta de cada rubro (almuerzo en comida, 18–20 en salud). |
+| **Mar · Mié · Jue** | 10:00–12:00 y 15:00–18:00 | **Terreno.** 5 puertas por día. Evitar la hora punta de cada negocio (si atiende público a esa hora, el dueño no te escucha). |
 | | noche (30 min) | Registrar cada conversación en OPS el mismo día. Nota de voz post-diagnóstico (Componente 5, `SISTEMA-DE-CIERRE.md`). |
 | **Viernes** | mañana | **Seguimiento.** Todos los leads en `contactado` o `propuesta` con más de 4 días sin respuesta reciben un mensaje anclado a algo que dijeron. |
 | | tarde | Propuestas y contratos (`modo-terreno` / `documentos-cliente`). Tablero con números reales. 1 pieza de contenido sacada de una objeción de la semana. |
@@ -110,6 +123,7 @@ Se revisan con el tablero real de OPS, no con la sensación de la semana.
 | **Dom 22 nov** | Hay diagnósticos pero 0 cierres | Revisar en qué nivel de consciencia llegan (Componente 1). Probablemente se está ofreciendo un plan muy grande: abrir con Plan 01 o Plan 04. |
 | **Dom 6 dic** (mitad) | Menos de 2 cierres | La meta pasa a ser **3 clientes al 18 dic + 2 en la primera semana de enero**. Se dejan las puertas nuevas y se trabaja 100% el pipeline que ya existe. |
 | **Dom 6 dic** | 3 o más cierres | Vas por buen camino. Subir el foco en referidos de los clientes ya firmados. |
+| **Dom 22 nov** | Un servicio no genera ningún diagnóstico y el otro sí | No forzar el que no prende: poner el que funciona primero en la apertura y ofrecer el otro como fase 2 o como combo. |
 | Cualquier semana | Se cierra más rápido de lo que se puede implementar | Escalonar los inicios (la orden de inicio fija la fecha) y avisar el plazo real desde la propuesta. |
 
 ---
@@ -119,7 +133,7 @@ Se revisan con el tablero real de OPS, no con la sensación de la semana.
 Cinco implementaciones en paralelo, más INACAP, es el riesgo real del plan.
 
 - **Inicios escalonados:** los clientes 1–2 parten en noviembre, los clientes 3–5 en diciembre o la primera semana de enero. La propuesta lo dice desde el comienzo.
-- **Reutilizar:** la estructura de las landings de plan, las fichas de `verticales/demos` (un Plan 04 parte de su demo express) y el motor de Mesa Cero para restaurantes.
+- **Reutilizar (por eso se venden solo 2 servicios):** cada Agente IA parte de su ficha de `verticales/demos` (la demo express ya es el 60% del trabajo); cada Sistema digital parte de la misma base de web + panel de leads, con el color y los datos del cliente. Repetir 5 veces dos productos es mucho más rápido que hacer 5 proyectos distintos.
 - **Entregar el 31 de diciembre no es la meta.** La meta es firmar y cobrar el anticipo; la entrega final de los últimos clientes puede caer en enero, con el plazo escrito en el contrato.
 
 ---
@@ -129,7 +143,7 @@ Cinco implementaciones en paralelo, más INACAP, es el riesgo real del plan.
 - Rediseñar el sitio, OPS o el portal. Ya funcionan (registro: `HORIZON-REMODELACION-OCT-2026.md`).
 - Construir productos o verticales nuevos.
 - Bajar precios o inventar descuentos para cerrar.
-- Perseguir más de 2 rubros a la vez.
+- Vender servicios fuera de los 2 del foco (contenido, identidad, ads sueltos, SaaS).
 - Mandar una tercera pieza de "convencimiento" por DM (Componente 3: 1 pieza + 1 caso, después se propone el diagnóstico).
 
 ---
