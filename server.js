@@ -41,7 +41,7 @@ app.use((req, res, next) => {
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
       "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com https://va.vercel-scripts.com https://cdn.vercel-insights.com https://vitals.vercel-insights.com",
-      "frame-src 'none'",
+      "frame-src https://horizon-propuestas.vercel.app",
       "frame-ancestors 'none'",
     ].join('; ')
   );
@@ -143,6 +143,7 @@ app.get('/plan-05', (_req, res) => res.redirect(301, '/servicios'));
 app.get('/recursos/*', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/recursos/index.html')));
 
 // Portal con token dinámico
+app.get(['/visita', '/visita/:slug'], (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/index.html')));
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
 app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
 app.get('/api/recursos',  recursos);

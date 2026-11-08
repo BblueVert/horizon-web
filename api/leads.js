@@ -43,6 +43,8 @@ module.exports = async function handler(req, res) {
     lead.plan      = rx.elegido === 'pro' ? 'terreno-pro' : 'terreno-esencial';
     lead.status    = rx.decision === 'partimos' ? 'propuesta' : 'contactado';
     lead.prioridad = rx.decision === 'partimos' ? 'Alta' : (rx.recomendado === 'no' ? 'Baja' : 'Media');
+    // Su portal (/c/<token>) nace con la visita: antes del proyecto muestra el brief; al activarlo, el avance y los pagos.
+    lead.portal_token = uid();
   }
 
   const SB_URL = process.env.SUPABASE_URL;
@@ -79,7 +81,8 @@ module.exports = async function handler(req, res) {
     );
   }
 
-  return res.status(200).json({ ok: true, id: lead.id });
+  const SITE = (process.env.SITE_URL || 'https://www.horizonweb.cl').replace(/\/$/, '');
+  return res.status(200).json({ ok: true, id: lead.id, portal: lead.portal_token ? `${SITE}/c/${lead.portal_token}` : undefined });
 };
 
 function cleanRadiografia(rx) {
@@ -107,6 +110,14 @@ function cleanRadiografia(rx) {
     decision:    pick(rx.decision, ['partimos', 'lo-pienso'], 'lo-pienso'),
     mejoras:     Array.isArray(rx.mejoras) ? rx.mejoras.slice(0, 10).map(m => sanitize(m, 200)) : [],
     resumen:     sanitize(rx.resumen, 2000),
+    conversacion: sanitize(rx.conversacion, 2000),
+    notas:       sanitize(rx.notas, 1000),
+    contrato:    rx.contrato && typeof rx.contrato === 'object' ? {
+      rut:          sanitize(rx.contrato.rut, 20),
+      razon_social: sanitize(rx.contrato.razon_social, 150),
+      direccion:    sanitize(rx.contrato.direccion, 200),
+    } : null,
+    negocio_slug: sanitize(rx.negocio_slug, 60),
     fecha:       new Date().toISOString(),
   };
 }
