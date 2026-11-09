@@ -159,6 +159,9 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (slug && !fichas.obtener(slug)) { estado.soltar(jid); slug = null; }
     const codigo = codigoDemo(texto);
 
+    // Volver a mandar el link de la misma demo la reactiva si quedó en pausa (alguien respondió a mano).
+    if (codigo && codigo === slug && estado.enPausa(jid)) estado.pausar(jid, null);
+
     if (codigo && codigo !== slug) {
       const ficha = fichas.obtener(codigo);
       if (!ficha) {
