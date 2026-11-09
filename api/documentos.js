@@ -24,7 +24,7 @@ const PACKS = {
       ['Aviso al dueño', 'Si una conversación necesita a una persona, el agente avisa por WhatsApp con el resumen.'],
       ['Primer mes de mensualidad incluido', 'Soporte, ajustes del agente con las preguntas reales y corrección de errores.'],
     ],
-    no: 'Seguimiento automático a quien no agendó, recordatorios el día antes, reactivación de clientes, CRM con historial y dashboard de métricas (Pack Pro). Campañas pagadas y producción de contenido para redes.',
+    no: 'Seguimiento automático a quien no agendó, recordatorios el día antes, reactivación de clientes, historial de clientes y tablero de resultados (Pack Pro). Campañas pagadas y producción de contenido para redes.',
   },
   pro: {
     nm: 'Pack Pro', impl: 490000, palabras: 'cuatrocientos noventa mil', mes: 149000, plazo: '3 a 4 semanas',
@@ -34,8 +34,8 @@ const PACKS = {
       ['Seguimiento automático', 'A quien preguntó y no agendó, con mensajes que retoman su consulta al día siguiente y a los 3 días.'],
       ['Confirmación y recordatorio', 'Al agendar y el día antes, con opción de confirmar o cambiar la hora.'],
       ['Reactivación mensual', 'Mensaje a los clientes que no vuelven hace 30 a 60 días.'],
-      ['CRM con historial de cada cliente', 'Qué pidió, cuándo vino y cuántas veces ha vuelto.'],
-      ['Dashboard y reporte mensual', 'Consultas, horas agendadas, inasistencias y origen de cada cliente, con una revisión mensual de 15 minutos.'],
+      ['Historial de cada cliente', 'Qué pidió, cuándo vino y cuántas veces ha vuelto.'],
+      ['Tablero de resultados y reporte mensual', 'Consultas, horas agendadas, inasistencias y origen de cada cliente, con una revisión mensual de 15 minutos.'],
       ['Primer mes de mensualidad incluido', 'Soporte, ajustes del agente con las conversaciones reales y corrección de errores.'],
     ],
     no: 'Campañas pagadas, producción de contenido para redes e integraciones con sistemas contables. Se cotizan aparte si se necesitan.',
@@ -94,7 +94,7 @@ html,body{margin:0}body{background:#DCD6CE;color:var(--ink);font:400 10pt/1.55 v
 .eb{font:500 .78em/1 var(--m);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);display:inline-flex;align-items:center;gap:.7em}
 .eb::before{content:'';width:1.8em;height:1.5px;background:var(--acc)}
 .dk .eb{color:#E4DDF5}
-.g{color:var(--acc)}
+.g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .acc{color:var(--acc);font-weight:700}
 .acciones{position:sticky;top:0;z-index:50;display:flex;gap:10px;justify-content:center;padding:12px;background:#1A1626}
 .acciones button{font:700 14px var(--f);border:0;border-radius:12px;padding:12px 18px;cursor:pointer;background:linear-gradient(95deg,#F2690C,#CC3253 50%,#7B3FA0);color:#fff}
@@ -162,7 +162,7 @@ const PROP_CSS = `
 .s1{display:grid;grid-template-rows:auto 1fr}
 .hbar{background:var(--dark);display:flex;justify-content:space-between;align-items:center;padding:1.3em 6%}.hbar .lg{height:1.9em}.hbar span{font:500 .78em var(--m);letter-spacing:.14em;text-transform:uppercase;color:#B9B3CC}
 .s1 .cv{display:grid;grid-template-columns:1fr 1fr;gap:4%;padding:4% 6% 4.5%;align-items:center}
-.s1 h1{font-size:5.4em}.s1 h1 .g{display:block}
+.s1 h1{font-size:5.4em}
 .s1 .sub{margin:1.1em 0 0;color:var(--ink2);font-size:1.2em;max-width:28em}
 .chk{display:flex;flex-wrap:wrap;gap:.6em 1.4em;margin-top:1.6em;font-size:.95em;color:var(--ink2)}.chk span{display:inline-flex;align-items:center;gap:.45em}.chk .ico{width:1.1em;height:1.1em;color:var(--c3)}
 .hero{position:relative;height:100%;min-height:22em}
@@ -187,10 +187,15 @@ const PROP_CSS = `
 .brandcol{position:absolute;inset:8% 8% 8% 4%;border-radius:28px;background:var(--deepS);display:grid;place-items:center;color:#fff;text-align:center;font-size:2.4em;font-weight:800;letter-spacing:-.03em;padding:1em}
 /* 3 lo que vimos */
 .s3{display:grid;grid-template-columns:.92fr 1.08fr;gap:3%;padding:5% 5.5% 5% 6.5%}
-.s3 .l{display:flex;flex-direction:column;gap:1.6em}.s3 h2{font-size:3.8em}
-.money{flex:1;border-radius:26px;background:var(--dark);color:#fff;padding:1.8em 2em;display:flex;flex-direction:column;justify-content:space-between}
-.money .v{font-size:5.6em;font-weight:800;letter-spacing:-.05em;line-height:.95;color:#FFB27A}.money .v small{font-size:.24em;letter-spacing:0;color:#fff;font-weight:600}
-.money p{margin:0;color:#D7CFEA;font-size:.95em}
+.s3 .l{display:flex;flex-direction:column;gap:1.2em}.s3 h2{font-size:3.6em}
+.calc{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:1.4em 1.6em;display:flex;flex-direction:column;gap:.9em;box-shadow:0 24px 48px -32px rgba(26,22,38,.4)}
+.calc .hd{display:flex;align-items:center;gap:.8em}.calc .hd b{font-size:1.15em}.calc .hd small{display:block;color:var(--ink2);font-size:.85em}
+.mt{display:grid;grid-template-columns:1fr auto;align-items:center;padding:.55em 0;border-bottom:1px solid var(--line);font-size:.98em}.mt b{font:600 .9em var(--m);background:var(--t2);color:var(--c2);padding:.3em .6em;border-radius:8px}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:.7em;margin-top:auto}
+.res div{border-radius:16px;padding:.9em 1em}.res small{display:block;font:500 .66em var(--m);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3em}
+.res .a{background:var(--t1)}.res .a small{color:var(--c1)}.res .a b{font-size:1.7em;letter-spacing:-.03em}
+.res .b{background:var(--dark);color:#fff;background-image:linear-gradient(135deg,#1A1626 0%,#3B2A6E 70%,#7B3FA0 100%)}.res .b small{color:#D7CFEA}.res .b b{font-size:1.7em;letter-spacing:-.03em}
+.calc .nt{margin:0;color:var(--ink3);font-size:.78em}
 .s3 .r{display:flex;flex-direction:column;justify-content:center;gap:1em}
 .rd{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--cli);border-radius:18px;padding:1.3em 1.5em;display:grid;grid-template-columns:3em 1fr;gap:1.1em;align-items:center;box-shadow:0 18px 36px -26px rgba(26,22,38,.4)}
 .rd .n{width:3em;height:3em;border-radius:14px;background:var(--hot);color:#fff;display:grid;place-items:center;font:600 1em var(--m)}
@@ -236,7 +241,7 @@ const PROP_CSS = `
 .s6 .l{display:grid;grid-template-rows:auto 1fr;gap:1.4em}.s6 h2{font-size:3.6em}
 .g4{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:1em}
 .tc{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.4em 1.5em;display:grid;grid-template-columns:auto 1fr;gap:.5em 1em;align-content:center}
-.tc .big{grid-column:1/-1;margin-top:.2em;font-size:3.2em;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--ink)}.tc .big span{color:var(--acc)}
+.tc .big{grid-column:1/-1;margin-top:.2em;font-size:3.2em;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--ink)}.tc .big span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .tc b{font-size:1.05em;align-self:center}.tc p{grid-column:1/-1;margin:0;color:var(--ink2);font-size:1.02em;line-height:1.45}
 .s6 .r{display:grid;grid-template-rows:1fr 1fr;gap:1em}
 .dc{border-radius:22px;padding:1.5em;display:flex;flex-direction:column;justify-content:space-between}
@@ -249,22 +254,22 @@ const PROP_CSS = `
 .pc{display:grid;grid-template-columns:repeat(4,1fr);gap:1em;align-items:stretch}
 .pk{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.4em;display:flex;flex-direction:column;gap:.75em;position:relative}
 .pk.on{background:var(--dark);color:#fff;border:0}.pk.on .who{color:#D7CFEA}.pk.on li{color:#fff}
-.pk .nn{font-size:3em;font-weight:800;letter-spacing:-.05em;line-height:1;color:var(--acc)}
+.pk .nn{font-size:3em;font-weight:800;letter-spacing:-.05em;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;align-self:flex-start}
 .pk.on .nn{background:none;-webkit-text-fill-color:#FFB27A;color:#FFB27A}
-.pk h3{font-size:1.5em}.pk .du{justify-self:start;font:500 .72em var(--m);letter-spacing:.08em;text-transform:uppercase;padding:.35em .7em;border-radius:99px;background:var(--bg2);color:var(--acc)}
+.pk h3{font-size:1.6em}.pk .du{justify-self:start;font:500 .72em var(--m);letter-spacing:.08em;text-transform:uppercase;padding:.35em .7em;border-radius:99px;background:var(--bg2);color:var(--acc)}
 .pk.on .du{background:var(--chip);color:#FFB27A}
-.pk ul{list-style:none;margin:0;padding:0;display:grid;gap:.4em;align-content:start}.pk li{display:grid;grid-template-columns:1.2em 1fr;gap:.5em;font-size:1em;line-height:1.4;color:var(--ink)}.pk li .ico{width:1.1em;height:1.1em;color:var(--acc);margin-top:.15em}
+.pk ul{list-style:none;margin:0;padding:0;display:grid;gap:.4em;align-content:start}.pk li{display:grid;grid-template-columns:1.2em 1fr;gap:.5em;font-size:1.08em;line-height:1.45;color:var(--ink)}.pk ul{gap:.65em!important;margin-top:.3em!important}.pk li .ico{width:1.1em;height:1.1em;color:var(--acc);margin-top:.15em}
 .who{margin-top:auto;border-radius:12px;background:var(--bg2);padding:.6em .8em;font-size:.9em;color:var(--ink)}.pk.on .who{background:#2A2536}.who b{color:inherit}
 /* 8 dudas */
 .s8{padding:4.5% 5.5% 4.5% 6.5%;display:grid;grid-template-rows:auto 1fr;gap:1.6em;background:var(--bg2)}
-.s8 h2{font-size:3.6em}.s8 h2 span{color:var(--acc)}
-.qa{display:grid;grid-template-columns:repeat(3,1fr);gap:1em}
-.q{background:var(--surface);border-radius:22px;padding:1.3em 1.4em;display:flex;flex-direction:column;gap:.6em;border:1px solid var(--line)}
-.q b{font-size:1.15em;letter-spacing:-.01em}.q p{margin:0;color:var(--ink2);font-size:.95em}.q .tag2{align-self:flex-start;font:500 .7em var(--m);letter-spacing:.08em;text-transform:uppercase;padding:.3em .6em;border-radius:6px;background:var(--dark);color:#fff}
+.s8 h2{font-size:3.6em}.s8 h2 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.qa{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:.9em 1.1em}
+.qd{background:var(--surface);border-radius:20px;padding:1em 1.3em;display:grid;grid-template-columns:2.6em 1fr;gap:.2em 1em;align-items:center;border:1px solid var(--line)}.qd .chipI{grid-row:1/3}
+.qd b{font-size:1.15em;letter-spacing:-.01em;align-self:end}.qd p{margin:0;color:var(--ink2);font-size:.98em;align-self:start;line-height:1.45}
 /* 9 contraportada */
 .s9{display:grid;grid-template-columns:1fr 1fr}
 .s9 .l{padding:6% 6.5%;display:grid;grid-template-rows:auto 1fr auto;gap:1.5em}
-.s9 h2{font-size:4.2em;align-self:center}.s9 h2 span{color:#FFB27A}
+.s9 h2{font-size:4.2em;align-self:center}.s9 h2 span{background:linear-gradient(95deg,#FF9A4D,#E8637A 55%,#B07BE0);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ct{display:grid;grid-template-columns:auto 1fr;gap:.45em 1.4em;border-top:1px solid var(--chipb);padding-top:1em;font-size:.98em}.ct span:nth-child(odd){font:500 .72em var(--m);letter-spacing:.12em;text-transform:uppercase;color:#D7CFEA;padding-top:.3em}
 .s9 .r{display:grid;grid-template-rows:44% 1fr}.s9 .r .img{border-bottom-left-radius:0}
 .s9 .r .bx{padding:5% 7%;display:flex;flex-direction:column;justify-content:space-between}
@@ -283,7 +288,7 @@ function propuesta(lead) {
   const F = i => M.fotos.length ? M.fotos[i % M.fotos.length] : '';
   const bg = u => u ? `style="background-image:url('${h(u)}')"` : 'style="background:var(--deepS)"';
   const lecturas = Array.isArray(rx.lecturas) && rx.lecturas.length ? rx.lecturas.slice(0, 3) : (rx.mejoras || []).slice(1, 4);
-  const pasos = [['i-search', 'Le encuentran en Google y en su web'], ['i-chat', 'Le escriben por WhatsApp'], ['i-agent', 'El agente responde y agenda'], ['i-panel', 'Todo queda en su panel']];
+  const pasos = [['i-search', 'Le encuentran en Google y en su web'], ['i-chat', 'Le escriben por WhatsApp'], ['i-agent', 'El agente responde y agenda'], ['i-panel', 'Todo queda registrado en su panel']];
   if (k === 'pro') pasos.push(['i-bell', 'Seguimiento y recordatorios'], ['i-users', 'Sus clientes vuelven']);
   const msgs = charla(rx.modelo);
   const icEnt = ['i-web', 'i-search', 'i-agent', 'i-panel', 'i-bell', 'i-users', 'i-spark', 'i-layers'];
@@ -292,7 +297,7 @@ function propuesta(lead) {
   const horas = ['10:41', '10:41', '10:42', '10:42'];
   const s = [];
   s.push(`<section class="sl s1"><div class="hbar"><img class="lg" src="${LOGO}" alt="HORIZON"><span>Propuesta comercial · ${h(D.fechaCorta)}</span></div>
-    <div class="cv"><div><span class="eb">${h(pk.nm)} · válida por 15 días</span><h1 style="margin-top:.5em">Propuesta para<span class="g">${h(D.negocio)}</span></h1>
+    <div class="cv"><div><span class="eb">${h(pk.nm)} · válida por 15 días</span><h1 style="margin-top:.5em">Propuesta para<br><span class="g">${h(D.negocio)}</span></h1>
     <p class="sub">Un sistema que atiende, agenda y ordena su negocio, armado con lo que vimos en su local.</p>
     <div class="chk"><span>${icn('i-check')}Agente 24/7</span><span>${icn('i-check')}Sin permanencia</span><span>${icn('i-check')}Instalación presencial</span></div>
     <span class="cb2">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span></div>
@@ -308,7 +313,13 @@ function propuesta(lead) {
     <div class="col">${M.fotos.length ? `<div class="img a" ${bg(F(0))}></div><div class="img b" ${bg(F(1))}></div><div class="img c" ${bg(F(2))}></div>` : `<div class="brandcol">HORIZON ×<br>${h(D.negocio)}</div>`}
     <div class="sticker"><b>Armado para ${h(D.negocio)}</b>Con su información, sus precios y su forma de atender.</div></div><span class="pg-n">02</span></section>`);
   s.push(`<section class="sl s3"><div class="l"><div><span class="eb">Diagnóstico</span><h2 style="margin-top:.4em">Lo que vimos<br>en su negocio</h2></div>
-    ${rx.escape_mes ? `<div class="money"><span class="eb">Se escapa hoy, aprox.</span><div><div class="v">${clp(rx.escape_mes)}<small> al mes</small></div><p style="margin-top:.8em">Estimación a la baja con sus respuestas. No es una promesa: es lo que hoy no está entrando.</p></div></div>` : ''}</div>
+    ${rx.escape_mes ? `<div class="calc"><div class="hd"><span class="chipI">${icn('i-panel')}</span><div><b>¿Cuánto se le escapa al mes?</b><small>Con los números de su radiografía</small></div></div>
+      <div class="mt"><span>Mensajes al día</span><b>${h({ menos5: 'menos de 5', '5a20': '5 a 20', mas20: 'más de 20' }[(rx.respuestas || {}).q1] || '—')}</b></div>
+      <div class="mt"><span>Valor de lo que piden por WhatsApp</span><b>${rx.ticket ? clp(rx.ticket) : '—'}</b></div>
+      <div class="mt"><span>Se pierde por atención (lo resuelve el agente)</span><b>${rx.agente_mes ? clp(rx.agente_mes) : '—'}</b></div>
+      <div class="mt"><span>Se pierde después de la conversación</span><b>${rx.pro_mes ? clp(rx.pro_mes) : '—'}</b></div>
+      <div class="res"><div class="a"><small>Respuestas a tiempo</small><b>24/7</b></div><div class="b"><small>Se escapa al mes, aprox.</small><b>${clp(rx.escape_mes)}</b></div></div>
+      <p class="nt">Estimación a la baja con sus respuestas. No es una promesa: es lo que hoy no está entrando.</p></div>` : ''}</div>
     <div class="r">${lecturas.map((x, i) => `<div class="rd"><span class="n">0${i + 1}</span><p>${h(x)}</p></div>`).join('')}</div><span class="pg-n">03</span></section>`);
   s.push(`<section class="sl s4"><div class="l"><span class="eb">Cómo funciona</span><h2>Su negocio,<br><span class="g">atendiendo solo.</span></h2>
     <p>Cada pieza le pasa la información a la siguiente. Nada queda suelto en el chat ni en el cuaderno.</p>
@@ -330,11 +341,11 @@ function propuesta(lead) {
     <div class="tc"><span class="chipI k2">${icn('i-layers')}</span><b>Revisiones</b><div class="big">2 <span>rondas</span></div><p>De cambios sobre el diseño, antes de construir.</p></div>
     <div class="tc"><span class="chipI k3">${icn('i-clock')}</span><b>Sus respuestas</b><div class="big">5 <span>días</span></div><p>Hábiles para entregar información o aprobar. Si se atrasa, la entrega se corre en los mismos días.</p></div>
     <div class="tc"><span class="chipI k4">${icn('i-shield')}</span><b>Garantía</b><div class="big">30 <span>días</span></div><p>De corrección de errores después de la entrega, con el primer mes de soporte incluido.</p></div></div></div>
-    <div class="r"><div class="dc a"><span class="eb">Inicio</span><div><div class="v">48 h</div><p>Desde el pago inicial, con la reunión de kickoff.</p></div></div>
+    <div class="r"><div class="dc a"><span class="eb">Inicio</span><div><div class="v">48 h</div><p>Desde el pago inicial, con la reunión de inicio.</p></div></div>
     <div class="dc b"><span class="eb" style="color:#B9B3CC">Mensualidad</span><div><div class="v">${clp(pk.mes)}</div><p>Desde el mes 2. Mes a mes, sin permanencia.</p></div></div></div><span class="pg-n">06</span></section>`);
   const etapas = [
     ['01', 'Diagnóstico', 'Hoy', ['Visitamos su local', 'Probó su agente', 'Radiografía del negocio'], 'Usted: conversar 15 minutos.', true],
-    ['02', 'Kickoff', '48 horas', ['Ordenamos precios, fotos y horarios', 'Creamos su panel y su portal', 'Fijamos las fechas'], 'Usted: una reunión y su información.'],
+    ['02', 'Reunión de inicio', '48 horas', ['Ordenamos precios, fotos y horarios', 'Creamos su panel y su portal', 'Fijamos las fechas'], 'Usted: una reunión y su información.'],
     ['03', 'Construcción', pk.plazo, ['Diseñamos y usted aprueba', 'Entrenamos al agente con su negocio', 'Conectamos web, WhatsApp y panel'], 'Usted: aprobar el diseño (2 rondas).'],
     ['04', 'Entrega y soporte', 'Mes a mes', ['Lo dejamos funcionando', 'Le enseñamos a usar el panel', 'Ajustamos el agente cada mes'], 'Usted: atender a los clientes que llegan.'],
   ];
@@ -342,18 +353,18 @@ function propuesta(lead) {
     <div class="pc">${etapas.map(e => `<div class="pk${e[5] ? ' on' : ''}"><span class="nn">${e[0]}</span><h3>${h(e[1])}</h3><span class="du">${h(e[2])}</span><ul>${e[3].map(x => `<li>${icn('i-check')}<span>${h(x)}</span></li>`).join('')}</ul><div class="who">${h(e[4])}</div></div>`).join('')}</div>
     <div class="tot"><span>De la firma a su sistema funcionando</span><b style="color:#FFB27A">${h(pk.plazo)}</b></div><span class="pg-n">07</span></section>`);
   const dudas = [
-    ['¿Tengo que saber de tecnología?', 'No. Nosotros lo instalamos y lo dejamos funcionando. Usted solo aprueba y usa el panel desde el celular.', 'Sin curva'],
-    ['¿Y si el agente responde mal?', 'Se entrena con su información real y lo ajustamos cada mes con sus conversaciones. Si algo necesita a una persona, le avisa a usted.', 'Ajuste mensual'],
-    ['¿Me amarro a un contrato largo?', 'No. La mensualidad es mes a mes y sin permanencia. Si quiere terminar, avisa con 15 días.', 'Sin permanencia'],
-    ['¿Y si no me sirve?', 'Tiene 30 días de garantía después de la entrega, con el primer mes de soporte incluido.', '30 días'],
-    ['¿La web y los datos son míos?', 'Sí. Pagado el proyecto, el sitio, los contenidos y las cuentas quedan a su nombre.', 'Todo suyo'],
-    ['¿Cuánto tiempo me toma a mí?', 'Una reunión de inicio y aprobar el diseño. Le damos 5 días hábiles para cada respuesta.', 'Poco tiempo'],
+    ['¿Tengo que saber de tecnología?', 'No. Nosotros lo instalamos y lo dejamos funcionando. Usted solo aprueba y usa el panel desde el celular.', 'Sin curva', 'i-spark'],
+    ['¿Y si el agente responde mal?', 'Se entrena con su información real y lo ajustamos cada mes con sus conversaciones. Si algo necesita a una persona, le avisa a usted.', 'Ajuste mensual', 'i-agent'],
+    ['¿Me amarro a un contrato largo?', 'No. La mensualidad es mes a mes y sin permanencia. Si quiere terminar, avisa con 15 días.', 'Sin permanencia', 'i-calendar'],
+    ['¿Y si no me sirve?', 'Tiene 30 días de garantía después de la entrega, con el primer mes de soporte incluido.', '30 días', 'i-shield'],
+    ['¿La web y los datos son míos?', 'Sí. Pagado el proyecto, el sitio, los contenidos y las cuentas quedan a su nombre.', 'Todo suyo', 'i-layers'],
+    ['¿Cuánto tiempo me toma a mí?', 'Una reunión de inicio y aprobar el diseño. Le damos 5 días hábiles para cada respuesta.', 'Poco tiempo', 'i-clock'],
   ];
   s.push(`<section class="sl s8"><div><span class="eb">Sin letra chica</span><h2 style="margin-top:.4em">Lo que suele preocupar <span>(y por qué no debería)</span></h2></div>
-    <div class="qa">${dudas.map(d => `<div class="q"><span class="tag2">${h(d[2])}</span><b>${h(d[0])}</b><p>${h(d[1])}</p></div>`).join('')}</div><span class="pg-n">08</span></section>`);
+    <div class="qa">${dudas.map((d, i) => `<div class="qd"><span class="chipI k${(i % 4) + 1}">${icn(d[3])}</span><b>${h(d[0])}</b><p>${h(d[1])}</p></div>`).join('')}</div><span class="pg-n">08</span></section>`);
   s.push(`<section class="sl s9"><div class="l deep"><img class="lg" src="${LOGO}" alt="HORIZON"><h2>Está a un paso de que su negocio <span>atienda solo.</span></h2>
     <div class="ct"><span>Correo</span><span>${CONTACTO.correo}</span><span>WhatsApp</span><span>${CONTACTO.whatsapp}</span><span>Web</span><span>${CONTACTO.web}</span></div></div>
-    <div class="r"><div class="img" ${bg(F(5) || M.hero)}></div><div class="bx"><div><span class="eb">Próximos pasos</span><ol class="ps"><li>Aceptar esta propuesta.</li><li>Firmar el contrato y pagar el 50% desde su portal.</li><li>Kickoff en 48 horas.</li></ol></div>
+    <div class="r"><div class="img" ${bg(F(5) || M.hero)}></div><div class="bx"><div><span class="eb">Próximos pasos</span><ol class="ps"><li>Aceptar esta propuesta.</li><li>Firmar el contrato y pagar el 50% desde su portal.</li><li>Reunión de inicio en 48 horas.</li></ol></div>
     <div class="sig"><b>Acepto la propuesta</b> · ${h(D.nombre)}<small>${h(D.negocio)} · HZ-${D.anio}-${h(D.slug)}-PRO</small></div></div></div></section>`);
   return shell({ titulo: 'Propuesta · ' + D.negocio, cuerpo: s.join('\n'), css: PROP_CSS, color: D.color, tema: M.tema });
 }
@@ -370,7 +381,7 @@ const CON_CSS = `
 .cover{padding:0;background:var(--bg)}.cover::before{display:none}
 .cover .top{background:var(--ink);display:flex;justify-content:space-between;align-items:center;padding:20px 56px}.cover .top img{height:24px}.cover .top span{font:500 7.5pt var(--m);letter-spacing:.14em;text-transform:uppercase;color:#B9B3CC}
 .cover .body{flex:1;padding:44px 56px 48px;display:flex;flex-direction:column;gap:26px}
-.cover h1{font:800 40pt/1.02 var(--f);letter-spacing:-.04em;margin:10px 0 0;color:var(--ink)}.cover h1 .g{display:block}
+.cover h1{font:800 40pt/1.02 var(--f);letter-spacing:-.04em;margin:10px 0 0;color:var(--ink)}
 .cover .sub{margin:12px 0 0;color:var(--ink2);font-size:12pt}
 .cover .photo{height:300px;border-radius:24px;background-size:cover;background-position:center;box-shadow:0 30px 60px -32px rgba(26,22,38,.5)}
 .cover .cb{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px 6px 6px;font:700 9pt var(--f)}.cover .cb img{height:22px;padding:0 6px}.cover .cb i{width:10px;height:10px;border-radius:50%;background:var(--cli);margin-left:6px}
@@ -417,7 +428,7 @@ function contrato(lead) {
   const photo = M.hero ? `style="background-image:url('${h(M.hero)}')"` : 'style="background:var(--deep)"';
 
   const portada = `<section class="pg cover"><div class="top"><img src="${LOGO}" alt="HORIZON"><span>${h(codigo)}</span></div>
-    <div class="body"><div><span class="eb">Contrato · ${h(pk.nm)}</span><h1>Contrato de prestación<span class="g">de servicios.</span></h1><p class="sub">Implementación ${h(pk.nm)} para ${h(D.negocio)}</p></div>
+    <div class="body"><div><span class="eb">Contrato · ${h(pk.nm)}</span><h1>Contrato de prestación<br><span class="g">de servicios.</span></h1><p class="sub">Implementación ${h(pk.nm)} para ${h(D.negocio)}</p></div>
     <span class="cb">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span>
     <div class="photo" ${photo}></div>
     <div class="parties"><div class="party"><small>/ Cliente</small><b>${h(clienteNom)}</b></div><div class="party"><small>/ Prestador</small><b>HORIZON · ${PREST}</b></div>
@@ -459,7 +470,7 @@ function contrato(lead) {
 
   const p5 = `<section class="pg">${band}<div class="in">
     <h2 class="sec">Anexo A · Alcance del servicio</h2>
-    <div class="boxes" style="margin-left:0"><div class="box"><div><small>Plan contratado</small><b>${h(pk.nm)}</b></div></div><div class="box"><div><small>Plazo</small><b>${h(pk.plazo)} desde el kickoff</b></div></div></div>
+    <div class="boxes" style="margin-left:0"><div class="box"><div><small>Plan contratado</small><b>${h(pk.nm)}</b></div></div><div class="box"><div><small>Plazo</small><b>${h(pk.plazo)} desde la reunión de inicio</b></div></div></div>
     <table><tr><th>Incluye</th><th>Detalle</th></tr>${pk.incluye.map(([a, b]) => `<tr><td><b>${h(a)}</b></td><td>${h(b)}</td></tr>`).join('')}</table>
     <p><b>No incluido:</b> ${h(pk.no)}</p>
     <div class="firm"><div class="fc">${fld('Iniciales del Cliente', '')}</div><div class="fc">${fld('Iniciales del Prestador', '')}</div></div>

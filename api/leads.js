@@ -145,7 +145,7 @@ function cleanRadiografia(rx) {
 // Precios de terreno: misma fuente que shared/hz-radiografia.js (ESTRATEGIA/HORIZON-ACELERADORA-NOV-DIC-2026.md).
 const PACKS = {
   esencial: { nm: 'Esencial', impl: 290000, mes: 99000, incluye: ['Web del negocio + ficha de Google Business', 'Agente IA en WhatsApp: responde 24/7, agenda y toma pedidos', 'Panel con cada consulta, hora y pedido', 'Primer mes de mensualidad incluido'] },
-  pro:      { nm: 'Pro', impl: 490000, mes: 149000, incluye: ['Todo lo del Pack Esencial', 'Seguimiento automático a quien preguntó y no agendó', 'Recordatorio el día antes y mensaje a clientes que no vuelven', 'CRM con historial y dashboard con reporte mensual', 'Primer mes de mensualidad incluido'] },
+  pro:      { nm: 'Pro', impl: 490000, mes: 149000, incluye: ['Todo lo del Pack Esencial', 'Seguimiento automático a quien preguntó y no agendó', 'Recordatorio el día antes y mensaje a clientes que no vuelven', 'Historial de clientes y tablero de resultados con reporte mensual', 'Primer mes de mensualidad incluido'] },
 };
 const clp = n => '$' + Math.round(n).toLocaleString('es-CL');
 const h = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
