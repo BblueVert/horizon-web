@@ -145,6 +145,8 @@ app.get('/plan-05', (_req, res) => res.redirect(301, '/servicios'));
 app.get('/recursos/*', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/recursos/index.html')));
 
 // Portal con token dinámico
+app.get('/visita/:slug/panel', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/panel.html')));
+app.get('/api/demo-panel', require('./api/demo-panel'));
 app.get(['/visita', '/visita/:slug'], (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/index.html')));
 app.get('/c/:token/:doc', (req, res) => { req.query = { ...req.query, t: req.params.token, doc: req.params.doc }; return documentos(req, res); });
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));

@@ -14,6 +14,7 @@
     { "source": "/terreno/pro", "destination": "/Pages/terreno/pro.html" },
     { "source": "/terreno/radiografia", "destination": "/Pages/terreno/radiografia.html" },
     { "source": "/visita", "destination": "/Pages/visita/index.html" },
+    { "source": "/visita/:slug/panel", "destination": "/Pages/visita/panel.html" },
     { "source": "/visita/:slug", "destination": "/Pages/visita/index.html" },
     { "source": "/servicios", "destination": "/Pages/servicios.html" },
     { "source": "/recursos", "destination": "/Pages/recursos/index.html" },
