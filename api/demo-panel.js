@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
   if (!SB_URL || !SB_KEY) return res.status(503).json({ error: 'Falta SUPABASE_SERVICE_ROLE_KEY' });
   const sb = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
   try {
-    const f = await httpsRequest('GET', `${SB_URL}/rest/v1/demo_fichas?slug=eq.${slug}&activa=eq.true&select=slug,nombre&limit=1`, sb);
+    const f = await httpsRequest('GET', `${SB_URL}/rest/v1/demo_fichas?slug=eq.${slug}&activa=eq.true&select=slug,nombre,color:ficha->>color,asistente:ficha->>asistente&limit=1`, sb);
     const ficha = (JSON.parse(f.body || '[]'))[0];
     if (!ficha) return res.status(404).json({ error: 'Demo no encontrada' });
     const desde = new Date(Date.now() - 7 * 864e5).toISOString();

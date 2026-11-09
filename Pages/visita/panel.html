@@ -6,91 +6,151 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Panel del negocio · HORIZON</title>
 <link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/OPS/shared/ops.css">
 <style>
-.dm-sel{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
-.dm-sel a{font-size:13px;font-weight:600;padding:8px 12px;border-radius:99px;border:1px solid var(--border2);color:var(--text2);text-decoration:none;background:var(--card);}
-.dm-sel a.on{background:var(--text);color:var(--card);border-color:var(--text);}
-.dm-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
-.dm-kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
-.dm-kpi small{display:block;font-family:var(--fm);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);}
-.dm-kpi b{font-size:26px;font-variant-numeric:tabular-nums;color:var(--text);}
-.dm-list{display:grid;gap:10px;}
-.dm-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:grid;gap:6px;}
-.dm-item.new{border-color:var(--h1);box-shadow:0 0 0 3px rgba(242,105,12,.15);}
-.dm-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;}
-.dm-top b{font-size:15px;color:var(--text);}
-.dm-meta{font-family:var(--fm);font-size:12px;color:var(--text3);}
-.dm-res{font-size:14px;color:var(--text);}
-.dm-kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13px;}
-.dm-kv dt{color:var(--text3);} .dm-kv dd{margin:0;color:var(--text);font-weight:600;}
-.dm-live{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:12px;color:var(--text3);}
-.dm-live i{width:8px;height:8px;border-radius:50%;background:#16A34A;animation:dmP 1.6s infinite;}
-@keyframes dmP{50%{opacity:.3}}
-@media(max-width:900px){.dm-kpis{grid-template-columns:repeat(2,1fr);}}
-@media (prefers-reduced-motion: reduce){.dm-live i{animation:none}}
+:root{--c:#F2690C;}
+body{background:#FFFBF6;}
+.pn{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+.pn-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:22px;}
+.pn-head h1{font:800 28px/1.1 'Plus Jakarta Sans',sans-serif;color:var(--text);margin:0 0 4px;}
+.pn-head p{margin:0;font-size:13px;color:var(--text3);}
+.pn-live{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:12px;color:var(--text3);}
+.pn-live i{width:8px;height:8px;border-radius:50%;background:#16A34A;animation:pnP 1.6s infinite;}
+@keyframes pnP{50%{opacity:.3}}
+.pn-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.pn-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+.pn-stat small{display:block;font-size:12.5px;font-weight:700;color:var(--text2);margin-bottom:8px;}
+.pn-stat b{display:block;font:800 28px/1 'Plus Jakarta Sans',sans-serif;color:var(--text);font-variant-numeric:tabular-nums;}
+.pn-stat span{display:block;font-size:11.5px;color:var(--text3);margin-top:6px;}
+.pn-stat.acc{border-color:var(--c);box-shadow:inset 4px 0 0 var(--c);}
+.pn-canales{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.pn-canal{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+.pn-canal .ic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+.pn-canal .ic svg{width:18px;height:18px;}
+.pn-canal small{display:block;font-size:12.5px;font-weight:700;color:var(--text2);}
+.pn-canal b{font:800 24px/1.1 'Plus Jakarta Sans',sans-serif;color:var(--text);}
+.pn-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;}
+.pn-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
+.pn-card h3{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;color:var(--text);margin:0 0 4px;}
+.pn-card h3 em{font-style:normal;font-size:11px;font-weight:500;color:var(--text3);}
+.pn-card>p{font-size:11.5px;color:var(--text3);margin:0 0 12px;}
+.pn-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--border);}
+.pn-row:last-child{border-bottom:none;}
+.pn-row.new{background:linear-gradient(90deg,rgba(242,105,12,.10),transparent);}
+.pn-dot{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;}
+.pn-dot svg{width:16px;height:16px;}
+.pn-info b{display:block;font-size:13.5px;color:var(--text);}
+.pn-info .res{font-size:12.5px;color:var(--text2);margin-top:2px;}
+.pn-info .meta{font-family:var(--fm);font-size:11px;color:var(--text3);margin-top:4px;}
+.pn-side{text-align:right;display:grid;gap:6px;justify-items:end;}
+.pn-side .tot{font-size:13.5px;font-weight:800;color:var(--text);white-space:nowrap;}
+.pn-est{font:600 11px 'Plus Jakarta Sans',sans-serif;border:0;border-radius:99px;padding:5px 10px;cursor:pointer;}
+.pn-est.pendiente{background:#FDE2E1;color:#B42318;}
+.pn-est.aceptado,.pn-est.preparando{background:#FEF0C7;color:#93370D;}
+.pn-est.listo{background:#DCFAE6;color:#067647;}
+.pn-est.entregado{background:#EEEDF2;color:#5B5670;}
+.pn-empty{font-size:13px;color:var(--text3);padding:18px 0;}
+@media(max-width:900px){.pn-stats{grid-template-columns:repeat(2,1fr);}.pn-grid{grid-template-columns:1fr;}}
+@media(max-width:520px){.pn-canales{grid-template-columns:1fr;}.pn-stat b{font-size:24px;}}
+@media (prefers-reduced-motion: reduce){.pn-live i{animation:none}}
 </style>
-<script src="/shared/hz-icons.js"></script>
 </head>
 <body>
 <header style="background:#1A1626;padding:16px 20px;display:flex;justify-content:space-between;align-items:center"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" style="height:22px"><span style="font:500 11px 'DM Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#B9B3CC">Panel del negocio · demo</span></header>
-<div class="ops-layout" style="display:block">
-  <main class="ops-main" style="margin:0">
-    <div class="ops-header">
-      <div>
-        <div class="ops-page-title" id="dmTitle">Panel de demos</div>
-        <div class="ops-page-sub"><span class="dm-live"><i></i>En vivo · lo que el agente atendió y agendó por WhatsApp</span></div>
-      </div>
-    </div>
-    <div class="ops-content">
-            <div id="dmBody"><div class="ops-loading"><div class="ops-spinner"></div>Cargando…</div></div>
-    </div>
-  </main>
-</div>
+<main class="pn">
+  <div class="pn-head">
+    <div><h1 id="pnTitle">Panel del negocio</h1><p id="pnFecha"></p></div>
+    <span class="pn-live"><i></i>En vivo · lo que el agente atendió por WhatsApp y la web</span>
+  </div>
+  <div id="pnBody"><div class="ops-loading"><div class="ops-spinner"></div>Cargando…</div></div>
+</main>
 <script>
-const TIPO = { pedido: 'Pedido', reserva: 'Reserva', consulta: 'Consulta', derivar: 'Pide hablar con alguien' };
-const BADGE = { pedido: 'badge-green', reserva: 'badge-green', consulta: 'badge-gray', derivar: 'badge-gray' };
-let slug = (location.pathname.split('/').filter(Boolean)[1] || new URLSearchParams(location.search).get('slug') || '').toLowerCase();
-let vistos = null;
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function hora(iso){const d=new Date(iso);return d.toLocaleDateString('es-CL',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});}
-function canal(t){return !t||t==='web'?'Web':'WhatsApp '+t;}
+const IC = {
+  wa:'<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.5a8.4 8.4 0 0 1-11.7 7.7L4 20l.9-4.6a8.4 8.4 0 1 1 15.6-3.9Z"/></svg>',
+  web:'<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5a13 13 0 0 1 0 17M12 3.5a13 13 0 0 0 0 17"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
+  msg:'<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v10H9l-4 4z"/></svg>'
+};
+const ESTADOS = ['pendiente','aceptado','preparando','listo','entregado'];
+const ETQ = {pendiente:'Pendiente',aceptado:'Aceptado',preparando:'Preparando',listo:'Listo',entregado:'Entregado'};
+const slug = (location.pathname.split('/').filter(Boolean)[1] || new URLSearchParams(location.search).get('slug') || '').toLowerCase();
+const KEY = 'hz-panel-estados-' + slug;
+let estados = {}; try { estados = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+let vistos = null, ultimas = [];
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clp = n => '$' + Math.round(n).toLocaleString('es-CL');
+const hora = iso => { const d=new Date(iso); return d.toLocaleDateString('es-CL',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}); };
+const esWeb = a => !a.telefono || a.telefono === 'web';
+const total = a => Number.isFinite(Number(a.datos && a.datos.total)) && a.datos.total !== null ? Number(a.datos.total) : 0;
 
-async function api(q){
-  const r = await fetch('/api/demo-panel'+q);
-  if(!r.ok) throw new Error(r.status);
-  return r.json();
+function saludo(){ const h=new Date().getHours(); return h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches'; }
+document.getElementById('pnFecha').textContent = new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
+
+function estadoBtn(a){
+  const e = estados[a.id] || 'pendiente';
+  return `<button class="pn-est ${e}" data-id="${a.id}" title="Cambiar estado">${ETQ[e]}</button>`;
 }
-async function cargar(){
-  if(!slug){document.getElementById('dmBody').innerHTML='<div class="ops-empty"><div class="ops-empty-text">No hay demos publicadas.</div></div>';return;}
-  const {ficha, acciones} = await api('?slug='+encodeURIComponent(slug));
-  document.getElementById('dmTitle').textContent = ficha ? ficha.nombre : 'Panel de demos';
+function fila(a, nuevos){
+  const d = a.datos || {}, web = esWeb(a);
+  const color = a.tipo==='reserva' ? 'var(--c)' : web ? '#1A1626' : '#25D366';
+  const icono = a.tipo==='reserva' ? IC.cal : a.tipo==='pedido' ? (web?IC.web:IC.wa) : IC.msg;
+  const extra = [d.entrega && (d.entrega==='delivery'?'Delivery':'Retiro'), d.hora, web?'Web':'WhatsApp '+a.telefono].filter(Boolean).join(' · ');
+  return `<div class="pn-row${nuevos.has(a.id)?' new':''}">
+    <div class="pn-dot" style="background:${color}">${icono}</div>
+    <div class="pn-info"><b>${esc(d.cliente||'Cliente')}</b><div class="res">${esc(a.resumen||d.detalle||'')}</div><div class="meta">${hora(a.created_at)} · ${esc(extra)}</div></div>
+    <div class="pn-side">${total(a)?`<span class="tot">${clp(total(a))}</span>`:''}${a.tipo==='pedido'||a.tipo==='reserva'?estadoBtn(a):''}</div>
+  </div>`;
+}
+function pintar(ficha, acciones){
+  if (ficha && ficha.color) document.documentElement.style.setProperty('--c', ficha.color);
+  document.getElementById('pnTitle').textContent = saludo() + (ficha ? ', ' + ficha.nombre : '');
   const hoy = new Date().toDateString();
-  const deHoy = acciones.filter(a=>new Date(a.created_at).toDateString()===hoy);
-  const cuenta = t => deHoy.filter(a=>a.tipo===t).length;
-  const nuevos = vistos ? new Set(acciones.filter(a=>!vistos.has(a.id)).map(a=>a.id)) : new Set();
-  vistos = new Set(acciones.map(a=>a.id));
-  document.getElementById('dmBody').innerHTML =
-    `<div class="dm-kpis">
-      <div class="dm-kpi"><small>Hoy</small><b>${deHoy.length}</b></div>
-      <div class="dm-kpi"><small>Pedidos</small><b>${cuenta('pedido')}</b></div>
-      <div class="dm-kpi"><small>Reservas</small><b>${cuenta('reserva')}</b></div>
-      <div class="dm-kpi"><small>Consultas</small><b>${cuenta('consulta')+cuenta('derivar')}</b></div>
-    </div>` +
-    (acciones.length ? '<div class="dm-list">'+acciones.map(a=>{
-      const d=a.datos||{};
-      return `<div class="dm-item${nuevos.has(a.id)?' new':''}">
-        <div class="dm-top"><b>${esc(d.cliente||'Cliente')}</b><span class="badge ${BADGE[a.tipo]||'badge-gray'}">${TIPO[a.tipo]||a.tipo}</span></div>
-        <div class="dm-meta">${hora(a.created_at)} · ${esc(canal(a.telefono))}${a.codigo?' · '+esc(a.codigo):''}</div>
-        ${a.resumen?`<div class="dm-res">${esc(a.resumen)}</div>`:''}
-        <dl class="dm-kv">${d.detalle?`<dt>Detalle</dt><dd>${esc(d.detalle)}</dd>`:''}${d.hora?`<dt>Hora</dt><dd>${esc(d.hora)}</dd>`:''}${d.entrega?`<dt>Entrega</dt><dd>${esc(d.entrega)}</dd>`:''}${Number.isFinite(d.total)?`<dt>Total</dt><dd>$${Number(d.total).toLocaleString('es-CL')}</dd>`:''}${d.otros?`<dt>Otros</dt><dd>${esc(d.otros)}</dd>`:''}</dl>
-      </div>`;}).join('')+'</div>'
-    : '<div class="ops-empty"><div class="ops-empty-text">Todavía no hay pedidos en esta demo. Haz uno por WhatsApp o por el chat de la web y aparece aquí solo.</div></div>');
+  const deHoy = acciones.filter(a => new Date(a.created_at).toDateString() === hoy);
+  const pedidosHoy = deHoy.filter(a => a.tipo === 'pedido');
+  const ventas = pedidosHoy.reduce((s,a) => s + total(a), 0);
+  const conTotal = pedidosHoy.filter(a => total(a));
+  const reservas = acciones.filter(a => a.tipo === 'reserva');
+  const consultas = acciones.filter(a => a.tipo === 'consulta' || a.tipo === 'derivar');
+  const porPreparar = acciones.filter(a => a.tipo === 'pedido' && !['entregado'].includes(estados[a.id]));
+  const wa = acciones.filter(a => !esWeb(a)).length, web = acciones.length - wa;
+  const nuevos = vistos ? new Set(acciones.filter(a => !vistos.has(a.id)).map(a => a.id)) : new Set();
+  vistos = new Set(acciones.map(a => a.id));
+  document.getElementById('pnBody').innerHTML = `
+    <div class="pn-stats">
+      <div class="pn-stat acc"><small>Ventas de hoy</small><b>${clp(ventas)}</b><span>${pedidosHoy.length} pedido${pedidosHoy.length===1?'':'s'} tomados por el agente</span></div>
+      <div class="pn-stat"><small>Ticket promedio</small><b>${conTotal.length?clp(ventas/conTotal.length):'—'}</b><span>Pedidos con total de hoy</span></div>
+      <div class="pn-stat"><small>Reservas agendadas</small><b>${reservas.length}</b><span>Últimos 7 días</span></div>
+      <div class="pn-stat"><small>Consultas atendidas</small><b>${consultas.length}</b><span>Sin que tuvieras que responder</span></div>
+    </div>
+    <div class="pn-canales">
+      <div class="pn-canal"><div class="ic" style="background:#25D366">${IC.wa}</div><div><small>WhatsApp</small><b>${wa}</b></div></div>
+      <div class="pn-canal"><div class="ic" style="background:#1A1626">${IC.web}</div><div><small>Web</small><b>${web}</b></div></div>
+    </div>
+    <div class="pn-grid">
+      <section class="pn-card"><h3>Pedidos por preparar <em>${porPreparar.length}</em></h3><p>Toca el estado para avanzarlo: pendiente, aceptado, preparando, listo, entregado.</p>
+        ${porPreparar.length ? porPreparar.map(a=>fila(a,nuevos)).join('') : '<div class="pn-empty">No hay pedidos pendientes. Haz uno por WhatsApp y aparece aquí solo.</div>'}</section>
+      <section class="pn-card"><h3>Reservas y consultas <em>${reservas.length+consultas.length}</em></h3><p>Lo que el agente agendó o dejó anotado para ti.</p>
+        ${reservas.length+consultas.length ? [...reservas,...consultas].sort((x,y)=>y.created_at.localeCompare(x.created_at)).map(a=>fila(a,nuevos)).join('') : '<div class="pn-empty">Todavía no hay reservas ni consultas.</div>'}</section>
+    </div>`;
 }
-(async()=>{
-  try { await cargar(); } catch(e){ document.getElementById('dmBody').innerHTML='<div class="ops-empty"><div class="ops-empty-text">No se pudo cargar ('+esc(e.message)+').</div></div>'; }
-  setInterval(()=>cargar().catch(()=>{}), 5000);
+document.addEventListener('click', e => {
+  const b = e.target.closest('.pn-est'); if (!b) return;
+  const id = b.dataset.id, i = ESTADOS.indexOf(estados[id] || 'pendiente');
+  estados[id] = ESTADOS[Math.min(i + 1, ESTADOS.length - 1)];
+  try { localStorage.setItem(KEY, JSON.stringify(estados)); } catch (err) {}
+  pintar(ultimas.ficha, ultimas.acciones);
+});
+async function cargar(){
+  if (!slug) { document.getElementById('pnBody').innerHTML = '<div class="pn-empty">Falta el negocio en el link.</div>'; return; }
+  const r = await fetch('/api/demo-panel?slug=' + encodeURIComponent(slug));
+  if (!r.ok) throw new Error(r.status);
+  ultimas = await r.json();
+  pintar(ultimas.ficha, ultimas.acciones || []);
+}
+(async () => {
+  try { await cargar(); } catch (e) { document.getElementById('pnBody').innerHTML = '<div class="pn-empty">No se pudo cargar (' + esc(e.message) + ').</div>'; }
+  setInterval(() => cargar().catch(() => {}), 5000);
 })();
 </script>
 <script src="/shared/analytics.js"></script>
