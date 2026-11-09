@@ -10,7 +10,8 @@
     "validar": "node scripts/validar.js",
     "publicar": "node scripts/publicar.js",
     "test": "node --test test/*.test.js",
-    "fichas-mesa-cero": "node scripts/fichas-mesa-cero.js"
+    "fichas-mesa-cero": "node scripts/fichas-mesa-cero.js",
+    "motor": "node scripts/motor.js"
   },
   "engines": {
     "node": ">=20"
