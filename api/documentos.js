@@ -75,7 +75,7 @@ const MEDIA = {
   'cake-boutique': { base: PROP + 'cake-boutique/', hero: 'img/hero-mesa.jpg', fotos: ['img/cumpleanos.jpg', 'img/cat-tortas.jpg', 'img/iced-matcha.jpg', 'img/box-uno.jpg', 'img/torta-bizcocho.jpg', 'img/mini-torta.jpg'], logo: 'iso-ae.svg', fondo: '#F6E6EA' },
   'que-rolls': { base: PROP + 'que-rolls/', hero: 'hero.png', fotos: ['burg.png', 'p50.png', 'acev.png', 'gopo.png', 'palt.png', 'burs.png'], logo: '', fondo: '#0B0B0B',
     // Paleta del negocio (su web es negra y roja): la propuesta la toma y HORIZON queda como sello.
-    tema: '--bg:#0D0D0D;--bg2:#171717;--surface:#1C1C1C;--ink:#F4F1EC;--ink2:#BDB8B2;--ink3:#8A8580;--line:#2B2B2B;--line2:#353535;--acc:#E21B23;--deepS:linear-gradient(150deg,#000 0%,#1A0506 55%,#4A070B 100%);--deep:linear-gradient(150deg,#000 0%,#1A0506 55%,#4A070B 100%);--hot:linear-gradient(120deg,#E21B23,#FF5A36);--grad:linear-gradient(95deg,#E21B23,#FF5A36);--dark:#000;--chip:#2A0A0C;--chipb:#7A1015' },
+    tema: '--bg:#0D0D0D;--bg2:#171717;--surface:#1C1C1C;--ink:#F4F1EC;--ink2:#BDB8B2;--ink3:#8A8580;--line:#2B2B2B;--line2:#353535;--acc:#E21B23;--deepS:linear-gradient(150deg,#000 0%,#1A0506 55%,#4A070B 100%);--deep:linear-gradient(150deg,#000 0%,#1A0506 55%,#4A070B 100%);--hot:linear-gradient(120deg,#E21B23,#FF5A36);--grad:linear-gradient(95deg,#E21B23,#FF5A36);--dark:#000;--chip:#2A0A0C;--chipb:#7A1015;--t1:#2A0A0C;--t2:#2A0A0C;--t3:#2A0A0C;--t4:#2A0A0C;--c1:#FF5A36;--c2:#FF5A36;--c3:#FF5A36;--c4:#FF5A36' },
 };
 const CASOS = [
   ['VitalKine', 'Kinesiología a domicilio · Rancagua', 'Sitio a medida con reservas propias y SEO local.', '/Identidad/casos/vitalkine.webp'],
@@ -94,7 +94,7 @@ html,body{margin:0}body{background:#DCD6CE;color:var(--ink);font:400 10pt/1.55 v
 .eb{font:500 .78em/1 var(--m);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);display:inline-flex;align-items:center;gap:.7em}
 .eb::before{content:'';width:1.8em;height:1.5px;background:var(--acc)}
 .dk .eb{color:#E4DDF5}
-.g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.g{color:var(--acc)}
 .acc{color:var(--acc);font-weight:700}
 .acciones{position:sticky;top:0;z-index:50;display:flex;gap:10px;justify-content:center;padding:12px;background:#1A1626}
 .acciones button{font:700 14px var(--f);border:0;border-radius:12px;padding:12px 18px;cursor:pointer;background:linear-gradient(95deg,#F2690C,#CC3253 50%,#7B3FA0);color:#fff}
@@ -148,7 +148,7 @@ const icn = (n, cls) => `<svg class="ico ${cls || ''}" viewBox="0 0 24 24" aria-
 // ── Propuesta: diapositivas 16:9. Solo colores sólidos y degradados opacos sobre fotos sin velos
 // (las capas transparentes, desenfoques y vidrio no se ven bien en los visores de PDF del celular).
 const PROP_CSS = `
-:root{--dark:#1A1626;--chip:#2C2160;--chipb:#5B4A9E;--deepS:linear-gradient(150deg,#1E1744 0%,#2C2160 35%,#4A2A85 70%,#6B2F8E 100%);--hot:linear-gradient(120deg,#F2690C,#C4467A)}
+:root{--dark:#1A1626;--chip:#2A2536;--chipb:#3A3448;--deepS:#1A1626;--hot:linear-gradient(120deg,#F2690C,#C4467A);--t1:#FFE2CC;--t2:#ECE3FF;--t3:#DDF5E6;--t4:#FFDDE5;--c1:#C2560A;--c2:#7B3FA0;--c3:#15803D;--c4:#C4467A}
 @page{size:338.7mm 190.5mm;margin:0}
 .sl{position:relative;width:min(100%,1180px);aspect-ratio:16/9;margin:24px auto;background:var(--bg);overflow:hidden;box-shadow:0 30px 60px -30px rgba(26,22,38,.35);break-after:page;font-size:clamp(9px,1.06vw,12.6px)}
 .sl h1,.sl h2,.sl h3{margin:0;font-weight:800;letter-spacing:-.035em;line-height:1.02}
@@ -156,17 +156,24 @@ const PROP_CSS = `
 .lg{height:2.4em;width:auto;display:block}
 .img{background-size:cover;background-position:center}
 .ico{stroke-width:1.8}
-.chipI{width:2.6em;height:2.6em;border-radius:12px;background:var(--hot);color:#fff;display:grid;place-items:center;flex:none}.chipI .ico{width:1.3em;height:1.3em}
+.chipI{width:2.6em;height:2.6em;border-radius:12px;background:var(--t1);color:var(--c1);display:grid;place-items:center;flex:none}.chipI.k2{background:var(--t2);color:var(--c2)}.chipI.k3{background:var(--t3);color:var(--c3)}.chipI.k4{background:var(--t4);color:var(--c4)}.chipI .ico{width:1.3em;height:1.3em}
 .deep{background:var(--deepS);color:#fff}.deep .eb{color:#E4DDF5}
 /* 1 portada: panel sólido + foto nítida */
-.s1{display:grid;grid-template-columns:46% 54%}
-.s1 .l{padding:5.5% 6%;display:grid;grid-template-rows:auto 1fr auto;gap:1.5em}
-.s1 h1{font-size:5em;align-self:end}.s1 h1 small{display:block;font:500 .19em var(--m);letter-spacing:.16em;text-transform:uppercase;color:#FFB27A;margin-bottom:1.3em}
-.s1 .sub{margin:1em 0 0;color:#E4DDF5;font-size:1.15em;max-width:26em}
-.tg{display:inline-flex;align-items:center;gap:.6em;padding:.55em 1em;border-radius:99px;font:600 .88em var(--f);background:var(--chip);border:1px solid var(--chipb);color:#fff;margin:0 .5em .5em 0}
-.s1 .r{position:relative}.s1 .r .img{position:absolute;inset:0}
-.cb{position:absolute;left:5%;bottom:6%;background:#fff;border-radius:16px;padding:.7em 1.1em;display:flex;align-items:center;gap:.8em;box-shadow:0 20px 40px -20px rgba(26,22,38,.5);font-weight:700;font-size:.95em}
-.cb img{height:1.9em;width:auto}.cb i{width:.8em;height:.8em;border-radius:50%;background:var(--cli)}.cb span{font:500 .78em var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block}
+.s1{display:grid;grid-template-rows:auto 1fr}
+.hbar{background:var(--dark);display:flex;justify-content:space-between;align-items:center;padding:1.3em 6%}.hbar .lg{height:1.9em}.hbar span{font:500 .78em var(--m);letter-spacing:.14em;text-transform:uppercase;color:#B9B3CC}
+.s1 .cv{display:grid;grid-template-columns:1fr 1fr;gap:4%;padding:4% 6% 4.5%;align-items:center}
+.s1 h1{font-size:5.4em}.s1 h1 .g{display:block}
+.s1 .sub{margin:1.1em 0 0;color:var(--ink2);font-size:1.2em;max-width:28em}
+.chk{display:flex;flex-wrap:wrap;gap:.6em 1.4em;margin-top:1.6em;font-size:.95em;color:var(--ink2)}.chk span{display:inline-flex;align-items:center;gap:.45em}.chk .ico{width:1.1em;height:1.1em;color:var(--c3)}
+.hero{position:relative;height:100%;min-height:22em}
+.hero .ph{position:absolute;inset:6% 6% 4% 10%;border-radius:26px;box-shadow:0 40px 70px -35px rgba(26,22,38,.55)}
+.fl{position:absolute;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 44px -24px rgba(26,22,38,.45);padding:.8em 1em;font-size:.86em;z-index:2}
+.fl small{display:block;font:500 .72em var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}.fl b{font-size:1.02em}
+.fl .row{display:flex;align-items:center;gap:.7em}
+.fl.chat{left:0;top:30%;width:52%;display:grid;gap:.45em}.fl.chat .q{background:var(--t1);padding:.5em .7em;border-radius:12px 12px 12px 4px;color:var(--ink)}.fl.chat .a{background:var(--dark);color:#fff;padding:.5em .7em;border-radius:12px 12px 4px 12px;justify-self:end;max-width:90%}
+.fl.ok{right:0;top:0}.fl.st{right:2%;bottom:0;width:38%}
+.bars{display:flex;align-items:flex-end;gap:.35em;height:3.2em;margin-top:.5em}.bars i{flex:1;border-radius:4px;background:var(--t2)}.bars i:last-child{background:var(--hot)}
+.cb2{display:inline-flex;align-items:center;gap:.6em;margin-top:1.6em;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:.4em 1em .4em .45em;font-weight:700;font-size:.92em}.cb2 img{height:1.8em;width:auto}.cb2 i{width:.8em;height:.8em;border-radius:50%;background:var(--cli);margin-left:.4em}
 /* 2 hola (se mantiene) */
 .s2{display:grid;grid-template-columns:1fr 1fr}
 .s2 .tx{padding:6% 5% 6% 7%;display:flex;flex-direction:column;justify-content:center;gap:1.2em}
@@ -181,7 +188,7 @@ const PROP_CSS = `
 /* 3 lo que vimos */
 .s3{display:grid;grid-template-columns:.92fr 1.08fr;gap:3%;padding:5% 5.5% 5% 6.5%}
 .s3 .l{display:flex;flex-direction:column;gap:1.6em}.s3 h2{font-size:3.8em}
-.money{flex:1;border-radius:26px;background:var(--deepS);color:#fff;padding:1.8em 2em;display:flex;flex-direction:column;justify-content:space-between}
+.money{flex:1;border-radius:26px;background:var(--dark);color:#fff;padding:1.8em 2em;display:flex;flex-direction:column;justify-content:space-between}
 .money .v{font-size:5.6em;font-weight:800;letter-spacing:-.05em;line-height:.95;color:#FFB27A}.money .v small{font-size:.24em;letter-spacing:0;color:#fff;font-weight:600}
 .money p{margin:0;color:#D7CFEA;font-size:.95em}
 .s3 .r{display:flex;flex-direction:column;justify-content:center;gap:1em}
@@ -222,31 +229,32 @@ const PROP_CSS = `
 .s5 .hd2 h2{font-size:3em}.s5 .hd2 p{margin:.3em 0 0;color:var(--ink2);max-width:36em}
 .ents{display:grid;grid-template-columns:1fr 1fr;gap:.8em 1.4em;align-content:center}
 .ent{display:grid;grid-template-columns:2.6em 1fr;gap:.8em;align-items:start}.ent b{display:block;font-size:1em}.ent span{color:var(--ink2);font-size:.88em;line-height:1.4}
-.price{border-radius:22px;background:var(--deepS);color:#fff;display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:1.2em;padding:1.1em 1.6em;align-items:center}
+.price{border-radius:22px;background:var(--dark);color:#fff;display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:1.2em;padding:1.1em 1.6em;align-items:center}
 .price small{display:block;font:500 .7em var(--m);letter-spacing:.1em;text-transform:uppercase;color:#D7CFEA}.price b{font-size:2em;letter-spacing:-.03em}.price .o{color:#FFB27A}.price em{font-style:normal;color:#D7CFEA;font-size:.82em}
 /* 6 a tener en cuenta */
 .s6{display:grid;grid-template-columns:1.55fr .85fr;gap:2.4%;padding:5% 5.5% 5% 6.5%}
 .s6 .l{display:grid;grid-template-rows:auto 1fr;gap:1.4em}.s6 h2{font-size:3.6em}
-.g4{display:grid;grid-template-columns:1fr 1fr;gap:1em}
-.tc{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.3em 1.4em;display:grid;grid-template-columns:auto 1fr;gap:.4em 1em;align-content:start}
-.tc .big{grid-column:1/-1;font-size:2.6em;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--ink)}.tc .big span{color:var(--acc)}
-.tc b{font-size:1.05em;align-self:center}.tc p{grid-column:1/-1;margin:0;color:var(--ink2);font-size:.95em}
+.g4{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:1em}
+.tc{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.4em 1.5em;display:grid;grid-template-columns:auto 1fr;gap:.5em 1em;align-content:center}
+.tc .big{grid-column:1/-1;margin-top:.2em;font-size:3.2em;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--ink)}.tc .big span{color:var(--acc)}
+.tc b{font-size:1.05em;align-self:center}.tc p{grid-column:1/-1;margin:0;color:var(--ink2);font-size:1.02em;line-height:1.45}
 .s6 .r{display:grid;grid-template-rows:1fr 1fr;gap:1em}
 .dc{border-radius:22px;padding:1.5em;display:flex;flex-direction:column;justify-content:space-between}
 .dc .v{font-size:3.4em;font-weight:800;letter-spacing:-.04em;line-height:1}.dc p{margin:0;font-size:.98em}
-.dc.a{background:var(--deepS);color:#fff}.dc.a .v{color:#FFB27A}.dc.a p{color:#D7CFEA}.dc.b{background:var(--dark);color:#fff}.dc.b p{color:#B9B3CC}
+.dc.a{background:var(--t1);color:var(--ink)}.dc.a .v{color:var(--c1)}.dc.a p{color:var(--ink2)}.dc.a .eb{color:var(--ink2)}.dc.b{background:var(--dark);color:#fff}.dc.b p{color:#B9B3CC}
 /* 7 proceso */
-.s7{padding:4.5% 5.5% 4.5% 6.5%;display:grid;grid-template-rows:auto 1fr;gap:1.6em}
+.s7{padding:4.5% 5.5% 4.5% 6.5%;display:grid;grid-template-rows:auto 1fr auto;gap:1.4em}
+.tot{border-radius:18px;background:var(--dark);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:1em 1.4em;font-size:1.05em}.tot b{font-size:1.4em}.tot .g{font-weight:800}
 .s7 .hd{display:flex;justify-content:space-between;align-items:flex-end;gap:2em}.s7 h2{font-size:3.6em}.s7 .hd p{margin:0;max-width:30em;color:var(--ink2)}
-.pc{display:grid;grid-template-columns:repeat(4,1fr);gap:1em}
-.pk{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.3em;display:grid;grid-template-rows:auto auto auto 1fr auto;gap:.6em;position:relative}
-.pk.on{background:var(--deepS);color:#fff;border:0}.pk.on .who{color:#D7CFEA}.pk.on li{color:#fff}
-.pk .nn{font-size:3em;font-weight:800;letter-spacing:-.05em;line-height:1;background:var(--hot);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pc{display:grid;grid-template-columns:repeat(4,1fr);gap:1em;align-items:stretch}
+.pk{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.4em;display:flex;flex-direction:column;gap:.75em;position:relative}
+.pk.on{background:var(--dark);color:#fff;border:0}.pk.on .who{color:#D7CFEA}.pk.on li{color:#fff}
+.pk .nn{font-size:3em;font-weight:800;letter-spacing:-.05em;line-height:1;color:var(--acc)}
 .pk.on .nn{background:none;-webkit-text-fill-color:#FFB27A;color:#FFB27A}
 .pk h3{font-size:1.5em}.pk .du{justify-self:start;font:500 .72em var(--m);letter-spacing:.08em;text-transform:uppercase;padding:.35em .7em;border-radius:99px;background:var(--bg2);color:var(--acc)}
 .pk.on .du{background:var(--chip);color:#FFB27A}
-.pk ul{list-style:none;margin:0;padding:0;display:grid;gap:.4em;align-content:start}.pk li{display:grid;grid-template-columns:1.2em 1fr;gap:.5em;font-size:.92em;color:var(--ink)}.pk li .ico{width:1.1em;height:1.1em;color:var(--acc);margin-top:.15em}
-.who{border-top:1px dashed var(--line2);padding-top:.6em;font-size:.86em;color:var(--ink2)}.who b{color:inherit}
+.pk ul{list-style:none;margin:0;padding:0;display:grid;gap:.4em;align-content:start}.pk li{display:grid;grid-template-columns:1.2em 1fr;gap:.5em;font-size:1em;line-height:1.4;color:var(--ink)}.pk li .ico{width:1.1em;height:1.1em;color:var(--acc);margin-top:.15em}
+.who{margin-top:auto;border-radius:12px;background:var(--bg2);padding:.6em .8em;font-size:.9em;color:var(--ink)}.pk.on .who{background:#2A2536}.who b{color:inherit}
 /* 8 dudas */
 .s8{padding:4.5% 5.5% 4.5% 6.5%;display:grid;grid-template-rows:auto 1fr;gap:1.6em;background:var(--bg2)}
 .s8 h2{font-size:3.6em}.s8 h2 span{color:var(--acc)}
@@ -264,7 +272,7 @@ const PROP_CSS = `
 .sig{border-top:2px solid var(--ink);padding-top:.6em;font-size:.9em}.sig small{display:block;font:500 .72em var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:.3em}
 @media screen and (max-width:760px){
  .sl{aspect-ratio:auto;width:auto;margin:0 0 12px;font-size:13px;display:block;padding:0}
- .s1 .r,.col,.s5 .ph,.s9 .r .img{height:340px}.s1 .r{position:relative}.s1 h1{font-size:3em}
+ .col,.s5 .ph,.s9 .r .img{height:340px}.s1 h1{font-size:3em}.s1 .cv{grid-template-columns:1fr;padding:24px 20px}.hero{height:400px}
  .s1 .l,.s2 .tx,.s4 .l,.s5 .body,.s9 .l,.s9 .r .bx{padding:28px 20px}.s3,.s6,.s7,.s8{padding:28px 20px}
  .s3,.s6{display:grid;grid-template-columns:1fr;gap:16px}.stage{height:460px;margin:0 16px 20px}.phn{height:88%}.phn.web{left:4%}.phn.wa{left:auto;right:4%}.pnl,.avs{display:none}
  .ents,.price,.g4,.pc,.qa,.s9{grid-template-columns:1fr}.s7 .hd{flex-direction:column;align-items:start}.pg-n{display:none}}
@@ -283,11 +291,16 @@ function propuesta(lead) {
   const shot = rx.negocio_slug && MEDIA[rx.negocio_slug] ? `/Identidad/demos/${rx.negocio_slug}-web.jpg` : '';
   const horas = ['10:41', '10:41', '10:42', '10:42'];
   const s = [];
-  s.push(`<section class="sl s1"><div class="l deep"><img class="lg" src="${LOGO}" alt="HORIZON">
-    <h1><small>Propuesta · ${h(pk.nm)}</small>${h(D.negocio)}</h1>
-    <div><p class="sub">Un sistema que atiende, agenda y ordena su negocio, armado con lo que vimos en su local.</p>
-    <div style="margin-top:1.4em"><span class="tg">${h(D.fechaCorta)}</span><span class="tg">Válida por 15 días</span><span class="tg">Rancagua</span></div></div></div>
-    <div class="r"><div class="img" ${bg(M.hero)}></div><div class="cb">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}<div><span>HORIZON ×</span>${h(D.negocio)}</div></div></div></section>`);
+  s.push(`<section class="sl s1"><div class="hbar"><img class="lg" src="${LOGO}" alt="HORIZON"><span>Propuesta comercial · ${h(D.fechaCorta)}</span></div>
+    <div class="cv"><div><span class="eb">${h(pk.nm)} · válida por 15 días</span><h1 style="margin-top:.5em">Propuesta para<span class="g">${h(D.negocio)}</span></h1>
+    <p class="sub">Un sistema que atiende, agenda y ordena su negocio, armado con lo que vimos en su local.</p>
+    <div class="chk"><span>${icn('i-check')}Agente 24/7</span><span>${icn('i-check')}Sin permanencia</span><span>${icn('i-check')}Instalación presencial</span></div>
+    <span class="cb2">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span></div>
+    <div class="hero"><div class="img ph" ${bg(M.hero)}></div>
+      <div class="fl chat"><small>WhatsApp · ${h(D.negocio)}</small><span class="q">${h(msgs[0][1])}</span><span class="a">${h(msgs[1][1])}</span></div>
+      <div class="fl ok"><div class="row"><span class="chipI k3">${icn('i-calendar')}</span><div><small>Agenda</small><b>${rx.modelo === 'comida' ? 'Pedido confirmado' : rx.modelo === 'clinica' ? 'Hora confirmada' : 'Encargo confirmado'}</b></div></div></div>
+      <div class="fl st"><small>Respondidas fuera de horario</small><b style="font-size:1.6em">12</b> <span style="color:var(--ink2)">esta semana</span><div class="bars"><i style="height:30%"></i><i style="height:45%"></i><i style="height:40%"></i><i style="height:60%"></i><i style="height:70%"></i><i style="height:100%"></i></div></div>
+    </div></div></section>`);
   s.push(`<section class="sl s2"><div class="tx"><span class="eb">Rancagua · ${h(D.fechaLarga)}</span>
     <h2>Hola${first ? ', ' + h(first) : ''}.<br><span class="g">Esto es para usted.</span></h2>
     <p>Gracias por recibirnos en ${h(D.negocio)}. Esta propuesta no es genérica: está armada con lo que vimos en su local y con sus propias respuestas a la radiografía.</p>
@@ -310,13 +323,13 @@ function propuesta(lead) {
   s.push(`<section class="sl s5"><div class="ph"><div class="img" ${bg(F(4) || M.hero)}></div><div class="cap"><span class="eb" style="color:#D7CFEA">Nuestra propuesta</span><h2 style="margin-top:.3em">${h(pk.nm)}</h2></div></div>
     <div class="body"><div class="hd2"><div><span class="eb">${k === 'pro' ? 'Llena la agenda y hace volver' : 'Atiende y agenda'}</span><h2 style="margin-top:.3em">Qué recibe</h2>
     <p>${k === 'pro' ? 'Un agente que atiende y agenda 24/7, y un sistema que sigue trabajando después de la conversación.' : 'Un agente que atiende y agenda 24/7, con la web y el panel donde queda cada contacto.'}</p></div></div>
-    <div class="ents">${pk.incluye.map(([a, b], i) => `<div class="ent"><span class="chipI">${icn(icEnt[i % icEnt.length])}</span><div><b>${h(a)}</b><span>${h(b)}</span></div></div>`).join('')}</div>
+    <div class="ents">${pk.incluye.map(([a, b], i) => `<div class="ent"><span class="chipI k${(i % 4) + 1}">${icn(icEnt[i % icEnt.length])}</span><div><b>${h(a)}</b><span>${h(b)}</span></div></div>`).join('')}</div>
     <div class="price"><div><small>Plazo</small><b>${h(pk.plazo)}</b></div><div><small>Implementación · pago único</small><b class="o">${clp(pk.impl)}</b><br><em>50% al firmar · 50% antes de la entrega</em></div><div><small>Mensualidad desde el mes 2</small><b>${clp(pk.mes)}</b><br><em>Mes a mes, sin permanencia</em></div></div></div><span class="pg-n">05</span></section>`);
   s.push(`<section class="sl s6"><div class="l"><div><span class="eb">Modalidad de pago y forma de trabajo</span><h2 style="margin-top:.4em">A tener en cuenta</h2></div>
     <div class="g4"><div class="tc"><span class="chipI">${icn('i-wallet')}</span><b>Pago</b><div class="big">50<span>/</span>50</div><p>50% al firmar para reservar el inicio y 50% antes de la entrega final, desde su portal de cliente.</p></div>
-    <div class="tc"><span class="chipI">${icn('i-layers')}</span><b>Revisiones</b><div class="big">2 <span>rondas</span></div><p>De cambios sobre el diseño, antes de construir.</p></div>
-    <div class="tc"><span class="chipI">${icn('i-clock')}</span><b>Sus respuestas</b><div class="big">5 <span>días</span></div><p>Hábiles para entregar información o aprobar. Si se atrasa, la entrega se corre en los mismos días.</p></div>
-    <div class="tc"><span class="chipI">${icn('i-shield')}</span><b>Garantía</b><div class="big">30 <span>días</span></div><p>De corrección de errores después de la entrega, con el primer mes de soporte incluido.</p></div></div></div>
+    <div class="tc"><span class="chipI k2">${icn('i-layers')}</span><b>Revisiones</b><div class="big">2 <span>rondas</span></div><p>De cambios sobre el diseño, antes de construir.</p></div>
+    <div class="tc"><span class="chipI k3">${icn('i-clock')}</span><b>Sus respuestas</b><div class="big">5 <span>días</span></div><p>Hábiles para entregar información o aprobar. Si se atrasa, la entrega se corre en los mismos días.</p></div>
+    <div class="tc"><span class="chipI k4">${icn('i-shield')}</span><b>Garantía</b><div class="big">30 <span>días</span></div><p>De corrección de errores después de la entrega, con el primer mes de soporte incluido.</p></div></div></div>
     <div class="r"><div class="dc a"><span class="eb">Inicio</span><div><div class="v">48 h</div><p>Desde el pago inicial, con la reunión de kickoff.</p></div></div>
     <div class="dc b"><span class="eb" style="color:#B9B3CC">Mensualidad</span><div><div class="v">${clp(pk.mes)}</div><p>Desde el mes 2. Mes a mes, sin permanencia.</p></div></div></div><span class="pg-n">06</span></section>`);
   const etapas = [
@@ -326,7 +339,8 @@ function propuesta(lead) {
     ['04', 'Entrega y soporte', 'Mes a mes', ['Lo dejamos funcionando', 'Le enseñamos a usar el panel', 'Ajustamos el agente cada mes'], 'Usted: atender a los clientes que llegan.'],
   ];
   s.push(`<section class="sl s7"><div class="hd"><div><span class="eb">Paso a paso</span><h2 style="margin-top:.4em">Cómo trabajamos juntos</h2></div><p>Nosotros hacemos el trabajo técnico. A usted le pedimos poco tiempo y decisiones claras.</p></div>
-    <div class="pc">${etapas.map(e => `<div class="pk${e[5] ? ' on' : ''}"><span class="nn">${e[0]}</span><h3>${h(e[1])}</h3><span class="du">${h(e[2])}</span><ul>${e[3].map(x => `<li>${icn('i-check')}<span>${h(x)}</span></li>`).join('')}</ul><div class="who">${h(e[4])}</div></div>`).join('')}</div><span class="pg-n">07</span></section>`);
+    <div class="pc">${etapas.map(e => `<div class="pk${e[5] ? ' on' : ''}"><span class="nn">${e[0]}</span><h3>${h(e[1])}</h3><span class="du">${h(e[2])}</span><ul>${e[3].map(x => `<li>${icn('i-check')}<span>${h(x)}</span></li>`).join('')}</ul><div class="who">${h(e[4])}</div></div>`).join('')}</div>
+    <div class="tot"><span>De la firma a su sistema funcionando</span><b style="color:#FFB27A">${h(pk.plazo)}</b></div><span class="pg-n">07</span></section>`);
   const dudas = [
     ['¿Tengo que saber de tecnología?', 'No. Nosotros lo instalamos y lo dejamos funcionando. Usted solo aprueba y usa el panel desde el celular.', 'Sin curva'],
     ['¿Y si el agente responde mal?', 'Se entrena con su información real y lo ajustamos cada mes con sus conversaciones. Si algo necesita a una persona, le avisa a usted.', 'Ajuste mensual'],
@@ -353,17 +367,15 @@ const CON_CSS = `
 .band img{height:17px}.band i{width:8px;height:8px;border-radius:50%;background:var(--cli);display:inline-block;margin-right:8px}
 .in{padding:34px 56px 26px;flex:1}
 .foot{display:flex;justify-content:space-between;padding:14px 56px 22px;border-top:1px solid var(--line);font:500 7pt var(--m);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}.foot b{color:var(--ink);font-weight:500}
-.cover{padding:0;background:var(--ink)}.cover::before{display:none}
-.cover .photo{height:40%;min-height:380px;background-size:cover;background-position:center;position:relative}
-.cover .top{background:var(--ink);display:flex;justify-content:space-between;align-items:center;padding:22px 56px}.cover .top img{height:26px}
-
-.cover .cb{display:flex;align-items:center;gap:10px;background:#fff;border-radius:99px;padding:6px 14px 6px 6px;color:var(--ink);font:600 9pt var(--f)}
-.cover .cb img{height:22px;padding:0 6px}.cover .cb i{width:10px;height:10px;border-radius:50%;background:var(--cli);margin-left:6px}
-.cover .body{flex:1;background:var(--deep);color:#fff;padding:40px 56px 48px;display:flex;flex-direction:column;justify-content:space-between}
-.cover h1{font:800 44pt/1 var(--f);letter-spacing:-.04em;margin:0}.cover h1 span{color:#FFB27A}
-.cover .sub{margin:12px 0 0;color:#E4DDF5;font-size:12pt}
-.parties{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin-top:28px}
-.party{border-top:1px solid rgba(255,255,255,.4);padding-top:10px}.party small{display:block;font:500 7.5pt var(--m);letter-spacing:.14em;text-transform:uppercase;color:#E4DDF5;margin-bottom:4px}.party b{font-size:10.5pt}
+.cover{padding:0;background:var(--bg)}.cover::before{display:none}
+.cover .top{background:var(--ink);display:flex;justify-content:space-between;align-items:center;padding:20px 56px}.cover .top img{height:24px}.cover .top span{font:500 7.5pt var(--m);letter-spacing:.14em;text-transform:uppercase;color:#B9B3CC}
+.cover .body{flex:1;padding:44px 56px 48px;display:flex;flex-direction:column;gap:26px}
+.cover h1{font:800 40pt/1.02 var(--f);letter-spacing:-.04em;margin:10px 0 0;color:var(--ink)}.cover h1 .g{display:block}
+.cover .sub{margin:12px 0 0;color:var(--ink2);font-size:12pt}
+.cover .photo{height:300px;border-radius:24px;background-size:cover;background-position:center;box-shadow:0 30px 60px -32px rgba(26,22,38,.5)}
+.cover .cb{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px 6px 6px;font:700 9pt var(--f)}.cover .cb img{height:22px;padding:0 6px}.cover .cb i{width:10px;height:10px;border-radius:50%;background:var(--cli);margin-left:6px}
+.parties{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.party{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 16px}.party small{display:block;font:500 7pt var(--m);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}.party b{font-size:10.5pt}
 h2.sec{display:flex;align-items:center;gap:10px;font:800 15pt/1 var(--f);letter-spacing:-.02em;margin:4px 0 14px}
 h2.sec::before{content:'';width:22px;height:3px;border-radius:3px;background:var(--grad)}
 .in p{margin:0 0 11px;text-align:justify;line-height:1.66}
@@ -404,8 +416,10 @@ function contrato(lead) {
   const fld = (l, v, sig) => `<label class="fld"><small>${l}</small><div class="${sig ? 'sig' : ''}">${v || ''}</div></label>`;
   const photo = M.hero ? `style="background-image:url('${h(M.hero)}')"` : 'style="background:var(--deep)"';
 
-  const portada = `<section class="pg cover"><div class="top"><img src="${LOGO}" alt="HORIZON"><span class="cb">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span></div><div class="photo" ${photo}></div>
-    <div class="body"><div><span class="eb">${h(codigo)}</span><h1 style="margin-top:14px">Contrato de prestación<br>de servicios<span>.</span></h1><p class="sub">Implementación ${h(pk.nm)} para ${h(D.negocio)}</p></div>
+  const portada = `<section class="pg cover"><div class="top"><img src="${LOGO}" alt="HORIZON"><span>${h(codigo)}</span></div>
+    <div class="body"><div><span class="eb">Contrato · ${h(pk.nm)}</span><h1>Contrato de prestación<span class="g">de servicios.</span></h1><p class="sub">Implementación ${h(pk.nm)} para ${h(D.negocio)}</p></div>
+    <span class="cb">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span>
+    <div class="photo" ${photo}></div>
     <div class="parties"><div class="party"><small>/ Cliente</small><b>${h(clienteNom)}</b></div><div class="party"><small>/ Prestador</small><b>HORIZON · ${PREST}</b></div>
     <div class="party"><small>/ Servicio</small><b>${h(pk.nm)} · ${h(pk.plazo)}</b></div><div class="party"><small>/ Fecha</small><b>${h(D.fechaLarga)}</b></div></div></div></section>`;
 
