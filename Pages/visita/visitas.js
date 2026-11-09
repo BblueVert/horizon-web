@@ -21,6 +21,7 @@ window.HZ_VISITAS = {
     color: '#B5838D',
     web: 'https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app/cake-boutique/',
     chat: 'cafe-boutique',
+    panel: 'https://mesa-cero-git-claude-plan-acelerador-neg-f85444-horizon-landing.vercel.app/panel/cafe-boutique',
     sugerencias: ['¿Qué tortas tienen?', 'Quiero una torta para 15 personas el sábado', '¿Hasta qué hora atienden?']
   },
   'hospital-burgers': {
