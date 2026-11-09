@@ -92,7 +92,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
   const aYo = (texto) => (yo ? [{ jid: yo, texto }] : []);
   const avisosFalla = new Map(); // slug → último aviso de falla a tu chat
 
-  async function turno(jid, telefono, textoEscrito, ficha, audio) {
+  async function turno(jid, telefono, textoEscrito, ficha, audio, obsoleto) {
     // Los audios los transcribe e interpreta el motor (flujo n8n); la IA genérica solo lee texto.
     if (audio && !ficha.motor) return [{ jid, texto: 'Por ahora solo puedo leer mensajes escritos. ¿Me lo escribes? 🙏' }];
     let r;
@@ -110,6 +110,10 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
         ...(aviso ? aYo(`⚠️ La demo *${ficha.slug}* no pudo responder (${ficha.motor ? `motor ${ficha.motor}` : 'IA por n8n demo-ia'}): ${String(e.message).slice(0, 200)}`) : []),
       ];
     }
+    // El cliente siguió escribiendo mientras la IA pensaba: esta respuesta ya no sirve. No se guarda ni se manda;
+    // el bot junta lo anterior con lo nuevo y responde todo de una vez (como una persona que lee antes de contestar).
+    // Los motores guardan su propia sesión, así que su respuesta sí se manda.
+    if (!ficha.motor && obsoleto && obsoleto()) return null;
     const texto = r.transcripcion || textoEscrito; // en un audio, lo que dijo el cliente
     estado.agregarTurno(jid, texto, JSON.stringify(r));
     // Toda la carta va en vez del texto de la IA; una parte va antes de sus recomendaciones.
@@ -152,7 +156,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
   }
 
   // Mensaje de un cliente/prospecto. Tu chat contigo mismo nunca hace de demo: ahí solo llegan avisos.
-  async function entrante({ jid, telefono, texto, audio }) {
+  async function entrante({ jid, telefono, texto, audio, obsoleto }) {
     if (jid === yo) return [];
     let slug = estado.demoDe(jid);
     // Si la demo del chat se dio de baja (activa: false), el chat queda libre: si no, se quedaba mudo.
@@ -183,7 +187,8 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       if (ficha) {
         estado.tomarArmada();
         estado.asignar(jid, ficha.slug, telefono);
-        const salida = await turno(jid, telefono, texto, ficha, audio);
+        const salida = await turno(jid, telefono, texto, ficha, audio, obsoleto);
+        if (!salida) return null;
         salida.push(...aYo(`▶️ +${telefono} empezó la demo de ${ficha.nombre}.`));
         return salida;
       }
@@ -196,7 +201,7 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (!slug || estado.enPausa(jid)) return [];
     const ficha = fichas.obtener(slug);
     if (!ficha) return [];
-    return turno(jid, telefono, texto, ficha, audio);
+    return turno(jid, telefono, texto, ficha, audio, obsoleto);
   }
 
   // Mensaje escrito desde el teléfono vinculado (Benja o alguien de HORIZON).

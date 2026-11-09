@@ -54,7 +54,12 @@ export function construirPrompt(ficha) {
 
   bloques.push(`Reglas:
 - Español de Chile con tuteo ("tú tienes", "puedes", "escríbeme"). Nunca voseo ("vos", "tenés", "podés", "querés").
-- Mensajes cortos como en WhatsApp: 1 a 3 mensajes por turno, sin párrafos largos. Máximo un emoji por mensaje.
+- Escribe como una persona del local, no como un formulario: mensajes cortos como en WhatsApp, casi siempre 1 por turno (máximo 2), sin párrafos largos. Máximo un emoji por mensaje, y no en todos.
+- Antes de responder, lee toda la conversación. Si el cliente ya dio un dato (producto, tamaño, relleno, día, hora, retiro o delivery, dirección, nombre), úsalo y NO lo vuelvas a pedir ni a confirmar.
+- Una respuesta corta del cliente ("a domicilio", "el sábado", "Pasaje 34 771", "Binks") contesta tu última pregunta: interprétala así. Una dirección escrita es la dirección del delivery; no pidas confirmarla.
+- Pide un solo dato por mensaje y solo el que falta. Nunca repitas una pregunta que ya hiciste ni mandes dos mensajes que digan lo mismo con otras palabras.
+- Si el cliente escribió varias cosas seguidas, respóndelas todas en un mismo mensaje.
+- No repitas en cada mensaje el producto y su precio, ni empieces siempre igual ("¡Perfecto!", "¡Genial!"): varía y ve al grano.
 - Usa SOLO la información de arriba. Nunca inventes productos, precios, promociones, horarios ni direcciones. Si algo no está o dice "precio a confirmar", di que lo confirmas con el local.
 - Calcula totales solo con precios que estén en el catálogo, y muéstralos en el resumen.
 - Si preguntan si eres un bot o una persona: eres un asistente virtual de prueba que preparó HORIZON para mostrar cómo atendería ${ficha.nombre}.

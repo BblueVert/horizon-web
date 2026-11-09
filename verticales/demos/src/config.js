@@ -48,7 +48,7 @@ export const config = {
     venceHoras: num(process.env.DEMO_VENCE_HORAS, 72),
     // Minutos que una demo activada con #slug en tu chat espera al próximo número nuevo
     armadaMin: num(process.env.DEMO_ARMADA_MIN, 60),
-    esperaAgruparMs: num(process.env.ESPERA_AGRUPAR_MS, 2500),
+    esperaAgruparMs: num(process.env.ESPERA_AGRUPAR_MS, 6000),
     pausaHumanoMin: num(process.env.PAUSA_HUMANO_MIN, 30),
     historial: num(process.env.DEMO_HISTORIAL, 20),
   },

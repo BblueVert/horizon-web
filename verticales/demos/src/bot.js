@@ -124,7 +124,13 @@ function alRecibir(m) {
     buffers.delete(jid);
     encolar(jid, async () => {
       await sock.readMessages(b.claves).catch(() => {});
-      const salida = await conv.entrante({ jid, telefono, texto: b.textos.join('\n') });
+      const salida = await conv.entrante({ jid, telefono, texto: b.textos.join('\n'), obsoleto: () => buffers.has(jid) });
+      if (salida === null) {
+        // Llegaron mensajes nuevos mientras pensaba: se responden junto con estos.
+        const nuevo = buffers.get(jid);
+        if (nuevo) { nuevo.textos.unshift(...b.textos); nuevo.claves.unshift(...b.claves); }
+        return;
+      }
       if (salida.length) await sock.sendPresenceUpdate('composing', jid).catch(() => {});
       enviarTodo(salida);
     });
