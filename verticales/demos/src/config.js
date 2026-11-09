@@ -8,6 +8,10 @@ const num = (v, d) => (v === undefined || v === '' ? d : Number(v));
 function motores(v) {
   const base = {
     'mesa-cero': 'http://localhost:5678/webhook/wa-mesacero-v2',
+    // Agentes por rubro (mesa-cero/_workflows-n8n/rubros): misma base, cada uno adaptado a su modelo de negocio.
+    sushi: 'http://localhost:5678/webhook/wa-sushi',
+    hamburguesas: 'http://localhost:5678/webhook/wa-hamburguesas',
+    pasteleria: 'http://localhost:5678/webhook/wa-pasteleria',
     minimarket: 'http://localhost:3100/mensaje',
   };
   for (const par of String(v || '').split(',').map(s => s.trim()).filter(Boolean)) {
