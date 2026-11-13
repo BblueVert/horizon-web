@@ -5,6 +5,8 @@ description: Arma en minutos un agente demo de WhatsApp para un negocio que Benj
 
 # Demo express
 
+> **En puerta a puerta no se usa antes de entrar** (decisión de Benja, 13-nov-2026). A un negocio con el que no hay conversación se le muestra la demo de su rubro con datos de ejemplo (`fichas/rubro-*.json`, `ejemplo-sangucheria`, `minimarket-la-esquina`). Esta skill se usa **después** de la visita, si le interesó, o antes de una reunión ya agendada. Una demo con datos reales se le muestra solo a ese negocio, nunca a su competencia.
+
 Benja va manejando o caminando, a ~5 minutos del local. Objetivo: **demo funcionando en el número Horizon Pruebas (+56 9 7696 2659, el de la consultoría y Mesa Cero) antes de que entre**. Velocidad primero, sin inventar nada.
 
 ## 1. Arranque (respuesta inmediata, 1 línea)
