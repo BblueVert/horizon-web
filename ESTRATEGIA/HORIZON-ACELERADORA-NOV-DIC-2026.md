@@ -30,7 +30,7 @@ Eso es **~30 contactos por semana**, o **6 por día hábil**. Se reparte en tres
 | Fuente | Contactos/semana | Por qué |
 |---|---|---|
 | **Red cálida** (conocidos, ex compañeros, familia, clientes de Binks Barber, contactos de VitalKine y Floremané) | 10 | Es la más rápida: ya hay confianza, y el diagnóstico se agenda en días, no semanas. |
-| **Puerta a puerta con demo en mano** (`demo-express`) | 15 | Es la ventaja que ninguna agencia de Rancagua tiene: el dueño le escribe al agente de **su propio negocio** frente a ti. |
+| **Puerta a puerta con demo en mano** (demos de rubro ya armadas) | 15 | Es la ventaja que ninguna agencia de Rancagua tiene: el dueño le escribe frente a ti a un agente de **un negocio como el suyo**. Si le interesa, después se arma el suyo con `demo-express`. |
 | **Inbound** (Instagram, `/agendar`, `/recursos`) | 5 | Apoyo, no motor. En 7 semanas el contenido no alcanza a madurar solo; sirve para que el que te googlea después de la puerta encuentre algo. |
 
 ---
@@ -78,7 +78,7 @@ Cómo se arma con el mismo código: el Esencial es la base (web + agente complet
 - **Garantía del agente (para compensar que todavía no hay casos):** si después de los primeros 30 días el agente no le sirvió, se apaga y no paga la mensualidad del mes 2. La web y el panel quedan igual. Le baja el riesgo al dueño sin bajar el precio.
 - Agente suelto, sin web ni panel: **no se ofrece.**
 
-**Cómo se presenta en la mesa:** primero el sistema (la web y el panel donde cae cada consulta), después el agente como "el que atiende cuando tú no puedes". La demo va en ese orden: el dueño le escribe al agente de su negocio (`demo-express`) y ve aparecer el lead en el panel. El agente es el gancho de la demo, pero lo que se vende es el sistema.
+**Cómo se presenta en la mesa:** primero el sistema (la web y el panel donde cae cada consulta), después el agente como "el que atiende cuando tú no puedes". La demo va en ese orden: el dueño le escribe al agente de ejemplo de su rubro y ve aparecer el lead en el panel. El agente es el gancho de la demo, pero lo que se vende es el sistema.
 
 **Qué ofrecer primero (en el diagnóstico):**
 
@@ -105,7 +105,7 @@ Dos días de preparación, no más. Todo lo demás se arregla en movimiento.
 
 1. **Lista de red cálida (50 nombres)** en OPS como leads `new` con origen `red-calida`: nombre, negocio, cómo lo conoces. No solo dueños: también el que conoce a un dueño.
 2. **Lista de 60 negocios objetivo** en Google Maps, filtrados **por dolor, no por rubro**: PyMEs de servicio con 4+ estrellas, 50+ reseñas, WhatsApp visible (señal de que les escriben mucho) y sin web o con web que no capta consultas. Marcar en cada uno si apunta al pack Esencial o al Pro.
-3. **Una sola demo, sistema + agente:** 3 demos express pre-armadas (skill `demo-express`) de negocios reales de la lista, y el panel de leads (OPS pipeline con datos de ejemplo) abierto al lado. El dueño le escribe al agente y ve aparecer su consulta en el panel. Ensayarla en el celular, sin depender de wifi.
+3. **Una sola demo, sistema + agente:** las demos de rubro con datos de ejemplo (`verticales/demos/fichas/rubro-*.json`: barbería, estética, dental, pastelería, cafetería, florería, veterinaria, sanguchería y minimarket) y el panel de leads (OPS pipeline con datos de ejemplo) abierto al lado. No se arma una demo por negocio antes de entrar: `demo-express` se usa **después** de la visita, si al negocio le interesa, y su link va en el seguimiento del día 1. Las demos con datos reales (Qué Rolls, Cake Boutique, Hospital Burgers, clínicas dentales, Tía Julia) se muestran solo a su propio negocio. El dueño le escribe al agente y ve aparecer su consulta en el panel. Ensayarla en el celular, sin depender de wifi.
 4. **Guion de 3 líneas** para la red cálida, en tuteo:
    > "Hola [nombre], estoy armando HORIZON, sistemas para que los negocios de Rancagua no pierdan clientes por WhatsApp. Estoy tomando 3 negocios fundadores este año. ¿Conoces a alguien con un local que ande colapsado respondiendo mensajes? (Si eres tú, mejor todavía.)"
 5. **Tablero semanal** en OPS: puertas, conversaciones, demos mostradas, diagnósticos, propuestas, cierres, anticipos. Se llena cada viernes con números reales.
