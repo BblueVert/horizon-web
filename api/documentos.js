@@ -430,7 +430,7 @@ function contrato(lead) {
   const portada = `<section class="pg cover"><div class="top"><img src="${LOGO}" alt="HORIZON"><span>${h(codigo)}</span></div>
     <div class="body"><div><span class="eb">Contrato · ${h(pk.nm)}</span><h1>Contrato de prestación<br><span class="g">de servicios.</span></h1><p class="sub">Implementación ${h(pk.nm)} para ${h(D.negocio)}</p></div>
     <span class="cb">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span>
-    <div class="photo" ${photo}></div>
+    ${M.hero ? `<div class="photo" ${photo}></div>` : portadaMarca(D, 'Rancagua')}
     <div class="parties"><div class="party"><small>/ Cliente</small><b>${h(clienteNom)}</b></div><div class="party"><small>/ Prestador</small><b>HORIZON · ${PREST}</b></div>
     <div class="party"><small>/ Servicio</small><b>${h(pk.nm)} · ${h(pk.plazo)}</b></div><div class="party"><small>/ Fecha</small><b>${h(D.fechaLarga)}</b></div></div></div></section>`;
 
@@ -476,7 +476,158 @@ function contrato(lead) {
     <div class="firm"><div class="fc">${fld('Iniciales del Cliente', '')}</div><div class="fc">${fld('Iniciales del Prestador', '')}</div></div>
     </div>${foot('05')}</section>`;
 
-  return shell({ titulo: 'Contrato · ' + D.negocio, cuerpo: portada + p2 + p3 + p4 + p5, css: CON_CSS, color: D.color });
+  return shell({ titulo: 'Contrato · ' + D.negocio, cuerpo: portada + p2 + p3 + p4 + p5, css: CON_CSS + BIEN_CSS, color: D.color });
+}
+
+// ── Guía de bienvenida: lo que recibe el cliente cuando dice que sí, en vez del presupuesto plano.
+// Misma hoja vertical del contrato; explica en simple cómo vamos a trabajar. No reemplaza al contrato.
+const BIEN_CSS = `
+.cover .marca{height:300px;border-radius:24px;background:var(--deep);color:#fff;position:relative;overflow:hidden;box-shadow:0 30px 60px -32px rgba(26,22,38,.5);display:flex;flex-direction:column;justify-content:flex-end;padding:26px 28px}
+.marca .big{font:800 30pt/1 var(--f);letter-spacing:-.04em}.marca .big span{background:linear-gradient(95deg,#FF9A4D,#E8637A 55%,#B07BE0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.marca .rb{font:500 7.5pt var(--m);letter-spacing:.14em;text-transform:uppercase;color:#D7CFEA;margin-top:10px}
+.marca .wa{position:absolute;right:24px;top:24px;width:46%;display:grid;gap:7px;font-size:8.5pt}
+.marca .wa span{padding:7px 10px;border-radius:12px;line-height:1.35}.marca .wa .q{background:#fff;color:var(--ink);border-top-left-radius:3px;justify-self:start}.marca .wa .a{background:#D9FDD3;color:#111B21;border-top-right-radius:3px;justify-self:end}
+.carta{border-left:3px solid var(--cli);padding:2px 0 2px 16px;margin:0 0 16px}
+.carta p{margin:0 0 9px}.firma{font-size:9.5pt;margin-top:6px}.firma b{display:block;font-size:10.5pt}
+.lect{display:grid;gap:8px;margin:0 0 16px}
+.lect div{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:center;background:var(--bg);border:1px solid var(--line2);border-radius:12px;padding:9px 12px;font-size:10pt;font-weight:500}
+.lect span{width:30px;height:30px;border-radius:9px;background:var(--hot,linear-gradient(120deg,#F2690C,#C4467A));color:#fff;display:grid;place-items:center;font:600 8pt var(--m)}
+.quad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:4px 0 16px}
+.quad div{border-radius:14px;padding:12px 14px;background:var(--bg);border:1px solid var(--line2)}.quad div.dk{background:var(--ink);color:#fff;border:0}
+.quad small{display:block;font:500 6.8pt var(--m);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}.quad .dk small{color:#B9B3CC}.quad b{font-size:12pt;letter-spacing:-.02em}.quad .dk b{color:#FFB27A}
+.tl{position:relative;margin:4px 0 14px}.tl::before{content:'';position:absolute;left:15px;top:8px;bottom:8px;width:2px;background:var(--grad);border-radius:2px}
+.et{position:relative;display:grid;grid-template-columns:32px 1fr auto;gap:14px;align-items:start;padding:0 0 13px}
+.et .n{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font:600 8pt var(--m);position:relative;z-index:1}
+.et.on .n{background:var(--acc)}
+.et b{display:block;font-size:10.5pt}.et p{margin:2px 0 0;color:var(--ink2);font-size:9.3pt;line-height:1.5;text-align:left}
+.et em{font:500 7pt var(--m);font-style:normal;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:99px;background:var(--bg2);color:var(--acc);white-space:nowrap}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 14px}
+.dos>div{border-radius:16px;padding:14px 16px;border:1px solid var(--line2);background:var(--bg)}.dos>div.dk{background:var(--ink);color:#fff;border:0}
+.dos h3{font:800 10.5pt var(--f);margin:0 0 8px;display:flex;align-items:center;gap:8px}.dos .ico{width:16px;height:16px;color:var(--acc)}.dos .dk .ico{color:#FFB27A}
+.dos ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:9.4pt}.dos li{display:grid;grid-template-columns:14px 1fr;gap:8px}.dos li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--acc);margin-top:6px}.dos .dk li::before{background:#FFB27A}
+.lst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 16px}
+.lst>div{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;border:1px solid var(--line2);border-radius:12px;padding:10px 12px;background:#fff;font-size:9.4pt;line-height:1.45}
+.lst>div::before{content:'';width:16px;height:16px;border:1.6px solid var(--ink2);border-radius:5px;margin-top:1px}.lst b{display:block;font-size:9.8pt}.lst span{color:var(--ink2)}
+.canal{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:10px;margin:0 0 14px}
+.canal>div{border-radius:14px;padding:12px 14px;border:1px solid var(--line2);background:var(--bg)}.canal>div.dk{background:var(--deep);color:#fff;border:0}
+.canal small{display:block;font:500 6.8pt var(--m);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}.canal .dk small{color:#D7CFEA}
+.canal b{font-size:10pt}.canal p{margin:4px 0 0;font-size:8.8pt;color:var(--ink2);text-align:left;line-height:1.45}.canal .dk p{color:#E4DDF5}.canal a{color:#FFB27A;font:600 8.6pt var(--m);word-break:break-all;text-decoration:none}
+.pasos{display:grid;gap:8px;margin:4px 0 16px}
+.pasos>div{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line2);border-radius:14px;padding:10px 14px;background:#fff}
+.pasos .nn{font:800 20pt/1 var(--f);letter-spacing:-.05em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pasos b{font-size:10.3pt}.pasos span{display:block;color:var(--ink2);font-size:9pt}.pasos em{font:500 7pt var(--m);font-style:normal;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.cierre{border-radius:18px;background:var(--deep);color:#fff;padding:18px 22px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+.cierre b{font:800 15pt/1.15 var(--f);letter-spacing:-.03em}.cierre b span{background:linear-gradient(95deg,#FF9A4D,#E8637A 55%,#B07BE0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cierre .ct{display:grid;gap:3px;font:500 8pt var(--m);color:#E4DDF5;text-align:right}
+@media screen and (max-width:760px){.quad,.lst,.canal{grid-template-columns:1fr 1fr}.dos,.cierre{grid-template-columns:1fr}.cierre .ct{text-align:left}.marca .wa{display:none}}`;
+
+// Portada sin fotos del negocio: composición de marca con una conversación de ejemplo, en vez de un recuadro vacío.
+function portadaMarca(D, rubro) {
+  const m = charla(D.rx.modelo);
+  return `<div class="marca"><div class="wa"><span class="q">${h(m[0][1])}</span><span class="a">${h(m[1][1])}</span></div>
+    <div class="big">HORIZON ×<br><span>${h(D.negocio)}</span></div><div class="rb">${h(rubro)}</div></div>`;
+}
+
+// Lo que se le pide al cliente para partir, según su tipo de negocio.
+function insumos(modelo) {
+  const base = [
+    ['Logo y colores', 'Si los tiene; si no, los resolvemos en la reunión de inicio.'],
+    ['Número de WhatsApp', 'El que usará el agente. Le ayudamos a dejarlo como WhatsApp Business.'],
+    ['Acceso a Google', 'La cuenta del negocio para su ficha en Google Maps.'],
+    ['Preguntas frecuentes', 'Las 10 que más le hacen, con la respuesta que da hoy.'],
+  ];
+  if (modelo === 'clinica') return [
+    ['Prestaciones y precios', 'Lista vigente de tratamientos y valores, aunque sea una foto.'],
+    ['Horarios y profesionales', 'Horario de atención, de cada profesional y horas para urgencias.'],
+    ['Políticas', 'Abonos, cancelaciones, atrasos, convenios e isapres.'],
+    ['Agenda actual', 'Dónde agenda hoy (cuaderno, Google Calendar o software).'], ...base];
+  if (modelo === 'comida') return [
+    ['Carta y precios', 'Carta vigente con precios, promos y fotos si las tiene.'],
+    ['Horarios y locales', 'Horario de atención, zonas de delivery y costo de envío.'],
+    ['Forma de pago', 'Cómo cobra hoy (transferencia, efectivo, link de pago).'], ...base];
+  if (modelo === 'pasteleria') return [
+    ['Productos y precios', 'Tortas por tamaño, rellenos, sabores y lo de vitrina.'],
+    ['Encargos', 'Con cuánta anticipación se piden, abono y despacho.'],
+    ['Fotos de productos', 'Las que tenga; si faltan, las coordinamos.'], ...base];
+  return [['Servicios y precios', 'Lista vigente de servicios y valores.'], ['Horarios', 'Horario de atención y disponibilidad.'], ['Políticas', 'Abonos, cancelaciones y formas de pago.'], ...base];
+}
+
+function bienvenida(lead, token) {
+  const D = datos(lead), { pk, rx, k } = D, M = medios(D);
+  const codigo = `HZ-${D.anio}-${D.slug}-GB`;
+  const first = D.nombre.split(' ')[0] || '';
+  const rubro = { clinica: 'Clínica · Rancagua', comida: 'Restaurante · Rancagua', pasteleria: 'Pastelería · Rancagua' }[rx.modelo] || 'Rancagua';
+  const lecturas = Array.isArray(rx.lecturas) && rx.lecturas.length ? rx.lecturas.slice(0, 3) : (rx.mejoras || []).slice(0, 3);
+  const portal = token ? `horizonweb.cl/c/${token}` : '';
+  const band = `<div class="band"><img src="${LOGO}" alt="HORIZON"><span><i></i>HORIZON × ${h(D.negocio)}</span></div>`;
+  const foot = n => `<div class="foot"><span>/ Guía de bienvenida · ${h(codigo)}</span><span><b>${n}</b> / 05</span></div>`;
+  const foto = M.hero ? `<div class="photo" style="background-image:url('${h(M.hero)}')"></div>` : portadaMarca(D, rubro);
+
+  const p1 = `<section class="pg cover"><div class="top"><img src="${LOGO}" alt="HORIZON"><span>${h(codigo)}</span></div>
+    <div class="body"><div><span class="eb">Guía de bienvenida · ${h(pk.nm)}</span><h1>Bienvenidos a<br><span class="g">HORIZON.</span></h1><p class="sub">Todo lo que viene para ${h(D.negocio)}, en un solo lugar.</p></div>
+    <span class="cb">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span>
+    ${foto}
+    <div class="parties"><div class="party"><small>/ Preparada para</small><b>${h(D.nombre || D.negocio)}</b></div><div class="party"><small>/ Servicio</small><b>${h(pk.nm)} · ${h(pk.plazo)}</b></div>
+    <div class="party"><small>/ Inicio</small><b>48 horas desde el pago inicial</b></div><div class="party"><small>/ Fecha</small><b>${h(D.fechaLarga)}</b></div></div></div></section>`;
+
+  const p2 = `<section class="pg">${band}<div class="in">
+    <h2 class="sec">Bienvenida</h2>
+    <div class="carta"><p>${first ? h(first) + ', g' : 'G'}racias por confiar en nosotros. Desde hoy trabajamos juntos para que ${h(D.negocio)} atienda, agende y ordene sus clientes sin depender de que alguien esté mirando el teléfono.</p>
+    <p>Esta guía le cuenta, paso a paso, qué vamos a hacer, qué necesitamos de usted y cómo nos vamos a comunicar. Las condiciones formales están en el contrato; aquí se las explicamos en simple.</p>
+    <div class="firma"><b>Benjamín Vera</b>Fundador de HORIZON · ${CONTACTO.whatsapp}</div></div>
+    ${lecturas.length ? `<h2 class="sec" style="margin-top:22px">Lo que vamos a resolver</h2><div class="lect">${lecturas.map((x, i) => `<div><span>0${i + 1}</span>${h(x)}</div>`).join('')}</div>` : ''}
+    <h2 class="sec" style="margin-top:22px">Su proyecto en una mirada</h2>
+    <div class="quad"><div><small>Servicio</small><b>${h(pk.nm)}</b></div><div><small>Plazo</small><b>${h(pk.plazo)}</b></div><div class="dk"><small>Implementación</small><b>${clp(pk.impl)}</b></div><div><small>Desde el mes 2</small><b>${clp(pk.mes)}/mes</b></div></div>
+    <div class="ents" style="margin-left:0">${pk.incluye.map(([a]) => `<div>${icn('i-check')}${h(a)}</div>`).join('')}</div>
+    </div>${foot('02')}</section>`;
+
+  const etapas = [
+    ['01', 'Firma y pago inicial', 'Hoy', 'Firma el contrato y paga el 50% desde su portal. Con eso reservamos su fecha de inicio.', true],
+    ['02', 'Reunión de inicio', '48 horas', 'Una reunión para ordenar precios, horarios y accesos. Creamos su panel y su portal.'],
+    ['03', 'Diseño y aprobación', 'Semana 1', 'Le mostramos cómo se verá y cómo responderá su agente. Tiene 2 rondas de cambios.'],
+    ['04', 'Construcción', 'Semana 2', 'Entrenamos al agente con su negocio y conectamos web, WhatsApp y panel.'],
+    ['05', 'Pruebas con usted', `Hasta ${pk.plazo.split(' a ').pop()}`, 'Lo prueba como si fuera su cliente antes de abrirlo al público.'],
+    ['06', 'Entrega y capacitación', 'Al pagar el saldo', 'Le entregamos todo a su nombre y le enseñamos a usar el panel desde el celular.'],
+    ['07', 'Acompañamiento', 'Mes 1 incluido', 'Revisamos sus conversaciones reales y ajustamos el agente.'],
+  ];
+  const p3 = `<section class="pg">${band}<div class="in">
+    <h2 class="sec">Cómo vamos a trabajar</h2>
+    <p>Siempre sabrá en qué etapa estamos: cada avance queda en su portal de cliente. Nada se publica sin su visto bueno.</p>
+    <div class="tl">${etapas.map(e => `<div class="et${e[4] ? ' on' : ''}"><span class="n">${e[0]}</span><div><b>${h(e[1])}</b><p>${h(e[3])}</p></div><em>${h(e[2])}</em></div>`).join('')}</div>
+    <div class="dos"><div class="dk"><h3>${icn('i-spark')}Lo que hacemos nosotros</h3><ul><li>Todo el trabajo técnico y el diseño</li><li>Entrenar y ajustar al agente</li><li>Dejar las cuentas a su nombre</li><li>Avisarle cada avance en el portal</li></ul></div>
+    <div><h3>${icn('i-users')}Lo que le pedimos a usted</h3><ul><li>Una reunión de inicio</li><li>Su información (página siguiente)</li><li>Aprobar el diseño</li><li>Responder en 5 días hábiles</li></ul></div></div>
+    </div>${foot('03')}</section>`;
+
+  const p4 = `<section class="pg">${band}<div class="in">
+    <h2 class="sec">Lo que necesitamos de usted</h2>
+    <p>Para cumplir las fechas, le pedimos esto dentro de los 5 días hábiles siguientes a la reunión de inicio. Si algo se atrasa, la entrega se corre en los mismos días.</p>
+    <div class="lst">${insumos(rx.modelo).map(([a, b]) => `<div><div><b>${h(a)}</b><span>${h(b)}</span></div></div>`).join('')}</div>
+    <p style="font-size:9pt;color:var(--ink2)">Las cuentas quedan siempre a nombre de ${h(D.negocio)}. Las contraseñas se comparten por un canal seguro, nunca por correo ni en este documento.</p>
+    <h2 class="sec" style="margin-top:22px">Cómo nos comunicamos</h2>
+    <div class="canal"><div class="dk"><small>Su portal de cliente</small><b>Avances, pagos y entrega</b>${portal ? `<p><a href="https://${h(portal)}">${h(portal)}</a></p>` : '<p>Se lo enviamos por correo.</p>'}</div>
+    <div><small>WhatsApp</small><b>${CONTACTO.whatsapp}</b><p>Para coordinar y dudas rápidas.</p></div>
+    <div><small>Correo</small><b style="font-size:9pt">${CONTACTO.correo}</b><p>Para aprobaciones del diseño y la entrega.</p></div></div>
+    <table><tr><th>Reunión</th><th>Cuándo</th><th>Para qué</th></tr>
+    <tr><td><b>Inicio</b></td><td>48 h desde el pago</td><td>Ordenar información, reglas de atención y accesos</td></tr>
+    <tr><td><b>Revisión del diseño</b></td><td>Semana 1</td><td>Ver cómo responde su agente y pedir cambios</td></tr>
+    <tr><td><b>Entrega y capacitación</b></td><td>Al terminar</td><td>Usar el panel y saber cómo pedir ajustes</td></tr></table>
+    </div>${foot('04')}</section>`;
+
+  const p5 = `<section class="pg">${band}<div class="in">
+    <h2 class="sec">Pagos y soporte</h2>
+    <table><tr><th>Concepto</th><th>Cuándo</th><th style="text-align:right">Monto</th></tr>
+    <tr><td><b>Pago inicial (50%)</b></td><td>Al firmar</td><td style="text-align:right"><b>${clp(pk.impl / 2)}</b></td></tr>
+    <tr><td><b>Saldo (50%)</b></td><td>Antes de la entrega final</td><td style="text-align:right"><b>${clp(pk.impl / 2)}</b></td></tr>
+    <tr><td><b>Mensualidad</b></td><td>Desde el mes 2, entre el día 25 y el 5</td><td style="text-align:right"><b>${clp(pk.mes)}</b></td></tr></table>
+    <p>Paga cada cuota desde su portal o por transferencia, con boleta de honorarios. El primer mes de soporte va incluido; luego es mes a mes y sin permanencia: si quiere terminar, avisa con 15 días.${k === 'pro' ? '' : ' Si más adelante quiere seguimiento automático y recordatorios, puede pasar al Pack Pro.'}</p>
+    <h2 class="sec" style="margin-top:22px">Próximos pasos</h2>
+    <div class="pasos"><div><span class="nn">01</span><div><b>Firmar el contrato</b><span>En papel o con firma electrónica.</span></div><em>Hoy</em></div>
+    <div><span class="nn">02</span><div><b>Pagar el 50% inicial</b><span>Desde su portal, con Mercado Pago, o por transferencia.</span></div><em>Hoy</em></div>
+    <div><span class="nn">03</span><div><b>Reunión de inicio</b><span>Le escribimos para fijar el día y la hora.</span></div><em>48 h</em></div></div>
+    <div class="cierre"><b>Desde hoy, ${h(D.negocio)}<br><span>atiende solo.</span></b><div class="ct"><span>${CONTACTO.whatsapp}</span><span>${CONTACTO.correo}</span><span>${CONTACTO.web}</span></div></div>
+    </div>${foot('05')}</section>`;
+
+  return shell({ titulo: 'Guía de bienvenida · ' + D.negocio, cuerpo: p1 + p2 + p3 + p4 + p5, css: CON_CSS + BIEN_CSS, color: D.color });
 }
 
 module.exports = async function handler(req, res) {
@@ -484,7 +635,7 @@ module.exports = async function handler(req, res) {
   if (rateLimit(getIp(req), 60_000, 30)) return res.status(429).send('Demasiadas solicitudes');
   const q = req.query || {};
   const token = String(q.t || q.token || ''), doc = String(q.doc || '');
-  if (!UUID_RE.test(token) || !['propuesta', 'contrato'].includes(doc)) return res.status(404).send('Documento no encontrado');
+  if (!UUID_RE.test(token) || !['propuesta', 'contrato', 'bienvenida'].includes(doc)) return res.status(404).send('Documento no encontrado');
   const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!SB_URL || !SB_KEY) return res.status(503).send('Config incompleta');
   try {
@@ -495,7 +646,7 @@ module.exports = async function handler(req, res) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'private, no-store');
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-    return res.status(200).send(doc === 'contrato' ? contrato(lead) : propuesta(lead));
+    return res.status(200).send(doc === 'contrato' ? contrato(lead) : doc === 'bienvenida' ? bienvenida(lead, token) : propuesta(lead));
   } catch (e) {
     return res.status(500).send('Error interno');
   }
@@ -503,3 +654,4 @@ module.exports = async function handler(req, res) {
 
 module.exports.propuesta = propuesta;
 module.exports.contrato = contrato;
+module.exports.bienvenida = bienvenida;

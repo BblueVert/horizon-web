@@ -448,8 +448,8 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
       </div>
       <div class="card brief" id="b-docs" hidden>
         <div class="sec-h"><h2 class="sec-t"><i class="hz-i" data-i="pencil"></i>Tus documentos</h2></div>
-        <p class="b-docs-t">Revisa tu propuesta y tu contrato. Puedes guardarlos en PDF desde el botón de arriba de cada documento.</p>
-        <div class="b-docs-l"><a class="btn btn-send" id="d-prop" target="_blank" rel="noopener">Ver propuesta</a><a class="btn btn-send" id="d-con" target="_blank" rel="noopener">Ver contrato</a></div>
+        <p class="b-docs-t">Revisa tu guía de bienvenida, tu propuesta y tu contrato. Puedes guardarlos en PDF desde el botón de arriba de cada documento.</p>
+        <div class="b-docs-l"><a class="btn btn-send" id="d-bien" target="_blank" rel="noopener">Guía de bienvenida</a><a class="btn btn-send" id="d-prop" target="_blank" rel="noopener">Ver propuesta</a><a class="btn btn-send" id="d-con" target="_blank" rel="noopener">Ver contrato</a></div>
       </div>
     </section>
   </div>
@@ -1040,7 +1040,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     if (!S.lead.reunion_fecha) { $('p-name').textContent = 'Cuéntanos de tu negocio'; $('p-desc').textContent = 'Con esto preparamos tu proyecto. Se guarda solo mientras escribes.'; $('now').innerHTML = ''; }
     if (['propuesta','arranque'].includes(S.lead.status)) {
       $('b-docs').hidden = false;
-      $('d-prop').href = '/c/' + token + '/propuesta'; $('d-con').href = '/c/' + token + '/contrato';
+      $('d-bien').href = '/c/' + token + '/bienvenida'; $('d-prop').href = '/c/' + token + '/propuesta'; $('d-con').href = '/c/' + token + '/contrato';
     }
     const keys = ['negocio','problema','objetivo','intentos'], b = S.lead.brief || {};
     $('b-send').onclick = async () => {
