@@ -9,6 +9,13 @@
     { "source": "/plan-02", "destination": "/Pages/plan-02.html" },
     { "source": "/plan-03", "destination": "/Pages/plan-03.html" },
     { "source": "/plan-04", "destination": "/Pages/plan-04.html" },
+    { "source": "/terreno", "destination": "/Pages/terreno/index.html" },
+    { "source": "/terreno/esencial", "destination": "/Pages/terreno/esencial.html" },
+    { "source": "/terreno/pro", "destination": "/Pages/terreno/pro.html" },
+    { "source": "/terreno/radiografia", "destination": "/Pages/terreno/radiografia.html" },
+    { "source": "/visita", "destination": "/Pages/visita/index.html" },
+    { "source": "/visita/:slug/panel", "destination": "/Pages/visita/panel.html" },
+    { "source": "/visita/:slug", "destination": "/Pages/visita/index.html" },
     { "source": "/servicios", "destination": "/Pages/servicios.html" },
     { "source": "/recursos", "destination": "/Pages/recursos/index.html" },
     { "source": "/recursos/:path*", "destination": "/Pages/recursos/index.html" },
@@ -18,6 +25,7 @@
     { "source": "/booking-confirm", "destination": "/Pages/booking-confirm/index.html" },
     { "source": "/pago-demo", "destination": "/Pages/pago-demo/index.html" },
     { "source": "/demo/cafe-boutique", "destination": "/Pages/demo-cafe-boutique/index.html" },
+    { "source": "/c/:token/:doc", "destination": "/api/documentos?t=:token&doc=:doc" },
     { "source": "/c/:token", "destination": "/Pages/portal/index.html" },
     { "source": "/api/ops/tasks/:id", "destination": "/api/ops/tasks?id=:id" },
     { "source": "/ops", "destination": "/OPS/index.html" },
@@ -29,6 +37,7 @@
     { "source": "/ops/agente",        "destination": "/OPS/agente.html" },
     { "source": "/ops/deep-work",     "destination": "/OPS/deep-work.html" },
     { "source": "/ops/leads-activos", "destination": "/OPS/leads-activos.html" },
+    { "source": "/ops/demos",         "destination": "/OPS/demos.html" },
     { "source": "/ops/objetivos",     "destination": "/OPS/objetivos.html" },
     { "source": "/ops/agenda",        "destination": "/OPS/agenda.html" },
     { "source": "/ops/tareas",          "destination": "/OPS/tareas.html" },
@@ -46,7 +55,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://api.mercadopago.com https://graph.facebook.com https://va.vercel-scripts.com; frame-src 'none'; frame-ancestors 'none';" }
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://api.mercadopago.com https://graph.facebook.com https://va.vercel-scripts.com; frame-src https://horizon-propuestas.vercel.app https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app; frame-ancestors 'none';" }
       ]
     }
   ]

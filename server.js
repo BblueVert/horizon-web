@@ -9,6 +9,8 @@ const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 // OPS modules — required at startup so errors surface immediately
 const opsData     = require('./api/ops/dashboard');
 const opsLeads    = require('./api/ops/leads');
+const opsDemos    = require('./api/ops/demos');
+const documentos  = require('./api/documentos');
 const promoteLead = require('./api/ops/promote-lead');
 const tasks       = require('./api/ops/tasks');
 const agente      = require('./api/ops/agente');
@@ -41,7 +43,7 @@ app.use((req, res, next) => {
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
       "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com https://va.vercel-scripts.com https://cdn.vercel-insights.com https://vitals.vercel-insights.com",
-      "frame-src 'none'",
+      "frame-src https://horizon-propuestas.vercel.app https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app",
       "frame-ancestors 'none'",
     ].join('; ')
   );
@@ -116,6 +118,10 @@ const rewrites = {
   '/plan-02':         '/Pages/plan-02.html',
   '/plan-03':         '/Pages/plan-03.html',
   '/plan-04':         '/Pages/plan-04.html',
+  '/terreno':         '/Pages/terreno/index.html',
+  '/terreno/esencial': '/Pages/terreno/esencial.html',
+  '/terreno/pro':     '/Pages/terreno/pro.html',
+  '/terreno/radiografia': '/Pages/terreno/radiografia.html',
   '/servicios':       '/Pages/servicios.html',
   '/recursos':        '/Pages/recursos/index.html',
   // /crm redirige al pipeline unificado en OPS
@@ -139,6 +145,10 @@ app.get('/plan-05', (_req, res) => res.redirect(301, '/servicios'));
 app.get('/recursos/*', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/recursos/index.html')));
 
 // Portal con token dinámico
+app.get('/visita/:slug/panel', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/panel.html')));
+app.get('/api/demo-panel', require('./api/demo-panel'));
+app.get(['/visita', '/visita/:slug'], (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/index.html')));
+app.get('/c/:token/:doc', (req, res) => { req.query = { ...req.query, t: req.params.token, doc: req.params.doc }; return documentos(req, res); });
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
 app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
 app.get('/api/recursos',  recursos);
@@ -162,6 +172,7 @@ const opsPages = {
   '/ops/agente':          'OPS/agente.html',
   '/ops/deep-work':       'OPS/deep-work.html',
   '/ops/leads-activos':   'OPS/leads-activos.html',
+  '/ops/demos':           'OPS/demos.html',
   '/ops/objetivos':       'OPS/objetivos.html',
   '/ops/agenda':          'OPS/agenda.html',
   '/ops/tareas':          'OPS/tareas.html',
@@ -192,6 +203,7 @@ app.all('/api/saas/mp/:action', mpHandler);
 // OPS API endpoints
 app.get('/api/ops/dashboard',     opsData);
 app.get('/api/ops/leads',         opsLeads);
+app.get('/api/ops/demos',         opsDemos);
 app.post('/api/ops/promote-lead', promoteLead);
 app.get('/api/ops/tasks',         tasks);
 app.post('/api/ops/tasks',        tasks);
