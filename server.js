@@ -9,6 +9,8 @@ const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 // OPS modules — required at startup so errors surface immediately
 const opsData     = require('./api/ops/dashboard');
 const opsLeads    = require('./api/ops/leads');
+const opsDemos    = require('./api/ops/demos');
+const documentos  = require('./api/documentos');
 const promoteLead = require('./api/ops/promote-lead');
 const tasks       = require('./api/ops/tasks');
 const agente      = require('./api/ops/agente');
@@ -18,6 +20,8 @@ const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
 const recursos    = require('./api/recursos');
 const pagos       = require('./api/pagos');
+const demos       = require('./api/demos');
+const demoChat    = require('./api/demo-chat');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,12 +38,12 @@ app.use((req, res, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://cdn.vercel-insights.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com",
-      "frame-src 'none'",
+      "connect-src 'self' https://dkitbnrpwmwrfnmztdfc.supabase.co https://khvfhvpqhcchgxrtmrjo.supabase.co https://graph.facebook.com https://api.mercadopago.com https://va.vercel-scripts.com https://cdn.vercel-insights.com https://vitals.vercel-insights.com",
+      "frame-src https://horizon-propuestas.vercel.app https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app",
       "frame-ancestors 'none'",
     ].join('; ')
   );
@@ -114,6 +118,10 @@ const rewrites = {
   '/plan-02':         '/Pages/plan-02.html',
   '/plan-03':         '/Pages/plan-03.html',
   '/plan-04':         '/Pages/plan-04.html',
+  '/terreno':         '/Pages/terreno/index.html',
+  '/terreno/esencial': '/Pages/terreno/esencial.html',
+  '/terreno/pro':     '/Pages/terreno/pro.html',
+  '/terreno/radiografia': '/Pages/terreno/radiografia.html',
   '/servicios':       '/Pages/servicios.html',
   '/recursos':        '/Pages/recursos/index.html',
   // /crm redirige al pipeline unificado en OPS
@@ -121,6 +129,8 @@ const rewrites = {
   '/agendar':         '/Pages/agendar/index.html',
   '/privacidad':      '/Pages/privacidad.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
+  '/pago-demo':       '/Pages/pago-demo/index.html',
+  '/demo/cafe-boutique': '/Pages/demo-cafe-boutique/index.html', // demo web + agente para Andrea Escobar Cake Boutique   // pago simulado de las demos WhatsApp (verticales/demos)
 };
 
 Object.entries(rewrites).forEach(([from, to]) => {
@@ -135,12 +145,21 @@ app.get('/plan-05', (_req, res) => res.redirect(301, '/servicios'));
 app.get('/recursos/*', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/recursos/index.html')));
 
 // Portal con token dinámico
+app.get('/visita/:slug/panel', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/panel.html')));
+app.get('/api/demo-panel', require('./api/demo-panel'));
+app.get(['/visita', '/visita/:slug'], (_req, res) => res.sendFile(path.join(__dirname, 'Pages/visita/index.html')));
+app.get('/c/:token/:doc', (req, res) => { req.query = { ...req.query, t: req.params.token, doc: req.params.doc }; return documentos(req, res); });
 app.get('/c/:token', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/portal/index.html')));
 app.get('/api/portal',  rateLimitMiddleware(60_000, 30), portal);
 app.get('/api/recursos',  recursos);
 app.post('/api/recursos', recursos);
 app.post('/api/portal', rateLimitMiddleware(60_000, 20), portal);
 app.post('/api/pagos', pagos);   // pago desde el portal + webhook de Mercado Pago (?webhook=1)
+app.get('/api/demos',  demos);   // demos express de agentes WhatsApp (DEMOS_TOKEN)
+app.post('/api/demos', demos);
+app.get('/api/demo-chat',  demoChat); // chat web de las demos (mismo motor n8n demo-ia)
+app.post('/api/demo-chat', demoChat);
+app.options('/api/demo-chat', demoChat);
 
 // ── OPS — Centro de Operaciones ──────────────────────────────────────────────
 const opsPages = {
@@ -153,6 +172,7 @@ const opsPages = {
   '/ops/agente':          'OPS/agente.html',
   '/ops/deep-work':       'OPS/deep-work.html',
   '/ops/leads-activos':   'OPS/leads-activos.html',
+  '/ops/demos':           'OPS/demos.html',
   '/ops/objetivos':       'OPS/objetivos.html',
   '/ops/agenda':          'OPS/agenda.html',
   '/ops/tareas':          'OPS/tareas.html',
@@ -164,7 +184,7 @@ Object.entries(opsPages).forEach(([from, to]) => {
   app.get(from, (_req, res) => res.sendFile(path.join(__dirname, to)));
 });
 
-// ── Verticales SaaS ──────────────────────────────────────────────────────────
+// ── Verticales SaaS ──────────��───────────────────��───────────────────────────
 const saasPages = {
   '/saas/login':                      'verticales/peluquerias/login.html',
   '/verticales/peluquerias/login':    'verticales/peluquerias/login.html',
@@ -183,6 +203,7 @@ app.all('/api/saas/mp/:action', mpHandler);
 // OPS API endpoints
 app.get('/api/ops/dashboard',     opsData);
 app.get('/api/ops/leads',         opsLeads);
+app.get('/api/ops/demos',         opsDemos);
 app.post('/api/ops/promote-lead', promoteLead);
 app.get('/api/ops/tasks',         tasks);
 app.post('/api/ops/tasks',        tasks);

@@ -35,6 +35,12 @@
 @media(max-width:600px){.big-cal-grid{gap:2px;}}
 </style>
 <script src="/shared/hz-icons.js"></script>
+<script>
+  window.va = function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -144,5 +150,7 @@ window.calNext=()=>{ if(++calMonth>11){calMonth=0;calYear++;} renderCal(); };
   await opsInitNav(); await load();
 })();
 </script>
+<!-- Vercel Web Analytics -->
+<script src="/shared/analytics.js"></script>
 </body>
 </html>

@@ -1,0 +1,127 @@
+{
+  "slug": "estetica",
+  "nombre": "Studio Lumière",
+  "rubro": "estetica",
+  "flujo": "reservas",
+  "asistente": "Lumi",
+  "color": "#B4527A",
+  "descripcion": "Studio de uñas, pestañas y cejas en Rancagua. Atiende la dueña con una ayudante, solo con hora.",
+  "tono": "Cercana, cariñosa y ordenada. Trata de tú, usa el nombre de la clienta.",
+  "saludo": "¡Hola! 💅 Soy Lumi, la asistente de Studio Lumière. ¿Quieres agendar una hora o tienes alguna duda?",
+  "locales": [
+    {
+      "nombre": "Studio",
+      "direccion": "Av. Brasil 1150, local 4",
+      "comuna": "Rancagua",
+      "horario": "lunes a viernes 10:00 a 19:00, sábado 10:00 a 14:00",
+      "lat": -34.1737,
+      "lng": -70.7353,
+      "referencia": "frente a la farmacia, segundo piso"
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Uñas",
+      "items": [
+        {
+          "nombre": "Esmaltado permanente manos",
+          "precio": 15000,
+          "descripcion": "60 min"
+        },
+        {
+          "nombre": "Uñas acrílicas",
+          "precio": 25000,
+          "descripcion": "2 h"
+        },
+        {
+          "nombre": "Kapping gel",
+          "precio": 18000,
+          "descripcion": "90 min"
+        },
+        {
+          "nombre": "Pedicura con esmaltado permanente",
+          "precio": 18000,
+          "descripcion": "75 min"
+        },
+        {
+          "nombre": "Retiro de esmaltado",
+          "precio": 5000
+        }
+      ]
+    },
+    {
+      "categoria": "Pestañas y cejas",
+      "items": [
+        {
+          "nombre": "Extensión pelo a pelo",
+          "precio": 25000,
+          "descripcion": "2 h"
+        },
+        {
+          "nombre": "Lifting de pestañas",
+          "precio": 18000,
+          "descripcion": "60 min"
+        },
+        {
+          "nombre": "Perfilado de cejas",
+          "precio": 8000,
+          "descripcion": "30 min"
+        },
+        {
+          "nombre": "Laminado de cejas",
+          "precio": 15000,
+          "descripcion": "45 min"
+        },
+        {
+          "nombre": "Retoque pelo a pelo (hasta 21 días)",
+          "precio": 15000
+        }
+      ]
+    }
+  ],
+  "reservas": {
+    "activo": true,
+    "datos": [
+      "nombre",
+      "servicio",
+      "día",
+      "hora"
+    ],
+    "horarios": "lunes a viernes 10:00, 12:00, 15:00 y 17:00; sábado 10:00 y 12:00",
+    "notas": "Llegar 5 minutos antes. Atraso de más de 15 min se reagenda."
+  },
+  "pago_online": {
+    "activo": true,
+    "porcentaje": 30
+  },
+  "pagos": [
+    "transferencia",
+    "débito",
+    "crédito",
+    "efectivo"
+  ],
+  "faq": [
+    {
+      "p": "¿Puedo cancelar?",
+      "r": "Sí, avisando con 24 horas el abono queda para otra fecha."
+    },
+    {
+      "p": "¿Hacen diseños?",
+      "r": "Sí, decoración simple incluida; diseños elaborados desde $3.000 extra."
+    }
+  ],
+  "reglas": [
+    "Toda hora se confirma con abono del 30%.",
+    "Ofrece el retoque cuando agenden pelo a pelo."
+  ],
+  "datos_pedido": [
+    "nombre",
+    "servicio",
+    "día y hora"
+  ],
+  "derivar_a": "Di que la dueña le responde personalmente apenas termine con la clienta que está atendiendo.",
+  "notas_internas": "Negocio ficticio de demostración (HORIZON). Antes de mostrarlo a un negocio real, cambia nombre, dirección y precios por los suyos.",
+  "fuentes": [
+    "demo por rubro: datos de ejemplo, no de un negocio real"
+  ]
+}

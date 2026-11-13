@@ -1,0 +1,10 @@
+{
+  "slug": "tia-julia",
+  "nombre": "Tía Julia",
+  "rubro": "restaurante",
+  "flujo": "pedidos",
+  "motor": "mesa-cero",
+  "descripcion": "Demo de Mesa Cero: la atiende el flujo n8n wa-mesacero-v2 con la carta real de Tía Julia (no la IA genérica).",
+  "locales": [{ "nombre": "Rubio", "direccion": "Rubio 155", "comuna": "Rancagua" }],
+  "fuentes": ["mesa-cero/_workflows-n8n/bot-whatsapp-mesa-cero-borrador.json"]
+}

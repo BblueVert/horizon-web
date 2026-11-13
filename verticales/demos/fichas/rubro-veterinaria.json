@@ -1,0 +1,100 @@
+{
+  "slug": "veterinaria",
+  "nombre": "Veterinaria Patitas",
+  "rubro": "veterinaria",
+  "flujo": "reservas",
+  "asistente": "Pati",
+  "color": "#2F7A5B",
+  "descripcion": "Clínica veterinaria de barrio: consultas, vacunas, desparasitación y cirugías menores.",
+  "tono": "Tranquila, empática y clara. Si hay una urgencia, prioriza.",
+  "saludo": "¡Hola! 🐾 Soy Pati, de Veterinaria Patitas. ¿En qué te ayudo con tu mascota?",
+  "locales": [
+    {
+      "nombre": "Clínica",
+      "direccion": "Av. Kennedy 1450",
+      "comuna": "Rancagua",
+      "horario": "lunes a viernes 9:30 a 19:30, sábado 10:00 a 14:00",
+      "lat": -34.1612,
+      "lng": -70.7303
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Atención",
+      "items": [
+        {
+          "nombre": "Consulta general",
+          "precio": 18000
+        },
+        {
+          "nombre": "Control",
+          "precio": 12000
+        },
+        {
+          "nombre": "Vacuna óctuple (perro)",
+          "precio": 15000
+        },
+        {
+          "nombre": "Vacuna triple felina",
+          "precio": 15000
+        },
+        {
+          "nombre": "Vacuna antirrábica",
+          "precio": 10000
+        },
+        {
+          "nombre": "Desparasitación",
+          "precio": 5000,
+          "descripcion": "desde, según peso"
+        },
+        {
+          "nombre": "Esterilización gata",
+          "precio": 45000
+        },
+        {
+          "nombre": "Esterilización perra",
+          "precio": 60000,
+          "descripcion": "desde, según peso"
+        }
+      ]
+    }
+  ],
+  "reservas": {
+    "activo": true,
+    "datos": [
+      "nombre del tutor",
+      "nombre y especie de la mascota",
+      "motivo",
+      "día",
+      "hora"
+    ],
+    "horarios": "cada 30 minutos en horario de atención"
+  },
+  "pagos": [
+    "efectivo",
+    "débito",
+    "crédito",
+    "transferencia"
+  ],
+  "faq": [
+    {
+      "p": "¿Atienden urgencias?",
+      "r": "Sí, en horario de atención: vengan directo. Fuera de horario, deriva con el encargado."
+    }
+  ],
+  "reglas": [
+    "Si describen una urgencia (no respira bien, sangrado, intoxicación, atropello), di que vengan de inmediato y deriva.",
+    "Cirugías requieren consulta previa."
+  ],
+  "datos_pedido": [
+    "nombre del tutor",
+    "mascota",
+    "motivo",
+    "día y hora"
+  ],
+  "derivar_a": "Di que la veterinaria lo llama apenas termine la consulta en curso.",
+  "notas_internas": "Negocio ficticio de demostración (HORIZON). Antes de mostrarlo a un negocio real, cambia nombre, dirección y precios por los suyos.",
+  "fuentes": [
+    "demo por rubro: datos de ejemplo, no de un negocio real"
+  ]
+}

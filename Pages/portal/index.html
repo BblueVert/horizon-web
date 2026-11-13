@@ -289,6 +289,12 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
 .seg button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand);}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:600;border:1px solid transparent;}
 .btn .hz-i{font-size:17px;}
+.btn-send{background:#1A1626;color:#fff;cursor:pointer;text-decoration:none;}
+.btn-send:disabled{opacity:.6;}
+.b-ok{margin-top:12px;font-size:14px;color:#15803D;}
+#b-docs{margin-top:14px;}
+.b-docs-t{font-size:14px;margin:0 0 12px;}
+.b-docs-l{display:flex;flex-wrap:wrap;gap:10px;}
 .btn-main{background:var(--brand);color:var(--on-brand);flex:1;}
 .btn-sec{background:var(--surface);border-color:var(--line2);color:var(--ink);}
 .btn-done{background:var(--ok-soft);color:var(--ok);flex:1;}
@@ -317,6 +323,12 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
 </style>
+<script>
+  window.va = function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 <header class="top">
@@ -431,6 +443,13 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         <div class="fld"><label for="b-problema">¿Cuál es el mayor freno que tienes ahora?</label><textarea class="ctl" id="b-problema" maxlength="2000" placeholder="Lo primero que se te venga, sin filtro"></textarea></div>
         <div class="fld"><label for="b-objetivo">¿Qué resultado esperas de la sesión?</label><textarea class="ctl" id="b-objetivo" maxlength="2000" placeholder="Ej: un plan claro para ordenar las ventas"></textarea></div>
         <div class="fld"><label for="b-intentos">¿Ya intentaste resolverlo antes? ¿Cómo fue?</label><textarea class="ctl" id="b-intentos" maxlength="2000" placeholder="Qué probaste y qué pasó"></textarea></div>
+        <button class="btn btn-send" type="button" id="b-send"><i class="hz-i" data-i="check"></i>Enviar respuestas</button>
+        <p class="b-ok" id="b-ok" hidden>¡Listo! Recibimos tus respuestas. Si quieres agregar algo, edítalas cuando quieras: se guardan solas.</p>
+      </div>
+      <div class="card brief" id="b-docs" hidden>
+        <div class="sec-h"><h2 class="sec-t"><i class="hz-i" data-i="pencil"></i>Tus documentos</h2></div>
+        <p class="b-docs-t">Revisa tu propuesta y tu contrato. Puedes guardarlos en PDF desde el botón de arriba de cada documento.</p>
+        <div class="b-docs-l"><a class="btn btn-send" id="d-prop" target="_blank" rel="noopener">Ver propuesta</a><a class="btn btn-send" id="d-con" target="_blank" rel="noopener">Ver contrato</a></div>
       </div>
     </section>
   </div>
@@ -1017,7 +1036,19 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     $('now').innerHTML = `<span class="chip">${ic('calendar')}${esc(f || 'Sesión confirmada')}</span>` +
       (meet ? `<a class="chip" href="${esc(meet)}" target="_blank" rel="noopener">${ic('external')}Abrir Google Meet</a>` : '');
     $('meter-wrap').hidden = true; $('updated').hidden = true;
+    // Leads de terreno (sin sesión agendada): ya pasó la visita, el brief es para conocer mejor el negocio.
+    if (!S.lead.reunion_fecha) { $('p-name').textContent = 'Cuéntanos de tu negocio'; $('p-desc').textContent = 'Con esto preparamos tu proyecto. Se guarda solo mientras escribes.'; $('now').innerHTML = ''; }
+    if (['propuesta','arranque'].includes(S.lead.status)) {
+      $('b-docs').hidden = false;
+      $('d-prop').href = '/c/' + token + '/propuesta'; $('d-con').href = '/c/' + token + '/contrato';
+    }
     const keys = ['negocio','problema','objetivo','intentos'], b = S.lead.brief || {};
+    $('b-send').onclick = async () => {
+      $('b-send').disabled = true; clearTimeout(t);
+      try { await post({ action:'brief', brief: Object.fromEntries(keys.map(x => [x, $('b-' + x).value])) }); $('b-status').textContent = 'Guardado'; $('b-ok').hidden = false; }
+      catch { $('b-status').textContent = 'No se pudo enviar. Intenta de nuevo.'; }
+      $('b-send').disabled = false;
+    };
     let t;
     keys.forEach(k => { const el = $('b-' + k); el.value = b[k] || ''; el.addEventListener('input', () => {
       $('b-status').textContent = 'Escribiendo…'; clearTimeout(t);
@@ -1063,5 +1094,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S?.project) load(true); });
 })();
 </script>
+<!-- Vercel Web Analytics -->
+<script src="/shared/analytics.js"></script>
 </body>
 </html>

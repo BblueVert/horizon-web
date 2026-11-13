@@ -1,0 +1,103 @@
+{
+  "slug": "pasteleria",
+  "nombre": "Pastelería Dulce Abril",
+  "rubro": "panaderia",
+  "flujo": "pedidos",
+  "asistente": "Abril",
+  "color": "#C2662D",
+  "descripcion": "Pastelería artesanal. Tortas por encargo, kuchen y pies. Las tortas se encargan con 48 horas.",
+  "tono": "Dulce, alegre y clara con los plazos.",
+  "saludo": "¡Hola! 🎂 Soy Abril, de Pastelería Dulce Abril. ¿Buscas una torta para alguna celebración?",
+  "locales": [
+    {
+      "nombre": "Tienda",
+      "direccion": "Av. Cachapoal 820",
+      "comuna": "Rancagua",
+      "horario": "lunes a sábado 9:00 a 19:30",
+      "lat": -34.1752,
+      "lng": -70.7462
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Tortas por encargo (48 h)",
+      "items": [
+        {
+          "nombre": "Torta 15 personas",
+          "precio": 25000,
+          "descripcion": "sabores: tres leches, selva negra, hoja manjar, mil hojas frambuesa"
+        },
+        {
+          "nombre": "Torta 20 personas",
+          "precio": 32000
+        },
+        {
+          "nombre": "Torta 30 personas",
+          "precio": 45000
+        },
+        {
+          "nombre": "Mensaje o nombre en la torta",
+          "precio": 0
+        },
+        {
+          "nombre": "Topper personalizado",
+          "precio": 5000
+        }
+      ]
+    },
+    {
+      "categoria": "Para hoy",
+      "items": [
+        {
+          "nombre": "Kuchen de frambuesa",
+          "precio": 12000,
+          "descripcion": "10 trozos"
+        },
+        {
+          "nombre": "Pie de limón",
+          "precio": 14000
+        },
+        {
+          "nombre": "Cupcakes x6",
+          "precio": 9000
+        },
+        {
+          "nombre": "Trozo de torta",
+          "precio": 3200
+        }
+      ]
+    }
+  ],
+  "entrega": {
+    "retiro": true,
+    "delivery": true,
+    "zonas": "Rancagua y Machalí",
+    "costo": "$3.000"
+  },
+  "pago_online": {
+    "activo": true,
+    "porcentaje": 50
+  },
+  "pagos": [
+    "transferencia",
+    "débito",
+    "crédito",
+    "efectivo"
+  ],
+  "reglas": [
+    "Tortas: pregunta tamaño, sabor, fecha, hora de retiro y si lleva mensaje.",
+    "Tortas con menos de 48 h: di que lo confirmas con la pastelera.",
+    "El encargo se confirma con abono del 50%."
+  ],
+  "datos_pedido": [
+    "nombre",
+    "producto y sabor",
+    "fecha y hora de retiro o despacho",
+    "mensaje en la torta"
+  ],
+  "derivar_a": "Di que la pastelera le confirma por este chat en unos minutos.",
+  "notas_internas": "Negocio ficticio de demostración (HORIZON). Antes de mostrarlo a un negocio real, cambia nombre, dirección y precios por los suyos.",
+  "fuentes": [
+    "demo por rubro: datos de ejemplo, no de un negocio real"
+  ]
+}

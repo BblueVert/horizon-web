@@ -75,6 +75,12 @@
 @media(max-width:600px){.la-stats{grid-template-columns:1fr 1fr;gap:10px;}.la-stats>*:last-child{grid-column:1/-1;}}
 </style>
 <script src="/shared/hz-icons.js"></script>
+<script>
+  window.va = function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -214,5 +220,7 @@ async function activarProyecto(leadId){
   await opsInitNav(); await load();
 })();
 </script>
+<!-- Vercel Web Analytics -->
+<script src="/shared/analytics.js"></script>
 </body>
 </html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packs Esencial y Pro — HORIZON</title>
+<meta name="description" content="Compara los dos packs de HORIZON: Esencial (atiende y agenda) y Pro (llena la agenda y hace volver). Mismo agente IA completo, distinto sistema alrededor.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://horizonweb.cl/terreno">
+<meta property="og:title" content="Packs Esencial y Pro — HORIZON">
+<meta property="og:description" content="Mismo agente IA completo. Elige cuánto trabaja el sistema por ti.">
+<meta property="og:image" content="https://horizonweb.cl/Identidad/og-image.png">
+<meta property="og:locale" content="es_CL">
+<meta name="theme-color" content="#1A1626">
+<link rel="icon" href="/Identidad/Logo%20ISO.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/hz-light.css">
+<link rel="stylesheet" href="/shared/hz-plan.css">
+<style>
+  /* Comparador de packs: Esencial (naranja, como Plan 01) y Pro (violeta, como Plan 04). */
+  .cmp-page { --e: #F2690C; --et: #FFE2CC; --p: #7B3FA0; --pt2: #ECE3FF; }
+  .cmp-hero { padding: calc(var(--header-h) + 28px) 0 28px; }
+  .cmp-hero h1 { font-weight: 800; font-size: clamp(34px, 8vw, 60px); line-height: 1.04; letter-spacing: -.035em; margin: 14px 0 12px; }
+  .cmp-hero .lead { max-width: 56ch; }
+  .cmp-hero .lead strong { color: var(--ink); }
+
+  .cmp { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; }
+  .cmp-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .cmp-row > * { min-width: 0; }
+
+  /* Cabecera con los dos packs */
+  .cmp-head .lbl { display: none; }
+  .pk { padding: 18px 14px 16px; display: grid; gap: 8px; align-content: start; position: relative; }
+  .pk::before { content: ''; position: absolute; inset: 0 0 auto; height: 5px; }
+  .pk.e::before { background: var(--e); }
+  .pk.p::before { background: linear-gradient(90deg, #C4467A, #7B3FA0, #34276E); }
+  .pk.p { background: linear-gradient(180deg, rgba(236,227,255,.55), transparent 70%); border-left: 1px solid var(--line); }
+  .pk-tag { font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .pk.e .pk-tag { color: var(--e); } .pk.p .pk-tag { color: var(--p); }
+  .pk h2 { font-weight: 800; font-size: clamp(24px, 6vw, 34px); letter-spacing: -.03em; line-height: 1; }
+  .pk .claim { font-size: 13.5px; font-weight: 600; color: var(--ink2); line-height: 1.35; }
+  .pk .price { font-weight: 800; font-size: clamp(24px, 6.4vw, 36px); letter-spacing: -.035em; line-height: 1.05; margin-top: 4px; }
+  .pk.e .price { color: var(--e); } .pk.p .price { color: var(--p); }
+  .pk .price small { display: block; font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); margin-bottom: 2px; }
+  .pk .meta { display: grid; gap: 2px; font-size: 13px; color: var(--ink2); }
+  .pk .meta b { color: var(--ink); font-size: 15px; }
+  .pk .btn { margin-top: 6px; padding: 13px 14px; font-size: 14px; border-radius: 12px; justify-content: space-between; }
+  .pk.p .btn-p { background: var(--p); color: #fff; box-shadow: 0 10px 24px -12px rgba(123,63,160,.7); }
+  .pk.p .btn-p:hover { transform: translateY(-1px); }
+  .pk .pop { position: absolute; top: 14px; right: 12px; font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; background: var(--p); color: #fff; padding: 4px 8px; border-radius: 99px; }
+
+  /* Grupos y filas */
+  .grp { background: var(--bg2); border-block: 1px solid var(--line); padding: 12px 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .grp h3 { font-size: 15px; letter-spacing: -.01em; }
+  .grp p { font-size: 12.5px; color: var(--ink3); }
+  .feat { border-top: 1px solid var(--line); }
+  .feat:first-of-type { border-top: 0; }
+  .feat .lbl { grid-column: 1 / -1; padding: 14px 16px 2px; }
+  .feat .lbl strong { display: block; font-size: 15px; letter-spacing: -.01em; }
+  .feat .lbl span { display: block; font-size: 13px; color: var(--ink3); line-height: 1.4; }
+  .cell { padding: 8px 16px 14px; display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; font-size: 13.5px; color: var(--ink2); line-height: 1.4; }
+  .cell + .cell { border-left: 1px solid var(--line); }
+  .cell .ico { width: 20px; height: 20px; }
+  .cell.e .ico { color: var(--e); } .cell.p .ico { color: var(--p); }
+  .cell.no { color: var(--ink3); } .cell.no .ico { color: var(--line2); }
+  .cell b { color: var(--ink); font-weight: 700; }
+
+  .cmp-foot .pk { padding-top: 14px; }
+  .cmp-foot .pk::before { display: none; }
+  .cmp-foot .lbl { display: none; }
+
+  .notes { display: grid; gap: 10px; margin-top: 16px; }
+  .note { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 16px 18px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; color: var(--ink2); }
+  .note .ico { width: 20px; height: 20px; margin-top: 1px; color: var(--ink3); }
+  .note strong { color: var(--ink); }
+  .note.f { background: var(--lilac); border-color: transparent; color: #3F2A5C; }
+  .note.f .ico { color: var(--violet); }
+  .note.up .ico { color: var(--p); }
+
+  .which { display: grid; gap: 10px; margin-top: 28px; }
+  .which-item { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; padding: 16px 18px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+  .which-item .chip { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 6px 10px; border-radius: 99px; white-space: nowrap; }
+  .which-item.e .chip { background: var(--et); color: #9A3D06; }
+  .which-item.p .chip { background: var(--pt2); color: var(--p); }
+  .which-item p { font-size: 14.5px; color: var(--ink2); }
+  .which-item p q { color: var(--ink); font-weight: 600; quotes: '“' '”'; }
+
+  @media (min-width: 760px) {
+    .cmp-row { grid-template-columns: 1.15fr 1fr 1fr; }
+    .cmp-head .lbl { display: flex; flex-direction: column; justify-content: flex-end; padding: 22px; gap: 8px; }
+    .cmp-head .lbl p { font-size: 14px; color: var(--ink2); }
+    .pk { padding: 26px 22px 22px; border-left: 1px solid var(--line); }
+    .feat .lbl { grid-column: auto; padding: 16px 22px; }
+    .cmp-foot .lbl { display: block; }
+    .cell { padding: 16px 22px; border-left: 1px solid var(--line); }
+    .grp { padding: 14px 22px; }
+    .notes { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .which { grid-template-columns: 1fr 1fr; gap: 14px; }
+  }
+  @media (min-width: 900px) { .cmp-hero { padding: calc(var(--header-h) + 52px) 0 40px; } }
+</style>
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('anim');
+    setTimeout(function () { if (!window.gsap) document.documentElement.classList.remove('anim'); }, 2500);
+  }
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script>
+  window.va = function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+</head>
+<body class="c1 cmp-page">
+<a href="#main" class="skip">Saltar al contenido</a>
+
+<header class="header">
+  <div class="wrap">
+    <a href="/" class="logo" aria-label="HORIZON, inicio"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="140" height="27"></a>
+    <nav class="nav" aria-label="Packs">
+      <a href="/terreno" aria-current="page">Comparar</a>
+      <a href="/terreno/radiografia">Radiografía</a>
+      <a href="/terreno/esencial">Esencial</a>
+      <a href="/terreno/pro">Pro</a>
+      <a href="/#casos">Casos</a>
+    </nav>
+    <a href="https://wa.me/56976962659?text=Hola%20Benja%2C%20quiero%20saber%20qu%C3%A9%20pack%20de%20HORIZON%20me%20conviene" class="btn btn-acc" target="_blank" rel="noopener" data-origin="nav-terreno">Escríbeme</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="drawer"><svg class="ico"><use href="/shared/hz-sprite.svg#i-menu"/></svg></button>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="/terreno">Comparar packs</a>
+  <a href="/terreno/esencial">Pack Esencial</a>
+  <a href="/terreno/pro">Pack Pro</a>
+  <a href="/#casos">Casos</a>
+  <a href="https://wa.me/56976962659?text=Hola%20Benja%2C%20quiero%20saber%20qu%C3%A9%20pack%20de%20HORIZON%20me%20conviene" class="btn btn-acc" target="_blank" rel="noopener" data-origin="nav-mobile-terreno">Escríbeme <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a>
+</div>
+
+<main id="main">
+  <section class="cmp-hero">
+    <div class="wrap" data-intro>
+      <span class="p-tag"><svg class="ico"><use href="/shared/hz-sprite.svg#i-layers"/></svg>Packs HORIZON · Agente IA + sistema</span>
+      <h1>El mismo agente. <span class="g">Tú eliges cuánto trabaja el sistema.</span></h1>
+      <p class="lead">En los dos packs el agente responde, agenda la hora o toma el pedido. <strong>El Pro además persigue, recuerda y hace volver a tus clientes.</strong></p>
+    </div>
+  </section>
+
+  <section style="padding-bottom:64px">
+    <div class="wrap">
+      <div class="cmp" data-reveal>
+        <div class="cmp-row cmp-head">
+          <div class="lbl"><span class="eyebrow">Compara</span><p>Implementación con pago único (50% al firmar). La mensualidad parte en el mes 2: el primero va incluido.</p></div>
+          <div class="pk e">
+            <span class="pk-tag">Pack</span>
+            <h2>Esencial</h2>
+            <p class="claim">Atiende y agenda</p>
+            <p class="price"><small>Implementación</small>$290.000</p>
+            <div class="meta"><span><b>$99.000</b> / mes</span><span>2–3 semanas</span></div>
+            <a href="https://wa.me/56976962659?text=Hola%20Benja%2C%20quiero%20el%20Pack%20Esencial%20de%20HORIZON" class="btn btn-acc" target="_blank" rel="noopener" data-origin="cmp-head-esencial">Lo quiero <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a>
+          </div>
+          <div class="pk p">
+            <span class="pop">Más completo</span>
+            <span class="pk-tag">Pack</span>
+            <h2>Pro</h2>
+            <p class="claim">Llena la agenda y hace volver</p>
+            <p class="price"><small>Implementación</small>$490.000</p>
+            <div class="meta"><span><b>$149.000</b> / mes</span><span>3–4 semanas</span></div>
+            <a href="https://wa.me/56976962659?text=Hola%20Benja%2C%20quiero%20el%20Pack%20Pro%20de%20HORIZON" class="btn btn-p" target="_blank" rel="noopener" data-origin="cmp-head-pro">Lo quiero <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a>
+          </div>
+        </div>
+
+        <div class="grp"><h3>La base: que te encuentren y nadie quede sin respuesta</h3><p>Igual en los dos</p></div>
+
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Web + Google Business</strong><span>Tu negocio visible, con precios, horarios y botón a WhatsApp.</span></div>
+          <div class="cell e"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Incluido</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Incluido</span></div>
+        </div>
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Agente IA en WhatsApp</strong><span>Entrenado con la información real de tu negocio.</span></div>
+          <div class="cell e"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span><b>Completo:</b> responde 24/7, agenda o toma el pedido y confirma</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span><b>Completo:</b> el mismo agente</span></div>
+        </div>
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Panel</strong><span>Dónde ves lo que pasa en tu negocio.</span></div>
+          <div class="cell e"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Leads, horas y pedidos con su estado</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Lo mismo + <b>historial de cada cliente</b></span></div>
+        </div>
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Aviso al dueño</strong><span>Cuando una conversación necesita a una persona.</span></div>
+          <div class="cell e"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Incluido</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Incluido</span></div>
+        </div>
+
+        <div class="grp"><h3>Después de la conversación: que la consulta se convierta en cliente</h3><p>Solo en el Pro</p></div>
+
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Seguimiento a quien no agendó</strong><span>Mensajes que retoman lo que preguntó, al día siguiente y a los 3 días.</span></div>
+          <div class="cell e no"><svg class="ico"><use href="/shared/hz-sprite.svg#i-minus"/></svg><span>Queda en tu panel para que le escribas tú</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span><b>Automático</b></span></div>
+        </div>
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Confirmación y recordatorio</strong><span>Menos gente que no llega a su hora.</span></div>
+          <div class="cell e"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Confirmación al agendar</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span>Confirmación + <b>recordatorio el día antes</b></span></div>
+        </div>
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Clientes que vuelven</strong><span>Mensaje a quienes no vienen hace 30 a 60 días.</span></div>
+          <div class="cell e no"><svg class="ico"><use href="/shared/hz-sprite.svg#i-minus"/></svg><span>No incluido</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span><b>Reactivación mensual</b></span></div>
+        </div>
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Tu negocio en números</strong><span>Consultas, horas, inasistencias y de dónde llega cada cliente.</span></div>
+          <div class="cell e no"><svg class="ico"><use href="/shared/hz-sprite.svg#i-minus"/></svg><span>No incluido</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span><b>Dashboard + reporte mensual</b> de 15 min</span></div>
+        </div>
+
+        <div class="grp"><h3>Cada mes</h3><p>Mes a mes, sin permanencia</p></div>
+
+        <div class="cmp-row feat">
+          <div class="lbl"><strong>Mensualidad</strong><span>Hosting, soporte, cambios menores y ajuste del agente con tus conversaciones reales.</span></div>
+          <div class="cell e"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span><b>$99.000</b> / mes</span></div>
+          <div class="cell p"><svg class="ico"><use href="/shared/hz-sprite.svg#i-check"/></svg><span><b>$149.000</b> / mes</span></div>
+        </div>
+
+        <div class="cmp-row cmp-foot">
+          <div class="lbl" aria-hidden="true"></div>
+          <div class="pk e"><a href="https://wa.me/56976962659?text=Hola%20Benja%2C%20quiero%20el%20Pack%20Esencial%20de%20HORIZON" class="btn btn-acc" target="_blank" rel="noopener" data-origin="cmp-foot-esencial">Quiero el Esencial <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a><a href="/terreno/esencial" class="all-link" style="margin-top:4px">Ver detalle</a></div>
+          <div class="pk p"><a href="https://wa.me/56976962659?text=Hola%20Benja%2C%20quiero%20el%20Pack%20Pro%20de%20HORIZON" class="btn btn-p" target="_blank" rel="noopener" data-origin="cmp-foot-pro">Quiero el Pro <svg class="ico"><use href="/shared/hz-sprite.svg#i-arrow"/></svg></a><a href="/terreno/pro" class="all-link" style="margin-top:4px">Ver detalle</a></div>
+        </div>
+      </div>
+
+      <div class="notes" data-stagger>
+        <p class="note up"><svg class="ico"><use href="/shared/hz-sprite.svg#i-layers"/></svg><span><strong>Partes con el Esencial y subes cuando quieras.</strong> Pagas solo la diferencia ($200.000) y la mensualidad pasa a $149.000. Tu agente y tus datos siguen ahí.</span></p>
+        <p class="note"><svg class="ico"><use href="/shared/hz-sprite.svg#i-shield"/></svg><span><strong>Garantía de 30 días:</strong> si el agente no te sirve, lo apagamos y no pagas el mes 2.</span></p>
+        <p class="note f"><svg class="ico"><use href="/shared/hz-sprite.svg#i-gift"/></svg><span><strong>Fundadores:</strong> los primeros 3 negocios tienen el 2.º mes sin costo y la mensualidad congelada por 12 meses.</span></p>
+      </div>
+
+      <div class="which" data-stagger>
+        <div class="which-item e"><span class="chip">Esencial</span><p>Si lo que te pasa es <q>no alcanzo a responder</q> o <q>no me encuentran en Google</q>.</p></div>
+        <div class="which-item p"><span class="chip">Pro</span><p>Si lo que te pasa es <q>me dejan plantado</q> o <q>los clientes vienen una vez y no vuelven</q>.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div><a href="/" class="logo"><img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON" width="124" height="24"></a><p>Consultoría de Arquitectura Digital<br>Rancagua, Chile · 2026</p></div>
+    <nav aria-label="Pie de página"><a href="/terreno">Comparar packs</a><a href="/terreno/esencial">Pack Esencial</a><a href="/terreno/pro">Pack Pro</a><a href="/#casos">Casos</a></nav>
+    <small>horizonweb.cl</small>
+  </div>
+</footer>
+
+<a href="https://wa.me/56976962659?text=Hola%20Benja%2C%20quiero%20saber%20qu%C3%A9%20pack%20de%20HORIZON%20me%20conviene" class="wa" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2a9.8 9.8 0 0 0-8.4 14.9L2.3 21.8l4.8-1.3A9.8 9.8 0 1 0 12 2.2zm0 17.8a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-5.9c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8.9c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.7-1.8c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2c.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3z"/></svg>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<script src="/shared/hz-motion.js" defer></script>
+<!-- Vercel Web Analytics -->
+<script src="/shared/analytics.js"></script>
+</body>
+</html>

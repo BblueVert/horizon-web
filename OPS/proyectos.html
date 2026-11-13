@@ -25,6 +25,12 @@
 .pcard-next-label{font-family:var(--fm);font-size:11px;color:var(--text3);}
 </style>
 <script src="/shared/hz-icons.js"></script>
+<script>
+  window.va = function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -118,5 +124,7 @@ async function loadProyectos() {
   await loadProyectos();
 })();
 </script>
+<!-- Vercel Web Analytics -->
+<script src="/shared/analytics.js"></script>
 </body>
 </html>
