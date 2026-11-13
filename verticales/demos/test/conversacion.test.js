@@ -431,3 +431,13 @@ test('si la demo del chat se dio de baja, el chat toma la demo activada desde tu
   assert.equal(estado.demoDe(CLIENTE), 'ejemplo-sangucheria');
   assert.ok(out.length > 0, 'responde en vez de quedar mudo');
 });
+
+test('saludo en partes: va en el prompt y se separa si la IA lo junta', async () => {
+  const { construirPrompt, separarSaludo } = await import('../src/agente.js');
+  const ficha = { slug: 'x', nombre: 'X', saludo: ['¡Hola! Soy Sofi.', '¿Agendamos una hora?'] };
+  assert.match(construirPrompt(ficha), /2 mensajes separados/);
+  const r = separarSaludo(ficha, { respuestas: ['¡Hola! Soy Sofi.  ¿Agendamos una hora?'] });
+  assert.deepEqual(r.respuestas, ['¡Hola! Soy Sofi.', '¿Agendamos una hora?']);
+  const otro = separarSaludo(ficha, { respuestas: ['Hola, ¿qué tratamiento buscas?'] });
+  assert.deepEqual(otro.respuestas, ['Hola, ¿qué tratamiento buscas?']);
+});
