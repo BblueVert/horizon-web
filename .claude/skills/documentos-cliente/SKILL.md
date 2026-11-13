@@ -15,6 +15,7 @@ description: Genera los documentos formales de un cliente HORIZON (propuesta com
 | Documento | Estructura | Cuándo |
 |---|---|---|
 | Propuesta comercial | `estructuras/propuesta.md` | Después del diagnóstico, antes de cerrar |
+| Guía de bienvenida | `estructuras/guia-bienvenida.md` (plantilla `templates/guia.html`) | Cuando dice que sí: va con el contrato y el link del portal |
 | Contrato + Anexo A (alcance) | `estructuras/contrato.md` | Al cerrar |
 | Orden de inicio | `estructuras/orden-inicio.md` | En el kickoff |
 | Acta de entrega | `estructuras/acta-entrega.md` | Al entregar el proyecto |
@@ -30,5 +31,5 @@ description: Genera los documentos formales de un cliente HORIZON (propuesta com
 - Texto legal del contrato: **literal** desde `estructuras/contrato.md`. Solo se reemplazan variables; no se agregan ni quitan cláusulas sin que lo pidan.
 - Tono formal en documentos (tercera persona / usted). El tuteo es para redes y el sitio, no para contratos. Nunca voseo.
 - Montos en CLP con punto de miles (`$990.000`) y en palabras en el contrato.
-- Cada documento lleva código `HZ-<AAAA>-<slug>-<tipo>` (PRO, CON, OI, AE).
+- Cada documento lleva código `HZ-<AAAA>-<slug>-<tipo>` (PRO, GB, CON, OI, AE).
 - Dato que no está: `[[FALTA: …]]`. Condición sin definir: `[[DEFINIR: …]]`. Nunca inventar.
