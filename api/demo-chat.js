@@ -197,7 +197,7 @@ module.exports = async function handler(req, res) {
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
     const { nombre, saludo, color, catalogo, locales, reservas } = f;
     res.setHeader('Cache-Control', 'public, max-age=300');
-    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas });
+    return res.status(200).json({ nombre, saludo: Array.isArray(saludo) ? saludo.join(' ') : saludo, color, catalogo, locales, reservas });
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
   if (rateLimit(getIp(req), 60_000, 20)) return res.status(429).json({ error: 'Vas muy rápido, espera un poco' });

@@ -29,6 +29,29 @@ const OBJETIVO = {
   consultas: 'Responde dudas y capta al interesado: resuelve con la información de la ficha y, si la persona quiere avanzar, pide nombre y lo que necesita para que el negocio lo contacte.',
 };
 
+// "saludo" puede ser un texto o una lista: cada elemento de la lista va como un mensaje aparte.
+export function partesSaludo(ficha) {
+  const s = ficha?.saludo;
+  return (Array.isArray(s) ? s : [s]).map(x => String(x || '').trim()).filter(Boolean);
+}
+
+function saludoTexto(ficha) {
+  const partes = partesSaludo(ficha);
+  if (!partes.length) return null;
+  if (partes.length === 1) return `Saludo sugerido para el primer mensaje: "${partes[0]}"`;
+  return `Saludo para el primer mensaje, en ${partes.length} mensajes separados (cada uno es un elemento de "respuestas", en este orden): ${partes.map(x => `"${x}"`).join(' · ')}`;
+}
+
+// Si la IA juntó el saludo en un solo mensaje, se vuelve a separar en sus partes.
+export function separarSaludo(ficha, r) {
+  const partes = partesSaludo(ficha);
+  if (partes.length < 2 || !Array.isArray(r?.respuestas)) return r;
+  const plano = (t) => String(t).replace(/\s+/g, ' ').trim();
+  const junto = plano(partes.join(' '));
+  const respuestas = r.respuestas.flatMap(t => (plano(t) === junto ? partes : [t]));
+  return { ...r, respuestas };
+}
+
 export function construirPrompt(ficha) {
   const e = ficha.entrega || {};
   const r = ficha.reservas || {};
@@ -37,7 +60,7 @@ export function construirPrompt(ficha) {
     ficha.descripcion && `Sobre el negocio: ${ficha.descripcion}`,
     `Tu objetivo: ${OBJETIVO[ficha.flujo] || OBJETIVO.consultas}`,
     ficha.tono && `Tono: ${ficha.tono}`,
-    ficha.saludo && `Saludo sugerido para el primer mensaje: "${ficha.saludo}"`,
+    saludoTexto(ficha),
     locales(ficha) && `Locales:\n${locales(ficha)}`,
     ficha.horario && `Horario: ${ficha.horario}`,
     (ficha.catalogo || []).length && `Catálogo (precios en CLP):\n${catalogoTexto(ficha)}`,
@@ -89,7 +112,7 @@ export async function responder(ficha, historial, mensaje) {
     });
     if (!res.ok) throw new Error(`n8n demo-ia respondió ${res.status} (¿está activo el workflow?)`);
     const data = await res.json().catch(() => ({}));
-    return interpretar(data.content);
+    return separarSaludo(ficha, interpretar(data.content));
   }
 
   if (!config.llm.apiKey) throw new Error('LLM_VIA=deepseek necesita DEEPSEEK_API_KEY en .env');
@@ -108,7 +131,7 @@ export async function responder(ficha, historial, mensaje) {
   });
   if (!res.ok) throw new Error(`IA respondió ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const data = await res.json();
-  return interpretar(data?.choices?.[0]?.message?.content);
+  return separarSaludo(ficha, interpretar(data?.choices?.[0]?.message?.content));
 }
 
 export function interpretar(raw) {
