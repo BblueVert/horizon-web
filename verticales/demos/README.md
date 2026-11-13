@@ -36,6 +36,7 @@ Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#<slug>`
 | `cafeteria` | Café Esquina Norte | Pedido para retirar sin fila: hora + pago + código de retiro |
 | `floreria` | Florería Rosa Blanca | Pedido con despacho, mensaje de tarjeta y pago |
 | `veterinaria` | Veterinaria Patitas | Reserva de consulta/vacuna y derivación de urgencias |
+| `dental` | Clínica Dental Sonríe | Urgencia por dolor sin abono, tratamiento con abono 30%, isapre y cuotas |
 
 En todas: precios y servicios, ubicación con **pin de WhatsApp**, horario, y al confirmar el aviso *"así le llega al dueño"*. Para un negocio real, Claude parte de la de su rubro y cambia nombre, dirección y precios (`fichas/rubro-*.json`).
 
