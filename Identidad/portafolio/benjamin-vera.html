@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Portafolio de Benjamín Vera Yáñez: diseño de identidad, UX/UI, editorial e interacción. Rancagua, Chile.">
+<meta property="og:title" content="Benjamín Vera · Portafolio">
+<meta property="og:image" content="https://benjamin-vera.vercel.app/img/foto.jpg">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
+<title>Benjamín Vera Portafolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: noche HORIZON — hero con retrato en órbita, franja de cifras, casos de estudio a dos columnas, cierre de contacto.
+Single dark look por decisión (pedido explícito: morado, azul, tech). */
+:root{
+--void:#07060E;      /* fondo base */
+--deep:#0E0C1C;      /* superficies */
+--panel:#15122A;     /* tarjetas */
+--line:#2A2547;      /* bordes */
+--ink:#F3F1FF;       /* texto */
+--mute:#A3A0C4;      /* texto secundario */
+--dim:#6C6894;       /* etiquetas */
+--violet:#8B5CF6;    /* acento principal */
+--indigo:#5B6CFF;    /* azul */
+--cyan:#38BDF8;      /* azul claro, detalles tech */
+--flame:#FF6B35;     /* firma HORIZON, uso mínimo */
+--fd:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+--fb:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+--fm:'DM Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
+--fs:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{animation:none!important;transition:none!important;}}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--fb);font-size:16px;line-height:1.65;
+-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--void);}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px;}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));}
+.mono{font-family:var(--fm);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);}
+h1,h2,h3{text-wrap:balance;margin:0;}
+/* ── fondo ambiental ── */
+.glow{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.glow::before,.glow::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;}
+.glow::before{width:520px;height:520px;background:var(--violet);top:-160px;right:-120px;opacity:.35;}
+.glow::after{width:460px;height:460px;background:var(--indigo);top:180px;left:-200px;opacity:.28;}
+.grid-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+background-size:56px 56px;opacity:.28;
+-webkit-mask-image:radial-gradient(ellipse at 70% 30%,#000 10%,transparent 70%);mask-image:radial-gradient(ellipse at 70% 30%,#000 10%,transparent 70%);}
+/* ── nav ── */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(7,6,14,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(42,37,71,.6);}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px;}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--fd);font-size:1.35rem;letter-spacing:.06em;}
+.brand img{height:20px;width:auto;}
+.brand i{width:1px;height:20px;background:var(--line);}
+.brand span{color:var(--mute);font-size:1.15rem;}
+@media (max-width:380px){.brand span,.brand i{display:none;}}
+.navlinks{display:flex;gap:22px;}
+.navlinks a{text-decoration:none;font-family:var(--fm);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);transition:color .2s;}
+.navlinks a:hover{color:var(--ink);}
+@media (max-width:640px){.navlinks{display:none;}}
+/* ── hero ── */
+.hero{position:relative;padding-block:72px 64px;}
+.hero .wrap > *{min-width:0;}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:48px;align-items:center;}
+.status{display:inline-flex;align-items:center;gap:9px;padding:7px 14px;border:1px solid var(--line);border-radius:99px;background:rgba(21,18,42,.7);font-family:var(--fm);font-size:.72rem;letter-spacing:.08em;color:var(--mute);}
+.status b{width:8px;height:8px;border-radius:50%;background:#34D399;box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:ping 2.2s infinite;}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55);}70%{box-shadow:0 0 0 9px rgba(52,211,153,0);}100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}}
+.hero h1{font-family:var(--fd);font-weight:400;font-size:clamp(3.4rem,9vw,6.6rem);line-height:.9;letter-spacing:.02em;margin-top:22px;}
+.hero h1 span{display:block;padding-top:.12em;background:linear-gradient(100deg,var(--violet) 0%,var(--indigo) 50%,var(--cyan) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.role{font-family:var(--fs);font-weight:600;letter-spacing:-.01em;font-size:clamp(1.2rem,2.4vw,1.6rem);color:var(--ink);margin-top:14px;line-height:1.3;}
+.pitch{color:var(--mute);max-width:58ch;margin-top:18px;font-size:1.02rem;}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:10px;font-weight:600;font-size:.92rem;text-decoration:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-family:var(--fb);transition:transform .2s,border-color .2s,background .2s;}
+.btn:hover{transform:translateY(-2px);border-color:var(--violet);}
+.btn.primary{background:linear-gradient(120deg,var(--violet),var(--indigo));border-color:transparent;box-shadow:0 10px 30px -10px rgba(139,92,246,.7);}
+.btn svg{width:17px;height:17px;flex-shrink:0;}
+.portrait{position:relative;justify-self:center;width:min(360px,80vw);aspect-ratio:1;max-width:100%;}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(139,92,246,.45);animation:spin 40s linear infinite;}
+.ring::before,.ring::after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;}
+.ring::before{background:var(--cyan);top:8%;left:12%;box-shadow:0 0 14px var(--cyan);}
+.ring::after{background:var(--violet);bottom:10%;right:8%;box-shadow:0 0 14px var(--violet);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.face{position:absolute;inset:9%;border-radius:50%;padding:4px;background:linear-gradient(140deg,var(--violet),var(--indigo),var(--cyan));box-shadow:0 30px 80px -20px rgba(91,108,255,.55);}
+.face-in{width:100%;height:100%;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 30% 25%,#2B2360,var(--deep));position:relative;display:grid;place-items:center;}
+.face-in .ini{font-family:var(--fd);font-size:5.5rem;letter-spacing:.04em;color:var(--ink);opacity:.9;}
+.face-in img{color:transparent;font-size:0;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.tagchip{position:absolute;padding:8px 12px;border-radius:10px;background:rgba(14,12,28,.92);border:1px solid var(--line);font-family:var(--fm);font-size:.68rem;letter-spacing:.06em;color:var(--mute);white-space:nowrap;box-shadow:0 10px 30px -12px #000;}
+.tagchip em{font-style:normal;color:var(--cyan);}
+.tc1{top:4%;right:-4%;}
+.tc2{bottom:6%;left:-8%;}
+@media (max-width:860px){
+.hero .wrap{grid-template-columns:minmax(0,1fr);gap:40px;}
+.portrait{order:-1;width:min(250px,70vw);justify-self:start;}
+.tc1{right:-30%;}
+.tc2{left:auto;right:-36%;bottom:10%;}
+}
+@media (max-width:460px){.tagchip{display:none;}}
+/* ── cifras ── */
+.figures{border-block:1px solid var(--line);background:linear-gradient(90deg,rgba(139,92,246,.06),rgba(56,189,248,.04));}
+.figures .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-block:28px;gap:20px;}
+.fig strong{display:block;font-family:var(--fd);font-weight:400;font-size:2.6rem;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums;}
+.fig strong sup{font-size:1.1rem;color:var(--violet);vertical-align:top;margin-left:2px;}
+.fig span{display:block;margin-top:6px;font-size:.82rem;color:var(--mute);line-height:1.4;}
+@media (max-width:860px){.figures .wrap{grid-template-columns:repeat(2,minmax(0,1fr));}.fig:last-child{grid-column:1/-1;}}
+/* ── secciones ── */
+section.block{padding-block:88px 24px;position:relative;}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:40px;}
+.sec-head h2{font-family:var(--fd);font-weight:400;font-size:clamp(2.4rem,5vw,3.6rem);letter-spacing:.03em;line-height:1;}
+.sec-head p{color:var(--mute);max-width:46ch;margin:0;}
+/* ── caso ── */
+.case{display:grid;grid-template-columns:1fr 1fr;gap:44px;padding:40px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,var(--panel),var(--deep) 70%);margin-bottom:28px;position:relative;overflow:hidden;}
+.case > *{min-width:0;}
+.case::before{content:"";position:absolute;top:0;left:40px;right:40px;height:1px;background:linear-gradient(90deg,transparent,var(--violet),var(--cyan),transparent);opacity:.7;}
+.case-kicker{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;}
+.case h3{font-family:var(--fd);font-weight:400;font-size:clamp(2rem,4vw,2.8rem);letter-spacing:.03em;line-height:1;margin-top:14px;}
+.case .lede{font-family:var(--fs);font-weight:600;letter-spacing:-.01em;font-size:1.2rem;color:var(--ink);margin:10px 0 16px;line-height:1.4;}
+.case p{color:var(--mute);margin:0 0 14px;}
+.case p b{color:var(--ink);font-weight:600;}
+.pill{display:inline-block;padding:4px 10px;border-radius:99px;font-family:var(--fm);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);color:var(--mute);}
+.pill.live{border-color:rgba(52,211,153,.4);color:#6EE7B7;}
+.pill.v{border-color:rgba(139,92,246,.5);color:#C4B5FD;}
+.pill.c{border-color:rgba(56,189,248,.45);color:#7DD3FC;}
+.facts{display:grid;gap:12px;margin:22px 0;}
+.fact{display:grid;grid-template-columns:118px 1fr;gap:14px;padding-top:12px;border-top:1px solid var(--line);font-size:.93rem;}
+.fact dt{font-family:var(--fm);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);padding-top:3px;}
+.fact dd{margin:0;color:var(--mute);}
+.fact dd b{color:var(--ink);font-weight:600;}
+@media (max-width:520px){.fact{grid-template-columns:minmax(0,1fr);gap:4px;}}
+.stack{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+.stack span{font-family:var(--fm);font-size:.7rem;padding:5px 10px;border-radius:6px;background:rgba(91,108,255,.1);border:1px solid rgba(91,108,255,.28);color:#B9C2FF;}
+.link{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-family:var(--fm);font-size:.8rem;color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(56,189,248,.35);padding-bottom:2px;}
+.link:hover{border-color:var(--cyan);}
+/* galería Floremané */
+.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:start;}
+.gallery figure{margin:0;border-radius:12px;overflow:hidden;position:relative;aspect-ratio:1;background:var(--deep);}
+.gallery figure img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.gallery figure:hover img{transform:scale(1.05);}
+.gallery figcaption{position:absolute;left:8px;bottom:8px;padding:3px 8px;border-radius:5px;background:rgba(7,6,14,.75);font-family:var(--fm);font-size:.6rem;letter-spacing:.06em;color:var(--ink);}
+.gallery .wide{grid-column:span 2;grid-row:span 2;}
+.swatches{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.sw{display:flex;align-items:center;gap:7px;font-family:var(--fm);font-size:.66rem;color:var(--mute);}
+.sw i{width:22px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.12);}
+.pillars{display:grid;gap:8px;margin-top:6px;}
+.bar{display:grid;grid-template-columns:150px 1fr 38px;gap:12px;align-items:center;font-size:.84rem;color:var(--mute);}
+.bar .track{height:6px;border-radius:99px;background:var(--line);overflow:hidden;}
+.bar .track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--violet),var(--cyan));}
+.bar b{font-family:var(--fm);font-weight:500;font-size:.75rem;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums;}
+@media (max-width:520px){.bar{grid-template-columns:110px 1fr 34px;font-size:.78rem;}}
+/* visual de producto (mock) */
+.mock{border:1px solid var(--line);border-radius:16px;background:var(--void);padding:18px;display:grid;gap:12px;align-content:start;}
+.mock-top{display:flex;gap:6px;}
+.mock-top i{width:9px;height:9px;border-radius:50%;background:var(--line);}
+.chat{display:grid;gap:9px;}
+.msg{max-width:84%;padding:10px 13px;border-radius:14px;font-size:.85rem;line-height:1.45;}
+.msg.in{background:var(--panel);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:4px;}
+.msg.out{justify-self:end;background:linear-gradient(120deg,rgba(139,92,246,.9),rgba(91,108,255,.9));color:#fff;border-bottom-right-radius:4px;}
+.msg small{display:block;font-family:var(--fm);font-size:.6rem;opacity:.7;margin-top:4px;letter-spacing:.06em;}
+.phases{display:grid;gap:10px;}
+.phase{padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--void);}
+.phase .mono{color:var(--cyan);}
+.phase strong{display:block;margin:4px 0 2px;font-size:.98rem;}
+.phase p{margin:0;font-size:.86rem;color:var(--mute);}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.chips span{font-family:var(--fm);font-size:.64rem;padding:3px 8px;border-radius:5px;border:1px solid var(--line);color:var(--mute);}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;}
+.cal span{aspect-ratio:1;border-radius:7px;background:var(--panel);border:1px solid var(--line);font-family:var(--fm);font-size:.62rem;color:var(--dim);display:grid;place-items:center;}
+.cal span.on{background:linear-gradient(135deg,rgba(139,92,246,.75),rgba(56,189,248,.6));color:#fff;border-color:transparent;}
+.cal span.h{background:transparent;border:none;color:var(--violet);}
+@media (max-width:900px){.case{grid-template-columns:minmax(0,1fr);padding:26px 22px;gap:30px;}.case::before{left:22px;right:22px;}}
+/* ── proyectos principales ── */
+.proj{padding:48px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(170deg,var(--panel),var(--deep) 45%);margin-bottom:36px;position:relative;overflow:hidden;}
+.proj::before{content:"";position:absolute;top:0;left:48px;right:48px;height:1px;background:linear-gradient(90deg,transparent,var(--violet),var(--cyan),transparent);opacity:.7;}
+.proj-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:end;}
+.proj h3{font-family:var(--fd);font-weight:400;font-size:clamp(2.8rem,6vw,4.4rem);letter-spacing:.03em;line-height:.95;margin-top:16px;}
+.proj .lede{font-family:var(--fs);font-weight:600;letter-spacing:-.01em;font-size:1.3rem;color:var(--ink);margin:10px 0 0;line-height:1.35;max-width:30ch;}
+.meta{display:grid;gap:0;margin:0;border-top:1px solid var(--line);}
+.meta > div{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid var(--line);}
+.meta dt{font-family:var(--fm);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);padding-top:3px;}
+.meta dd{margin:0;color:var(--mute);font-size:.93rem;}
+.intro{margin:34px 0 0;max-width:68ch;color:var(--ink);font-size:1.05rem;line-height:1.7;}
+.intro b{color:var(--cyan);font-weight:600;}
+.steps{list-style:none;margin:30px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+.steps li{background:var(--deep);padding:20px 20px 22px;}
+.steps span{font-family:var(--fd);font-size:1.6rem;line-height:1;background:linear-gradient(180deg,var(--violet),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.steps strong{display:block;margin:8px 0 4px;font-size:1rem;}
+.steps p{margin:0;color:var(--mute);font-size:.87rem;line-height:1.55;}
+.chapter{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;margin-top:44px;padding-top:30px;border-top:1px solid var(--line);}
+.ch-label .mono{color:var(--cyan);}
+.ch-label p{margin:8px 0 0;color:var(--mute);font-size:.9rem;}
+.ch-notes{margin:14px 0 0;padding-left:16px;display:grid;gap:6px;color:var(--mute);font-size:.86rem;}
+.ch-notes b{color:var(--ink);font-weight:600;}
+.ch-notes li::marker{color:var(--violet);}
+.bento{display:grid;gap:12px;}
+.bento figure,.ig-side figure{margin:0;border-radius:14px;overflow:hidden;position:relative;background:var(--deep);border:1px solid var(--line);}
+.bento img,.bento video,.ig-side img{width:100%;height:100%;display:block;object-fit:cover;}
+.bento figcaption,.ig-side figcaption{position:absolute;left:10px;bottom:10px;padding:4px 9px;border-radius:6px;background:rgba(7,6,14,.78);font-family:var(--fm);font-size:.62rem;letter-spacing:.06em;color:var(--ink);}
+.b-id{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);}
+.t-logo{background:#F5EEDE!important;display:grid;place-items:center;padding:40px 30px 70px;min-height:340px;}
+.t-logo img{width:min(340px,80%);height:auto;object-fit:contain;}
+.palette{position:absolute;left:16px;right:16px;bottom:16px;display:flex;gap:6px;}
+.palette i{flex:1;height:26px;border-radius:6px;border:1px solid rgba(0,0,0,.08);}
+.t-reel{aspect-ratio:9/16;max-height:520px;justify-self:start;width:100%;}
+.t-reel video{background:#000;}
+.t-reel figcaption{bottom:auto;top:10px;}
+.b-three{grid-template-columns:repeat(3,minmax(0,1fr));}
+.b-three figure{aspect-ratio:1;}
+.b-camp{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:200px;grid-auto-flow:dense;}
+.b-camp .w2{grid-column:span 2;}
+.b-camp .h2{grid-row:span 2;}
+.b-s2{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:300px;}
+.b-s2 .w2{grid-column:span 2;}
+.strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;}
+.strip figure{margin:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);aspect-ratio:9/16;scroll-snap-align:start;background:var(--deep);}
+.strip img{width:100%;height:100%;object-fit:cover;display:block;}
+.ch-sub{margin:22px 0 10px;}
+.ch-sub .mono{color:var(--violet);font-size:.66rem;}
+.chapter > .strip + .ch-sub, .trio > .ch-sub:first-child{margin-top:0;}
+.trio{min-width:0;}
+.b-six{grid-template-columns:repeat(6,minmax(0,1fr));}
+.b-six figure{aspect-ratio:4/5;}
+.b-mix{grid-template-columns:repeat(6,minmax(0,1fr));align-items:start;}
+.b-mix figure{aspect-ratio:4/5;}
+.b-mix figure.tall{aspect-ratio:9/16;}
+.b-four{grid-template-columns:repeat(4,minmax(0,1fr));}
+.b-four figure{aspect-ratio:4/5;}
+.b-four img{object-position:top;}
+/* teléfono Instagram */
+.ig-wrap{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start;}
+.ig-car{display:grid;gap:14px;}
+.ig-car-h .mono{color:var(--violet);}
+.ig-car-h p{margin:6px 0 0;color:var(--mute);font-size:.9rem;max-width:52ch;}
+.ig-side{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+@media (max-width:700px){.ig-side{grid-template-columns:repeat(2,minmax(0,1fr));}}
+.ig-side figure{aspect-ratio:4/5;}
+.ig-side img{object-position:top;}
+.phone{background:#000;border:1px solid #2a2a2a;border-radius:30px;padding:16px 0 0;overflow:hidden;color:#fff;font-family:var(--fb);box-shadow:0 30px 80px -30px rgba(91,108,255,.45);}
+.ig-bar{display:flex;align-items:center;gap:6px;padding:0 16px 10px;font-size:1.1rem;}
+.ig-bar span{font-size:.8rem;opacity:.8;}
+.ig-head{display:flex;align-items:center;gap:18px;padding:4px 16px 10px;}
+.ig-avatar{width:78px;height:78px;border-radius:50%;flex-shrink:0;border:3px solid #22D47A;background:radial-gradient(circle at 50% 40%,#0d3b25,#03140c);display:grid;place-items:center;}
+.ig-avatar span{font-weight:800;font-size:1.25rem;letter-spacing:-.02em;color:#fff;line-height:1;}
+.ig-avatar i{font-style:normal;color:#22D47A;}
+.ig-stats{display:flex;flex:1;justify-content:space-around;text-align:center;font-size:.68rem;color:#ddd;}
+.ig-stats b{display:block;font-size:1rem;color:#fff;}
+.ig-bio{display:grid;gap:1px;padding:0 16px;font-size:.72rem;line-height:1.4;color:#eee;}
+.ig-bio b{font-size:.76rem;}
+.ig-cat{color:#9a9a9a;}
+.ig-link{color:#c8d7ff;font-weight:600;}
+.ig-btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:12px 16px 10px;}
+.ig-btns span{background:#262626;border-radius:8px;text-align:center;font-size:.72rem;font-weight:600;padding:7px 0;}
+.ig-btns span.on{background:#22D47A;color:#04150c;}
+.ig-hl{display:flex;gap:12px;padding:4px 16px 12px;overflow:hidden;}
+.ig-hl div{display:grid;justify-items:center;gap:4px;flex-shrink:0;width:56px;}
+.ig-hl img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:1.5px solid #333;}
+.ig-hl span{font-size:.58rem;color:#ddd;white-space:nowrap;}
+.ig-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;border-top:1px solid #222;padding-top:2px;}
+.ig-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;display:block;}
+@media (max-width:980px){
+.proj{padding:30px 22px;}.proj::before{left:22px;right:22px;}
+.proj-top{grid-template-columns:minmax(0,1fr);gap:24px;}
+.chapter{grid-template-columns:minmax(0,1fr);gap:16px;}
+.ig-wrap{grid-template-columns:minmax(0,1fr);}
+.phone{max-width:360px;}
+}
+@media (max-width:700px){
+.steps{grid-template-columns:minmax(0,1fr);}
+.b-id{grid-template-columns:minmax(0,1fr);}
+.t-reel{max-width:280px;}
+.b-three{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.b-camp{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:160px;}
+.b-camp .h2{grid-row:span 1;}
+.b-s2{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:220px;}
+.b-four{grid-template-columns:repeat(2,minmax(0,1fr));}
+.b-six{grid-template-columns:repeat(3,minmax(0,1fr));}
+.b-mix{grid-template-columns:repeat(3,minmax(0,1fr));}
+.strip{grid-auto-columns:42%;}
+.bento figcaption,.ig-side figcaption{font-size:.56rem;}
+}
+/* ── filtros por disciplina ── */
+.disc{display:flex;flex-wrap:wrap;gap:8px;margin:-12px 0 32px;}
+.disc button{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--deep);color:var(--mute);font:500 .86rem var(--fb);cursor:pointer;transition:border-color .2s,color .2s,background .2s;}
+.disc button span{font-family:var(--fm);font-size:.66rem;color:var(--dim);}
+.disc button:hover{color:var(--ink);border-color:var(--violet);}
+.disc button[aria-pressed="true"]{background:linear-gradient(120deg,var(--violet),var(--indigo));color:#fff;border-color:transparent;}
+.disc button[aria-pressed="true"] span{color:#E4DEFF;}
+[data-disc][hidden],.minis[hidden]{display:none!important;}
+/* ── capturas de interfaz ── */
+.shots{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start;}
+.shots figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--deep);position:relative;}
+.shots img{width:100%;height:auto;display:block;}
+.shots figcaption{position:absolute;left:10px;bottom:10px;padding:4px 9px;border-radius:6px;background:rgba(7,6,14,.82);font-family:var(--fm);font-size:.62rem;letter-spacing:.06em;color:var(--ink);}
+.shots .phoneshot{max-height:560px;}
+.shots .phoneshot img{height:100%;object-fit:cover;object-position:top;}
+.shots .full{grid-column:1/-1;}
+.case .shots{grid-template-columns:minmax(0,1fr);}
+.case .phoneshot{max-width:300px;justify-self:center;}
+@media (max-width:700px){.shots{grid-template-columns:minmax(0,1fr);}.shots .phoneshot{max-width:300px;}}
+/* ── otros proyectos ── */
+.minis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
+.mini{padding:28px;border:1px solid var(--line);border-radius:18px;background:var(--panel);display:flex;flex-direction:column;}
+.mini h3{font-family:var(--fd);font-weight:400;font-size:2rem;letter-spacing:.03em;line-height:1;margin:14px 0 10px;}
+.mini p{color:var(--mute);margin:0 0 12px;font-size:.95rem;}
+.mini ul{margin:0;padding-left:18px;color:var(--mute);font-size:.9rem;display:grid;gap:5px;}
+.mini li::marker{color:var(--violet);}
+.mini .stack{margin-top:auto;padding-top:18px;}
+.mini .logo{height:22px;width:auto;margin-top:14px;}
+@media (max-width:820px){.minis{grid-template-columns:minmax(0,1fr);}}
+/* ── método ── */
+.method{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+.step{padding:24px 20px;border-right:1px solid var(--line);background:var(--deep);position:relative;}
+.step:last-child{border-right:none;}
+.step .n{font-family:var(--fd);font-size:2.4rem;line-height:1;background:linear-gradient(180deg,var(--violet),var(--indigo));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.step strong{display:block;margin:10px 0 6px;font-size:1rem;}
+.step p{margin:0;font-size:.85rem;color:var(--mute);}
+@media (max-width:900px){.method{grid-template-columns:minmax(0,1fr);}.step{border-right:none;border-bottom:1px solid var(--line);display:grid;grid-template-columns:52px 1fr;column-gap:14px;}.step:last-child{border-bottom:none;}.step .n{grid-row:span 2;}.step strong{margin-top:2px;}}
+/* ── herramientas ── */
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
+.tool{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--deep);}
+.tool .mono{color:var(--violet);}
+.tool ul{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:7px;font-size:.92rem;}
+.tool li{display:flex;align-items:center;gap:9px;}
+.tool li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
+@media (max-width:900px){.tools{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:480px){.tools{grid-template-columns:minmax(0,1fr);}}
+/* ── formación ── */
+.edu{display:grid;grid-template-columns:1fr 1.3fr;gap:20px;}
+.edu > div{padding:26px;border:1px solid var(--line);border-radius:16px;background:var(--panel);min-width:0;}
+.edu h3{font-size:1.25rem;margin:10px 0 4px;}
+.edu p{color:var(--mute);margin:0;}
+.edu ul{margin:12px 0 0;padding-left:18px;color:var(--mute);display:grid;gap:8px;font-size:.93rem;}
+.edu li b{color:var(--ink);}
+@media (max-width:820px){.edu{grid-template-columns:minmax(0,1fr);}}
+/* ── contacto ── */
+.contact{margin-top:72px;padding-block:72px 56px;border-top:1px solid var(--line);position:relative;overflow:hidden;}
+.contact .wrap{position:relative;z-index:1;}
+.contact h2{font-family:var(--fd);font-weight:400;font-size:clamp(3rem,8vw,5.4rem);line-height:.92;letter-spacing:.02em;}
+.contact h2 span{background:linear-gradient(100deg,var(--violet),var(--indigo),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.contact p.sub{color:var(--mute);max-width:52ch;margin:18px 0 32px;}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+.ccard{padding:20px;border:1px solid var(--line);border-radius:14px;background:rgba(21,18,42,.8);display:flex;flex-direction:column;gap:8px;min-width:0;}
+.ccard .val{font-size:1rem;font-weight:600;word-break:break-word;user-select:all;}
+.ccard button,.ccard a.go{align-self:flex-start;margin-top:4px;font-family:var(--fm);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);background:none;border:1px solid rgba(56,189,248,.35);border-radius:6px;padding:6px 10px;cursor:pointer;text-decoration:none;}
+.ccard button:hover,.ccard a.go:hover{border-color:var(--cyan);}
+@media (max-width:820px){.cards{grid-template-columns:minmax(0,1fr);}}
+footer{padding-block:28px;border-top:1px solid var(--line);}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<nav>
+<div class="wrap">
+<a class="brand" href="#inicio" aria-label="HORIZON · Benjamín Vera"><img src="img/logo-horizon.svg" alt="HORIZON"><i></i><span>Benjamín Vera</span></a>
+<div class="navlinks">
+<a href="#trabajo">Trabajo</a>
+<a href="#metodo">Método</a>
+<a href="#herramientas">Herramientas</a>
+<a href="#contacto">Contacto</a>
+</div>
+</div>
+</nav>
+<header class="hero" id="inicio">
+<div class="glow"></div>
+<div class="grid-bg"></div>
+<div class="wrap">
+<div>
+<span class="status"><b></b>Disponible · Rancagua, Chile</span>
+<h1>Benjamín<span>Vera Yáñez</span></h1>
+<p class="role">Identidad, UX/UI, editorial y diseño de interacción</p>
+<p class="pitch">Diseñador en vías de titulación (8.º semestre de Diseño Digital y Web, INACAP Rancagua) y fundador de HORIZON. Diseño identidades, piezas editoriales e interfaces, y me interesa sobre todo cómo se usan: flujos de compra, cuestionarios, paneles y conversaciones con agentes de WhatsApp. Trabajo con IA y con el ecosistema de Google todos los días.</p>
+<div class="cta">
+<a class="btn primary" href="#trabajo">Ver proyectos
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+<a class="btn" href="https://www.linkedin.com/in/binkshorizon/" target="_blank" rel="noopener">
+<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.06c.53-1 1.82-2.05 3.75-2.05 4 0 4.74 2.64 4.74 6.07V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4z"/></svg>
+LinkedIn</a>
+</div>
+</div>
+<div class="portrait" aria-hidden="false">
+<div class="ring"></div>
+<div class="face"><div class="face-in">
+<span class="ini">BV</span>
+<img src="img/foto.jpg" alt="Retrato de Benjamín Vera" onerror="this.hidden=true">
+</div></div>
+<div class="tagchip tc1">fundador · <em>HORIZON</em></div>
+<div class="tagchip tc2">8.º sem · <em>INACAP</em></div>
+</div>
+</div>
+</header>
+<div class="figures">
+<div class="wrap">
+<div class="fig"><strong>270<sup>+</sup></strong><span>piezas de campaña para el lanzamiento de Fitt</span></div>
+<div class="fig"><strong>14</strong><span>personas entrevistadas en terreno para Fitt</span></div>
+<div class="fig"><strong>150<sup>+</sup></strong><span>creativos de Instagram para Floremané</span></div>
+<div class="fig"><strong>2</strong><span>productos SaaS diseñados y construidos</span></div>
+<div class="fig"><strong>1<sup>+</sup></strong><span>año dirigiendo mi propio estudio</span></div>
+</div>
+</div>
+<main>
+<section class="block" id="trabajo">
+<div class="wrap">
+<div class="sec-head">
+<h2>Trabajo seleccionado</h2>
+<p>Proyectos reales, contados desde el problema hasta lo que está pasando hoy: qué hice, con quién y cómo se fue construyendo.</p>
+</div>
+<div class="disc" role="group" aria-label="Filtrar proyectos por disciplina">
+<button type="button" data-f="todo" aria-pressed="true">Todo <span></span></button>
+<button type="button" data-f="identidad" aria-pressed="false">Identidad <span></span></button>
+<button type="button" data-f="uxui" aria-pressed="false">UX/UI <span></span></button>
+<button type="button" data-f="editorial" aria-pressed="false">Editorial <span></span></button>
+<button type="button" data-f="interaccion" aria-pressed="false">Interacción <span></span></button>
+</div>
+<!-- FLOREMANÉ -->
+<article class="proj" id="floremane" data-disc="identidad editorial">
+<header class="proj-top">
+<div class="proj-id">
+<div class="case-kicker"><span class="pill v">Dirección de arte</span><span class="pill">Branding</span><span class="pill">Contenido</span><span class="pill">E-commerce</span></div>
+<h3>Floremané</h3>
+<p class="lede">Una marca de carteras de cuero italiano, construida desde cero.</p>
+</div>
+<dl class="meta">
+<div><dt>Cliente</dt><dd>Daniela, importadora de cuero full-grain desde Italia</dd></div>
+<div><dt>Rol</dt><dd>Dirección del proyecto, tienda y contenido, en dupla con Gabriela Ortiz (HORIZON × GO)</dd></div>
+<div><dt>Hoy</dt><dd>Marca y tienda listas. Trabajando redes y creativos de lanzamiento</dd></div>
+</dl>
+</header>
+<p class="intro">Daniela tenía producto, pero no tenía marca, fotos, redes ni tienda. El desafío era que una marca nueva se sintiera de lujo desde el primer día, con carteras de alto valor y sin parecer un marketplace.</p>
+<ol class="steps">
+<li><span>01</span><strong>Levantamiento</strong><p>Formulario y reunión para definir público, precios, plataforma y lo que la marca nunca debía ser.</p></li>
+<li><span>02</span><strong>Concepto "silencio activo"</strong><p>El lujo está en lo que se omite. Estética japandi e interiorismo europeo; referentes Totême, A.P.C. y The Row.</p></li>
+<li><span>03</span><strong>Identidad</strong><p>Monograma FM, paleta crema y arena, y un color de acento por temporada.</p></li>
+<li><span>04</span><strong>Sesión I · producto</strong><p>24 carteras sobre pared ocre y mármol, con luz natural y props de lino y fruta, retocadas en Photoshop.</p></li>
+<li><span>05</span><strong>Sesión II · 141 creativos</strong><p>214 fotos revisadas una a una, agrupadas en 47 modelos, con historia, post y ficha para cada uno.</p></li>
+<li><span>06</span><strong>Gráficas y campaña</strong><p>Sistema tipográfico propio para Instagram, reel de lanzamiento e imágenes de campaña con IA.</p></li>
+</ol>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Identidad y lanzamiento</span><p>Logo oficial, paleta y el reel que abre la marca en Instagram.</p></div>
+<div class="bento b-id">
+<figure class="t-logo"><img src="img/v2/fm-logo.svg" alt="Logotipo oficial de Floremané" loading="lazy">
+<div class="palette" aria-label="Paleta de Floremané">
+<i style="background:#F5EEDE" title="Crema"></i><i style="background:#D6C9B6" title="Arena"></i><i style="background:#7C746A" title="Gris cuero"></i><i style="background:#1F1D20" title="Negro cálido"></i><i style="background:#709971" title="Salvia"></i><i style="background:#893210" title="Terracota"></i><i style="background:#9B0428" title="Borgoña"></i>
+</div>
+</figure>
+<figure class="t-reel">
+<video src="img/sel/m-reel.mp4" poster="img/sel/m-reel-poster.webp" controls playsinline muted preload="none" aria-label="Reel de lanzamiento de Floremané"></video>
+<figcaption>Reel de lanzamiento</figcaption>
+</figure>
+</div>
+</section>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Sesión 1 · producto</span><p>La base de todo: el catálogo fotografiado con la línea de la marca.</p></div>
+<div class="bento b-three">
+<figure><img src="img/sel/m-prod-1.jpg" alt="Cartera Aurelia burdeo sobre lino con limones" loading="lazy"><figcaption>Aurelia · Bordeaux</figcaption></figure>
+<figure><img src="img/sel/m-prod-3.jpg" alt="Cartera Intreccio negra" loading="lazy"><figcaption>Intreccio · Nero</figcaption></figure>
+<figure><img src="img/sel/m-prod-2.jpg" alt="Cartera Luna color camel" loading="lazy"><figcaption>Luna · Camel</figcaption></figure>
+</div>
+</section>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Gráficas para Instagram</span><p>Un sistema propio sobre las fotos de las sesiones I y II: título didone en tres líneas con la del medio en itálica, línea vertical, etiqueta en versalitas y monograma. El color del texto sale del propio bolso.</p></div>
+<div class="trio">
+<div class="strip" tabindex="0" aria-label="Historias de campaña de Floremané">
+<figure><img src="img/v3/s3-h01.jpg" alt="Historia: Dura más que las temporadas" loading="lazy"></figure>
+<figure><img src="img/v3/s3-h02.jpg" alt="Historia: Para lo que llevas todos los días" loading="lazy"></figure>
+<figure><img src="img/v3/s3-h03.jpg" alt="Historia: El herraje también es diseño" loading="lazy"></figure>
+<figure><img src="img/v3/s3-h04.jpg" alt="Historia: El grano que se ve es real" loading="lazy"></figure>
+<figure><img src="img/v3/s3-h05.jpg" alt="Historia: El color va en el cuero" loading="lazy"></figure>
+<figure><img src="img/v3/s3-h06.jpg" alt="Historia: La proporción es una decisión" loading="lazy"></figure>
+<figure><img src="img/v3/s3-h07.jpg" alt="Historia: Blanco, para la luz de primavera" loading="lazy"></figure>
+<figure><img src="img/v3/s3-h08.jpg" alt="Historia: Menos ruido. Más materia." loading="lazy"></figure>
+</div>
+<div class="ch-sub"><span class="mono">Carrusel · Aurelia</span></div>
+<div class="bento b-four">
+<figure><img src="img/v3/s3-c1-01.jpg" alt="Carrusel Aurelia, lámina 1" loading="lazy"><figcaption>1 / 4</figcaption></figure>
+<figure><img src="img/v3/s3-c1-02.jpg" alt="Carrusel Aurelia, lámina 2" loading="lazy"><figcaption>2 / 4</figcaption></figure>
+<figure><img src="img/v3/s3-c1-03.jpg" alt="Carrusel Aurelia, lámina 3" loading="lazy"><figcaption>3 / 4</figcaption></figure>
+<figure><img src="img/v3/s3-c1-04.jpg" alt="Carrusel Aurelia, lámina 4" loading="lazy"><figcaption>4 / 4</figcaption></figure>
+</div>
+</div>
+</section>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Sesión II · 47 modelos</span><p>De 214 fotos originales a 141 creativos. Cada toma se revisó con segmentación para descartar las que cortaban el asa. Cada modelo tiene tres piezas: ficha, post e historia.</p>
+<ul class="ch-notes">
+<li><b>Ficha:</b> foto en ventana de arco sobre el tono del bolso.</li>
+<li><b>Post:</b> la segunda mejor toma, con frase.</li>
+<li><b>Historia:</b> versión editorial vertical.</li>
+</ul>
+</div>
+<div class="trio">
+<div class="ch-sub"><span class="mono">Fichas de producto</span></div>
+<div class="bento b-six">
+<figure><img src="img/v3/s2-bucket-fucsia_ficha.jpg" alt="Ficha Bucket Fucsia" loading="lazy"></figure>
+<figure><img src="img/v3/s2-croco-cafe_ficha.jpg" alt="Ficha Croco Café" loading="lazy"></figure>
+<figure><img src="img/v3/s2-pavo-real_ficha.jpg" alt="Ficha Top handle Pavo Real" loading="lazy"></figure>
+<figure><img src="img/v3/s2-pochette-dorada_ficha.jpg" alt="Ficha Pochette Dorada" loading="lazy"></figure>
+<figure><img src="img/v3/s2-gamuza-burdeos_ficha.jpg" alt="Ficha Gamuza Burdeos" loading="lazy"></figure>
+<figure><img src="img/v3/s2-grande-camel_ficha.jpg" alt="Ficha Grande Camel" loading="lazy"></figure>
+</div>
+<div class="ch-sub"><span class="mono">Posts e historias</span></div>
+<div class="bento b-mix">
+<figure><img src="img/v3/s2-nappa-burdeos_post.jpg" alt="Post: Menos ruido. Más materia." loading="lazy"><figcaption>Post</figcaption></figure>
+<figure><img src="img/v3/s2-clasico-negro_post.jpg" alt="Post: Negro, para todos los días" loading="lazy"><figcaption>Post</figcaption></figure>
+<figure><img src="img/v3/s2-pavo-real_post.jpg" alt="Post: Un verde que no pasa desapercibido" loading="lazy"><figcaption>Post</figcaption></figure>
+<figure class="tall"><img src="img/v3/s2-bucket-rojo_historia.jpg" alt="Historia: Rojo, sin pedir permiso" loading="lazy"><figcaption>Historia</figcaption></figure>
+<figure class="tall"><img src="img/v3/s2-oliva_historia.jpg" alt="Historia: Oliva, un verde de tierra" loading="lazy"><figcaption>Historia</figcaption></figure>
+<figure class="tall"><img src="img/v3/s2-grande-gris_historia.jpg" alt="Historia: Gris, el tono de la ciudad" loading="lazy"><figcaption>Historia</figcaption></figure>
+</div>
+</div>
+</section>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Campaña con IA</span><p>Imágenes de campaña generadas a partir de las carteras reales, para la portada y las categorías de la tienda.</p></div>
+<div class="bento b-camp">
+<figure class="w2"><img src="img/v2/fm-hero-campo.webp" alt="Modelo apoyada en un fardo de paja con una cartera camel" loading="lazy"><figcaption>Campaña · campo</figcaption></figure>
+<figure class="h2"><img src="img/v2/fm-cat-bolsos.webp" alt="Modelo caminando por una calle italiana con bolso" loading="lazy"><figcaption>Categoría bolsos</figcaption></figure>
+<figure class="w2"><img src="img/sel/m-campana.jpg" alt="Mujer caminando por una plaza de Florencia con cartera negra" loading="lazy"><figcaption>Campaña · Florencia</figcaption></figure>
+</div>
+</section>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Sesión con modelo</span><p>Fotos en exteriores para contenido de Instagram y la portada de la tienda.</p></div>
+<div class="bento b-s2">
+<figure class="w2"><img src="img/v2/fm-hero-169.webp" alt="Modelo apoyada en una puerta verde con cartera camel" loading="lazy"><figcaption>Portada web</figcaption></figure>
+<figure><img src="img/v2/fm-galeria-sesion-01.webp" alt="Modelo con chaqueta de cuero y bolso negro" loading="lazy"><figcaption>Look negro</figcaption></figure>
+<figure><img src="img/v2/fm-galeria-sesion-07.webp" alt="Modelo sonriendo junto a cartera burdeo sobre una mesa" loading="lazy"><figcaption>Lifestyle</figcaption></figure>
+</div>
+</section>
+<div class="stack"><span>Photoshop</span><span>Illustrator</span><span>IA generativa</span><span>HTML/CSS/JS</span><span>Node.js</span><span>MercadoPago</span><span>Transbank</span></div>
+</article>
+<!-- FITT -->
+<article class="proj" id="fitt" data-disc="identidad uxui editorial interaccion">
+<header class="proj-top">
+<div class="proj-id">
+<div class="case-kicker"><span class="pill c">Proyecto de título</span><span class="pill">Diseño sistémico</span><span class="pill">UX</span><span class="pill">Campaña</span></div>
+<h3>Fitt</h3>
+<p class="lede">Una app para que los gimnasios no pierdan socios en silencio.</p>
+<a class="link" href="https://fitt-prototipo.vercel.app" target="_blank" rel="noopener">fitt-prototipo.vercel.app ↗</a>
+</div>
+<dl class="meta">
+<div><dt>Caso</dt><dd>VitalFit, gimnasio de Rancagua con más de 2.000 socios inscritos</dd></div>
+<div><dt>Rol</dt><dd>Todo el proyecto: investigación, marca, producto y campaña</dd></div>
+<div><dt>Hoy</dt><dd>Prototipo en línea y campaña de lanzamiento en curso desde el 9 de noviembre</dd></div>
+</dl>
+</header>
+<p class="intro">VitalFit pierde entre un 5 % y un 10 % de sus socios sin darse cuenta: la gente deja de ir y nadie la contacta. <b>12 de 12 socios</b> entrevistados nunca recibieron un mensaje del gimnasio. Fitt los acompaña desde el primer día y avisa a tiempo cuando alguien empieza a desaparecer.</p>
+<ol class="steps">
+<li><span>Abr</span><strong>Terreno</strong><p>Tres rondas de entrevistas y observación con 14 personas: socios, recepción y el dueño.</p></li>
+<li><span>Jun</span><strong>Insight</strong><p>"El que llega motivado y se va en silencio": socios nuevos, solos y con miedo a lesionarse.</p></li>
+<li><span>Jun</span><strong>Marca</strong><p>Nace Fitt, en verde y negro, con la promesa "tu primer día acompañado".</p></li>
+<li><span>Jul</span><strong>Prototipo</strong><p>App para socio, recepción y dueño: llegada, rutinas con IA, progreso y avisos.</p></li>
+<li><span>Oct</span><strong>Plan de medios</strong><p>Instagram, WhatsApp, impresos y landing, cada canal con su link rastreable e indicador.</p></li>
+<li><span>Nov</span><strong>Campaña</strong><p>Cuatro semanas y más de 270 piezas, en redes y dentro del gimnasio.</p></li>
+</ol>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Instagram</span><p>El perfil al cierre de la campaña: 13 publicaciones, historias destacadas por tema y una línea visual constante.</p>
+<ul class="ch-notes">
+<li><b>Carruseles</b> de mitos y guías para el socio nuevo.</li>
+<li><b>Reels</b> semanales con la voz de los socios de VitalFit.</li>
+<li><b>Historias diarias</b> con encuestas, quiz y cuenta regresiva.</li>
+</ul>
+</div>
+<div class="ig-wrap">
+<div class="phone" role="img" aria-label="Perfil de Instagram de Fitt">
+<div class="ig-bar"><b>fitt</b><span>⌄</span></div>
+<div class="ig-head">
+<div class="ig-avatar"><span>Fitt<i>.</i></span></div>
+<div class="ig-stats"><div><b>13</b>publicaciones</div><div><b>—</b>seguidores</div><div><b>—</b>seguidos</div></div>
+</div>
+<div class="ig-bio">
+<b>Fitt · tu primer día acompañado</b>
+<span class="ig-cat">Aplicación de fitness</span>
+<span>Te acompañamos desde tu primer día en el gym 💚</span>
+<span>Sabes qué hacer al llegar · tu historia se guarda · tú decides cómo te hablamos</span>
+<span>📍 Ya estamos en @vitalfit_cl · actívalo en recepción</span>
+<span class="ig-link">fitt-prototipo.vercel.app</span>
+</div>
+<div class="ig-btns"><span class="on">Seguir</span><span>Mensaje</span><span>Contacto</span></div>
+<div class="ig-hl">
+<div><img src="img/v2/hl-1.jpg" alt=""><span>Empieza aquí</span></div>
+<div><img src="img/v2/hl-2.jpg" alt=""><span>Primer día</span></div>
+<div><img src="img/v2/hl-3.jpg" alt=""><span>Máquinas</span></div>
+<div><img src="img/v2/hl-4.jpg" alt=""><span>Mitos</span></div>
+<div><img src="img/v2/hl-5.jpg" alt=""><span>Así nace</span></div>
+</div>
+<div class="ig-grid">
+<img src="img/v2/ig-01.jpg" alt="" loading="lazy"><img src="img/v2/ig-02.jpg" alt="" loading="lazy"><img src="img/v2/ig-03.jpg" alt="" loading="lazy">
+<img src="img/v2/ig-04.jpg" alt="" loading="lazy"><img src="img/v2/ig-05.jpg" alt="" loading="lazy"><img src="img/v2/ig-06.jpg" alt="" loading="lazy">
+<img src="img/v2/ig-07.jpg" alt="" loading="lazy"><img src="img/v2/ig-08.jpg" alt="" loading="lazy"><img src="img/v2/ig-09.jpg" alt="" loading="lazy">
+<img src="img/v2/ig-10.jpg" alt="" loading="lazy"><img src="img/v2/ig-11.jpg" alt="" loading="lazy"><img src="img/v2/ig-12.jpg" alt="" loading="lazy">
+</div>
+</div>
+<div class="ig-car">
+<div class="ig-car-h"><span class="mono">Un carrusel, lámina por lámina</span><p>"Nadie nace sabiendo usar un gimnasio": cinco mitos del primer día, con portada, desarrollo y cierre con llamado a la acción.</p></div>
+<div class="ig-side">
+<figure><img src="img/v2/car-1.jpg" alt="Lámina 1: Nadie nace sabiendo usar un gimnasio" loading="lazy"><figcaption>1 / 7</figcaption></figure>
+<figure><img src="img/v2/car-2.jpg" alt="Lámina 2 del carrusel" loading="lazy"><figcaption>2 / 7</figcaption></figure>
+<figure><img src="img/v2/car-3.jpg" alt="Lámina 3 del carrusel" loading="lazy"><figcaption>3 / 7</figcaption></figure>
+<figure><img src="img/v2/car-4.jpg" alt="Lámina 4 del carrusel" loading="lazy"><figcaption>4 / 7</figcaption></figure>
+<figure><img src="img/v2/car-5.jpg" alt="Lámina 5 del carrusel" loading="lazy"><figcaption>5 / 7</figcaption></figure>
+<figure><img src="img/v2/car-6.jpg" alt="Lámina 6 del carrusel" loading="lazy"><figcaption>6 / 7</figcaption></figure>
+</div>
+</div>
+</div>
+</section>
+<section class="chapter">
+<div class="ch-label"><span class="mono">En el gimnasio y en el celular</span><p>La campaña sale de Instagram: afiches, fichas con QR en cada máquina, WhatsApp y la propia app.</p></div>
+<div class="bento b-four">
+<figure><img src="img/sel/f-afiche.jpg" alt="Afiche: Llegó la Ruta Fitt" loading="lazy"><figcaption>Afiche · Ruta Fitt</figcaption></figure>
+<figure><img src="img/sel/f-ficha.jpg" alt="Ficha de máquina con QR: prensa" loading="lazy"><figcaption>Ficha con QR</figcaption></figure>
+<figure><img src="img/sel/f-whatsapp.jpg" alt="Mensaje de bienvenida por WhatsApp" loading="lazy"><figcaption>WhatsApp · día 1</figcaption></figure>
+<figure><img src="img/sel/f-app.jpg" alt="Pantalla de inicio de la app Fitt" loading="lazy"><figcaption>App · inicio</figcaption></figure>
+</div>
+</section>
+<div class="stack"><span>Figma</span><span>Next.js</span><span>PWA</span><span>Supabase</span><span>IA (Claude)</span><span>n8n</span><span>WhatsApp</span></div>
+</article>
+<!-- HORIZON -->
+<article class="proj" id="horizon" data-disc="identidad uxui editorial interaccion">
+<header class="proj-top">
+<div class="proj-id">
+<div class="case-kicker"><span class="pill v">Marca propia</span><span class="pill">Identidad</span><span class="pill">UX/UI</span><span class="pill">Editorial</span></div>
+<h3>HORIZON</h3>
+<p class="lede">Mi estudio, diseñado de punta a punta: la marca y todo lo que toca el cliente.</p>
+</div>
+<dl class="meta">
+<div><dt>Qué es</dt><dd>Sistema de crecimiento digital para pymes de servicio de Rancagua</dd></div>
+<div><dt>Rol</dt><dd>Identidad, dirección de arte, UX/UI y desarrollo</dd></div>
+<div><dt>Hoy</dt><dd>En uso para vender en terreno y atender a los clientes</dd></div>
+</dl>
+</header>
+<p class="intro">Una marca nueva tenía que explicar algo poco tangible: <b>un sistema</b> que responde, agenda y ordena clientes. La identidad parte de un atardecer (naranja, rosa y violeta) y el sitio lo muestra con una conversación real en vez de una ilustración.</p>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Identidad y sitio</span><p>Logotipo con la O en degradado, set propio de íconos, tokens de color y tipografía. Cada plan toma un tramo del degradado de la marca.</p></div>
+<div class="shots">
+<figure><img src="https://cdn.jsdelivr.net/gh/BblueVert/horizon-web@c60b6ffb36bf110828559a04600cf51431239ec0/Identidad/portafolio/horizon-hero.webp" alt="Portada del sitio de HORIZON con titular en degradado y una conversación de WhatsApp que agenda una hora" loading="lazy"><figcaption>Portada</figcaption></figure>
+<figure class="phoneshot"><img src="https://cdn.jsdelivr.net/gh/BblueVert/horizon-web@c60b6ffb36bf110828559a04600cf51431239ec0/Identidad/portafolio/horizon-movil.webp" alt="Sitio de HORIZON en celular" loading="lazy"><figcaption>Móvil</figcaption></figure>
+<figure class="full"><img src="https://cdn.jsdelivr.net/gh/BblueVert/horizon-web@c60b6ffb36bf110828559a04600cf51431239ec0/Identidad/portafolio/horizon-planes.webp" alt="Sección de planes con cuatro tarjetas, cada una con un color del degradado de la marca" loading="lazy"><figcaption>Planes</figcaption></figure>
+</div>
+</section>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Editorial</span><p>Documentos que se arman solos con los datos y las fotos de cada cliente, en co-branding.</p></div>
+<ul class="ch-notes" style="margin:0">
+<li><b>Propuesta comercial</b> de nueve láminas: portada, diagnóstico de lo que se le escapa al negocio, cómo se ve su sistema, inversión y preguntas frecuentes.</li>
+<li><b>Contrato</b> en tamaño carta, con portada, partes, cláusulas, firmas y anexo de alcance, listo para imprimir.</li>
+<li><b>Portal del cliente</b> donde sigue su proyecto, ve sus documentos y paga cada etapa en línea.</li>
+</ul>
+</section>
+<div class="stack"><span>Illustrator</span><span>Figma</span><span>HTML/CSS/JS</span><span>GSAP</span><span>Supabase</span><span>Gmail y Calendar</span></div>
+</article>
+<!-- RADIOGRAFÍA -->
+<article class="case" id="radiografia" data-disc="uxui interaccion">
+<div>
+<div class="case-kicker"><span class="pill c">Diseño de interacción</span><span class="pill">UX</span><span class="pill">Ventas en terreno</span></div>
+<h3>Radiografía</h3>
+<p class="lede">Ocho preguntas que deciden qué necesita un negocio.</p>
+<p>Una herramienta para usar desde el celular, frente al dueño del local. Las preguntas cambian según el rubro, porque una pastelería, una clínica y un local de comida no pierden clientes de la misma forma.</p>
+<dl class="facts">
+<div class="fact"><dt>Interacción</dt><dd>Una pregunta por pantalla, con opciones grandes para tocar con una mano. Se responde en <b>dos minutos</b>.</dd></div>
+<div class="fact"><dt>Lógica</dt><dd>No suma puntos: <b>cruza respuestas</b> (volumen, ticket, horario, clientes que no vuelven) y explica en palabras simples qué plan le conviene y por qué.</dd></div>
+<div class="fact"><dt>Cierre</dt><dd>Al terminar, el cliente queda en el CRM y le llegan por correo el diagnóstico, la propuesta y el contrato.</dd></div>
+</dl>
+<div class="stack"><span>UX writing</span><span>JavaScript</span><span>Supabase</span><span>Gmail API</span></div>
+</div>
+<div class="shots">
+<figure class="phoneshot"><img src="https://cdn.jsdelivr.net/gh/BblueVert/horizon-web@c60b6ffb36bf110828559a04600cf51431239ec0/Identidad/portafolio/radiografia.webp" alt="Pantalla inicial de la radiografía en celular, con el nombre del negocio y el tipo de negocio para elegir" loading="lazy"><figcaption>Inicio en celular</figcaption></figure>
+</div>
+</article>
+<!-- CAKE BOUTIQUE -->
+<article class="proj" id="cake-boutique" data-disc="identidad uxui interaccion">
+<header class="proj-top">
+<div class="proj-id">
+<div class="case-kicker"><span class="pill c">Propuesta</span><span class="pill">UX/UI</span><span class="pill">Flujo de compra</span></div>
+<h3>Cake Boutique</h3>
+<p class="lede">Una web que se ve como su carta y vende como su vitrina.</p>
+</div>
+<dl class="meta">
+<div><dt>Cliente</dt><dd>Andrea Escobar Cake Boutique, pastelería y café en Rancagua</dd></div>
+<div><dt>Rol</dt><dd>Dirección de arte, UX/UI y flujo de compra</dd></div>
+<div><dt>Hoy</dt><dd>Demo presentada al negocio, con pedidos que llegan a su panel</dd></div>
+</dl>
+</header>
+<p class="intro">La identidad sale de su carta impresa: rosado, negro, títulos en script y mayúsculas condensadas. Los productos se leen de la misma base de datos que usa el panel de la dueña, así que <b>la web nunca queda desactualizada</b>.</p>
+<ol class="steps">
+<li><span>01</span><strong>Elegir sin errores</strong><p>Cada torta se arma en una hoja que sube desde abajo: tamaño con su precio, relleno y cantidad. El botón dice qué falta hasta que todo está elegido.</p></li>
+<li><span>02</span><strong>Pedido con fecha</strong><p>Las tortas se encargan, así que el pedido pide día y hora con calendario, además de retiro o delivery.</p></li>
+<li><span>03</span><strong>Llega al panel</strong><p>El pedido entra con el detalle completo: "Torta de bizcocho · 25 porciones · Relleno Tropical".</p></li>
+</ol>
+<section class="chapter">
+<div class="ch-label"><span class="mono">Escritorio y móvil</span><p>Portada con la identidad de la carta y la misma experiencia en el celular, donde ocurre casi toda la compra.</p></div>
+<div class="shots">
+<figure><img src="https://cdn.jsdelivr.net/gh/BblueVert/horizon-web@c60b6ffb36bf110828559a04600cf51431239ec0/Identidad/portafolio/cake-hero.webp" alt="Portada de la web de Cake Boutique con fondo rosado y una torta de dos pisos con flores" loading="lazy"><figcaption>Portada</figcaption></figure>
+<figure class="phoneshot"><img src="https://cdn.jsdelivr.net/gh/BblueVert/horizon-web@c60b6ffb36bf110828559a04600cf51431239ec0/Identidad/portafolio/cake-movil.webp" alt="Web de Cake Boutique en celular" loading="lazy"><figcaption>Móvil</figcaption></figure>
+</div>
+</section>
+<div class="stack"><span>Dirección de arte</span><span>UX/UI</span><span>JavaScript</span><span>Supabase</span><span>WhatsApp</span></div>
+</article>
+<!-- MESA CERO -->
+<article class="case" id="mesa-cero" data-disc="uxui interaccion">
+<div>
+<div class="case-kicker"><span class="pill live">En uso</span><span class="pill">Automatización</span><span class="pill">IA</span><span class="pill">Producto propio</span></div>
+<h3>Mesa Cero</h3>
+<p class="lede">Un agente de WhatsApp que toma los pedidos del restaurante.</p>
+<p>El cliente escribe por WhatsApp y el agente le responde con el menú real, los precios y la disponibilidad, leídos directo desde la base de datos. Hoy lo usa un restaurante de Rancagua todos los días.</p>
+<dl class="facts">
+<div class="fact"><dt>Diferencial</dt><dd>Comisión de <b>3 %</b> por venta, frente al <b>25–30 %</b> que cobran las apps de delivery.</dd></div>
+<div class="fact"><dt>Ventas</dt><dd>Bot de demos para salir a terreno: el dueño del local prueba el agente desde su propio WhatsApp.</dd></div>
+<div class="fact"><dt>Conversación</dt><dd>Diseñé cómo habla el agente: <b>una pregunta a la vez</b>, entiende respuestas cortas ("a domicilio", "el sábado") y no vuelve a pedir lo que el cliente ya dijo. Hay un perfil por rubro: sushi, hamburguesas y pastelería.</dd></div>
+<div class="fact"><dt>Marca</dt><dd>La misma plataforma toma la identidad de cada local: colores, logo y carta propios en la página de pedido y en el panel.</dd></div>
+</dl>
+<div class="stack"><span>Next.js</span><span>Baileys</span><span>n8n</span><span>Supabase</span><span>Docker</span><span>IA</span></div>
+</div>
+<div class="mock" aria-label="Ejemplo de conversación con el agente">
+<div class="mock-top"><i></i><i></i><i></i></div>
+<div class="chat">
+<div class="msg in">Hola! ¿Qué tienen de almuerzo hoy?<small>CLIENTE · 13:02</small></div>
+<div class="msg out">¡Hola! Hoy tenemos menú del día con cazuela o pollo arvejado, más postre. ¿Te anoto alguno?<small>AGENTE · 13:02</small></div>
+<div class="msg in">Una cazuela para llevar porfa<small>CLIENTE · 13:03</small></div>
+<div class="msg out">Listo, una cazuela para llevar. ¿A qué nombre lo dejo?<small>AGENTE · 13:03</small></div>
+</div>
+<span class="mono" style="font-size:.62rem;">Conversación de ejemplo</span>
+</div>
+</article>
+<div class="minis">
+<article class="mini" id="agenda" data-disc="uxui">
+<div class="case-kicker"><span class="pill live">Online</span><span class="pill">SaaS</span></div>
+<h3>Horizon Agenda</h3>
+<p>Plataforma de reservas y gestión para peluquerías y barberías, pensada para competir con AgendaPro con instalación en persona.</p>
+<ul>
+<li>Página de reservas por negocio, con mapa y reseñas.</li>
+<li>Panel del dueño: agenda, equipo, servicios, clientes y reportes.</li>
+<li>Punto de venta y liquidación de comisiones por profesional.</li>
+<li>Base de datos multi-cliente de 17 tablas con seguridad por fila.</li>
+</ul>
+<a class="link" href="https://horizon-agenda.vercel.app" target="_blank" rel="noopener">horizon-agenda.vercel.app ↗</a>
+<div class="stack"><span>JavaScript</span><span>Express</span><span>Supabase</span><span>MercadoPago</span><span>WhatsApp API</span></div>
+</article>
+</div>
+</div>
+</section>
+<section class="block" id="metodo">
+<div class="wrap">
+<div class="sec-head">
+<h2>Cómo trabajo</h2>
+<p>Antes de diseñar una pieza, entiendo el negocio. Cada proyecto pasa por estas cinco etapas, en este orden.</p>
+</div>
+<div class="method">
+<div class="step"><span class="n">01</span><strong>Diagnóstico</strong><p>Reunión con el cliente, formulario de levantamiento y revisión de lo que ya tiene.</p></div>
+<div class="step"><span class="n">02</span><strong>Concepto</strong><p>Referentes, moodboard y la idea central que ordena todas las decisiones.</p></div>
+<div class="step"><span class="n">03</span><strong>Diseño</strong><p>Identidad, key visual y sus bajadas a cada formato y canal.</p></div>
+<div class="step"><span class="n">04</span><strong>Producción</strong><p>Fotografía, piezas, web y automatizaciones, listas para usar.</p></div>
+<div class="step"><span class="n">05</span><strong>Medición</strong><p>Indicadores por canal y ajustes con el proyecto ya funcionando.</p></div>
+</div>
+</div>
+</section>
+<section class="block" id="herramientas">
+<div class="wrap">
+<div class="sec-head">
+<h2>Herramientas</h2>
+<p>Lo que uso en el día a día, del diseño al código.</p>
+</div>
+<div class="tools">
+<div class="tool"><span class="mono">Diseño</span><ul><li>Photoshop</li><li>Illustrator</li><li>Figma</li><li>Identidad y branding</li><li>UX/UI y prototipado</li></ul></div>
+<div class="tool"><span class="mono">IA generativa</span><ul><li>Generación de imagen</li><li>Generación de video</li><li>Claude</li><li>Claude Code a diario</li><li>Agentes de WhatsApp (DeepSeek, n8n)</li></ul></div>
+<div class="tool"><span class="mono">Desarrollo</span><ul><li>HTML, CSS, JavaScript</li><li>Node.js y Express</li><li>Next.js</li><li>Supabase / PostgreSQL</li></ul></div>
+<div class="tool"><span class="mono">Ecosistema Google</span><ul><li>Gmail API en flujos de venta</li><li>Google Calendar para agendar</li><li>Drive y Docs con clientes</li><li>Google Business para locales</li></ul></div>
+<div class="tool"><span class="mono">Operación</span><ul><li>n8n</li><li>Vercel y Docker</li><li>MercadoPago y Transbank</li><li>Git y GitHub</li></ul></div>
+</div>
+</div>
+</section>
+<section class="block" id="formacion">
+<div class="wrap">
+<div class="sec-head"><h2>Formación</h2></div>
+<div class="edu">
+<div>
+<span class="mono">INACAP Rancagua · 2026</span>
+<h3>Diseño Digital y Web</h3>
+<p>Carrera profesional, 8.º semestre.</p>
+</div>
+<div>
+<span class="mono">Ramos destacados</span>
+<ul>
+<li><b>Seminario de Diseño Sistémico e Innovación</b>: investigación en terreno que dio origen a Fitt.</li>
+<li><b>Taller de Diseño de Experiencia de Usuario</b>: prototipo funcional de Fitt.</li>
+<li><b>Gestión de Diseño</b>: plan de medios digitales de la campaña de lanzamiento.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+</main>
+<section class="contact" id="contacto">
+<div class="glow"></div>
+<div class="wrap">
+<span class="mono">Contacto</span>
+<h2>Hablemos de<br><span>tu próximo proyecto</span></h2>
+<p class="sub">Busco trabajo en diseño gráfico, identidad, UX/UI y diseño de interacción. Vivo en Rancagua, tengo disponibilidad inmediata y me acomoda el trabajo híbrido o part-time.</p>
+<div class="cards">
+<div class="ccard"><span class="mono">Correo</span><span class="val" id="mail">soportebinks@gmail.com</span><button type="button" data-copy="soportebinks@gmail.com">Copiar</button></div>
+<div class="ccard"><span class="mono">Teléfono / WhatsApp</span><span class="val" id="tel">+56 9 4651 3068</span><button type="button" data-copy="+56946513068">Copiar</button></div>
+<div class="ccard"><span class="mono">LinkedIn</span><span class="val">linkedin.com/in/binkshorizon</span><a class="go" href="https://www.linkedin.com/in/binkshorizon/" target="_blank" rel="noopener">Abrir ↗</a></div>
+</div>
+</div>
+</section>
+<footer>
+<div class="wrap">
+<span class="mono">Benjamín Vera Yáñez · 2026</span>
+<span class="mono">Rancagua, Chile</span>
+</div>
+</footer>
+<script>
+document.querySelectorAll('[data-copy]').forEach(function(b){
+b.addEventListener('click',function(){
+var t=b.getAttribute('data-copy'), old=b.textContent;
+function done(){b.textContent='Copiado';setTimeout(function(){b.textContent=old;},1600);}
+try{
+navigator.clipboard.writeText(t).then(done,function(){sel(b);});
+}catch(e){sel(b);}
+});
+});
+(function(){
+var bs=[].slice.call(document.querySelectorAll('.disc button'));
+var items=[].slice.call(document.querySelectorAll('[data-disc]'));
+var minis=document.querySelector('.minis');
+function tiene(el,f){return f==='todo'||el.getAttribute('data-disc').split(' ').indexOf(f)>=0;}
+bs.forEach(function(b){
+var f=b.getAttribute('data-f');
+b.querySelector('span').textContent=items.filter(function(el){return tiene(el,f);}).length;
+b.addEventListener('click',function(){
+bs.forEach(function(o){o.setAttribute('aria-pressed',String(o===b));});
+items.forEach(function(el){el.hidden=!tiene(el,f);});
+if(minis)minis.hidden=![].some.call(minis.querySelectorAll('[data-disc]'),function(el){return !el.hidden;});
+});
+});
+})();
+function sel(b){
+var v=b.parentNode.querySelector('.val');
+var r=document.createRange();r.selectNodeContents(v);
+var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+b.textContent='Seleccionado';
+}
+</script>
+</body>
+</html>
