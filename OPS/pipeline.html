@@ -104,12 +104,6 @@ textarea.lm-input{resize:vertical;min-height:70px;line-height:1.5;}
 }
 </style>
 <script src="/shared/hz-icons.js"></script>
-<script>
-  window.va = function () {
-    (window.vaq = window.vaq || []).push(arguments);
-  };
-</script>
-<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 <div class="ops-layout">
@@ -195,7 +189,7 @@ textarea.lm-input{resize:vertical;min-height:70px;line-height:1.5;}
         <div>
           <label class="lm-lbl">Tipo de precio</label>
           <select class="lm-input" id="lf-tipoprecio">
-      <option value="fundador">Fundador (mismo precio + beneficios)</option>
+      <option value="fundador">Fundador (50% implementación + beneficios)</option>
       <option value="normal">Precio Normal</option>
           </select>
         </div>
@@ -254,7 +248,7 @@ textarea.lm-input{resize:vertical;min-height:70px;line-height:1.5;}
 <script src="/OPS/shared/ops-auth.js"></script>
 <script src="/OPS/shared/ops-nav.js"></script>
 <script>
-const PLANS={plan01:{label:'Presencia Digital',preciof:490000},plan02:{label:'Ecosistema Digital',preciof:990000},plan03:{label:'Negocio Activo (plan anterior)',preciof:null},plan04:{label:'Sistema con IA',preciof:1990000},plan05:{label:'Agente IA Personalizado',preciof:1490000}};
+const PLANS={plan01:{label:'Presencia Digital',preciof:245000},plan02:{label:'Ecosistema Digital',preciof:495000},plan03:{label:'Negocio Activo (plan anterior)',preciof:null},plan04:{label:'Sistema con IA',preciof:995000},plan05:{label:'Agente IA Personalizado',preciof:745000}};
 
 // Etapas completas para el stage mover
 const ALL_STAGES=[

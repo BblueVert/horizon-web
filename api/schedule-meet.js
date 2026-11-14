@@ -73,6 +73,66 @@ function resumenCalificacion(c) {
   ].filter(Boolean).join(' · ');
 }
 
+// ── Enriquecimiento con IA (DeepSeek) ──────────────────────────────────────
+// Lee lo que el lead contó de su negocio y deja en OPS un brief para el diagnóstico.
+// Solo viajan datos del negocio: nunca nombre, email ni teléfono (Ley 21.719).
+const PLANES = ['Plan 01 · Presencia Digital', 'Plan 02 · Ecosistema Digital', 'Plan 03 · Sistema con IA', 'Plan 04 · Agente IA Personalizado'];
+const PROMPT_ENRIQUECER = `Eres el analista de leads de HORIZON, que arma sistemas digitales (web, CRM, automatización e IA) para PyMEs de servicio en Rancagua, Chile.
+Planes: ${PLANES.join('; ')}.
+Con los datos del lead, responde SOLO un JSON con estas claves:
+"rubro" (texto corto), "resumen" (1 frase sobre el negocio), "dolor" (el problema principal, 1 frase),
+"plan_sugerido" (uno de los planes, tal cual), "fit" (número 0-100: qué tan buen cliente es para HORIZON),
+"razon_fit" (1 frase), "preguntas" (3 preguntas para el diagnóstico).
+Español de Chile con tuteo. Si falta información, dilo en el campo; no inventes datos del negocio.`;
+
+async function enriquecerLead({ negocio, contexto, resumen, plan }) {
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey || (!negocio && !contexto)) return null;
+  const datos = [
+    negocio  && 'Negocio: ' + negocio,
+    contexto && 'Qué quiere resolver: ' + contexto,
+    resumen  && 'Calificación: ' + resumen,
+    plan     && 'Plan que marcó: ' + plan,
+  ].filter(Boolean).join('\n');
+  try {
+    const r = await httpsRequest('POST', 'https://api.deepseek.com/chat/completions',
+      { Authorization: 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+      {
+        model: process.env.DEEPSEEK_MODEL || 'deepseek-chat', max_tokens: 500, temperature: 0.3,
+        response_format: { type: 'json_object' },
+        messages: [{ role: 'system', content: PROMPT_ENRIQUECER }, { role: 'user', content: datos }],
+      },
+      6_000
+    );
+    if (r.status !== 200) { console.warn('[schedule-meet] IA status:', r.status); return null; }
+    const o = JSON.parse(JSON.parse(r.body).choices?.[0]?.message?.content || '{}');
+    const fit = Math.max(0, Math.min(100, Math.round(Number(o.fit) || 0)));
+    return {
+      rubro:         sanitize(String(o.rubro || ''), 80),
+      resumen:       sanitize(String(o.resumen || ''), 300),
+      dolor:         sanitize(String(o.dolor || ''), 300),
+      plan_sugerido: PLANES.includes(o.plan_sugerido) ? o.plan_sugerido : '',
+      fit,
+      razon_fit:     sanitize(String(o.razon_fit || ''), 300),
+      preguntas:     (Array.isArray(o.preguntas) ? o.preguntas : []).slice(0, 3).map(p => sanitize(String(p), 200)),
+      fecha:         new Date().toISOString(),
+    };
+  } catch (err) {
+    console.warn('[schedule-meet] IA skip (no bloqueante):', err.message);
+    return null;
+  }
+}
+
+function notaEnriquecimiento(e) {
+  if (!e) return '';
+  return [
+    `[IA] ${e.rubro || 'Rubro sin definir'} · fit ${e.fit}/100${e.plan_sugerido ? ' · sugiere ' + e.plan_sugerido : ''}`,
+    e.dolor && 'Dolor: ' + e.dolor,
+    e.razon_fit && 'Fit: ' + e.razon_fit,
+    e.preguntas.length && 'Preguntas: ' + e.preguntas.join(' / '),
+  ].filter(Boolean).join('\n');
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://horizonweb.cl');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -90,6 +150,7 @@ module.exports = async function handler(req, res) {
   const fecha   = sanitize(body.fecha    || '', 12);  // YYYY-MM-DD
   const hora    = sanitize(body.hora     || '', 6);   // HH:MM
   const contexto= sanitize(body.contexto || '', 500);
+  const negocio = sanitize(body.negocio  || '', 120);
   const planRaw = sanitize(body.plan     || '', 50);
   // Normalize 'plan-01' → 'plan01' to match CRM keys
   const plan = planRaw.replace(/^plan-(\d+)$/, 'plan$1');
@@ -119,6 +180,9 @@ module.exports = async function handler(req, res) {
   const G_RT    = process.env.GOOGLE_REFRESH_TOKEN;
 
   if (!SB_URL || !SB_KEY) return res.status(503).json({ error: 'Config incompleta (supabase)' });
+
+  // La IA corre en paralelo con Supabase y Calendar: no suma espera al cliente.
+  const enriquecimientoP = enriquecerLead({ negocio, contexto, resumen, plan });
 
   const sbAuth    = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
   const sbHeaders = { ...sbAuth, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
@@ -190,7 +254,8 @@ module.exports = async function handler(req, res) {
   // ── 3. Upsert lead in Supabase ────────────────────────────────────────────
   const reunionISO = sinPresupuesto ? '' : `${fecha}T${hora}:00`;
   const califRegistro = calif.presupuesto ? { ...calif, resumen, fecha: new Date().toISOString() } : null;
-
+  const enriquecimiento = await enriquecimientoP;
+  const notaIA = notaEnriquecimiento(enriquecimiento);
 
   if (existingLead) {
     // No sobreescribir el status — solo actualizar Meet link y fecha
@@ -202,6 +267,12 @@ module.exports = async function handler(req, res) {
       patch.prioridad = PRIORIDAD[calif.presupuesto];
       patch.nota = [existingLead.nota, '[Calificación] ' + resumen].filter(Boolean).join('\n');
     }
+    if (enriquecimiento) {
+      const prev = patch.hooks_respuestas || (existingLead.hooks_respuestas && typeof existingLead.hooks_respuestas === 'object' ? existingLead.hooks_respuestas : {});
+      patch.hooks_respuestas = { ...prev, enriquecimiento };
+      patch.nota = [patch.nota || existingLead.nota, notaIA].filter(Boolean).join('\n');
+    }
+    if (negocio)  patch.empresa  = negocio;
     if (nombre)   patch.nombre   = nombre;
     if (telefono) patch.telefono = telefono;
     if (plan)     patch.plan     = plan;
@@ -218,12 +289,15 @@ module.exports = async function handler(req, res) {
     }
   } else {
     const newLead = {
-      id: uid(), nombre, email, empresa: '', telefono,
-      nota: [resumen && '[Calificación] ' + resumen, contexto].filter(Boolean).join('\n'),
+      id: uid(), nombre, email, empresa: negocio, telefono,
+      nota: [resumen && '[Calificación] ' + resumen, contexto, notaIA].filter(Boolean).join('\n'),
       plan, canal: 'hero', origen: source || (sinPresupuesto ? 'agendar-sin-presupuesto' : 'agendar-directo'),
       status: 'new', prioridad: PRIORIDAD[calif.presupuesto] || 'Media', tipoprecio: 'fundador',
       cal_link: meetLink, reunion_fecha: reunionISO || null, portal_token: portalToken,
-      historial: [], hooks_respuestas: califRegistro ? { calificacion: califRegistro } : {},
+      historial: [], hooks_respuestas: {
+        ...(califRegistro && { calificacion: califRegistro }),
+        ...(enriquecimiento && { enriquecimiento }),
+      },
     };
     try {
       const r = await httpsRequest('POST', `${SB_URL}/rest/v1/leads`, sbHeaders, newLead);
@@ -245,7 +319,7 @@ module.exports = async function handler(req, res) {
   if (N8N_BOOKING) {
     httpsRequest('POST', N8N_BOOKING,
       { 'Content-Type': 'application/json' },
-      { nombre, email, telefono, plan, meetLink, reunionFecha: reunionISO, contexto, calificacion: califRegistro }
+      { nombre, email, telefono, negocio, plan, meetLink, reunionFecha: reunionISO, contexto, calificacion: califRegistro, enriquecimiento }
     ).catch(err => console.error('[schedule-meet] n8n notify:', err.message));
   }
 

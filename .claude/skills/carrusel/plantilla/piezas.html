@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Piezas HORIZON · plantilla</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens de marca (shared/hz-light.css) */
+  :root { --bg:#FFFBF6; --ink:#1A1626; --ink2:#5F5970; --line:#F0E7DC; --acc:#F2690C; --rose:#C4467A; --violet:#7B3FA0; --ok:#16A34A; --bad:#E5383B;
+          --grad: linear-gradient(95deg, #F2690C 0%, #C4467A 55%, #7B3FA0 100%); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Plus Jakarta Sans', sans-serif; background:#d9d4cc; display:flex; flex-wrap:wrap; gap:40px; padding:40px; }
+
+  /* Lienzo */
+  .pz { position:relative; overflow:hidden; background:var(--bg); color:var(--ink); flex:none; }
+  .story { width:1080px; height:1920px; padding:150px 80px 120px; }
+  .post  { width:1080px; height:1350px; padding:90px 80px; }
+  /* Semitono de puntos en degradado (esquinas) */
+  .pz::before, .pz::after { content:''; position:absolute; pointer-events:none; width:720px; height:720px;
+    background: radial-gradient(circle, var(--c) 34%, transparent 36%) 0 0/22px 22px;
+    -webkit-mask: radial-gradient(circle at var(--at), #000 0%, rgba(0,0,0,.55) 35%, transparent 70%);
+            mask: radial-gradient(circle at var(--at), #000 0%, rgba(0,0,0,.55) 35%, transparent 70%); opacity:.55; }
+  .pz::before { --c:#E8618C; --at:100% 0%; top:0; right:0; }
+  .pz::after  { --c:#F2690C; --at:0% 100%; bottom:0; left:0; }
+  .pz > * { position:relative; z-index:1; }
+
+  /* Sello HORIZON (logo siempre sobre fondo oscuro) */
+  .brand { display:inline-flex; align-items:center; gap:14px; background:var(--ink); border-radius:99px; padding:16px 26px; }
+  .brand img { height:30px; display:block; }
+  .brand span { font:500 20px 'DM Mono', monospace; color:#fff; letter-spacing:.08em; opacity:.7; }
+
+  /* Tipografía */
+  h1 { font-weight:800; letter-spacing:-.045em; line-height:.98; margin-top:70px; }
+  .story h1 { font-size:132px; } .post h1 { font-size:108px; }
+  .g { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { margin-top:48px; padding-left:28px; border-left:5px solid; border-image:var(--grad) 1; font-weight:700; letter-spacing:-.025em; line-height:1.12; }
+  .story .sub { font-size:56px; } .post .sub { font-size:46px; }
+  .sub em { font-style:normal; color:var(--acc); }
+
+  /* Burbujas */
+  .bub { position:absolute; width:560px; background:#fff; border-radius:34px; padding:28px 32px 30px 128px; box-shadow:0 30px 60px -30px rgba(26,22,38,.35), 0 2px 6px rgba(26,22,38,.06); }
+  .bub::after { content:''; position:absolute; right:70px; bottom:-26px; border:16px solid transparent; border-top:24px solid #fff; border-bottom:0; }
+  .bub .av { position:absolute; left:28px; top:28px; width:80px; height:80px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:32px; color:#fff; }
+  .bub b { display:block; font-size:28px; font-weight:700; margin-bottom:6px; }
+  .bub p { font-size:30px; line-height:1.3; color:#2b2735; }
+  .bub .ic { position:absolute; right:-22px; top:-22px; width:68px; height:68px; border-radius:50%; display:grid; place-items:center; border:6px solid #fff; box-shadow:0 8px 18px rgba(0,0,0,.18); }
+  .bub .ic svg { width:30px; }
+  .bad .ic { background:var(--bad); } .good .ic { background:var(--ok); }
+
+  /* Etiqueta Sin / Con */
+  .tag { position:absolute; display:inline-flex; align-items:center; gap:16px; border-radius:22px; padding:16px 26px; font-size:26px; line-height:1.2; box-shadow:0 14px 30px -14px rgba(0,0,0,.35); }
+  .tag svg { width:40px; flex:none; }
+  .tag.dark { background:var(--ink); color:#fff; } .tag.dark small { color:#ff8a8a; }
+  .tag.hz { background:var(--grad); color:#fff; } .tag.hz small { color:#fff; opacity:.9; }
+  .tag small { display:block; font-size:24px; font-weight:700; }
+
+  /* Bandeja / tarjeta UI */
+  .ui { position:absolute; background:#fff; border-radius:30px; padding:34px 36px; box-shadow:0 40px 70px -35px rgba(26,22,38,.4); }
+  .ui h4 { font:700 24px 'Plus Jakarta Sans'; letter-spacing:.06em; text-transform:uppercase; margin-bottom:20px; }
+  .row { display:grid; grid-template-columns:44px 1fr auto; gap:16px; align-items:center; padding:16px 0; border-top:1px solid var(--line); }
+  .row i { width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-style:normal; font-weight:800; color:#fff; font-size:20px; }
+  .row b { font-size:24px; display:block; } .row span { font-size:21px; color:var(--ink2); }
+  .row em { font:500 20px 'DM Mono', monospace; font-style:normal; color:var(--ok); }
+  .new { background:var(--grad); color:#fff; font-size:16px; font-weight:800; padding:4px 10px; border-radius:6px; margin-left:8px; vertical-align:middle; }
+
+  /* CTA */
+  .cta { position:absolute; left:80px; display:inline-flex; align-items:center; gap:18px; background:var(--grad); color:#fff; font-weight:800; font-size:38px; letter-spacing:-.01em; padding:32px 48px; border-radius:24px; box-shadow:0 24px 48px -20px rgba(196,70,122,.6); }
+  .cta svg { width:34px; }
+  .kicker { font:500 24px 'DM Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--ink2); }
+  .num { position:absolute; right:80px; bottom:70px; font:500 22px 'DM Mono', monospace; color:var(--ink2); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></symbol>
+  <symbol id="ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></symbol>
+  <symbol id="bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6l1-8z" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<!-- ═══ HISTORIA 1080×1920 ═══ -->
+<div class="pz story" data-out="historia-responder-lento">
+  <div class="brand"><img src="../../../../Identidad/Logo HORIZON.svg" alt="HORIZON"><span>RANCAGUA</span></div>
+  <h1>Pierdes<br>clientes por<br><span class="g">responder<br>tarde</span></h1>
+  <p class="sub">Tu negocio puede responder en <em>menos de 60 segundos</em>, a cualquier hora.</p>
+
+  <div class="tag dark" style="right:150px; top:1030px"><svg style="color:#fff"><use href="#clock"/></svg><div>Sin sistema<small>Respuesta al otro día</small></div></div>
+  <div class="bub bad" style="right:80px; top:1150px"><div class="av" style="background:#5F5970">C</div><b>Cliente</b><p>¿Tienen hora hoy? Escribí ayer y nada.</p><div class="ic"><svg><use href="#x"/></svg></div></div>
+  <div class="bub good" style="left:80px; top:1440px"><div class="av" style="background:#C4467A">C</div><b>Cliente</b><p>¡Qué rápido! Reservado para las 17:00.</p><div class="ic"><svg><use href="#ok"/></svg></div></div>
+  <div class="tag hz" style="left:230px; top:1660px"><svg style="color:#fff"><use href="#bolt"/></svg><div>Con HORIZON<small>Respuesta en menos de 1 minuto</small></div></div>
+</div>
+
+<!-- ═══ POST 1080×1350 ═══ -->
+<div class="pz post" data-out="post-responder-lento">
+  <div class="brand"><img src="../../../../Identidad/Logo HORIZON.svg" alt="HORIZON"></div>
+  <h1 style="font-size:104px; margin-top:60px">Pierdes clientes<br>por <span class="g">responder tarde</span></h1>
+  <p class="sub" style="max-width:760px">Un agente de IA responde, agenda y te avisa. <em>24/7.</em></p>
+
+  <div class="tag dark" style="right:80px; top:650px"><svg style="color:#fff"><use href="#clock"/></svg><div>Sin sistema<small>Respuesta al otro día</small></div></div>
+  <div class="bub bad" style="right:80px; top:810px; width:500px"><div class="av" style="background:#5F5970">C</div><b>Cliente</b><p>Llevo horas esperando respuesta.</p><div class="ic"><svg><use href="#x"/></svg></div></div>
+  <div class="bub good" style="left:80px; top:990px; width:500px"><div class="av" style="background:#C4467A">C</div><b>Cliente</b><p>¡Qué rápido y buen servicio!</p><div class="ic"><svg><use href="#ok"/></svg></div></div>
+  <div class="tag hz" style="right:80px; top:1110px"><svg style="color:#fff"><use href="#bolt"/></svg><div>Con HORIZON<small>Menos de 1 minuto</small></div></div>
+</div>
+
+<!-- ═══ CARRUSEL 1080×1350 (5 láminas) ═══ -->
+<div class="pz post" data-out="carrusel-01-portada">
+  <div class="brand"><img src="../../../../Identidad/Logo HORIZON.svg" alt="HORIZON"></div>
+  <h1 style="font-size:126px; margin-top:170px">¿Cuántos clientes<br>pierdes por<br><span class="g">no responder<br>a tiempo?</span></h1>
+  <p class="sub">Desliza y haz la cuenta →</p>
+  <div class="num">01 / 05</div>
+</div>
+<div class="pz post" data-out="carrusel-02-problema">
+  <p class="kicker">El problema</p>
+  <h1 style="font-size:84px; margin-top:30px">Te escriben mientras<br><span class="g">estás atendiendo</span></h1>
+  <div class="bub bad" style="left:80px; top:560px"><div class="av" style="background:#5F5970">C</div><b>Cliente · 23:14</b><p>¿Atienden mañana temprano?</p><div class="ic"><svg><use href="#x"/></svg></div></div>
+  <div class="bub bad" style="right:80px; top:820px"><div class="av" style="background:#9C96AB">C</div><b>Cliente · 08:02</b><p>Hola?? Ya reservé en otro lado.</p><div class="ic"><svg><use href="#x"/></svg></div></div>
+  <div class="tag dark" style="left:80px; top:1110px"><svg style="color:#fff"><use href="#clock"/></svg><div>9 horas sin respuesta<small>= un cliente menos</small></div></div>
+  <div class="num">02 / 05</div>
+</div>
+<div class="pz post" data-out="carrusel-03-solucion">
+  <p class="kicker">La solución</p>
+  <h1 style="font-size:84px; margin-top:30px">Un agente que responde<br><span class="g">por ti, 24/7</span></h1>
+  <div class="bub good" style="right:80px; top:560px"><div class="av" style="background:#C4467A">C</div><b>Cliente · 23:14</b><p>¿Atienden mañana temprano?</p><div class="ic"><svg><use href="#ok"/></svg></div></div>
+  <div class="bub good" style="left:80px; top:820px; padding-left:128px"><div class="av" style="background:var(--ink)">H</div><b>Tu negocio · 23:14</b><p>¡Sí! Tengo 9:00 o 10:30. ¿Cuál te acomoda?</p><div class="ic"><svg><use href="#ok"/></svg></div></div>
+  <div class="tag hz" style="right:80px; top:1110px"><svg style="color:#fff"><use href="#bolt"/></svg><div>Respuesta al instante<small>y la hora queda agendada</small></div></div>
+  <div class="num">03 / 05</div>
+</div>
+<div class="pz post" data-out="carrusel-04-como">
+  <p class="kicker">Cómo funciona</p>
+  <h1 style="font-size:84px; margin-top:30px">Todo conectado,<br><span class="g">nada a mano</span></h1>
+  <div class="ui" style="left:80px; right:80px; top:520px">
+    <h4>Lo que pasa solo</h4>
+    <div class="row"><i style="background:#F2690C">1</i><div><b>Responde</b><span>WhatsApp, Instagram y web</span></div><em>al instante</em></div>
+    <div class="row"><i style="background:#D9583F">2</i><div><b>Agenda</b><span>Elige hora en tu calendario</span></div><em>sin llamar</em></div>
+    <div class="row"><i style="background:#C4467A">3</i><div><b>Recuerda</b><span>Aviso 24 h antes</span></div><em>menos faltas</em></div>
+    <div class="row"><i style="background:#7B3FA0">4</i><div><b>Registra</b><span>Cada cliente en tu CRM</span></div><em>ordenado</em></div>
+  </div>
+  <div class="num">04 / 05</div>
+</div>
+<div class="pz post" data-out="carrusel-05-cta">
+  <div class="brand"><img src="../../../../Identidad/Logo HORIZON.svg" alt="HORIZON"><span>RANCAGUA</span></div>
+  <h1 style="font-size:104px; margin-top:150px">Que responda<br>tu negocio,<br><span class="g">no tú.</span></h1>
+  <p class="sub">Diagnóstico gratis de 15 minutos. Vemos cuántos clientes se te están yendo.</p>
+  <div class="cta" style="bottom:200px">Comenta “AGENTE” <svg><use href="#arrow"/></svg></div>
+  <div class="num">05 / 05</div>
+</div>
+</body>
+</html>
