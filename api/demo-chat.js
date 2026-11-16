@@ -10,6 +10,7 @@
 //   GET  /api/demo-chat?slug=cafe-boutique → carta y datos del local para la web
 
 const { rateLimit, getIp, httpsRequest } = require('./shared');
+const mesaCero = require('./_mesa-cero');
 
 // Las fichas de prospectos no van al repo (es público): se leen de demo_fichas (Supabase),
 // las mismas que publica /api/demos para el bot. Solo responden las marcadas con "web": true.
@@ -32,8 +33,10 @@ async function fichaWeb(slug) {
   return ok;
 }
 
-// Persona y reglas de atención del agente de Qué Rolls / Mesa Cero (n8n wa-mesacero-v2, nodo "Armar consulta a la IA"),
-// adaptadas a pastelería/cafetería. Mandan sobre las reglas genéricas de agente.js.
+// Persona y reglas de atención del agente de Qué Rolls / Mesa Cero (n8n wa-mesacero-v2, nodo "Armar consulta a la IA").
+// Mandan sobre las reglas genéricas de agente.js. Sirven para todas las webs de demo (/demo/<slug>): el flujo de tortas
+// solo se agrega si la carta tiene tortas (hojarasca/bizcocho) y "Andrea" solo existe en Cake Boutique.
+const quienConfirma = (ficha) => (ficha.slug === 'cafe-boutique' ? 'Andrea' : 'el equipo');
 const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 function ahoraChile() {
   const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Santiago' }));
@@ -42,7 +45,9 @@ function ahoraChile() {
 function personaWeb(ficha) {
   const { dia, hhmm } = ahoraChile();
   const negocio = ficha.nombre;
-  return `Atiendes el WhatsApp de *${negocio}*. Hablas como una persona real del local: cercana, cálida y con buena onda, como quien lleva años atendiendo a las clientas de siempre. Estas reglas mandan sobre cualquier otra de este mensaje.
+  const quien = quienConfirma(ficha);
+  const tortas = /hojarasca/i.test(JSON.stringify(ficha.catalogo || []));
+  return `Atiendes el WhatsApp de *${negocio}*. Hablas como una persona real del local: cercana, cálida y con buena onda, como quien lleva años atendiendo a los clientes de siempre. Estas reglas mandan sobre cualquier otra de este mensaje.
 
 ## Cómo escribes
 - Español de Chile, natural, tuteando ("te cuento", "¿te tinca?"). Nunca voseo: "quieres", "tienes", "puedes", jamás "querés", "tenés", "podés".
@@ -50,34 +55,34 @@ function personaWeb(ficha) {
 - Cada elemento de "respuestas" es un mensajito de WhatsApp aparte: 1 a 3 frases, una idea por mensaje. Usa entre 1 y 4 según lo que pida la conversación (un saludo = 1 o 2; una pregunta de la carta = 2 o 3). Solo el ÚLTIMO mensaje puede terminar en pregunta.
 - Responde primero lo que te preguntaron, directo. Nada de "¡Excelente pregunta!" ni repetir la pregunta.
 - Sin listas largas ni títulos. Si hay varias opciones, nombra 2 o 3 que calcen y ofrece el resto ("también hay congeladas y de número, ¿te cuento?").
-- Si pide algo general ("quiero una torta", "quiero pedir", "qué me recomiendas"), responde con UNA pregunta corta para saber qué busca, con 2 o 3 tipos reales de la carta, SIN precios ni descripciones largas ("¿La buscas de bizcocho, de hojarasca o una congelada?").
+- Si pide algo general ("quiero pedir", "quiero agendar", "qué me recomiendas"), responde con UNA pregunta corta para saber qué busca, con 2 o 3 opciones reales de la carta, SIN precios ni descripciones largas.
 - Si elige una categoría o pregunta qué hay de una categoría concreta ("¿qué tortas tienen?", "¿qué lattes hay?", "¿qué alfajores?"), dáselas TODAS las de esa categoría con su precio exacto, en un solo mensaje (una por línea, sin viñetas), y después pregunta cuál le tinca.
-- Interpreta lo que la clienta ya dijo en la conversación (qué pidió, para cuántos, su nombre): nunca vuelvas a preguntar algo que ya respondió.
+- Interpreta lo que el cliente ya dijo en la conversación (qué pidió, para cuántos, su nombre): nunca vuelvas a preguntar algo que ya respondió.
 - Los precios que escribas son EXACTAMENTE los de la carta. No hagas cálculos con precios que no estén en la carta.
 - Emojis con moderación: máximo uno cada dos mensajes. Negrita como mucho en una palabra (*así*).
 - Si sabes el nombre, úsalo de vez en cuando, no en cada mensaje.
 - No digas que algo es "de los más pedidos": no tienes esos datos.
 
-## Cómo se encarga una torta (una sola pregunta a la vez, en este orden, saltando lo que ya dijo)
+${tortas ? `## Cómo se encarga una torta (una sola pregunta a la vez, en este orden, saltando lo que ya dijo)
 1. Tipo: bizcocho, hojarasca, congelada, de número/letra/corazón o mini torta.
 2. Tamaño: 15, 25 o 35 porciones (o el tamaño que corresponda a ese tipo).
 3. Relleno: ofrece 2 o 3 de ese tipo con su nombre ("Chocotella, Tropical o Cookies and Cream") y menciona que hay más.
-4. Diseño: los precios son con diseño simple (1 color o acuarela, drip opcional, decoración de chocolate). Con imágenes o flores suma aprox. $8.000 y el valor final lo confirma Andrea.
+4. Diseño: los precios son con diseño simple (1 color o acuarela, drip opcional, decoración de chocolate). Con imágenes o flores suma aprox. $8.000 y el valor final lo confirma ${quien}.
 5. Día del pedido. Si es hojarasca, avisa que se retira el mismo día que se consume.
 6. Retiro en el local o delivery (si es delivery, la dirección escrita; el costo depende de la dirección y se confirma).
 7. Nombre completo.
 Después muestra un resumen corto con el total de lo que sí tiene precio y pregunta si lo confirmas.
 
-## Al agregar algo
+` : ''}## Al agregar algo
 - Reacción corta y cálida (1 o 2 mensajes): comenta la elección y, si calza, sugiere como comentario un acompañamiento que SÍ esté en la carta ("si quieres le sumamos unas lunitas de nuez").
-- Productos sin precio en la carta: di que el valor te lo confirma Andrea, sin inventarlo.
+- Productos sin precio en la carta: di que el valor te lo confirma ${quien}, sin inventarlo.
 
 ## Qué más puedes responder
 - Horario: hoy es ${dia} y son las ${hhmm} (hora de Chile). Si ahora está cerrado según el horario, dilo y cuenta a qué hora abre; igual puedes tomar el encargo.
 - Ubicación: da la dirección y pon "ubicacion": true.
 - Reclamos (llegó mal, faltó algo): muestra empatía, pregunta lo que falte de a una cosa, di que quedó registrado y que el equipo se va a comunicar. No prometas devoluciones ni descuentos ni le vendas más mientras no se resuelva. "accion" tipo "derivar".
 - Si el mensaje no tiene nada que ver con el local, una línea amable diciendo que solo ayudas con pedidos y consultas de ${negocio}.
-- Nunca inventes productos, precios, rellenos, promociones, tiempos ni costos de envío. Si no está, "eso te lo confirmo con Andrea".`;
+- Nunca inventes productos, precios, rellenos, promociones, tiempos ni costos de envío. Si no está, "eso te lo confirmo con ${quien}".`;
 }
 
 // ── Capas del flujo Qué Rolls (n8n wa-mesacero-v2, v4): Reglas → IA (+reintento) → Verificar → Corregir → Respuesta final ──
@@ -132,9 +137,9 @@ function verificarYCorregir(ficha, historial, out) {
   return { ...out, respuestas: chunks };
 }
 // "Respuesta final": aviso fijo de alergias y no repetir una respuesta casi igual a la anterior.
-function respuestaFinal(mensaje, historial, out) {
+function respuestaFinal(ficha, mensaje, historial, out) {
   const chunks = [...out.respuestas];
-  if (/al[eé]rg|intoleran|cel[ií]ac/i.test(mensaje)) chunks.splice(Math.max(0, chunks.length - 1), 0, 'Ojo: esto es lo que lista la carta. Por tu alergia, confírmalo directo con Andrea antes de pedir 🙏');
+  if (/al[eé]rg|intoleran|cel[ií]ac/i.test(mensaje)) chunks.splice(Math.max(0, chunks.length - 1), 0, `Ojo: esto es lo que lista la carta. Por tu alergia, confírmalo directo con ${quienConfirma(ficha)} antes de pedir 🙏`);
   const palabras = (s) => new Set(norm(s).split(/[^a-z0-9]+/).filter(x => x.length > 2));
   const ultima = [...historial].reverse().find(m => m.role === 'assistant');
   let previa = ''; try { previa = (JSON.parse(ultima?.content || '{}').respuestas || []).join('\n\n'); } catch { previa = ultima?.content || ''; }
@@ -197,7 +202,8 @@ module.exports = async function handler(req, res) {
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
     const { nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega } = f;
     res.setHeader('Cache-Control', 'public, max-age=300');
-    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega });
+    // panel: el de Mesa Cero si la demo es un tenant allá; si no, /visita/<slug>/panel
+    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega, panel: mesaCero.panelUrl(f.slug) });
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
   if (rateLimit(getIp(req), 60_000, 20)) return res.status(429).json({ error: 'Vas muy rápido, espera un poco' });
@@ -205,6 +211,49 @@ module.exports = async function handler(req, res) {
   const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
   const ficha = await fichaWeb(String(body.slug || '')).catch(() => null);
   if (!ficha) return res.status(404).json({ error: 'Demo no encontrada' });
+
+  // Checkout de la web (carrito): el total se calcula con los precios de la ficha, nunca con los del navegador.
+  if (body.pedido && typeof body.pedido === 'object') {
+    try {
+      const { extrasConfirmacion, avisoDueno } = await cargarAgente();
+      const P = body.pedido;
+      const precios = new Map();
+      for (const c of ficha.catalogo || []) for (const it of c.items || []) {
+        if (Number.isFinite(it.precio)) precios.set(it.nombre, it.precio);
+        for (const v of it.variantes || []) if (Number.isFinite(v.precio)) precios.set(`${it.nombre} (${v.nombre})`, v.precio);
+      }
+      const items = (Array.isArray(P.items) ? P.items : []).slice(0, 30)
+        .map(x => ({ nombre: String(x.nombre || '').slice(0, 120), cant: Math.min(20, Math.max(1, Math.round(Number(x.cant) || 1))) }))
+        .filter(x => precios.has(x.nombre));
+      if (!items.length) return res.status(400).json({ error: 'El carrito está vacío' });
+      const cliente = String(P.nombre || '').trim().slice(0, 80);
+      const telefono = String(P.telefono || '').replace(/[^\d+]/g, '').slice(0, 20);
+      const entrega = P.entrega === 'delivery' ? 'delivery' : 'retiro';
+      const direccion = String(P.direccion || '').trim().slice(0, 160);
+      const hora = String(P.hora || '').trim().slice(0, 40);
+      if (!cliente || telefono.replace(/\D/g, '').length < 8) return res.status(400).json({ error: 'Falta tu nombre o tu teléfono' });
+      if (entrega === 'delivery' && !direccion) return res.status(400).json({ error: 'Falta la dirección de despacho' });
+      const total = items.reduce((a, x) => a + precios.get(x.nombre) * x.cant, 0);
+      const detalle = items.map(x => `${x.cant} × ${x.nombre}`).join(', ');
+      const accion = { tipo: 'pedido', resumen: `${detalle} · ${entrega}${direccion ? ' a ' + direccion : ''}`,
+        datos: { cliente, entrega, detalle, total, hora: hora || undefined, otros: `Teléfono: ${telefono} · pedido desde la web` } };
+      const r = extrasConfirmacion(ficha, accion, '');
+      const aviso = avisoDueno(ficha, r.accion, null);
+      const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (SB_URL && SB_KEY) {
+        await httpsRequest('POST', `${SB_URL}/rest/v1/demo_acciones`,
+          { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          { slug: ficha.slug, telefono: 'web', tipo: 'pedido', resumen: accion.resumen.slice(0, 2000),
+            datos: { ...accion.datos, items, codigo: r.accion.codigo, canal: 'web' } }).catch(e => console.error('demo-chat pedido:', e.message));
+      }
+      // Y al panel real de Mesa Cero, si la demo es un tenant allá.
+      await mesaCero.enviarPedido(ficha, { codigo: r.accion.codigo, canal: 'web', entrega, cliente, telefono, direccion, hora, total, items });
+      return res.status(200).json({ ok: true, codigo: r.accion.codigo, total, extras: r.mensajes, aviso, panel: mesaCero.panelUrl(ficha.slug) });
+    } catch (e) {
+      console.error('demo-chat pedido:', e.message);
+      return res.status(500).json({ error: 'No se pudo registrar el pedido' });
+    }
+  }
 
   const mensaje = String(body.mensaje || '').trim().slice(0, 600);
   const historial = (Array.isArray(body.historial) ? body.historial : [])
@@ -225,7 +274,7 @@ module.exports = async function handler(req, res) {
       if (esJSON(raw2) || !String(raw || '').trim()) raw = raw2;
     }
     let out = interpretar(raw);
-    out = respuestaFinal(mensaje, historial, verificarYCorregir(ficha, historial, out));
+    out = respuestaFinal(ficha, mensaje, historial, verificarYCorregir(ficha, historial, out));
     let extras = [], aviso = null;
     if (out.accion) {
       const r = extrasConfirmacion(ficha, out.accion, '');
@@ -239,6 +288,7 @@ module.exports = async function handler(req, res) {
           { slug: ficha.slug, telefono: 'web', tipo: r.accion.tipo, resumen: String(r.accion.resumen || '').slice(0, 2000),
             datos: { ...(r.accion.datos || {}), codigo: r.accion.codigo || null } }).catch(e => console.error('demo-chat acción:', e.message));
       }
+      await mesaCero.enviarDelAgente(ficha, r.accion, { telefono: '', canal: 'web' });
     }
     return res.status(200).json({ respuestas: out.respuestas, accion: out.accion, extras, aviso });
   } catch (e) {

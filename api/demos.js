@@ -11,6 +11,7 @@
 
 const crypto = require('crypto');
 const { httpsRequest, rateLimit, getIp } = require('./shared');
+const mesaCero = require('./_mesa-cero');
 
 const SLUG = /^[a-z0-9][a-z0-9-]{1,40}$/;
 const TIPOS = ['pedido', 'reserva', 'consulta', 'derivar'];
@@ -71,6 +72,16 @@ module.exports = async function handler(req, res) {
         resumen: String(b.resumen || '').slice(0, 2000),
         datos: b.datos && typeof b.datos === 'object' ? b.datos : {},
       }, 'return=minimal');
+      // Lo que tomó el bot (pedido, reserva, consulta) también va al panel real de Mesa Cero.
+      if (mesaCero.esTenant(b.slug)) {
+        const f = await rest('GET', `demo_fichas?slug=eq.${b.slug}&select=ficha&limit=1`);
+        const ficha = f.status === 200 ? (JSON.parse(f.body || '[]')[0] || {}).ficha : null;
+        if (ficha) {
+          await mesaCero.enviarDelAgente({ ...ficha, slug: b.slug },
+            { tipo: b.tipo, codigo: b.codigo, resumen: b.resumen, datos: b.datos && typeof b.datos === 'object' ? b.datos : {} },
+            { telefono: b.telefono, canal: 'whatsapp' });
+        }
+      }
       return res.status(r.status < 300 ? 201 : 502).json({ ok: r.status < 300 });
     }
 

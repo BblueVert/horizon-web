@@ -9,8 +9,11 @@ export function crearEstado(ruta = join(config.bot.carpetaDatos, 'estado.json'))
   let chats = {};
   // Demo "armada" desde tu chat: la toma el próximo chat nuevo que escriba (una sola vez).
   let armada = null;
+  // Último chat que tomó una demo activada desde tu chat (tu número personal de prueba): la próxima que actives
+  // lo cambia aunque esté en medio de otra demo.
+  let probador = null;
   try {
-    if (existsSync(ruta)) ({ chats = {}, armada = null } = JSON.parse(readFileSync(ruta, 'utf8')));
+    if (existsSync(ruta)) ({ chats = {}, armada = null, probador = null } = JSON.parse(readFileSync(ruta, 'utf8')));
   } catch {}
   let timer = null;
 
@@ -18,7 +21,7 @@ export function crearEstado(ruta = join(config.bot.carpetaDatos, 'estado.json'))
     clearTimeout(timer);
     timer = setTimeout(() => {
       mkdirSync(config.bot.carpetaDatos, { recursive: true });
-      writeFileSync(ruta, JSON.stringify({ chats, armada }, null, 1));
+      writeFileSync(ruta, JSON.stringify({ chats, armada, probador }, null, 1));
     }, 500);
   }
 
@@ -63,7 +66,8 @@ export function crearEstado(ruta = join(config.bot.carpetaDatos, 'estado.json'))
       return armada?.slug || null;
     },
     // Entrega la demo armada a quien la pide y la desarma (la toma un solo chat).
-    tomarArmada() { const s = this.armada(); if (s) { armada = null; guardar(); } return s; },
+    tomarArmada(jid) { const s = this.armada(); if (s) { armada = null; if (jid) probador = jid; guardar(); } return s; },
+    esProbador(jid) { return !!jid && jid === probador; },
     desarmar() { const habia = !!armada; armada = null; guardar(); return habia; },
   };
 }

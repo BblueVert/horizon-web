@@ -93,11 +93,29 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 /* Botón flotante: abre el WhatsApp de demos con "#demo <slug>" (el bot conecta ese chat al agente del rubro) */
 .fab { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 64px; height: 64px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 14px 30px -10px rgba(0,0,0,.45); }
 .fab svg { width: 34px; height: 34px; fill: #fff; }
+
+/* Carrito (flujo pedidos): el pedido va a /api/demo-chat y llega al panel /visita/<slug>/panel */
+.cinta { background: var(--ink); color: #fff; text-align: center; font-size: 13px; padding: 7px 12px; }
+.cinta a { color: #FFD7A8; font-weight: 700; }
+.carro { position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; z-index: 39; display: none; }
+.carro.on { display: inline-flex; }
+.panel-c { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.45); display: none; align-items: flex-end; justify-content: center; }
+.panel-c.on { display: flex; }
+.hoja { background: #fff; width: min(520px, 100%); max-height: 92vh; overflow: auto; border-radius: 22px 22px 0 0; padding: 20px; }
+.hoja h3 { margin: 0 0 12px; font-size: 22px; }
+.linea { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.linea button { border: 0; background: var(--c2); border-radius: 8px; width: 28px; height: 28px; cursor: pointer; font-weight: 800; }
+.hoja label { display: block; font-size: 13px; font-weight: 700; margin: 12px 0 4px; }
+.hoja input, .hoja select { width: 100%; border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 12px; font: 15px var(--f); }
+.hoja .tot { font-size: 20px; font-weight: 800; margin: 14px 0; }
+.hoja .err { color: #B42318; font-size: 14px; }
+.hoja .aviso { background: var(--ink); color: #fff; border-radius: 14px; padding: 12px 14px; white-space: pre-wrap; font-size: 13.5px; margin: 12px 0; }
 .vacio { padding: 30vh 16px; text-align: center; color: var(--ink2); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .galeria img { transition: none; } }
 </style>
 </head>
 <body>
+<div class="cinta">Demo HORIZON · <a id="linkPanel" target="_blank" rel="noopener">Ver panel del dueño</a></div>
 <header class="top"><div class="wrap">
   <a class="marca" href="#inicio"><i></i><span id="nombreTop">…</span></a>
   <nav class="menu"><a href="#destacados" id="navDest">Destacados</a><a href="#carta" id="navCarta">Carta</a><a href="#donde">Dónde estamos</a></nav>
@@ -144,6 +162,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   <a class="sello" href="https://www.horizonweb.cl" target="_blank" rel="noopener">DEMO HECHA POR <img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON"></a>
 </div></footer>
 
+<button class="btn carro" id="carro">🛒 Ver pedido · <span id="carroTot">$0</span></button>
+<div class="panel-c" id="pc"><div class="hoja" id="hoja"></div></div>
 <a class="fab" id="fab" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
 
 <script>
@@ -159,18 +179,24 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   var NUMERO = '56976962659';
   var WA = 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent('#demo ' + SLUG);
   var ficha = null;
+  // Panel del dueño: el real de Mesa Cero si la demo es un tenant allá (lo dice la ficha); si no, el de demos.
+  var PANEL = '/visita/' + SLUG + '/panel';
 
   // Textos según cómo atiende el negocio: pedidos, reservas o consultas
   var TEXTOS = {
-    pedidos:  { cta: 'Pedir por WhatsApp', dest: 'Lo más pedido', tDest: 'Hecho para que vuelvas', carta: 'Carta', tCarta: 'Elige y te lo dejamos listo', accion: 'Pedir' },
+    pedidos:  { cta: 'Hacer mi pedido', dest: 'Lo más pedido', tDest: 'Hecho para que vuelvas', carta: 'Carta', tCarta: 'Elige y te lo dejamos listo', accion: 'Pedir' },
     reservas: { cta: 'Agendar por WhatsApp', dest: 'Nuestros servicios', tDest: 'Lo que hacemos por ti', carta: 'Servicios y precios', tCarta: 'Elige tu servicio y agendamos', accion: 'Agendar' },
     consultas:{ cta: 'Consultar por WhatsApp', dest: 'Lo que ofrecemos', tDest: 'Te ayudamos a elegir', carta: 'Catálogo', tCarta: 'Pregunta por lo que te interese', accion: 'Consultar' },
   };
+
+  // El negrita de WhatsApp (*así*) se ve como negrita en la web
+  var fmt = function (s) { return esc(s).replace(/\*([^*\n]+)\*/g, '<b>$1</b>'); };
 
   if (!SLUG) { $('app').innerHTML = '<p class="vacio">Demo no encontrada.</p>'; return; }
 
   fetch('/api/demo-chat?slug=' + SLUG).then(function (r) { if (!r.ok) throw new Error('404'); return r.json(); }).then(function (f) {
     ficha = f;
+    if (f.panel) { PANEL = f.panel; $('linkPanel').href = PANEL; }
     var T = TEXTOS[f.flujo] || TEXTOS.consultas;
     if (/^#[0-9a-f]{6}$/i.test(f.color || '')) {
       document.documentElement.style.setProperty('--c', f.color);
@@ -181,7 +207,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     $('descripcion').textContent = f.descripcion || '';
     var l0 = (f.locales || [])[0];
     $('rubro').textContent = (l0 && l0.comuna) || 'Rancagua';
-    $('ctaHero').textContent = T.cta; $('ctaTop').textContent = 'Escríbenos';
+    $('ctaHero').textContent = T.cta; if (f.flujo === 'pedidos') { $('ctaHero').removeAttribute('target'); $('ctaHero').removeAttribute('data-wa'); $('ctaHero').href = '#carta'; } $('ctaTop').textContent = 'Escríbenos';
     $('ebDest').textContent = T.dest; $('tituloDest').textContent = T.tDest; $('navDest').textContent = T.dest;
     $('ebCarta').textContent = T.carta; $('tituloCarta').textContent = T.tCarta; $('navCarta').textContent = T.carta; $('ctaCarta').textContent = 'Ver ' + T.carta.toLowerCase();
     $('pie').textContent = '© ' + new Date().getFullYear() + ' ' + f.nombre + ' · negocio ficticio de demostración';
@@ -200,11 +226,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       [].forEach.call($('tabs').children, function (b, j) { b.setAttribute('aria-selected', j === i); });
       $('items').innerHTML = cats[i].items.map(function (it) {
         var vars = (it.variantes || []).length;
-        var precio = vars ? 'desde ' + dinero(Math.min.apply(null, it.variantes.map(function (v) { return v.precio; }))) : (it.precio == null ? 'A cotizar' : it.precio === 0 ? 'Gratis' : dinero(it.precio));
+        var precio = vars ? 'desde ' + dinero(Math.min.apply(null, it.variantes.map(function (v) { return v.precio; }).concat(it.precio != null ? [it.precio] : []))) : (it.precio == null ? 'A cotizar' : it.precio === 0 ? 'Gratis' : dinero(it.precio));
         return '<div class="item"><div class="t"><b>' + esc(it.nombre) + '</b><span class="precio">' + esc(precio) + '</span></div>' +
           (it.descripcion ? '<p>' + esc(it.descripcion) + '</p>' : '') +
           (vars ? '<div class="vars">' + it.variantes.map(function (v) { return '<span>' + esc(v.nombre) + ' ' + dinero(v.precio) + '</span>'; }).join('') + '</div>' : '') +
-          '<button class="pedir" data-pedir>' + T.accion + ' →</button></div>';
+          (f.flujo === 'pedidos' && it.precio != null && !vars ? '<button class="pedir" data-add="' + esc(it.nombre) + '" data-p="' + it.precio + '">Agregar +</button>' :
+           f.flujo === 'pedidos' && vars ? '<div class="vars">' + (it.precio != null ? '<button class="pedir" data-add="' + esc(it.nombre) + '" data-p="' + it.precio + '">Agregar +</button> ' : '') + it.variantes.map(function (v) { return '<button class="pedir" data-add="' + esc(it.nombre + ' (' + v.nombre + ')') + '" data-p="' + v.precio + '">+ ' + esc(v.nombre) + '</button>'; }).join(' ') + '</div>' :
+           '<button class="pedir" data-pedir>' + T.accion + ' →</button>') + '</div>';
       }).join('');
     }
     // Automotora: vitrina de autos en vez de carta (fotos auto-1…N, si no hay usa la foto del auto destacado)
@@ -237,6 +265,49 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
   }).catch(function () { $('app').innerHTML = '<p class="vacio">Esta demo no está disponible.</p>'; });
 
+  $('linkPanel').href = PANEL;
+  // Carrito
+  var carro = {};
+  function totalCarro() { return Object.keys(carro).reduce(function (a, k) { return a + carro[k].p * carro[k].n; }, 0); }
+  function pintarCarro() { var t = totalCarro(); $('carro').classList.toggle('on', t > 0); $('carroTot').textContent = dinero(t); }
+  function hoja(html) { $('hoja').innerHTML = html; $('pc').classList.add('on'); }
+  function verCarro() {
+    var ks = Object.keys(carro);
+    hoja('<h3>Tu pedido</h3>' + ks.map(function (k) { return '<div class="linea"><span>' + carro[k].n + ' × ' + esc(k) + '</span><span>' + dinero(carro[k].p * carro[k].n) + ' <button data-menos="' + esc(k) + '">−</button></span></div>'; }).join('') +
+      '<div class="tot">Total ' + dinero(totalCarro()) + '</div>' +
+      '<label>Nombre</label><input id="cNom" autocomplete="name"><label>Teléfono</label><input id="cTel" inputmode="tel" placeholder="9 1234 5678">' +
+      '<label>Entrega</label><select id="cEnt"><option value="retiro">Retiro en el local</option><option value="delivery">Delivery</option></select>' +
+      '<label>Dirección (si es delivery)</label><input id="cDir"><label>Hora</label><input id="cHora" placeholder="Ej: 20:30">' +
+      '<p class="err" id="cErr"></p><button class="btn" id="cOk" style="width:100%;justify-content:center">Confirmar pedido</button>' +
+      '<p style="text-align:center;font-size:13px"><a href="' + WA + '" target="_blank" rel="noopener">o pídelo por WhatsApp</a> · <a href="#" data-cerrar>Seguir mirando</a></p>');
+  }
+  async function confirmar() {
+    var body = { slug: SLUG, pedido: { items: Object.keys(carro).map(function (k) { return { nombre: k, cant: carro[k].n }; }),
+      nombre: $('cNom').value, telefono: $('cTel').value, entrega: $('cEnt').value, direccion: $('cDir').value, hora: $('cHora').value } };
+    $('cOk').disabled = true;
+    try {
+      var r = await fetch('/api/demo-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      var d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'No se pudo enviar');
+      carro = {}; pintarCarro();
+      var links = fmt((d.extras || []).join('\n\n')).replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" rel="noopener">Pagar ahora →</a>');
+      hoja('<h3>¡Pedido recibido! ' + esc(d.codigo) + '</h3><p style="white-space:pre-wrap">' + links + '</p>' +
+        '<div class="aviso"><b>Así le llega al dueño</b>\n' + fmt(d.aviso || '') + '</div>' +
+        '<a class="btn" style="width:100%;justify-content:center" href="' + esc(d.panel || PANEL) + '" target="_blank" rel="noopener">Ver panel del dueño</a>' +
+        '<p style="text-align:center"><a href="#" data-cerrar>Cerrar</a></p>');
+    } catch (e) { $('cErr').textContent = e.message; $('cOk').disabled = false; }
+  }
+  $('carro').onclick = verCarro;
+  $('pc').addEventListener('click', function (e) { if (e.target === $('pc') || e.target.closest('[data-cerrar]')) { e.preventDefault(); $('pc').classList.remove('on'); } });
+  $('hoja').addEventListener('click', function (e) {
+    var m = e.target.closest('[data-menos]'); if (m) { var k = m.getAttribute('data-menos'); if (--carro[k].n <= 0) delete carro[k]; pintarCarro(); totalCarro() ? verCarro() : $('pc').classList.remove('on'); }
+    if (e.target.id === 'cOk') confirmar();
+  });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-add]'); if (!a) return;
+    var k = a.getAttribute('data-add'); carro[k] = carro[k] || { p: Number(a.getAttribute('data-p')), n: 0 }; carro[k].n++; pintarCarro();
+    a.textContent = '✓ Agregado'; setTimeout(function () { a.textContent = a.getAttribute('data-add').indexOf('(') > 0 ? '+ ' + a.getAttribute('data-add').split('(').pop().replace(')', '') : 'Agregar +'; }, 900);
+  });
   [].forEach.call(document.querySelectorAll('[data-wa], #fab'), function (a) { a.href = WA; });
   document.addEventListener('click', function (e) {
     var p = e.target.closest('[data-pedir]'); if (p) { e.preventDefault(); window.open(WA, '_blank', 'noopener'); }
