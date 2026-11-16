@@ -10,6 +10,7 @@
 //   GET  /api/demo-chat?slug=cafe-boutique → carta y datos del local para la web
 
 const { rateLimit, getIp, httpsRequest } = require('./shared');
+const mesaCero = require('./_mesa-cero');
 
 // Las fichas de prospectos no van al repo (es público): se leen de demo_fichas (Supabase),
 // las mismas que publica /api/demos para el bot. Solo responden las marcadas con "web": true.
@@ -201,7 +202,8 @@ module.exports = async function handler(req, res) {
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
     const { nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega } = f;
     res.setHeader('Cache-Control', 'public, max-age=300');
-    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega });
+    // panel: el de Mesa Cero si la demo es un tenant allá; si no, /visita/<slug>/panel
+    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega, panel: mesaCero.panelUrl(f.slug) });
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
   if (rateLimit(getIp(req), 60_000, 20)) return res.status(429).json({ error: 'Vas muy rápido, espera un poco' });
@@ -244,7 +246,9 @@ module.exports = async function handler(req, res) {
           { slug: ficha.slug, telefono: 'web', tipo: 'pedido', resumen: accion.resumen.slice(0, 2000),
             datos: { ...accion.datos, items, codigo: r.accion.codigo, canal: 'web' } }).catch(e => console.error('demo-chat pedido:', e.message));
       }
-      return res.status(200).json({ ok: true, codigo: r.accion.codigo, total, extras: r.mensajes, aviso });
+      // Y al panel real de Mesa Cero, si la demo es un tenant allá.
+      await mesaCero.enviarPedido(ficha, { codigo: r.accion.codigo, canal: 'web', entrega, cliente, telefono, direccion, hora, total, items });
+      return res.status(200).json({ ok: true, codigo: r.accion.codigo, total, extras: r.mensajes, aviso, panel: mesaCero.panelUrl(ficha.slug) });
     } catch (e) {
       console.error('demo-chat pedido:', e.message);
       return res.status(500).json({ error: 'No se pudo registrar el pedido' });

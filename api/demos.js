@@ -11,6 +11,7 @@
 
 const crypto = require('crypto');
 const { httpsRequest, rateLimit, getIp } = require('./shared');
+const mesaCero = require('./_mesa-cero');
 
 const SLUG = /^[a-z0-9][a-z0-9-]{1,40}$/;
 const TIPOS = ['pedido', 'reserva', 'consulta', 'derivar'];
@@ -71,6 +72,19 @@ module.exports = async function handler(req, res) {
         resumen: String(b.resumen || '').slice(0, 2000),
         datos: b.datos && typeof b.datos === 'object' ? b.datos : {},
       }, 'return=minimal');
+      // Pedido tomado por el bot en una demo de pedidos: también al panel real de Mesa Cero.
+      if (b.tipo === 'pedido' && mesaCero.esTenant(b.slug)) {
+        const f = await rest('GET', `demo_fichas?slug=eq.${b.slug}&select=ficha&limit=1`);
+        const ficha = f.status === 200 ? (JSON.parse(f.body || '[]')[0] || {}).ficha : null;
+        const d = b.datos && typeof b.datos === 'object' ? b.datos : {};
+        if (ficha) {
+          await mesaCero.enviarPedido({ ...ficha, slug: b.slug }, {
+            codigo: d.codigo || b.codigo, canal: 'whatsapp', entrega: /deliv|despacho/i.test(String(d.entrega || '')) ? 'delivery' : 'retiro',
+            cliente: d.cliente, telefono: b.telefono, direccion: d.direccion, hora: d.hora,
+            total: Number(String(d.total || '').replace(/\D/g, '')) || 0, detalle: d.detalle || b.resumen,
+          });
+        }
+      }
       return res.status(r.status < 300 ? 201 : 502).json({ ok: r.status < 300 });
     }
 
