@@ -65,6 +65,12 @@ async function crearPago(req, res) {
     if (!item) return res.status(404).json({ error: 'Ítem no encontrado' });
     if (item.estado === 'pagado') return res.status(409).json({ error: 'Este ítem ya está pagado' });
     if (!Number.isInteger(item.monto) || item.monto <= 0) return res.status(409).json({ error: 'Este ítem todavía no tiene monto definido' });
+    // El saldo (bloquea_entrega) va después: no se cobra mientras quede un pago previo pendiente (el anticipo).
+    const todos = await get(`budget_items?project_id=eq.${project.id}&select=id,monto,estado,bloquea_entrega`).catch(() => []);
+    const este = todos.find(t => t.id === item.id);
+    if (este && este.bloquea_entrega && todos.some(t => t.id !== item.id && t.estado !== 'pagado' && !t.bloquea_entrega && t.monto > 0)) {
+      return res.status(409).json({ error: 'Primero se paga el anticipo. El saldo se paga antes de la entrega final.' });
+    }
 
     const volver = (estado) => `${SITE}/c/${token}?pago=${estado}#pres`;
     const pref = {
