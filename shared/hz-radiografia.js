@@ -244,7 +244,24 @@
     return d;
   }
 
+  // Rubros para elegir en la radiografía: cada uno usa las preguntas de un modelo y su set de fotos
+  // en /Identidad/rubros/<k>/ (hero + foto-1…5), que toman la propuesta, el contrato y la bienvenida.
+  var RUBROS = [
+    ['estetica', 'Salón o estética', 'general'],
+    ['barberia', 'Barbería', 'general'],
+    ['dental', 'Clínica dental', 'clinica'],
+    ['kine', 'Kine o salud con hora', 'clinica'],
+    ['veterinaria', 'Veterinaria', 'clinica'],
+    ['comida', 'Comida y delivery', 'comida'],
+    ['pasteleria', 'Pastelería o café', 'pasteleria'],
+    ['gimnasio', 'Gimnasio o box', 'general'],
+    ['ropa', 'Tienda de ropa', 'general'],
+    ['automotora', 'Automotora', 'general'],
+    ['general', 'Otro negocio', 'general'],
+  ];
+
   window.HZRX = {
+    RUBROS: RUBROS,
     PACK: PACK, MODELOS: MODELOS, modelo: modelo, preguntas: preguntas, etiqueta: etiqueta,
     Q: preguntas('general'), TICKETS: MODELOS.general.ticket[2],
     calc: calc, resumen: resumen, normPhone: normPhone, clp: clp

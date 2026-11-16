@@ -130,6 +130,7 @@ function cleanRadiografia(rx) {
     agente_mes:  num(rx.agente_mes, 100000000),
     pro_mes:     num(rx.pro_mes, 100000000),
     modelo:      pick(rx.modelo, ['general', 'pasteleria', 'comida', 'clinica'], 'general'),
+    rubro:       pick(rx.rubro, ['estetica', 'barberia', 'dental', 'kine', 'veterinaria', 'comida', 'pasteleria', 'gimnasio', 'ropa', 'automotora', 'general'], ''),
     recomendado: pick(rx.recomendado, ['esencial', 'pro', 'no'], 'esencial'),
     elegido:     pick(rx.elegido, ['esencial', 'pro'], 'esencial'),
     decision:    pick(rx.decision, ['partimos', 'lo-pienso'], 'lo-pienso'),

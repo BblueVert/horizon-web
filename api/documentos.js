@@ -111,9 +111,17 @@ function shell({ titulo, cuerpo, css, color, tema }) {
 ${cuerpo}</body></html>`;
 }
 
+// Fotos genéricas por rubro (Identidad/rubros/<rubro>/): para negocios sin fotos propias.
+// Orden de fotos = espacios de la propuesta: F(0–2) collage, F(4) "Nuestra propuesta", F(5) "Próximos pasos" (F(3) no se usa).
+const RUBROS = ['estetica', 'barberia', 'dental', 'kine', 'veterinaria', 'comida', 'pasteleria', 'gimnasio', 'ropa', 'automotora', 'general'];
+const RUBRO_DE_MODELO = { general: 'general', clinica: 'dental', comida: 'comida', pasteleria: 'pasteleria' };
 function medios(D) {
   const m = MEDIA[D.rx.negocio_slug] || null;
-  if (!m) return { hero: '', fotos: [], logo: '', fondo: '', tema: '' };
+  if (!m) {
+    const r = RUBROS.includes(D.rx.rubro) ? D.rx.rubro : (RUBRO_DE_MODELO[D.rx.modelo] || 'general');
+    const b = `/Identidad/rubros/${r}/`;
+    return { hero: b + 'hero.webp', fotos: ['foto-1', 'foto-2', 'foto-3', 'foto-1', 'foto-4', 'foto-5'].map(f => b + f + '.webp'), logo: '', fondo: '', tema: '' };
+  }
   return { hero: m.base + m.hero, fotos: m.fotos.map(f => m.base + f), logo: m.logo ? m.base + m.logo : '', fondo: m.fondo, tema: m.tema || '' };
 }
 // Mensajes de ejemplo del agente según el tipo de negocio (se muestran como maqueta, no como datos del cliente).
