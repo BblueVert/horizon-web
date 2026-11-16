@@ -92,7 +92,7 @@ module.exports = async function handler(req, res) {
   // "Partimos" en terreno: el proyecto y el cobro 50/50 quedan listos al tiro, así el portal ya muestra
   // el botón de pago del anticipo (Mercado Pago) sin pasar por OPS.
   let cobro = false;
-  if (rx && rx.decision === 'partimos' && rx.recomendado !== 'no' && SB_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (rx && rx.decision === 'partimos' && rx.recomendado !== 'no' && !lead.contratado && SB_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
     cobro = await prepararCobro(SB_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, lead, rx);
   }
 
@@ -270,12 +270,19 @@ async function actualizarLead(SB_URL, SB_KEY, lead) {
     if (!prev) return false;
     const ORDEN = ['new', 'contactado', 'propuesta', 'arranque', 'activo', 'cerrado'];
     const sube = ORDEN.indexOf(lead.status) > ORDEN.indexOf(prev.status);
+    // Cliente que ya pagó (arranque en adelante): el pack contratado y su radiografía quedan fijos;
+    // la nueva radiografía se guarda aparte para no cambiar sus documentos ni su plan.
+    const prevH = prev.hooks_respuestas && typeof prev.hooks_respuestas === 'object' ? prev.hooks_respuestas : {};
+    const contratado = ORDEN.indexOf(prev.status) >= ORDEN.indexOf('arranque') && prevH.radiografia;
     const patch = {
       nombre: lead.nombre, empresa: lead.empresa || undefined, telefono: lead.telefono || undefined,
-      plan: lead.plan, origen: lead.origen, prioridad: lead.prioridad,
+      plan: contratado ? undefined : lead.plan, origen: lead.origen, prioridad: lead.prioridad,
       nota: [prev.nota, lead.nota].filter(Boolean).join(' | ').slice(0, 2000),
-      hooks_respuestas: { ...(prev.hooks_respuestas && typeof prev.hooks_respuestas === 'object' ? prev.hooks_respuestas : {}), radiografia: lead.hooks_respuestas.radiografia },
+      hooks_respuestas: contratado
+        ? { ...prevH, radiografia_posterior: lead.hooks_respuestas.radiografia }
+        : { ...prevH, radiografia: lead.hooks_respuestas.radiografia },
     };
+    if (contratado) lead.contratado = true;
     if (sube) patch.status = lead.status;
     if (!prev.portal_token) patch.portal_token = lead.portal_token; else lead.portal_token = prev.portal_token;
     lead.id = prev.id;
