@@ -29,6 +29,12 @@ const OBJETIVO = {
   consultas: 'Responde dudas y capta al interesado: resuelve con la información de la ficha y, si la persona quiere avanzar, pide nombre y lo que necesita para que el negocio lo contacte.',
 };
 
+// Saludo según la hora de Chile: "Buenos días" hasta las 12:00, "Buenas tardes" hasta las 20:00, después "Buenas noches".
+export function saludoHora(fecha = new Date()) {
+  const h = Number(new Intl.DateTimeFormat('es-CL', { timeZone: 'America/Santiago', hour: 'numeric', hourCycle: 'h23' }).format(fecha));
+  return h >= 5 && h < 12 ? 'Buenos días' : h >= 12 && h < 20 ? 'Buenas tardes' : 'Buenas noches';
+}
+
 export function construirPrompt(ficha) {
   const e = ficha.entrega || {};
   const r = ficha.reservas || {};
@@ -37,7 +43,7 @@ export function construirPrompt(ficha) {
     ficha.descripcion && `Sobre el negocio: ${ficha.descripcion}`,
     `Tu objetivo: ${OBJETIVO[ficha.flujo] || OBJETIVO.consultas}`,
     ficha.tono && `Tono: ${ficha.tono}`,
-    ficha.saludo && `Saludo sugerido para el primer mensaje: "${ficha.saludo}"`,
+    ficha.saludo && `Saludo sugerido para el primer mensaje: "${ficha.saludo}" (cambia el "¡Hola!" por el saludo de la hora).`,
     locales(ficha) && `Locales:\n${locales(ficha)}`,
     ficha.horario && `Horario: ${ficha.horario}`,
     (ficha.catalogo || []).length && `Catálogo (precios en CLP):\n${catalogoTexto(ficha)}`,
@@ -51,6 +57,11 @@ export function construirPrompt(ficha) {
     (ficha.datos_pedido || []).length && `Para cerrar un ${ficha.flujo === 'reservas' ? 'agendamiento' : 'pedido'} necesitas: ${ficha.datos_pedido.join(', ')}.`,
     ficha.derivar_a && `Si no puedes resolver algo: ${ficha.derivar_a}`,
   ].filter(Boolean);
+
+  bloques.push(`Saludo y trato (va antes que todo):
+- Tu primer mensaje de la conversación parte siempre con "${saludoHora()}" (es el saludo que corresponde a esta hora en Chile), seguido del nombre del cliente si ya lo sabes ("${saludoHora()}, Pedro").
+- Trato cordial y amable en toda la conversación. Si el cliente te dice su nombre, úsalo de vez en cuando (no en cada mensaje). Si no lo sabes, pídelo con naturalidad cuando vayas a agendar o cerrar el pedido.
+- Si el cliente saluda más tarde en la misma conversación, responde el saludo de la hora antes de seguir.`);
 
   bloques.push(`Reglas:
 - Español de Chile con tuteo ("tú tienes", "puedes", "escríbeme"). Nunca voseo ("vos", "tenés", "podés", "querés").
