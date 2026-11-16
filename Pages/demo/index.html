@@ -105,7 +105,17 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .cart-btn .n.on { transform: scale(1); }
 .cart-btn.pulso { animation: pulso .5s; }
 @keyframes pulso { 40% { transform: scale(1.15); } }
-header.top .der { display: flex; align-items: center; gap: 10px; }
+header.top .der { display: flex; align-items: center; gap: 10px; flex: none; }
+/* Header siempre en una línea: el nombre se corta con "…" y los botones no se parten */
+.marca { min-width: 0; flex: 1 1 auto; }
+.marca span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.marca i { flex: none; }
+.btn { white-space: nowrap; }
+@media (max-width: 520px) {
+  header.top .wrap { gap: 10px; }
+  .marca { font-size: 16px; }
+  header.top .der .btn { padding: 10px 15px; font-size: 14px; }
+}
 
 /* Comida: filas de carta con botón + (estilo app de delivery) */
 .platos { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0 28px; }
@@ -425,7 +435,7 @@ body.con-barra footer { padding-bottom: 110px; }
     MOSTRAR = function () { var b = [].indexOf.call($('tabs').children, $('tabs').querySelector('[aria-selected="true"]')); if (b >= 0) mostrar(b); };
     if (f.flujo === 'reservas' || f.flujo === 'consultas') {
       ['ctaHero', 'ctaTop'].forEach(function (id) { var a = $(id); a.removeAttribute('target'); a.removeAttribute('data-wa'); a.href = '#'; a.setAttribute('data-reservar', ''); });
-      $('ctaTop').textContent = T.cta;
+      $('ctaTop').textContent = T.boton; // corto en el header ("Reservar" / "Agendar"); el hero dice el texto largo
     }
     if (f.flujo === 'pedidos') { $('cartBtn').classList.add('on'); if (TIENDA) { $('ctaHero').textContent = 'Ver productos'; $('ebCarta').textContent = 'Tienda'; $('navCarta').textContent = 'Tienda'; $('tituloCarta').textContent = 'Elige y te lo enviamos'; $('ctaCarta').textContent = 'Ver tienda'; } }
     // Automotora: vitrina de autos en vez de carta (fotos auto-1…N, si no hay usa la foto del auto destacado)
