@@ -41,7 +41,12 @@ module.exports = async function handler(req, res) {
     const pr = await httpsRequest('GET',
       `${SB_URL}/rest/v1/projects?lead_id=eq.${encodeURIComponent(leadId)}&select=id&limit=1`, auth);
     const existing = JSON.parse(pr.body || '[]');
-    if (existing.length) return res.status(409).json({ error: 'Este lead ya tiene un proyecto activo', project_id: existing[0].id });
+    // Cliente de terreno: el proyecto nació con "Partimos" (api/leads.js). Activar solo lo pasa a "activo".
+    if (existing.length) {
+      await httpsRequest('PATCH', `${SB_URL}/rest/v1/leads?id=eq.${encodeURIComponent(leadId)}`,
+        { ...auth, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, { status: 'activo' });
+      return res.status(200).json({ ok: true, project_id: existing[0].id, existente: true });
+    }
 
     const projectId = uid();
     await httpsRequest('POST', `${SB_URL}/rest/v1/projects`, headers,

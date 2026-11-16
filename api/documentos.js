@@ -111,9 +111,17 @@ function shell({ titulo, cuerpo, css, color, tema }) {
 ${cuerpo}</body></html>`;
 }
 
+// Fotos genéricas por rubro (Identidad/rubros/<rubro>/): para negocios sin fotos propias.
+// Orden de fotos = espacios de la propuesta: F(0–2) collage, F(4) "Nuestra propuesta", F(5) "Próximos pasos" (F(3) no se usa).
+const RUBROS = ['estetica', 'barberia', 'dental', 'kine', 'veterinaria', 'comida', 'pasteleria', 'gimnasio', 'ropa', 'automotora', 'general'];
+const RUBRO_DE_MODELO = { general: 'general', clinica: 'dental', comida: 'comida', pasteleria: 'pasteleria' };
 function medios(D) {
   const m = MEDIA[D.rx.negocio_slug] || null;
-  if (!m) return { hero: '', fotos: [], logo: '', fondo: '', tema: '' };
+  if (!m) {
+    const r = RUBROS.includes(D.rx.rubro) ? D.rx.rubro : (RUBRO_DE_MODELO[D.rx.modelo] || 'general');
+    const b = `/Identidad/rubros/${r}/`;
+    return { hero: b + 'hero.webp', fotos: ['foto-1', 'foto-2', 'foto-3', 'foto-1', 'foto-4', 'foto-5'].map(f => b + f + '.webp'), logo: '', fondo: '', tema: '' };
+  }
   return { hero: m.base + m.hero, fotos: m.fotos.map(f => m.base + f), logo: m.logo ? m.base + m.logo : '', fondo: m.fondo, tema: m.tema || '' };
 }
 // Mensajes de ejemplo del agente según el tipo de negocio (se muestran como maqueta, no como datos del cliente).
@@ -299,7 +307,7 @@ function propuesta(lead) {
   s.push(`<section class="sl s1"><div class="hbar"><img class="lg" src="${LOGO}" alt="HORIZON"><span>Propuesta comercial · ${h(D.fechaCorta)}</span></div>
     <div class="cv"><div><span class="eb">${h(pk.nm)} · válida por 15 días</span><h1 style="margin-top:.5em">Propuesta para<br><span class="g">${h(D.negocio)}</span></h1>
     <p class="sub">Un sistema que atiende, agenda y ordena su negocio, armado con lo que vimos en su local.</p>
-    <div class="chk"><span>${icn('i-check')}Agente 24/7</span><span>${icn('i-check')}Sin permanencia</span><span>${icn('i-check')}Instalación presencial</span></div>
+    <div class="chk"><span>${icn('i-check')}Agente 24/7</span><span>${icn('i-check')}Marcha blanca de 30 días</span><span>${icn('i-check')}Instalación presencial</span></div>
     <span class="cb2">${M.logo ? `<img src="${h(M.logo)}" alt="">` : '<i></i>'}HORIZON × ${h(D.negocio)}</span></div>
     <div class="hero"><div class="img ph" ${bg(M.hero)}></div>
       <div class="fl chat"><small>WhatsApp · ${h(D.negocio)}</small><span class="q">${h(msgs[0][1])}</span><span class="a">${h(msgs[1][1])}</span></div>
@@ -335,14 +343,14 @@ function propuesta(lead) {
     <div class="body"><div class="hd2"><div><span class="eb">${k === 'pro' ? 'Llena la agenda y hace volver' : 'Atiende y agenda'}</span><h2 style="margin-top:.3em">Qué recibe</h2>
     <p>${k === 'pro' ? 'Un agente que atiende y agenda 24/7, y un sistema que sigue trabajando después de la conversación.' : 'Un agente que atiende y agenda 24/7, con la web y el panel donde queda cada contacto.'}</p></div></div>
     <div class="ents">${pk.incluye.map(([a, b], i) => `<div class="ent"><span class="chipI k${(i % 4) + 1}">${icn(icEnt[i % icEnt.length])}</span><div><b>${h(a)}</b><span>${h(b)}</span></div></div>`).join('')}</div>
-    <div class="price"><div><small>Plazo</small><b>${h(pk.plazo)}</b></div><div><small>Implementación · pago único</small><b class="o">${clp(pk.impl)}</b><br><em>50% al firmar · 50% antes de la entrega</em></div><div><small>Mensualidad desde el mes 2</small><b>${clp(pk.mes)}</b><br><em>Mes a mes, sin permanencia</em></div></div></div><span class="pg-n">05</span></section>`);
+    <div class="price"><div><small>Plazo</small><b>${h(pk.plazo)}</b></div><div><small>Implementación · pago único</small><b class="o">${clp(pk.impl)}</b><br><em>50% al firmar · 50% antes de la entrega</em></div><div><small>Mensualidad desde el mes 2</small><b>${clp(pk.mes)}</b><br><em>Mínimo 90 días, luego mes a mes</em></div></div></div><span class="pg-n">05</span></section>`);
   s.push(`<section class="sl s6"><div class="l"><div><span class="eb">Modalidad de pago y forma de trabajo</span><h2 style="margin-top:.4em">A tener en cuenta</h2></div>
     <div class="g4"><div class="tc"><span class="chipI">${icn('i-wallet')}</span><b>Pago</b><div class="big">50<span>/</span>50</div><p>50% al firmar para reservar el inicio y 50% antes de la entrega final, desde su portal de cliente.</p></div>
     <div class="tc"><span class="chipI k2">${icn('i-layers')}</span><b>Revisiones</b><div class="big">2 <span>rondas</span></div><p>De cambios sobre el diseño, antes de construir.</p></div>
     <div class="tc"><span class="chipI k3">${icn('i-clock')}</span><b>Sus respuestas</b><div class="big">5 <span>días</span></div><p>Hábiles para entregar información o aprobar. Si se atrasa, la entrega se corre en los mismos días.</p></div>
     <div class="tc"><span class="chipI k4">${icn('i-shield')}</span><b>Garantía</b><div class="big">30 <span>días</span></div><p>De corrección de errores después de la entrega, con el primer mes de soporte incluido.</p></div></div></div>
     <div class="r"><div class="dc a"><span class="eb">Inicio</span><div><div class="v">48 h</div><p>Desde el pago inicial, con la reunión de inicio.</p></div></div>
-    <div class="dc b"><span class="eb" style="color:#B9B3CC">Mensualidad</span><div><div class="v">${clp(pk.mes)}</div><p>Desde el mes 2. Mes a mes, sin permanencia.</p></div></div></div><span class="pg-n">06</span></section>`);
+    <div class="dc b"><span class="eb" style="color:#B9B3CC">Mensualidad</span><div><div class="v">${clp(pk.mes)}</div><p>Desde el mes 2. Mínimo 90 días, luego mes a mes.</p></div></div></div><span class="pg-n">06</span></section>`);
   const etapas = [
     ['01', 'Diagnóstico', 'Hoy', ['Visitamos su local', 'Probó su agente', 'Radiografía del negocio'], 'Usted: conversar 15 minutos.', true],
     ['02', 'Reunión de inicio', '48 horas', ['Ordenamos precios, fotos y horarios', 'Creamos su panel y su portal', 'Fijamos las fechas'], 'Usted: una reunión y su información.'],
@@ -355,8 +363,8 @@ function propuesta(lead) {
   const dudas = [
     ['¿Tengo que saber de tecnología?', 'No. Nosotros lo instalamos y lo dejamos funcionando. Usted solo aprueba y usa el panel desde el celular.', 'Sin curva', 'i-spark'],
     ['¿Y si el agente responde mal?', 'Se entrena con su información real y lo ajustamos cada mes con sus conversaciones. Si algo necesita a una persona, le avisa a usted.', 'Ajuste mensual', 'i-agent'],
-    ['¿Me amarro a un contrato largo?', 'No. La mensualidad es mes a mes y sin permanencia. Si quiere terminar, avisa con 15 días.', 'Sin permanencia', 'i-calendar'],
-    ['¿Y si no me sirve?', 'Tiene 30 días de garantía después de la entrega, con el primer mes de soporte incluido.', '30 días', 'i-shield'],
+    ['¿Me amarro a un contrato largo?', 'No. El compromiso inicial es de 90 días: el mes 1 va incluido como marcha blanca y se pagan los meses 2 y 3. Después es mes a mes y termina avisando con 15 días.', '90 días', 'i-calendar'],
+    ['¿Y si no me sirve?', 'Si al terminar el mes de marcha blanca el agente no le sirve, lo apagamos y no paga los meses 2 y 3. Además, 30 días de corrección de errores tras la entrega.', '30 días', 'i-shield'],
     ['¿La web y los datos son míos?', 'Sí. Pagado el proyecto, el sitio, los contenidos y las cuentas quedan a su nombre.', 'Todo suyo', 'i-layers'],
     ['¿Cuánto tiempo me toma a mí?', 'Una reunión de inicio y aprobar el diseño. Le damos 5 días hábiles para cada respuesta.', 'Poco tiempo', 'i-clock'],
   ];
@@ -443,11 +451,11 @@ function contrato(lead) {
     <div class="ents">${pk.incluye.map(([a]) => `<div>${icn('i-check')}${h(a)}</div>`).join('')}</div>
     ${cl(2, 'Alcance', 'Los servicios comprenden exclusivamente lo indicado en el Anexo A. Todo trabajo no incluido en él se considera adicional y se cotizará por separado antes de realizarse. Lo que el Anexo A señala como "No incluido" no forma parte de este contrato.')}
     ${cl(3, 'Plazo de implementación', `El plazo estimado es de <span class="acc">${pk.plazo}</span> contadas desde la reunión de inicio (kickoff), que se realizará una vez recibido el pago inicial y los insumos indicados en la Orden de Inicio. Si el Cliente entrega insumos, accesos o aprobaciones fuera del plazo de <span class="acc">5 días hábiles</span>, el plazo de entrega se extenderá en los mismos días de atraso.`)}
-    ${cl(4, 'Precio y forma de pago', `El precio de la implementación es de <span class="acc">${clp(pk.impl)} (${pk.palabras} pesos)</span>, monto bruto, con boleta de honorarios. Se pagará de la siguiente forma: <span class="acc">50%</span> al firmar este contrato para reservar el inicio y <span class="acc">50%</span> antes de la entrega final. Los pagos se realizarán por transferencia bancaria a la cuenta que el Prestador indique por escrito. El Prestador emitirá boleta de honorarios por cada pago recibido.`)}
+    ${cl(4, 'Precio y forma de pago', `El precio de la implementación es de <span class="acc">${clp(pk.impl)} (${pk.palabras} pesos)</span>, monto bruto, con boleta de honorarios. Se pagará de la siguiente forma: <span class="acc">50%</span> al firmar este contrato para reservar el inicio y <span class="acc">50%</span> antes de la entrega final. Los pagos podrán realizarse con Mercado Pago, desde el portal del Cliente o con lector de tarjetas, o por transferencia bancaria a la cuenta que el Prestador indique por escrito. El Prestador emitirá boleta de honorarios por cada pago recibido.`)}
     </div>${foot('02')}</section>`;
 
   const p3 = `<section class="pg">${band}<div class="in">
-    ${cl(5, 'Soporte mensual', `El primer mes de soporte posterior a la entrega está incluido en el precio. Desde el segundo mes, el Cliente podrá contratar el soporte ${pk.soporte} por <span class="acc">${clp(pk.mes)} mensuales</span>, pagaderos al inicio del mes que cubren, entre el día 25 y el día 5 del mes siguiente. El soporte es mes a mes y sin permanencia: cualquiera de las partes puede ponerle término avisando por escrito con <span class="acc">15 días corridos</span> de anticipación al siguiente período.`)}
+    ${cl(5, 'Soporte mensual', `El primer mes posterior a la entrega es de marcha blanca y su soporte está incluido en el precio. El soporte ${pk.soporte} se contrata por un período inicial de <span class="acc">90 días</span> contados desde la entrega, por lo que los meses 2 y 3 se pagan a <span class="acc">${clp(pk.mes)} mensuales</span>, al inicio del mes que cubren, entre el día 25 y el día 5 del mes siguiente. Si al terminar la marcha blanca el agente no le resulta útil, el Cliente podrá avisarlo por escrito antes del inicio del mes 2: el agente se desactiva y no se cobran los meses 2 y 3. Cumplidos los 90 días, el soporte continúa mes a mes y sin permanencia: cualquiera de las partes puede ponerle término avisando por escrito con <span class="acc">15 días corridos</span> de anticipación al siguiente período.`)}
     ${cl(6, 'Revisiones y aprobaciones', 'El diseño se presentará al Cliente para su aprobación antes de construirse. Se incluyen <span class="acc">2 rondas</span> de cambios sobre el diseño. Las aprobaciones podrán darse por correo electrónico o WhatsApp y se entenderán definitivas. Los cambios posteriores a una aprobación o que excedan las rondas incluidas se cotizarán aparte.')}
     ${cl(7, 'Obligaciones del Cliente', 'El Cliente se obliga a: (a) entregar oportunamente la información, contenidos, imágenes y accesos necesarios; (b) designar una persona de contacto con facultades para aprobar; (c) pagar el precio en la forma convenida; y (d) garantizar que los contenidos que entrega no infringen derechos de terceros.')}
     ${cl(8, 'Servicios y costos de terceros', 'El dominio, el hosting y las cuentas en plataformas de terceros (Google, Meta, WhatsApp Business API, proveedores de inteligencia artificial u otros) quedarán a nombre del Cliente y sus costos serán de su cargo, salvo que el Anexo A indique otra cosa. La inversión en publicidad se paga directamente a la plataforma correspondiente. El Prestador no responde por cambios, caídas o políticas de dichas plataformas.')}
@@ -479,12 +487,79 @@ function contrato(lead) {
   return shell({ titulo: 'Contrato · ' + D.negocio, cuerpo: portada + p2 + p3 + p4 + p5, css: CON_CSS, color: D.color });
 }
 
+// Guía de bienvenida: qué pasa ahora, qué necesitamos del cliente y cómo se paga (50/50 desde el portal).
+// Insumos: los de la Orden de Inicio (.claude/skills/documentos-cliente/estructuras/orden-inicio.md) que aplican a cada pack.
+const BIEN_CSS = CON_CSS + `
+.steps{display:grid;gap:10px;margin:0 0 18px}
+.step{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start;border:1px solid var(--line2);border-radius:14px;padding:12px 14px;background:var(--bg)}
+.step .nn{width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff;font:600 8.5pt var(--m);display:grid;place-items:center}
+.step b{display:block;font-size:10.5pt}.step span{color:var(--ink2);font-size:9.5pt}.step em{font:500 7.5pt var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-style:normal;white-space:nowrap}
+.chk{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
+.chk li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:10pt}
+.chk li i{width:16px;height:16px;border:1.5px solid var(--line2);border-radius:5px;margin-top:2px;background:#fff}
+.chk li small{display:block;color:var(--ink3);font-size:8.5pt}
+.pay{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:0 0 14px}
+.pay div{border-radius:14px;padding:12px 14px;background:var(--bg2)}.pay small{display:block;font:500 7pt var(--m);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:2px}.pay b{font-size:12pt}
+.pay div.hl{background:var(--deep);color:#fff}.pay div.hl small{color:#E4DDF5}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px}.links a{font:700 9.5pt var(--f);text-decoration:none;border-radius:10px;padding:9px 12px;background:var(--ink);color:#fff}.links a.p{background:var(--acc)}
+@media screen and (max-width:760px){.pay{grid-template-columns:1fr}.step{grid-template-columns:30px 1fr}.step em{grid-column:2}}`;
+
+function bienvenida(lead, portal) {
+  const D = datos(lead), { pk, k } = D, M = medios(D);
+  const mitad = Math.round(pk.impl / 2);
+  const codigo = `HZ-${D.anio}-${D.slug}-BV`;
+  const band = `<div class="band"><img src="${LOGO}" alt="HORIZON"><span><i></i>HORIZON × ${h(D.negocio)}</span></div>`;
+  const foot = n => `<div class="foot"><span>/ Guía de bienvenida · ${h(codigo)}</span><span><b>${n}</b> / 02</span></div>`;
+  const photo = `style="background-image:url('${h(M.hero)}');height:200px"`;
+
+  const pasos = [
+    ['Pago del 50% de inicio', `${clp(mitad)} desde su portal de cliente, con Mercado Pago. Con este pago queda reservado el inicio.`, 'Hoy'],
+    ['Envío de la información', 'La lista de la página siguiente. Mientras más completa llegue, más rápido avanzamos.', '5 días hábiles'],
+    ['Reunión de inicio (kickoff)', '30 minutos, en persona o por videollamada, para revisar su negocio y dejar el calendario de trabajo.', '48 horas'],
+    ['Construcción', k === 'pro' ? 'Web, Google Business, agente IA en WhatsApp, panel, seguimiento, recordatorios y tablero.' : 'Web, Google Business, agente IA en WhatsApp y panel de consultas y agenda.', pk.plazo],
+    ['Pruebas con usted', 'Le escribe al agente como si fuera un cliente, revisa la web y pedimos los ajustes antes de entregar.', 'Antes de entregar'],
+    ['Pago del 50% restante y entrega', `${clp(pk.impl - mitad)} desde el mismo portal. Con ese pago se liberan la entrega final y los accesos.`, 'Entrega'],
+  ];
+
+  const insumos = [
+    ['Logo, colores y tipografías', 'Si los tiene. Si no, trabajamos con una propuesta simple.'],
+    ['Servicios o productos, precios, horarios y políticas', 'Abono, cancelaciones, medios de pago, zonas de reparto: lo que el agente debe saber responder.'],
+    ['Fotos del local, del equipo y de sus trabajos o productos', 'Desde el celular sirven, con buena luz.'],
+    ['Las 10 preguntas que más le hacen sus clientes', 'Tal como se las escriben. Es la base del entrenamiento del agente.'],
+    ['Número de WhatsApp para el agente', 'Idealmente WhatsApp Business. Lo configuramos juntos en el kickoff.'],
+    ['Cuenta de Google con acceso a su ficha de Google Business', 'Si no tiene ficha, la creamos.'],
+    ['Cómo agenda o toma pedidos hoy', 'Cuaderno, app o calendario. Si usa una app de reservas, el acceso o el link.'],
+    ['Dominio (si ya tiene uno)', 'Y los datos del hosting, si existe una web anterior.'],
+  ].concat(k === 'pro' ? [['Lista de clientes actuales (opcional)', 'Nombre y teléfono, para el seguimiento y la reactivación mensual. Solo con clientes que le dieron su número.']] : []);
+
+  const p1 = `<section class="pg cover"><div class="top"><img src="${LOGO}" alt="HORIZON"><span>${h(codigo)}</span></div>
+    <div class="body"><div><span class="eb">Bienvenida · ${h(pk.nm)}</span><h1>Bienvenida a<br><span class="g">HORIZON.</span></h1><p class="sub">${h(D.nombre)}, esta guía resume cómo seguimos con ${h(D.negocio)}, qué necesitamos de usted y cómo se paga.</p></div>
+    ${M.hero ? `<div class="photo" ${photo}></div>` : ''}
+    <h2 class="sec">Cómo seguimos</h2>
+    <div class="steps">${pasos.map(([t, d, w], i) => `<div class="step"><span class="nn">${String(i + 1).padStart(2, '0')}</span><div><b>${h(t)}</b><span>${h(d)}</span></div><em>${h(w)}</em></div>`).join('')}</div>
+    </div>${foot('01')}</section>`;
+
+  const p2 = `<section class="pg">${band}<div class="in">
+    <h2 class="sec">Lo que necesitamos de usted</h2>
+    <p style="text-align:left">Envíelo por WhatsApp o desde su portal dentro de los <span class="acc">5 días hábiles</span> siguientes al pago de inicio. Si algo no lo tiene, nos dice y lo resolvemos juntos.</p>
+    <ul class="chk">${insumos.map(([t, d]) => `<li><i></i><div>${h(t)}<small>${h(d)}</small></div></li>`).join('')}</ul>
+    <h2 class="sec">Cómo se paga</h2>
+    <div class="pay"><div class="hl"><small>Hoy · 50% de inicio</small><b>${clp(mitad)}</b></div><div><small>Antes de la entrega · 50%</small><b>${clp(pk.impl - mitad)}</b></div><div><small>Desde el mes 2</small><b>${clp(pk.mes)} / mes</b></div></div>
+    <p style="text-align:left">Puede pagar con Mercado Pago desde su portal o, si lo prefiere, por transferencia bancaria. Cada pago queda registrado en su portal. El primer mes va incluido como marcha blanca y el compromiso inicial es de 90 días: se pagan los meses 2 y 3, y después es mes a mes y sin permanencia. Valores con boleta de honorarios.</p>
+    ${portal ? `<div class="links"><a class="p" href="${h(portal)}#pres">Ir a pagar en mi portal</a><a href="${h(portal)}/propuesta">Propuesta</a><a href="${h(portal)}/contrato">Contrato</a></div>` : ''}
+    <h2 class="sec">Cómo nos comunicamos</h2>
+    <p style="text-align:left">WhatsApp <b>${h(CONTACTO.whatsapp)}</b> para coordinar y resolver dudas del día a día. Correo <b>${h(CONTACTO.correo)}</b> para aprobaciones formales. El avance del proyecto lo ve siempre en su portal.</p>
+    </div>${foot('02')}</section>`;
+
+  return shell({ titulo: 'Bienvenida · ' + D.negocio, cuerpo: p1 + p2, css: BIEN_CSS, color: D.color });
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
   if (rateLimit(getIp(req), 60_000, 30)) return res.status(429).send('Demasiadas solicitudes');
   const q = req.query || {};
   const token = String(q.t || q.token || ''), doc = String(q.doc || '');
-  if (!UUID_RE.test(token) || !['propuesta', 'contrato'].includes(doc)) return res.status(404).send('Documento no encontrado');
+  if (!UUID_RE.test(token) || !['propuesta', 'contrato', 'bienvenida'].includes(doc)) return res.status(404).send('Documento no encontrado');
   const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!SB_URL || !SB_KEY) return res.status(503).send('Config incompleta');
   try {
@@ -495,7 +570,8 @@ module.exports = async function handler(req, res) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'private, no-store');
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-    return res.status(200).send(doc === 'contrato' ? contrato(lead) : propuesta(lead));
+    const portal = `${(process.env.SITE_URL || 'https://www.horizonweb.cl').replace(/\/$/, '')}/c/${token}`;
+    return res.status(200).send(doc === 'contrato' ? contrato(lead) : doc === 'bienvenida' ? bienvenida(lead, portal) : propuesta(lead));
   } catch (e) {
     return res.status(500).send('Error interno');
   }
@@ -503,3 +579,4 @@ module.exports = async function handler(req, res) {
 
 module.exports.propuesta = propuesta;
 module.exports.contrato = contrato;
+module.exports.bienvenida = bienvenida;

@@ -223,8 +223,12 @@
     } else {
       L.push('Te recomiendo el Pack ' + pk.nm + ': ' + clp(pk.impl) + ' de implementación y ' + clp(pk.mes) + ' al mes desde el mes 2.');
       if (ctx.decision === 'partimos') {
-        L.push('Hoy te llegan a tu correo la cotización formal y el contrato.');
-        if (ctx.portal) L.push('Tu portal de cliente: ' + ctx.portal);
+        L.push('Hoy te llegan a tu correo la guía de bienvenida, la propuesta y el contrato.');
+        if (ctx.portal) {
+          L.push('');
+          L.push('Para partir, el 50% de inicio (' + clp(pk.impl / 2) + ') lo pagas aquí con Mercado Pago: ' + ctx.portal + '#pres');
+          L.push('Guía de bienvenida (lo que necesito de ti): ' + ctx.portal + '/bienvenida');
+        }
       } else {
         L.push('Cualquier duda, me escribes por acá.');
       }
@@ -240,7 +244,24 @@
     return d;
   }
 
+  // Rubros para elegir en la radiografía: cada uno usa las preguntas de un modelo y su set de fotos
+  // en /Identidad/rubros/<k>/ (hero + foto-1…5), que toman la propuesta, el contrato y la bienvenida.
+  var RUBROS = [
+    ['estetica', 'Salón o estética', 'general'],
+    ['barberia', 'Barbería', 'general'],
+    ['dental', 'Clínica dental', 'clinica'],
+    ['kine', 'Kine o salud con hora', 'clinica'],
+    ['veterinaria', 'Veterinaria', 'clinica'],
+    ['comida', 'Comida y delivery', 'comida'],
+    ['pasteleria', 'Pastelería o café', 'pasteleria'],
+    ['gimnasio', 'Gimnasio o box', 'general'],
+    ['ropa', 'Tienda de ropa', 'general'],
+    ['automotora', 'Automotora', 'general'],
+    ['general', 'Otro negocio', 'general'],
+  ];
+
   window.HZRX = {
+    RUBROS: RUBROS,
     PACK: PACK, MODELOS: MODELOS, modelo: modelo, preguntas: preguntas, etiqueta: etiqueta,
     Q: preguntas('general'), TICKETS: MODELOS.general.ticket[2],
     calc: calc, resumen: resumen, normPhone: normPhone, clp: clp

@@ -115,7 +115,7 @@
   // ?n=<slug> viene desde /visita/<slug>: precarga el nombre del negocio y lo asocia al lead.
   var SLUG = (new URLSearchParams(location.search).get('n') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
   var VIS = SLUG && window.HZ_VISITAS ? window.HZ_VISITAS[SLUG] : null;
-  function reset() { st = { scr: 'intro', i: 0, negocio: VIS ? VIS.nombre : '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', rut: '', razon: '', dir: '', notas: '', portal: '', decision: null, err: '', modelo: R.modelo(VIS && VIS.modelo) }; usarModelo(st.modelo); }
+  function reset() { st = { scr: 'intro', i: 0, negocio: VIS ? VIS.nombre : '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', rut: '', razon: '', dir: '', notas: '', portal: '', decision: null, err: '', modelo: R.modelo(VIS && VIS.modelo), rubro: (VIS && VIS.rubro) || '' }; usarModelo(st.modelo); }
   reset();
 
   var app = document.getElementById('app');
@@ -138,8 +138,8 @@
         '<h1>8 preguntas para ver qué se le escapa a tu negocio</h1>' +
         '<p class="lead">Respondes tocando la opción que más se parece a tu día. Al final ves cuánto se te puede estar escapando al mes y qué te conviene.</p>' +
         '<div class="field"><label for="negocio">¿Cómo se llama tu negocio?</label><input id="negocio" autocomplete="organization" value="' + esc(st.negocio) + '" placeholder="Ej: Kine Activa"></div>' +
-        '<div class="field"><label>¿Qué tipo de negocio es?</label><div class="chips">' + Object.keys(R.MODELOS).filter(function (k) { return k !== 'general'; }).concat(['general']).map(function (k) {
-          return '<button class="chip' + (st.modelo === k ? ' sel' : '') + '" data-act="mod" data-m="' + k + '">' + esc(R.MODELOS[k].nm) + '</button>';
+        '<div class="field"><label>¿Qué tipo de negocio es?</label><div class="chips">' + R.RUBROS.map(function (x) {
+          return '<button class="chip' + (st.rubro === x[0] ? ' sel' : '') + '" data-act="mod" data-m="' + x[2] + '" data-r="' + x[0] + '">' + esc(x[1]) + '</button>';
         }).join('') + '</div></div>' +
         '<button class="btn btn-acc" data-act="start">Empezar ' + ico('i-arrow') + '</button>' +
         '</section>';
@@ -247,9 +247,13 @@
         '<span class="ok-ic">' + ico('i-check') + '</span>' +
         '<h1>' + (st.decision === 'partimos' ? '¡Partimos, ' + esc(st.nombre.split(' ')[0]) + '!' : '¡Listo, ' + esc(st.nombre.split(' ')[0]) + '!') + '</h1>' +
         '<p class="lead">' + (st.decision === 'partimos' ?
-          'Hoy te llegan a ' + esc(st.email) + ' la cotización formal y el contrato del Pack ' + PACK[st.elegido].nm + '. Con la firma y el anticipo partimos.' :
+          'Te llegan a ' + esc(st.email) + ' la guía de bienvenida, la propuesta y el contrato del Pack ' + PACK[st.elegido].nm + '. Con el pago del 50% de inicio partimos.' :
           'Te mando tu radiografía por WhatsApp ahora. Mañana te escribo para resolver cualquier duda.') + '</p>' +
         (st.err ? '<p class="err">' + esc(st.err) + '</p>' : '') +
+        (st.decision === 'partimos' && st.cobro && st.portal ?
+          '<a class="btn ' + (st.elegido === 'pro' ? 'btn-p' : 'btn-acc') + '" href="' + esc(st.portal) + '#pres" target="_blank" rel="noopener">Pagar el 50% ahora · ' + clp(PACK[st.elegido].impl / 2) + ' ' + ico('i-arrow') + '</a>' +
+          '<p class="note">Se abre el portal en Presupuesto: se paga con Mercado Pago aquí mismo, o después con el link que llega por WhatsApp y correo.</p>' :
+          (st.decision === 'partimos' && st.portal ? '<p class="err">El cobro no quedó listo en el portal. Créalo en OPS (Presupuesto) antes de irte.</p>' : '')) +
         '<a class="btn wa-btn" href="' + wa + '" target="_blank" rel="noopener">Enviar radiografía por WhatsApp ' + ico('i-arrow') + '</a>' +
         '<p class="note">Se abre WhatsApp con el mensaje listo para ' + esc(st.tel) + '.</p>' +
         (st.correo === 'enviado' ? '<p class="note">El correo con su radiografía' + (st.decision === 'partimos' ? ' y la cotización' : '') + ' ya salió a ' + esc(st.email) + '.</p>' : (st.correo ? '<p class="err">El correo no salió (' + esc(st.correo) + '). Mándale la radiografía por WhatsApp.</p>' : '')) +
@@ -283,7 +287,7 @@
       mensaje: 'Radiografía en terreno. Recomendado: ' + c.rec + '. Elegido: ' + st.elegido + '. Decisión: ' + decision + '. Se le escapan ≈ ' + clp(c.total) + '/mes.' + (st.notas ? ' Notas: ' + st.notas : ''),
       fuente: 'terreno', origen: SLUG ? 'terreno-visita' : 'terreno-radiografia',
       radiografia: {
-        respuestas: st.r, ticket: st.ticket, escape_mes: c.total, agente_mes: c.agente, pro_mes: c.pro, modelo: st.modelo, color: VIS && VIS.color ? VIS.color : '', lecturas: (c.lecturas || []).map(function (x) { return x[0]; }),
+        respuestas: st.r, ticket: st.ticket, escape_mes: c.total, agente_mes: c.agente, pro_mes: c.pro, modelo: st.modelo, rubro: st.rubro || '', color: VIS && VIS.color ? VIS.color : '', lecturas: (c.lecturas || []).map(function (x) { return x[0]; }),
         recomendado: c.rec, elegido: st.elegido, decision: decision,
         mejoras: c.mejoras.map(function (m) { return m[0]; }), resumen: resumen(c),
         negocio_slug: SLUG, notas: st.notas,
@@ -292,7 +296,7 @@
     };
     st.scr = 'sending'; render();
     fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error('status ' + r.status); st.portal = j.portal || ''; st.correo = j.correo || ''; }); })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error('status ' + r.status); st.portal = j.portal || ''; st.correo = j.correo || ''; st.cobro = !!j.cobro; }); })
       .catch(function () { st.err = 'No se pudo guardar en OPS (sin señal o error del servidor). Manda igual la radiografía por WhatsApp y anota el lead a mano.'; })
       .then(function () { st.scr = 'listo'; render(); });
   }
@@ -300,7 +304,7 @@
   app.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-act]'); if (!b) return;
     var a = b.getAttribute('data-act');
-    if (a === 'mod') { st.negocio = document.getElementById('negocio').value.trim(); usarModelo(b.getAttribute('data-m')); st.r = {}; }
+    if (a === 'mod') { st.negocio = document.getElementById('negocio').value.trim(); st.rubro = b.getAttribute('data-r') || ''; usarModelo(b.getAttribute('data-m')); st.r = {}; }
     else if (a === 'start') { st.negocio = document.getElementById('negocio').value.trim(); st.scr = 'q'; st.i = 0; }
     else if (a === 'ans') { st.r[Q[st.i].id] = b.getAttribute('data-k'); if (st.i < Q.length - 1) st.i++; else st.scr = 'ticket'; }
     else if (a === 'tk') { st.ticket = Number(b.getAttribute('data-v')); document.getElementById('ticket').value = ''; }

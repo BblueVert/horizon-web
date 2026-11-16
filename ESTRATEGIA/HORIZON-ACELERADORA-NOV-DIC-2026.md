@@ -73,9 +73,10 @@ Versión visual (recorrido del sistema, packs y escalera): https://claude.ai/art
 Cómo se arma con el mismo código: el Esencial es la base (web + agente completo + panel con agenda). El Pro activa los módulos de seguimiento, recordatorios, reactivación, CRM con historial y dashboard. Se entrega más rápido que un proyecto a medida y el cliente siente que compró algo distinto, porque el resultado es distinto.
 
 - **Precio piso:** estos montos no se rebajan en la mesa. Si no le alcanza, se baja de pack (Pro → Esencial), no se hace descuento.
-- **Mes 1 de mensualidad incluido**, mes a mes y sin permanencia (igual que hoy).
+- **Mes 1 de mensualidad incluido como marcha blanca.** Compromiso inicial de 90 días: se pagan los meses 2 y 3; después, mes a mes y sin permanencia (decisión del 16 nov).
+- **Medios de pago:** Mercado Pago (portal del cliente o lector de tarjetas) como primera opción, o transferencia. Lo que no pasa por el portal se marca a mano en OPS.
 - **Fundadores (los 3 primeros):** mismo precio, 2.º mes de mensualidad sin costo y mensualidad congelada 12 meses. A cambio, testimonio en video y permiso para mostrar el caso.
-- **Garantía del agente (para compensar que todavía no hay casos):** si después de los primeros 30 días el agente no le sirvió, se apaga y no paga la mensualidad del mes 2. La web y el panel quedan igual. Le baja el riesgo al dueño sin bajar el precio.
+- **Garantía del agente (para compensar que todavía no hay casos):** si al terminar la marcha blanca (primeros 30 días) el agente no le sirvió, se apaga y no paga los meses 2 y 3. La web y el panel quedan igual. Le baja el riesgo al dueño sin bajar el precio.
 - Agente suelto, sin web ni panel: **no se ofrece.**
 
 **Cómo se presenta en la mesa:** primero el sistema (la web y el panel donde cae cada consulta), después el agente como "el que atiende cuando tú no puedes". La demo va en ese orden: el dueño le escribe al agente de su negocio (`demo-express`) y ve aparecer el lead en el panel. El agente es el gancho de la demo, pero lo que se vende es el sistema.
