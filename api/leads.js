@@ -242,7 +242,8 @@ async function prepararCobro(SB_URL, SRK, lead, rx) {
       if (d.status >= 300) throw new Error('DELETE budget_items ' + d.status);
     }
     const filas = [
-      { project_id: project.id, orden: 1, nombre: `Anticipo 50% · Pack ${pk.nm}`, monto: mitad,
+      // Las dos filas con las mismas columnas: en un insert múltiple PostgREST toma las columnas de la primera.
+      { project_id: project.id, orden: 1, nombre: `Anticipo 50% · Pack ${pk.nm}`, monto: mitad, bloquea_entrega: false,
         descripcion: 'Reserva el inicio. Con este pago agendamos el kickoff dentro de 48 horas.' },
       { project_id: project.id, orden: 2, nombre: `Saldo 50% · Pack ${pk.nm}`, monto: pk.impl - mitad, bloquea_entrega: true,
         descripcion: 'Se paga cuando revisas todo funcionando, antes de la entrega final.' },
