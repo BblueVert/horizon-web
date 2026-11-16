@@ -195,9 +195,9 @@ module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     const f = await fichaWeb(String((req.query && req.query.slug) || '')).catch(() => null);
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
-    const { nombre, saludo, color, catalogo, locales, reservas } = f;
+    const { nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega } = f;
     res.setHeader('Cache-Control', 'public, max-age=300');
-    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas });
+    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega });
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
   if (rateLimit(getIp(req), 60_000, 20)) return res.status(429).json({ error: 'Vas muy rápido, espera un poco' });

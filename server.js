@@ -138,7 +138,8 @@ Object.entries(rewrites).forEach(([from, to]) => {
 
 // /crm → redirect al pipeline OPS unificado
 app.get('/crm', (_req, res) => res.redirect(301, '/ops/pipeline'));
-app.get('/demo/cafe-boutique', (_req, res) => res.redirect(302, '/visita/pasteleria-cafe')); // demo genérica
+app.get('/demo/cafe-boutique', (_req, res) => res.redirect(302, '/demo/pasteleria-cafe')); // demo genérica
+app.get('/demo/:slug', (_req, res) => res.sendFile(path.join(__dirname, 'Pages/demo/index.html'))); // web de cada demo (plantilla única)
 app.get('/plan-05', (_req, res) => res.redirect(301, '/servicios'));
 
 // Recursos: /recursos/<slug> y /recursos/r/<token> los resuelve la misma página

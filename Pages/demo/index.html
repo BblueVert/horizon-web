@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Demo · HORIZON</title>
+<meta name="description" content="Demo de web con asistente de WhatsApp preparada por HORIZON.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Plantilla única de las demos web (/demo/<slug>): toma la ficha de /api/demo-chat y las fotos de /Identidad/demos/<slug>/.
+   Cada demo pone su color en --c; el resto es neutro para que la marca del negocio mande. */
+:root { --c: #F2690C; --c2: #FFF4EA; --ink: #17151C; --ink2: #5C5866; --line: #ECE7E1; --bg: #FFFCF8; --wa: #25D366; --wa-bg: #EFEAE2; --wa-out: #D9FDD3;
+  --f: 'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--f); }
+a { color: inherit; }
+.wrap { width: min(1120px, 100% - 32px); margin: 0 auto; }
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 999px; padding: 13px 22px; font: 700 15px var(--f); cursor: pointer; text-decoration: none; background: var(--c); color: #fff; transition: transform .15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn.claro { background: #fff; color: var(--ink); }
+.btn.borde { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+.eb { font: 700 12px var(--f); letter-spacing: .14em; text-transform: uppercase; color: var(--c); }
+
+header.top { position: sticky; top: 0; z-index: 30; background: rgba(255, 252, 248, .92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 12px; }
+.marca { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; text-decoration: none; letter-spacing: -.01em; }
+.marca i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); display: inline-block; }
+nav.menu { display: flex; gap: 22px; font-weight: 600; font-size: 14px; }
+nav.menu a { text-decoration: none; color: var(--ink2); }
+@media (max-width: 720px) { nav.menu { display: none; } }
+
+.hero { position: relative; min-height: min(78vh, 640px); display: flex; align-items: flex-end; color: #fff; background: var(--ink) center/cover no-repeat; }
+.hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.72) 100%); }
+.hero .wrap { position: relative; z-index: 1; padding: 56px 0 48px; }
+.hero h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1; letter-spacing: -.035em; margin: 10px 0 14px; font-weight: 800; }
+.hero p { font-size: clamp(16px, 2vw, 19px); max-width: 56ch; margin: 0 0 24px; color: #F2EEE9; }
+.hero .eb { color: #fff; background: var(--c); padding: 6px 12px; border-radius: 999px; }
+.hero .acc { display: flex; flex-wrap: wrap; gap: 10px; }
+
+section { padding: 72px 0; }
+h2 { font-size: clamp(28px, 4vw, 42px); line-height: 1.05; letter-spacing: -.03em; margin: 8px 0 24px; font-weight: 800; }
+.galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.galeria figure { margin: 0; border-radius: 22px; overflow: hidden; aspect-ratio: 1; background: var(--c2); }
+.galeria img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+.galeria figure:hover img { transform: scale(1.04); }
+@media (max-width: 720px) { .galeria { grid-template-columns: 1fr 1fr; } .galeria figure:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 10; } }
+
+
+/* Vitrina de autos (automotora): tarjeta tipo portal de autos usados */
+.autos { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.auto { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 14px; display: grid; grid-template-columns: 44% 1fr; gap: 14px; }
+.auto figure { margin: 0; position: relative; border-radius: 14px; overflow: hidden; background: var(--c2); aspect-ratio: 4 / 3; }
+.auto figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.auto .tag { position: absolute; top: 8px; left: 8px; background: var(--c); color: #fff; font: 700 11px var(--f); border-radius: 999px; padding: 4px 9px; }
+.auto h3 { margin: 0; font-size: 18px; letter-spacing: -.01em; color: var(--c); }
+.auto .spec { font-size: 13px; color: var(--ink2); margin: 4px 0 8px; }
+.auto .precio { font-size: 22px; font-weight: 800; }
+.auto .btns { grid-column: 1 / -1; display: grid; grid-template-columns: 64px 1fr 1fr; gap: 8px; }
+.auto .btns a { display: grid; place-items: center; border-radius: 999px; padding: 11px 8px; font: 800 13px var(--f); letter-spacing: .04em; text-decoration: none; }
+.auto .b-wa { background: var(--wa); } .auto .b-wa svg { width: 22px; height: 22px; fill: #fff; }
+.auto .b-res { border: 2px solid var(--c); color: var(--c); } .auto .b-cot { background: var(--c); color: #fff; }
+@media (max-width: 420px) { .autos { grid-template-columns: 1fr; } }
+#carta { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 18px; scrollbar-width: none; }
+.tabs button { flex: none; border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 9px 16px; font: 600 14px var(--f); cursor: pointer; color: var(--ink2); }
+.tabs button[aria-selected="true"] { background: var(--c); border-color: var(--c); color: #fff; }
+.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.item { border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px; background: var(--bg); }
+.item .t { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.item b { font-size: 16px; }
+.item .precio { font-weight: 800; color: var(--c); white-space: nowrap; }
+.item p { margin: 0; font-size: 14px; color: var(--ink2); }
+.item .vars { display: flex; flex-wrap: wrap; gap: 6px; }
+.item .vars span { font-size: 12px; background: var(--c2); border-radius: 999px; padding: 3px 9px; }
+.item .pedir { margin-top: auto; align-self: flex-start; border: 0; background: none; color: var(--c); font: 700 14px var(--f); cursor: pointer; padding: 6px 0 0; }
+
+.donde .wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; align-items: start; }
+@media (max-width: 820px) { .donde .wrap { grid-template-columns: 1fr; } }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 22px; }
+.local + .local { margin-top: 14px; }
+.local b { display: block; font-size: 17px; }
+.local span { color: var(--ink2); font-size: 15px; }
+.local small { display: block; margin-top: 6px; font-size: 14px; color: var(--ink); }
+
+footer { background: var(--ink); color: #CFCAD6; padding: 36px 0 120px; font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; align-items: center; }
+.sello { display: inline-flex; align-items: center; gap: 10px; background: #000; border-radius: 999px; padding: 10px 16px; text-decoration: none; color: #fff; font-size: 12px; letter-spacing: .06em; }
+.sello img { height: 15px; }
+
+/* Botón flotante: abre el WhatsApp de demos con "#demo <slug>" (el bot conecta ese chat al agente del rubro) */
+.fab { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 64px; height: 64px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 14px 30px -10px rgba(0,0,0,.45); }
+.fab svg { width: 34px; height: 34px; fill: #fff; }
+.vacio { padding: 30vh 16px; text-align: center; color: var(--ink2); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .galeria img { transition: none; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="marca" href="#inicio"><i></i><span id="nombreTop">…</span></a>
+  <nav class="menu"><a href="#destacados" id="navDest">Destacados</a><a href="#carta" id="navCarta">Carta</a><a href="#donde">Dónde estamos</a></nav>
+  <a class="btn" data-wa target="_blank" rel="noopener" id="ctaTop">Escríbenos</a>
+</div></header>
+
+<main id="app">
+  <div class="hero" id="inicio"><div class="wrap">
+    <span class="eb" id="rubro">Rancagua</span>
+    <h1 id="nombre">…</h1>
+    <p id="descripcion"></p>
+    <div class="acc"><a class="btn" data-wa target="_blank" rel="noopener" id="ctaHero">Pedir por WhatsApp</a><a class="btn claro" href="#carta" id="ctaCarta">Ver la carta</a></div>
+  </div></div>
+
+  <section id="destacados"><div class="wrap">
+    <span class="eb" id="ebDest">Lo más pedido</span>
+    <h2 id="tituloDest">Hecho para que vuelvas</h2>
+    <div class="galeria" id="galeria"></div>
+  </div></section>
+
+  <section id="carta"><div class="wrap">
+    <span class="eb" id="ebCarta">Carta</span>
+    <h2 id="tituloCarta">Elige y te lo dejamos listo</h2>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="items" id="items"></div>
+  </div></section>
+
+  <section class="donde" id="donde"><div class="wrap">
+    <div>
+      <span class="eb">Dónde estamos</span>
+      <h2>Te esperamos</h2>
+      <div id="locales"></div>
+    </div>
+    <div class="card">
+      <b style="font-size:18px">¿Dudas? Escríbenos</b>
+      <p style="color:var(--ink2);margin:8px 0 18px">Te respondemos al tiro por WhatsApp, a cualquier hora: precios, horarios, pedidos y reservas.</p>
+      <a class="btn" data-wa target="_blank" rel="noopener">Abrir WhatsApp</a>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span id="pie">© 2026</span>
+  <a class="sello" href="https://www.horizonweb.cl" target="_blank" rel="noopener">DEMO HECHA POR <img src="/Identidad/Logo%20HORIZON.svg" alt="HORIZON"></a>
+</div></footer>
+
+<a class="fab" id="fab" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+
+<script>
+(function () {
+  var SLUG = (location.pathname.split('/')[2] || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  var FOTOS = '/Identidad/demos/' + SLUG + '/';
+  var $ = function (id) { return document.getElementById(id); };
+  var dinero = function (n) { return '$' + Math.round(n).toLocaleString('es-CL'); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var hora = function () { var d = new Date(); return d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  // WhatsApp de demos (Horizon Pruebas). "#demo <slug>": desde el WhatsApp Business deja la demo activada
+  // para el próximo número que escriba; desde otro celular conecta ese chat al agente (verticales/demos).
+  var NUMERO = '56976962659';
+  var WA = 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent('#demo ' + SLUG);
+  var ficha = null;
+
+  // Textos según cómo atiende el negocio: pedidos, reservas o consultas
+  var TEXTOS = {
+    pedidos:  { cta: 'Pedir por WhatsApp', dest: 'Lo más pedido', tDest: 'Hecho para que vuelvas', carta: 'Carta', tCarta: 'Elige y te lo dejamos listo', accion: 'Pedir' },
+    reservas: { cta: 'Agendar por WhatsApp', dest: 'Nuestros servicios', tDest: 'Lo que hacemos por ti', carta: 'Servicios y precios', tCarta: 'Elige tu servicio y agendamos', accion: 'Agendar' },
+    consultas:{ cta: 'Consultar por WhatsApp', dest: 'Lo que ofrecemos', tDest: 'Te ayudamos a elegir', carta: 'Catálogo', tCarta: 'Pregunta por lo que te interese', accion: 'Consultar' },
+  };
+
+  if (!SLUG) { $('app').innerHTML = '<p class="vacio">Demo no encontrada.</p>'; return; }
+
+  fetch('/api/demo-chat?slug=' + SLUG).then(function (r) { if (!r.ok) throw new Error('404'); return r.json(); }).then(function (f) {
+    ficha = f;
+    var T = TEXTOS[f.flujo] || TEXTOS.consultas;
+    if (/^#[0-9a-f]{6}$/i.test(f.color || '')) {
+      document.documentElement.style.setProperty('--c', f.color);
+      document.documentElement.style.setProperty('--c2', f.color + '1A');
+    }
+    document.title = f.nombre + ' · demo';
+    ['nombreTop', 'nombre'].forEach(function (id) { $(id).textContent = f.nombre; });
+    $('descripcion').textContent = f.descripcion || '';
+    var l0 = (f.locales || [])[0];
+    $('rubro').textContent = (l0 && l0.comuna) || 'Rancagua';
+    $('ctaHero').textContent = T.cta; $('ctaTop').textContent = 'Escríbenos';
+    $('ebDest').textContent = T.dest; $('tituloDest').textContent = T.tDest; $('navDest').textContent = T.dest;
+    $('ebCarta').textContent = T.carta; $('tituloCarta').textContent = T.tCarta; $('navCarta').textContent = T.carta; $('ctaCarta').textContent = 'Ver ' + T.carta.toLowerCase();
+    $('pie').textContent = '© ' + new Date().getFullYear() + ' ' + f.nombre + ' · negocio ficticio de demostración';
+
+    // Fotos: hero + 3 destacados
+    var hero = new Image();
+    hero.onload = function () { $('inicio').style.backgroundImage = 'url(' + FOTOS + 'hero.webp)'; };
+    hero.src = FOTOS + 'hero.webp';
+    $('galeria').innerHTML = [1, 2, 3].map(function (n) {
+      return '<figure><img src="' + FOTOS + 'producto-' + n + '.webp" alt="" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></figure>';
+    }).join('');
+
+    // Carta
+    var cats = (f.catalogo || []).filter(function (c) { return (c.items || []).length; });
+    function mostrar(i) {
+      [].forEach.call($('tabs').children, function (b, j) { b.setAttribute('aria-selected', j === i); });
+      $('items').innerHTML = cats[i].items.map(function (it) {
+        var vars = (it.variantes || []).length;
+        var precio = vars ? 'desde ' + dinero(Math.min.apply(null, it.variantes.map(function (v) { return v.precio; }))) : (it.precio == null ? 'A cotizar' : it.precio === 0 ? 'Gratis' : dinero(it.precio));
+        return '<div class="item"><div class="t"><b>' + esc(it.nombre) + '</b><span class="precio">' + esc(precio) + '</span></div>' +
+          (it.descripcion ? '<p>' + esc(it.descripcion) + '</p>' : '') +
+          (vars ? '<div class="vars">' + it.variantes.map(function (v) { return '<span>' + esc(v.nombre) + ' ' + dinero(v.precio) + '</span>'; }).join('') + '</div>' : '') +
+          '<button class="pedir" data-pedir>' + T.accion + ' →</button></div>';
+      }).join('');
+    }
+    // Automotora: vitrina de autos en vez de carta (fotos auto-1…N, si no hay usa la foto del auto destacado)
+    if (SLUG === 'automotora') {
+      var WAICO = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>';
+      var autos = (cats[0] || { items: [] }).items;
+      $('ebCarta').textContent = 'Autos disponibles'; $('tituloCarta').textContent = 'Revisados y con papeles al día'; $('navCarta').textContent = 'Autos'; $('ctaCarta').textContent = 'Ver autos';
+      $('tabs').style.display = 'none';
+      $('items').className = 'autos';
+      $('items').innerHTML = autos.map(function (it, n) {
+        var partes = String(it.nombre).split(','), titulo = partes[0], km = (partes[1] || '').trim();
+        return '<div class="auto"><figure><span class="tag">Revisado</span><img src="' + FOTOS + 'auto-' + (n + 1) + '.webp" alt="' + esc(titulo) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + FOTOS + 'producto-1.webp\'"></figure>' +
+          '<div><h3>' + esc(titulo) + '</h3><div class="spec">' + esc([km, it.descripcion].filter(Boolean).join(' · ')) + '</div>' +
+          '<div class="precio">' + (it.precio ? dinero(it.precio) : 'A cotizar') + '</div></div>' +
+          '<div class="btns"><a class="b-wa" data-wa target="_blank" rel="noopener" aria-label="WhatsApp">' + WAICO + '</a><a class="b-res" data-wa target="_blank" rel="noopener">RESERVAR</a><a class="b-cot" data-wa target="_blank" rel="noopener">COTIZAR</a></div></div>';
+      }).join('');
+      [].forEach.call(document.querySelectorAll('[data-wa]'), function (a) { a.href = WA; });
+    } else {
+    $('tabs').innerHTML = cats.map(function (c) { return '<button role="tab">' + esc(c.categoria) + '</button>'; }).join('');
+    [].forEach.call($('tabs').children, function (b, i) { b.onclick = function () { mostrar(i); }; });
+    if (cats.length) mostrar(0); else $('carta').style.display = 'none';
+    }
+
+    // Locales
+    $('locales').innerHTML = (f.locales || []).map(function (l) {
+      var dir = [l.direccion, l.comuna].filter(Boolean).join(', ');
+      return '<div class="card local"><b>' + esc(l.nombre || f.nombre) + '</b><span>' + esc(dir) + '</span>' +
+        '<small>' + esc(l.horario || f.horario || '') + '</small></div>';
+    }).join('');
+
+  }).catch(function () { $('app').innerHTML = '<p class="vacio">Esta demo no está disponible.</p>'; });
+
+  [].forEach.call(document.querySelectorAll('[data-wa], #fab'), function (a) { a.href = WA; });
+  document.addEventListener('click', function (e) {
+    var p = e.target.closest('[data-pedir]'); if (p) { e.preventDefault(); window.open(WA, '_blank', 'noopener'); }
+  });
+})();
+</script>
+<script src="/shared/analytics.js"></script>
+</body>
+</html>
