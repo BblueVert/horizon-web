@@ -288,6 +288,7 @@ module.exports = async function handler(req, res) {
           { slug: ficha.slug, telefono: 'web', tipo: r.accion.tipo, resumen: String(r.accion.resumen || '').slice(0, 2000),
             datos: { ...(r.accion.datos || {}), codigo: r.accion.codigo || null } }).catch(e => console.error('demo-chat acción:', e.message));
       }
+      await mesaCero.enviarDelAgente(ficha, r.accion, { telefono: '', canal: 'web' });
     }
     return res.status(200).json({ respuestas: out.respuestas, accion: out.accion, extras, aviso });
   } catch (e) {
