@@ -1,0 +1,80 @@
+{
+  "slug": "ropa",
+  "nombre": "Boutique Alma",
+  "rubro": "tienda",
+  "flujo": "pedidos",
+  "web": true,
+  "asistente": "Alma",
+  "color": "#C4467A",
+  "descripcion": "Tienda de ropa y accesorios de mujer en Rancagua: vestidos, blusas, jeans, carteras y bisutería. Vende en el local y por Instagram con despacho.",
+  "tono": "Cercano, alegre y con buen ojo para combinar. Trata de tú. Recomienda sin presionar.",
+  "saludo": "¡Hola! Soy Alma, de Boutique Alma ✨ ¿Buscas algo en especial, quieres saber si queda tu talla o prefieres que te muestre lo nuevo?",
+  "locales": [
+    {
+      "nombre": "Tienda",
+      "direccion": "Calle Independencia 640, local 12",
+      "comuna": "Rancagua",
+      "horario": "lunes a sábado 10:30 a 20:00",
+      "lat": -34.1697,
+      "lng": -70.7432,
+      "referencia": "galería del centro, primer piso"
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Ropa",
+      "items": [
+        { "nombre": "Vestido midi estampado", "precio": 24990, "variantes": [{ "nombre": "S", "precio": 24990 }, { "nombre": "M", "precio": 24990 }, { "nombre": "L", "precio": 24990 }] },
+        { "nombre": "Blusa de lino", "precio": 17990, "descripcion": "colores: crema, coral y lila" },
+        { "nombre": "Jeans tiro alto", "precio": 22990, "descripcion": "tallas 36 a 46" },
+        { "nombre": "Sweater tejido", "precio": 19990, "descripcion": "talla única holgada" },
+        { "nombre": "Chaqueta de mezclilla", "precio": 27990 }
+      ]
+    },
+    {
+      "categoria": "Accesorios",
+      "items": [
+        { "nombre": "Cartera de cuero sintético", "precio": 21990, "descripcion": "colores: camel, negro y terracota" },
+        { "nombre": "Bolso de mimbre", "precio": 15990 },
+        { "nombre": "Aros y collares", "precio": 5990, "descripcion": "desde" },
+        { "nombre": "Lentes de sol", "precio": 9990 }
+      ]
+    },
+    {
+      "categoria": "Regalo",
+      "items": [
+        { "nombre": "Gift card", "precio": 20000, "descripcion": "también de $30.000 y $50.000" },
+        { "nombre": "Envoltura de regalo", "precio": 0, "descripcion": "gratis" }
+      ]
+    }
+  ],
+  "entrega": {
+    "retiro": true,
+    "delivery": true,
+    "zonas": "Rancagua y Machalí; resto de Chile por courier",
+    "costo": "Rancagua $2.500, Machalí $3.500, resto de Chile según courier (se paga al recibir)",
+    "minimo": null,
+    "apps": []
+  },
+  "pago_online": {
+    "activo": true
+  },
+  "pagos": ["débito", "crédito", "transferencia", "efectivo en tienda"],
+  "faq": [
+    { "p": "¿Tienen cambios?", "r": "Sí, hasta 10 días con boleta y la prenda sin uso, con etiqueta. No hacemos devoluciones de dinero, pero te damos otra prenda o una gift card." },
+    { "p": "¿Me reservan una prenda?", "r": "Sí, te la guardamos 24 horas. Si la pagas con el link, te la guardamos hasta que la retires o te la despachamos." },
+    { "p": "¿Cuánto se demora el despacho?", "r": "En Rancagua y Machalí, el mismo día si compras antes de las 15:00. Al resto de Chile, de 2 a 4 días hábiles." },
+    { "p": "¿Cómo sé mi talla?", "r": "Dime tu talla habitual o tus medidas y te digo cómo calza esa prenda. En el local te puedes probar todo." }
+  ],
+  "reglas": [
+    "Si preguntan por stock o talla de algo que no está en el catálogo, no inventes: di que lo confirmas con la tienda y deriva.",
+    "Cuando alguien elige una prenda, ofrece una combinación (un accesorio o una prenda que le quede) una sola vez, sin insistir.",
+    "Si es para regalo, ofrece la envoltura gratis y la gift card si no sabe la talla.",
+    "Para cerrar: confirma prenda, talla y color, retiro o despacho (con dirección), nombre y teléfono, y manda el link de pago.",
+    "Cambios: aplica lo de la FAQ. Reclamos o problemas con un pedido: deriva."
+  ],
+  "datos_pedido": ["nombre", "teléfono", "prenda, talla y color", "retiro o despacho", "dirección si es despacho"],
+  "derivar_a": "Di que la dueña le confirma personalmente en cuanto termine de atender a la clienta que está en la tienda.",
+  "notas_internas": "Tienda ficticia de demostración (HORIZON). Antes de mostrarla a una tienda real, cambia nombre, dirección, catálogo, tallas y precios por los suyos (idealmente desde su Instagram).",
+  "fuentes": ["demo por rubro: datos de ejemplo, no de un negocio real"]
+}

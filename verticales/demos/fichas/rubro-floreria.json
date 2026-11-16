@@ -3,6 +3,7 @@
   "nombre": "Florería Rosa Blanca",
   "rubro": "tienda",
   "flujo": "pedidos",
+  "web": true,
   "asistente": "Rosa",
   "color": "#7A3E6C",
   "descripcion": "Florería con despacho el mismo día. Ramos, arreglos y coronas.",

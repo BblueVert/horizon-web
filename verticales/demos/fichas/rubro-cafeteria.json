@@ -3,6 +3,7 @@
   "nombre": "Café Esquina Norte",
   "rubro": "cafeteria",
   "flujo": "pedidos",
+  "web": true,
   "asistente": "Norte",
   "color": "#6B4A2F",
   "descripcion": "Cafetería de especialidad chica, atendida por sus dueños. Pide por WhatsApp y retira sin fila.",
