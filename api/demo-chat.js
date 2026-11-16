@@ -11,6 +11,7 @@
 
 const { rateLimit, getIp, httpsRequest } = require('./shared');
 const mesaCero = require('./_mesa-cero');
+const agenda = require('./_agenda');
 
 // Las fichas de prospectos no van al repo (es público): se leen de demo_fichas (Supabase),
 // las mismas que publica /api/demos para el bot. Solo responden las marcadas con "web": true.
@@ -190,6 +191,15 @@ async function llamarIA(ficha, messages) {
   return (await r.json())?.choices?.[0]?.message?.content;
 }
 
+// Ítem del catálogo por nombre (servicio, auto, plan).
+function itemDe(ficha, nombre) {
+  for (const c of ficha.catalogo || []) for (const it of c.items || []) if (it.nombre === nombre) return it;
+  return null;
+}
+const DIAS_TXT = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+const fechaTxt = (f) => { const d = new Date(f + 'T12:00:00Z'); return `${DIAS_TXT[d.getUTCDay()]} ${d.getUTCDate()} de ${MESES[d.getUTCMonth()]}`; };
+
 const ORIGENES = ['https://horizon-propuestas.vercel.app', 'https://www.horizonweb.cl', 'https://horizonweb.cl'];
 
 module.exports = async function handler(req, res) {
@@ -200,6 +210,16 @@ module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     const f = await fichaWeb(String((req.query && req.query.slug) || '')).catch(() => null);
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
+    // GET ?slug=&agenda=1&servicio= → horas libres de los próximos 21 días para ese servicio.
+    if (req.query.agenda) {
+      const item = itemDe(f, String(req.query.servicio || ''));
+      const dur = agenda.duracion(item);
+      const hoy = agenda.hoyChile().fecha;
+      await mesaCero.asegurarTenant(f);
+      const ocup = await mesaCero.ocupados(f.slug, hoy, agenda.sumarDias(hoy, 21));
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(200).json({ duracion: dur, dias: agenda.disponibilidad(f, dur, ocup, 21) });
+    }
     const { nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega, rubro } = f;
     await mesaCero.asegurarTenant(f); // el panel de Mesa Cero queda creado desde la primera visita a la web
     res.setHeader('Cache-Control', 'public, max-age=300');
@@ -212,6 +232,74 @@ module.exports = async function handler(req, res) {
   const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
   const ficha = await fichaWeb(String(body.slug || '')).catch(() => null);
   if (!ficha) return res.status(404).json({ error: 'Demo no encontrada' });
+
+  // Reserva de la web: servicio + día + hora libres, validados contra la agenda (nunca contra lo que diga el navegador).
+  if (body.reserva && typeof body.reserva === 'object') {
+    try {
+      const R = body.reserva;
+      const servicio = String(R.servicio || '').slice(0, 160);
+      const item = itemDe(ficha, servicio);
+      if (!item) return res.status(400).json({ error: 'Elige un servicio de la lista' });
+      const fecha = String(R.fecha || ''), hora = String(R.hora || '');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || !/^\d{2}:\d{2}$/.test(hora)) return res.status(400).json({ error: 'Elige día y hora' });
+      const cliente = String(R.nombre || '').trim().slice(0, 80);
+      const telefono = String(R.telefono || '').replace(/[^\d+]/g, '').slice(0, 20);
+      if (!cliente || telefono.replace(/\D/g, '').length < 8) return res.status(400).json({ error: 'Falta tu nombre o tu teléfono' });
+      const extras = (Array.isArray(R.extras) ? R.extras : []).slice(0, 8)
+        .map(x => ({ k: String(x.k || '').slice(0, 60), v: String(x.v || '').trim().slice(0, 200) })).filter(x => x.k && x.v);
+      const dur = agenda.duracion(item);
+      const ocup = await mesaCero.ocupados(ficha.slug, fecha, fecha);
+      if (!agenda.esLibre(ficha, fecha, hora, dur, ocup)) return res.status(409).json({ error: 'Esa hora se acaba de ocupar. Elige otra.', ocupada: true });
+      const cuando = `${fechaTxt(fecha)} · ${hora}`;
+      const detalle = [servicio, ...extras.map(x => `${x.k}: ${x.v}`)].join(' · ');
+      const { extrasConfirmacion, avisoDueno } = await cargarAgente();
+      const accion = { tipo: 'reserva', resumen: `${servicio} · ${cuando}`,
+        datos: { cliente, detalle, hora: cuando, total: item.precio || null, otros: `Teléfono: ${telefono} · reservado desde la web${extras.length ? ' · ' + extras.map(x => `${x.k}: ${x.v}`).join(' · ') : ''}` } };
+      const r = extrasConfirmacion(ficha, accion, '');
+      try {
+        await mesaCero.reservar(ficha, { codigo: r.accion.codigo, cliente, telefono, servicio, detalle, cuando, fecha, hora,
+          duracion_min: dur, total: item.precio || 0, resumen: R.nota ? `Nota: ${String(R.nota).slice(0, 300)}` : '' });
+      } catch (e) {
+        if (/hora_tomada/.test(e.message)) return res.status(409).json({ error: 'Esa hora se acaba de ocupar. Elige otra.', ocupada: true });
+        console.error('demo-chat reserva:', e.message);
+      }
+      const aviso = avisoDueno(ficha, r.accion, null);
+      const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (SB_URL && SB_KEY) {
+        await httpsRequest('POST', `${SB_URL}/rest/v1/demo_acciones`,
+          { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          { slug: ficha.slug, telefono: 'web', tipo: 'reserva', resumen: accion.resumen.slice(0, 2000),
+            datos: { ...accion.datos, codigo: r.accion.codigo, canal: 'web', fecha, hora } }).catch(e => console.error('demo-chat reserva:', e.message));
+      }
+      return res.status(200).json({ ok: true, codigo: r.accion.codigo, cuando, servicio, duracion: dur, total: item.precio || 0, extras: r.mensajes, aviso, panel: mesaCero.panelUrl(ficha.slug) });
+    } catch (e) {
+      console.error('demo-chat reserva:', e.message);
+      return res.status(500).json({ error: 'No se pudo registrar la reserva' });
+    }
+  }
+
+  // Solicitud de la web sin hora (cotización de la automotora, consulta): va a la agenda como consulta.
+  if (body.consulta && typeof body.consulta === 'object') {
+    const C = body.consulta;
+    const cliente = String(C.nombre || '').trim().slice(0, 80);
+    const telefono = String(C.telefono || '').replace(/[^\d+]/g, '').slice(0, 20);
+    if (!cliente || telefono.replace(/\D/g, '').length < 8) return res.status(400).json({ error: 'Falta tu nombre o tu teléfono' });
+    const asunto = String(C.asunto || 'Consulta').slice(0, 160);
+    const extras = (Array.isArray(C.extras) ? C.extras : []).slice(0, 8)
+      .map(x => ({ k: String(x.k || '').slice(0, 60), v: String(x.v || '').trim().slice(0, 200) })).filter(x => x.k && x.v);
+    const detalle = [asunto, ...extras.map(x => `${x.k}: ${x.v}`)].join(' · ');
+    const { avisoDueno } = await cargarAgente();
+    const accion = { tipo: 'consulta', resumen: detalle, datos: { cliente, detalle, otros: `Teléfono: ${telefono} · desde la web` } };
+    const aviso = avisoDueno(ficha, accion, null);
+    await mesaCero.enviarAccion(ficha, { tipo: 'consulta', canal: 'web', cliente, telefono, detalle, resumen: String(C.nota || '').slice(0, 300) });
+    const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (SB_URL && SB_KEY) {
+      await httpsRequest('POST', `${SB_URL}/rest/v1/demo_acciones`,
+        { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        { slug: ficha.slug, telefono: 'web', tipo: 'consulta', resumen: detalle.slice(0, 2000), datos: { ...accion.datos, canal: 'web' } }).catch(e => console.error('demo-chat consulta:', e.message));
+    }
+    return res.status(200).json({ ok: true, aviso, panel: mesaCero.panelUrl(ficha.slug) });
+  }
 
   // Checkout de la web (carrito): el total se calcula con los precios de la ficha, nunca con los del navegador.
   if (body.pedido && typeof body.pedido === 'object') {

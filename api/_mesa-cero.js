@@ -98,4 +98,17 @@ async function asegurarTenant(ficha) {
   try { await sincronizar(ficha); } catch (e) { ultimaSync.delete(slug); console.error('mesa-cero demo:', e.message); }
 }
 
-module.exports = { enviarPedido, enviarAccion, enviarDelAgente, asegurarTenant, panelUrl, esTenant, itemsDeDetalle };
+// Horas tomadas en la agenda del panel (sin datos de clientes): [{ fecha, hora, duracion_min }]
+async function ocupados(slug, desde, hasta) {
+  if (!esTenant(slug)) return [];
+  try { return (await rpc('demo_horizon_ocupados', { p_slug: slug, p_desde: desde, p_hasta: hasta })) || []; }
+  catch (e) { console.error('mesa-cero ocupados:', e.message); return []; }
+}
+
+// Reserva hecha en la web: va directo a la agenda, que rechaza la hora si ya la tomaron ('hora_tomada').
+async function reservar(ficha, reserva) {
+  await sincronizar(ficha);
+  return rpc('demo_horizon_accion', { p_slug: ficha.slug, p_accion: { tipo: 'reserva', canal: 'web', ...reserva } });
+}
+
+module.exports = { enviarPedido, enviarAccion, enviarDelAgente, asegurarTenant, ocupados, reservar, panelUrl, esTenant, itemsDeDetalle };
