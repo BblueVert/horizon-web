@@ -175,8 +175,9 @@ module.exports = async function handler(req, res) {
         : [],
       project
         // tolerante: si la migración 013 aún no corre, el portal carga igual sin presupuesto
-        ? get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at,bloquea_entrega&order=orden.asc,created_at.asc`)
-            .catch(() => get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at&order=orden.asc,created_at.asc`))
+        // Orden solo por columnas con permiso para anon (created_at no lo tiene: con la llave anon, ordenar por ella falla).
+        ? get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at,bloquea_entrega&order=orden.asc,id.asc`)
+            .catch(() => get(`budget_items?project_id=eq.${project.id}&select=id,nombre,descripcion,monto,estado,pagado_at&order=orden.asc,id.asc`))
             .catch(() => [])
         : [],
     ]);
