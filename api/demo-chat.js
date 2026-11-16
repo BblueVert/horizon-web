@@ -206,6 +206,47 @@ module.exports = async function handler(req, res) {
   const ficha = await fichaWeb(String(body.slug || '')).catch(() => null);
   if (!ficha) return res.status(404).json({ error: 'Demo no encontrada' });
 
+  // Checkout de la web (carrito): el total se calcula con los precios de la ficha, nunca con los del navegador.
+  if (body.pedido && typeof body.pedido === 'object') {
+    try {
+      const { extrasConfirmacion, avisoDueno } = await cargarAgente();
+      const P = body.pedido;
+      const precios = new Map();
+      for (const c of ficha.catalogo || []) for (const it of c.items || []) {
+        if (Number.isFinite(it.precio)) precios.set(it.nombre, it.precio);
+        for (const v of it.variantes || []) if (Number.isFinite(v.precio)) precios.set(`${it.nombre} (${v.nombre})`, v.precio);
+      }
+      const items = (Array.isArray(P.items) ? P.items : []).slice(0, 30)
+        .map(x => ({ nombre: String(x.nombre || '').slice(0, 120), cant: Math.min(20, Math.max(1, Math.round(Number(x.cant) || 1))) }))
+        .filter(x => precios.has(x.nombre));
+      if (!items.length) return res.status(400).json({ error: 'El carrito está vacío' });
+      const cliente = String(P.nombre || '').trim().slice(0, 80);
+      const telefono = String(P.telefono || '').replace(/[^\d+]/g, '').slice(0, 20);
+      const entrega = P.entrega === 'delivery' ? 'delivery' : 'retiro';
+      const direccion = String(P.direccion || '').trim().slice(0, 160);
+      const hora = String(P.hora || '').trim().slice(0, 40);
+      if (!cliente || telefono.replace(/\D/g, '').length < 8) return res.status(400).json({ error: 'Falta tu nombre o tu teléfono' });
+      if (entrega === 'delivery' && !direccion) return res.status(400).json({ error: 'Falta la dirección de despacho' });
+      const total = items.reduce((a, x) => a + precios.get(x.nombre) * x.cant, 0);
+      const detalle = items.map(x => `${x.cant} × ${x.nombre}`).join(', ');
+      const accion = { tipo: 'pedido', resumen: `${detalle} · ${entrega}${direccion ? ' a ' + direccion : ''}`,
+        datos: { cliente, entrega, detalle, total, hora: hora || undefined, otros: `Teléfono: ${telefono} · pedido desde la web` } };
+      const r = extrasConfirmacion(ficha, accion, '');
+      const aviso = avisoDueno(ficha, r.accion, null);
+      const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (SB_URL && SB_KEY) {
+        await httpsRequest('POST', `${SB_URL}/rest/v1/demo_acciones`,
+          { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          { slug: ficha.slug, telefono: 'web', tipo: 'pedido', resumen: accion.resumen.slice(0, 2000),
+            datos: { ...accion.datos, items, codigo: r.accion.codigo, canal: 'web' } }).catch(e => console.error('demo-chat pedido:', e.message));
+      }
+      return res.status(200).json({ ok: true, codigo: r.accion.codigo, total, extras: r.mensajes, aviso });
+    } catch (e) {
+      console.error('demo-chat pedido:', e.message);
+      return res.status(500).json({ error: 'No se pudo registrar el pedido' });
+    }
+  }
+
   const mensaje = String(body.mensaje || '').trim().slice(0, 600);
   const historial = (Array.isArray(body.historial) ? body.historial : [])
     .filter(m => m && ['user', 'assistant'].includes(m.role) && typeof m.content === 'string')
