@@ -200,11 +200,11 @@ module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     const f = await fichaWeb(String((req.query && req.query.slug) || '')).catch(() => null);
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
-    const { nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega } = f;
+    const { nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega, rubro } = f;
     await mesaCero.asegurarTenant(f); // el panel de Mesa Cero queda creado desde la primera visita a la web
     res.setHeader('Cache-Control', 'public, max-age=300');
     // panel: el de Mesa Cero si la demo es un tenant allá; si no, /visita/<slug>/panel
-    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega, panel: mesaCero.panelUrl(f.slug) });
+    return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega, rubro, panel: mesaCero.panelUrl(f.slug) });
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
   if (rateLimit(getIp(req), 60_000, 20)) return res.status(429).json({ error: 'Vas muy rápido, espera un poco' });
@@ -224,7 +224,7 @@ module.exports = async function handler(req, res) {
         for (const v of it.variantes || []) if (Number.isFinite(v.precio)) precios.set(`${it.nombre} (${v.nombre})`, v.precio);
       }
       const items = (Array.isArray(P.items) ? P.items : []).slice(0, 30)
-        .map(x => ({ nombre: String(x.nombre || '').slice(0, 120), cant: Math.min(20, Math.max(1, Math.round(Number(x.cant) || 1))) }))
+        .map(x => ({ nombre: String(x.nombre || '').slice(0, 120), cant: Math.min(20, Math.max(1, Math.round(Number(x.cant) || 1))), nota: String(x.nota || '').trim().slice(0, 120) }))
         .filter(x => precios.has(x.nombre));
       if (!items.length) return res.status(400).json({ error: 'El carrito está vacío' });
       const cliente = String(P.nombre || '').trim().slice(0, 80);
@@ -235,7 +235,7 @@ module.exports = async function handler(req, res) {
       if (!cliente || telefono.replace(/\D/g, '').length < 8) return res.status(400).json({ error: 'Falta tu nombre o tu teléfono' });
       if (entrega === 'delivery' && !direccion) return res.status(400).json({ error: 'Falta la dirección de despacho' });
       const total = items.reduce((a, x) => a + precios.get(x.nombre) * x.cant, 0);
-      const detalle = items.map(x => `${x.cant} × ${x.nombre}`).join(', ');
+      const detalle = items.map(x => `${x.cant} × ${x.nombre}${x.nota ? ` (${x.nota})` : ''}`).join(', ');
       const accion = { tipo: 'pedido', resumen: `${detalle} · ${entrega}${direccion ? ' a ' + direccion : ''}`,
         datos: { cliente, entrega, detalle, total, hora: hora || undefined, otros: `Teléfono: ${telefono} · pedido desde la web` } };
       const r = extrasConfirmacion(ficha, accion, '');
@@ -248,7 +248,10 @@ module.exports = async function handler(req, res) {
             datos: { ...accion.datos, items, codigo: r.accion.codigo, canal: 'web' } }).catch(e => console.error('demo-chat pedido:', e.message));
       }
       // Y al panel real de Mesa Cero, si la demo es un tenant allá.
-      await mesaCero.enviarPedido(ficha, { codigo: r.accion.codigo, canal: 'web', entrega, cliente, telefono, direccion, hora, total, items });
+      // Las notas de cada producto ("sin cebolla") van en las notas del pedido de Mesa Cero, junto a la hora.
+      const notas = items.filter(x => x.nota).map(x => `${x.nombre}: ${x.nota}`).join(' · ');
+      await mesaCero.enviarPedido(ficha, { codigo: r.accion.codigo, canal: 'web', entrega, cliente, telefono, direccion,
+        hora: [hora, notas].filter(Boolean).join(' · '), total, items: items.map(({ nombre, cant }) => ({ nombre, cant })) });
       return res.status(200).json({ ok: true, codigo: r.accion.codigo, total, extras: r.mensajes, aviso, panel: mesaCero.panelUrl(ficha.slug) });
     } catch (e) {
       console.error('demo-chat pedido:', e.message);
