@@ -89,15 +89,22 @@ module.exports = async function handler(req, res) {
   const SITE = (process.env.SITE_URL || 'https://www.horizonweb.cl').replace(/\/$/, '');
   const portal = lead.portal_token ? `${SITE}/c/${lead.portal_token}` : undefined;
 
+  // "Partimos" en terreno: el proyecto y el cobro 50/50 quedan listos al tiro, así el portal ya muestra
+  // el botón de pago del anticipo (Mercado Pago) sin pasar por OPS.
+  let cobro = false;
+  if (rx && rx.decision === 'partimos' && rx.recomendado !== 'no' && SB_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    cobro = await prepararCobro(SB_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, lead, rx);
+  }
+
   // Radiografía de terreno: le llega por correo su diagnóstico y plan de acción (y la cotización si partió).
   let correo;
   if (rx) {
-    const c = correoRadiografia(lead, rx, portal);
+    const c = correoRadiografia(lead, rx, portal, cobro);
     correo = await enviarCorreo({ to: lead.email, subject: c.subject, html: c.html, text: c.text, cc: process.env.CORREO_COPIA || undefined });
     if (correo !== 'enviado') console.warn('[leads] correo radiografía:', correo);
   }
 
-  return res.status(200).json({ ok: true, id: lead.id, portal, correo });
+  return res.status(200).json({ ok: true, id: lead.id, portal, correo, cobro });
 };
 
 function cleanRadiografia(rx) {
@@ -150,7 +157,7 @@ const PACKS = {
 const clp = n => '$' + Math.round(n).toLocaleString('es-CL');
 const h = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-function correoRadiografia(lead, rx, portal) {
+function correoRadiografia(lead, rx, portal, cobro) {
   const pk = PACKS[rx.elegido] || PACKS.esencial;
   const parte = rx.decision === 'partimos' && rx.recomendado !== 'no';
   const negocio = lead.empresa || 'tu negocio';
@@ -164,8 +171,8 @@ function correoRadiografia(lead, rx, portal) {
     'Tu plan de acción:', ...mejoras.map((m, i) => `${i + 1}. ${m}`), '',
     rx.recomendado === 'no' ? 'Por ahora no te recomiendo invertir en un sistema: con estos pasos ya puedes ordenar mucho.' :
       `Pack ${pk.nm}: ${clp(pk.impl)} de implementación (50% al firmar: ${clp(pk.impl / 2)}) y ${clp(pk.mes)} al mes desde el mes 2. Valores + boleta de honorarios.`,
-    parte ? 'Próximos pasos: revisas la propuesta y el contrato, pagas el 50% desde tu portal y partimos con el kickoff en 48 horas.' : 'Cualquier duda, respóndeme este correo o escríbeme por WhatsApp al +56 9 7696 2659.',
-    portal && parte ? `Propuesta: ${portal}/propuesta\nContrato: ${portal}/contrato\nTu portal de cliente: ${portal}` : '', '',
+    parte ? `Próximos pasos: pagas el 50% de inicio (${clp(pk.impl / 2)}) desde tu portal con Mercado Pago, revisas la guía de bienvenida con lo que necesitamos de ti y partimos con el kickoff en 48 horas.` : 'Cualquier duda, respóndeme este correo o escríbeme por WhatsApp al +56 9 7696 2659.',
+    portal && parte ? `${cobro ? `Pagar el 50% ahora: ${portal}#pres\n` : ''}Guía de bienvenida: ${portal}/bienvenida\nPropuesta: ${portal}/propuesta\nContrato: ${portal}/contrato\nTu portal de cliente: ${portal}` : '', '',
     'Benja · HORIZON', 'horizonweb.cl',
   ].filter(l => l !== null).join('\n');
 
@@ -186,11 +193,70 @@ function correoRadiografia(lead, rx, portal) {
       ${fila('Implementación (pago único)', clp(pk.impl))}${fila('50% al firmar', clp(pk.impl / 2))}${fila('50% antes de la entrega', clp(pk.impl / 2))}${fila('Mensualidad desde el mes 2', clp(pk.mes) + ' / mes')}
     </table>
     <p style="font-size:12px;color:#9C96AB;margin:0 0 18px">Valores + boleta de honorarios. Mes a mes, sin permanencia. Propuesta válida por 15 días.</p>`}
-    ${parte ? `<h2 style="font-size:17px;margin:0 0 8px">Próximos pasos</h2><ol style="margin:0 0 18px;padding-left:20px;font-size:14.5px;line-height:1.5"><li>Revisas la propuesta y el contrato (botones de abajo).</li><li>Pagas el 50% de inicio desde tu portal, con Mercado Pago.</li><li>Kickoff en 48 horas. El avance lo ves en tu portal.</li></ol>${portal ? `<p style="margin:0 0 10px;font-size:14.5px">Tus documentos, listos para revisar y guardar en PDF:</p><p style="margin:0 0 18px"><a href="${h(portal)}/propuesta" style="display:inline-block;background:#1A1626;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ver propuesta</a><a href="${h(portal)}/contrato" style="display:inline-block;background:#1A1626;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ver contrato</a><a href="${h(portal)}" style="display:inline-block;background:#F2690C;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ir a mi portal</a></p>` : ''}` : '<p style="font-size:14.5px;margin:0 0 18px">Cualquier duda, responde este correo o escríbeme por WhatsApp al +56 9 7696 2659.</p>'}
+    ${parte ? `<h2 style="font-size:17px;margin:0 0 8px">Próximos pasos</h2><ol style="margin:0 0 18px;padding-left:20px;font-size:14.5px;line-height:1.5"><li>Pagas el 50% de inicio (${clp(pk.impl / 2)}) desde tu portal, con Mercado Pago.</li><li>Revisas la guía de bienvenida: ahí está lo que necesitamos de ti para partir.</li><li>Kickoff en 48 horas. El avance y el pago del 50% restante quedan en tu portal.</li></ol>${portal ? `${cobro ? `<p style="margin:0 0 18px"><a href="${h(portal)}#pres" style="display:block;text-align:center;background:#F2690C;color:#fff;text-decoration:none;font-weight:800;font-size:16px;padding:15px 16px;border-radius:12px">Pagar el 50% ahora · ${clp(pk.impl / 2)}</a></p>` : ''}<p style="margin:0 0 10px;font-size:14.5px">Tus documentos, listos para revisar y guardar en PDF:</p><p style="margin:0 0 18px"><a href="${h(portal)}/bienvenida" style="display:inline-block;background:#7B3FA0;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Guía de bienvenida</a><a href="${h(portal)}/propuesta" style="display:inline-block;background:#1A1626;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ver propuesta</a><a href="${h(portal)}/contrato" style="display:inline-block;background:#1A1626;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ver contrato</a><a href="${h(portal)}" style="display:inline-block;background:#F2690C;color:#fff;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:12px;margin:0 8px 8px 0">Ir a mi portal</a></p>` : ''}` : '<p style="font-size:14.5px;margin:0 0 18px">Cualquier duda, responde este correo o escríbeme por WhatsApp al +56 9 7696 2659.</p>'}
     <p style="font-size:14.5px;margin:0">Benja<br><span style="color:#9C96AB">HORIZON · Rancagua · horizonweb.cl</span></p>
   </div>
 </div></body></html>`;
   return { subject, text, html };
+}
+
+// Proyecto + cobro 50/50 del pack elegido (regla fija: 50% al partir, 50% antes de la entrega).
+// Idempotente: si el lead ya tiene proyecto lo reutiliza; si ya hay un pago hecho no toca el presupuesto;
+// si cambió de pack sin haber pagado, rehace los dos ítems con los montos nuevos.
+const HITOS_TERRENO = {
+  esencial: ['Kickoff e insumos', 'Web y Google Business', 'Agente IA y panel', 'Pruebas y entrega'],
+  pro:      ['Kickoff e insumos', 'Web y Google Business', 'Agente IA y panel', 'Seguimiento, recordatorios y tablero', 'Pruebas y entrega'],
+};
+async function prepararCobro(SB_URL, SRK, lead, rx) {
+  const k = rx.elegido === 'pro' ? 'pro' : 'esencial';
+  const pk = PACKS[k];
+  const mitad = Math.round(pk.impl / 2);
+  const h = { apikey: SRK, Authorization: 'Bearer ' + SRK, 'Content-Type': 'application/json' };
+  const get = async (path) => {
+    const r = await httpsRequest('GET', `${SB_URL}/rest/v1/${path}`, h);
+    if (r.status !== 200) throw new Error('GET ' + path.split('?')[0] + ' ' + r.status);
+    return JSON.parse(r.body || '[]');
+  };
+  try {
+    let [project] = await get(`projects?lead_id=eq.${encodeURIComponent(lead.id)}&select=id&order=created_at.asc&limit=1`);
+    if (!project) {
+      const r = await httpsRequest('POST', `${SB_URL}/rest/v1/projects`, { ...h, Prefer: 'return=representation' }, {
+        lead_id: lead.id, nombre: lead.empresa || lead.nombre || 'Proyecto', plan: lead.plan, estado: 'init',
+        descripcion: `Pack ${pk.nm} · partió en terreno con la radiografía`,
+      });
+      if (r.status >= 300) throw new Error('POST projects ' + r.status + ' ' + r.body);
+      project = JSON.parse(r.body || '[]')[0];
+      if (!project) throw new Error('POST projects sin respuesta');
+      const hitos = HITOS_TERRENO[k].map(nombre => ({ id: uid(), project_id: project.id, nombre, estado: 'pending', deliverables: [] }));
+      const m = await httpsRequest('POST', `${SB_URL}/rest/v1/project_milestones`, { ...h, Prefer: 'return=minimal' }, hitos);
+      if (m.status >= 300) console.warn('[leads] hitos:', m.status, m.body);
+    }
+
+    const items = await get(`budget_items?project_id=eq.${project.id}&select=id,monto,estado`);
+    if (items.some(i => i.estado === 'pagado')) return true;                       // ya pagó algo: no se toca
+    const total = items.reduce((a, i) => a + (Number(i.monto) || 0), 0);
+    if (items.length === 2 && total === pk.impl) return true;                        // ya está listo
+    if (items.length) {
+      const d = await httpsRequest('DELETE', `${SB_URL}/rest/v1/budget_items?project_id=eq.${project.id}&estado=eq.pendiente`, { ...h, Prefer: 'return=minimal' });
+      if (d.status >= 300) throw new Error('DELETE budget_items ' + d.status);
+    }
+    const filas = [
+      { project_id: project.id, orden: 1, nombre: `Anticipo 50% · Pack ${pk.nm}`, monto: mitad,
+        descripcion: 'Reserva el inicio. Con este pago agendamos el kickoff dentro de 48 horas.' },
+      { project_id: project.id, orden: 2, nombre: `Saldo 50% · Pack ${pk.nm}`, monto: pk.impl - mitad, bloquea_entrega: true,
+        descripcion: 'Se paga cuando revisas todo funcionando, antes de la entrega final.' },
+    ];
+    let b = await httpsRequest('POST', `${SB_URL}/rest/v1/budget_items`, { ...h, Prefer: 'return=minimal' }, filas);
+    if (b.status >= 300) {                                                            // sin la migración 014: sin bloquea_entrega
+      b = await httpsRequest('POST', `${SB_URL}/rest/v1/budget_items`, { ...h, Prefer: 'return=minimal' },
+        filas.map(({ bloquea_entrega, ...f }) => f));
+    }
+    if (b.status >= 300) throw new Error('POST budget_items ' + b.status + ' ' + b.body);
+    return true;
+  } catch (e) {
+    console.error('[leads] cobro:', e.message);
+    return false;
+  }
 }
 
 // Lead existente (mismo correo): conserva su id y su portal, suma la radiografía y sube la etapa

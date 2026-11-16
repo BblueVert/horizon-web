@@ -145,6 +145,10 @@ async function webhook(req, res) {
         lead_id: project.lead_id, tipo: 'pago', autor: 'horizon',
         contenido: `Pago recibido: ${item.nombre} (${clp(item.monto)}). ¡Gracias!`,
       }).catch(err => console.warn('[pagos] evento:', err.message));
+      // Primer pago (el anticipo) = cliente: el lead sube a "arranque" en OPS. Nunca baja una etapa más avanzada.
+      await httpsRequest('PATCH',
+        `${SB_URL}/rest/v1/leads?id=eq.${encodeURIComponent(project.lead_id)}&status=in.(new,contactado,propuesta)`,
+        sbw, { status: 'arranque' }).catch(err => console.warn('[pagos] etapa lead:', err.message));
     }
     console.log('[pagos] ítem pagado:', itemId, 'MP', pago.id);
     return res.status(200).json({ ok: true });

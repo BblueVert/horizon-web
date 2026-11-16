@@ -479,12 +479,79 @@ function contrato(lead) {
   return shell({ titulo: 'Contrato · ' + D.negocio, cuerpo: portada + p2 + p3 + p4 + p5, css: CON_CSS, color: D.color });
 }
 
+// Guía de bienvenida: qué pasa ahora, qué necesitamos del cliente y cómo se paga (50/50 desde el portal).
+// Insumos: los de la Orden de Inicio (.claude/skills/documentos-cliente/estructuras/orden-inicio.md) que aplican a cada pack.
+const BIEN_CSS = CON_CSS + `
+.steps{display:grid;gap:10px;margin:0 0 18px}
+.step{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start;border:1px solid var(--line2);border-radius:14px;padding:12px 14px;background:var(--bg)}
+.step .nn{width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff;font:600 8.5pt var(--m);display:grid;place-items:center}
+.step b{display:block;font-size:10.5pt}.step span{color:var(--ink2);font-size:9.5pt}.step em{font:500 7.5pt var(--m);letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-style:normal;white-space:nowrap}
+.chk{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
+.chk li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:10pt}
+.chk li i{width:16px;height:16px;border:1.5px solid var(--line2);border-radius:5px;margin-top:2px;background:#fff}
+.chk li small{display:block;color:var(--ink3);font-size:8.5pt}
+.pay{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:0 0 14px}
+.pay div{border-radius:14px;padding:12px 14px;background:var(--bg2)}.pay small{display:block;font:500 7pt var(--m);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:2px}.pay b{font-size:12pt}
+.pay div.hl{background:var(--deep);color:#fff}.pay div.hl small{color:#E4DDF5}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px}.links a{font:700 9.5pt var(--f);text-decoration:none;border-radius:10px;padding:9px 12px;background:var(--ink);color:#fff}.links a.p{background:var(--acc)}
+@media screen and (max-width:760px){.pay{grid-template-columns:1fr}.step{grid-template-columns:30px 1fr}.step em{grid-column:2}}`;
+
+function bienvenida(lead, portal) {
+  const D = datos(lead), { pk, k } = D, M = medios(D);
+  const mitad = Math.round(pk.impl / 2);
+  const codigo = `HZ-${D.anio}-${D.slug}-BV`;
+  const band = `<div class="band"><img src="${LOGO}" alt="HORIZON"><span><i></i>HORIZON × ${h(D.negocio)}</span></div>`;
+  const foot = n => `<div class="foot"><span>/ Guía de bienvenida · ${h(codigo)}</span><span><b>${n}</b> / 02</span></div>`;
+  const photo = `style="background-image:url('${h(M.hero)}');height:200px"`;
+
+  const pasos = [
+    ['Pago del 50% de inicio', `${clp(mitad)} desde su portal de cliente, con Mercado Pago. Con este pago queda reservado el inicio.`, 'Hoy'],
+    ['Envío de la información', 'La lista de la página siguiente. Mientras más completa llegue, más rápido avanzamos.', '5 días hábiles'],
+    ['Reunión de inicio (kickoff)', '30 minutos, en persona o por videollamada, para revisar su negocio y dejar el calendario de trabajo.', '48 horas'],
+    ['Construcción', k === 'pro' ? 'Web, Google Business, agente IA en WhatsApp, panel, seguimiento, recordatorios y tablero.' : 'Web, Google Business, agente IA en WhatsApp y panel de consultas y agenda.', pk.plazo],
+    ['Pruebas con usted', 'Le escribe al agente como si fuera un cliente, revisa la web y pedimos los ajustes antes de entregar.', 'Antes de entregar'],
+    ['Pago del 50% restante y entrega', `${clp(pk.impl - mitad)} desde el mismo portal. Con ese pago se liberan la entrega final y los accesos.`, 'Entrega'],
+  ];
+
+  const insumos = [
+    ['Logo, colores y tipografías', 'Si los tiene. Si no, trabajamos con una propuesta simple.'],
+    ['Servicios o productos, precios, horarios y políticas', 'Abono, cancelaciones, medios de pago, zonas de reparto: lo que el agente debe saber responder.'],
+    ['Fotos del local, del equipo y de sus trabajos o productos', 'Desde el celular sirven, con buena luz.'],
+    ['Las 10 preguntas que más le hacen sus clientes', 'Tal como se las escriben. Es la base del entrenamiento del agente.'],
+    ['Número de WhatsApp para el agente', 'Idealmente WhatsApp Business. Lo configuramos juntos en el kickoff.'],
+    ['Cuenta de Google con acceso a su ficha de Google Business', 'Si no tiene ficha, la creamos.'],
+    ['Cómo agenda o toma pedidos hoy', 'Cuaderno, app o calendario. Si usa una app de reservas, el acceso o el link.'],
+    ['Dominio (si ya tiene uno)', 'Y los datos del hosting, si existe una web anterior.'],
+  ].concat(k === 'pro' ? [['Lista de clientes actuales (opcional)', 'Nombre y teléfono, para el seguimiento y la reactivación mensual. Solo con clientes que le dieron su número.']] : []);
+
+  const p1 = `<section class="pg cover"><div class="top"><img src="${LOGO}" alt="HORIZON"><span>${h(codigo)}</span></div>
+    <div class="body"><div><span class="eb">Bienvenida · ${h(pk.nm)}</span><h1>Bienvenida a<br><span class="g">HORIZON.</span></h1><p class="sub">${h(D.nombre)}, esta guía resume cómo seguimos con ${h(D.negocio)}, qué necesitamos de usted y cómo se paga.</p></div>
+    ${M.hero ? `<div class="photo" ${photo}></div>` : ''}
+    <h2 class="sec">Cómo seguimos</h2>
+    <div class="steps">${pasos.map(([t, d, w], i) => `<div class="step"><span class="nn">${String(i + 1).padStart(2, '0')}</span><div><b>${h(t)}</b><span>${h(d)}</span></div><em>${h(w)}</em></div>`).join('')}</div>
+    </div>${foot('01')}</section>`;
+
+  const p2 = `<section class="pg">${band}<div class="in">
+    <h2 class="sec">Lo que necesitamos de usted</h2>
+    <p style="text-align:left">Envíelo por WhatsApp o desde su portal dentro de los <span class="acc">5 días hábiles</span> siguientes al pago de inicio. Si algo no lo tiene, nos dice y lo resolvemos juntos.</p>
+    <ul class="chk">${insumos.map(([t, d]) => `<li><i></i><div>${h(t)}<small>${h(d)}</small></div></li>`).join('')}</ul>
+    <h2 class="sec">Cómo se paga</h2>
+    <div class="pay"><div class="hl"><small>Hoy · 50% de inicio</small><b>${clp(mitad)}</b></div><div><small>Antes de la entrega · 50%</small><b>${clp(pk.impl - mitad)}</b></div><div><small>Desde el mes 2</small><b>${clp(pk.mes)} / mes</b></div></div>
+    <p style="text-align:left">Ambos pagos de la implementación se hacen desde su portal, con Mercado Pago. El primer mes de soporte va incluido; luego es mes a mes y sin permanencia. Valores con boleta de honorarios.</p>
+    ${portal ? `<div class="links"><a class="p" href="${h(portal)}#pres">Ir a pagar en mi portal</a><a href="${h(portal)}/propuesta">Propuesta</a><a href="${h(portal)}/contrato">Contrato</a></div>` : ''}
+    <h2 class="sec">Cómo nos comunicamos</h2>
+    <p style="text-align:left">WhatsApp <b>${h(CONTACTO.whatsapp)}</b> para coordinar y resolver dudas del día a día. Correo <b>${h(CONTACTO.correo)}</b> para aprobaciones formales. El avance del proyecto lo ve siempre en su portal.</p>
+    </div>${foot('02')}</section>`;
+
+  return shell({ titulo: 'Bienvenida · ' + D.negocio, cuerpo: p1 + p2, css: BIEN_CSS, color: D.color });
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
   if (rateLimit(getIp(req), 60_000, 30)) return res.status(429).send('Demasiadas solicitudes');
   const q = req.query || {};
   const token = String(q.t || q.token || ''), doc = String(q.doc || '');
-  if (!UUID_RE.test(token) || !['propuesta', 'contrato'].includes(doc)) return res.status(404).send('Documento no encontrado');
+  if (!UUID_RE.test(token) || !['propuesta', 'contrato', 'bienvenida'].includes(doc)) return res.status(404).send('Documento no encontrado');
   const SB_URL = process.env.SUPABASE_URL, SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!SB_URL || !SB_KEY) return res.status(503).send('Config incompleta');
   try {
@@ -495,7 +562,8 @@ module.exports = async function handler(req, res) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'private, no-store');
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-    return res.status(200).send(doc === 'contrato' ? contrato(lead) : propuesta(lead));
+    const portal = `${(process.env.SITE_URL || 'https://www.horizonweb.cl').replace(/\/$/, '')}/c/${token}`;
+    return res.status(200).send(doc === 'contrato' ? contrato(lead) : doc === 'bienvenida' ? bienvenida(lead, portal) : propuesta(lead));
   } catch (e) {
     return res.status(500).send('Error interno');
   }
@@ -503,3 +571,4 @@ module.exports = async function handler(req, res) {
 
 module.exports.propuesta = propuesta;
 module.exports.contrato = contrato;
+module.exports.bienvenida = bienvenida;
