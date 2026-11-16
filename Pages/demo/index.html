@@ -162,7 +162,9 @@ body.con-barra footer { padding-bottom: 110px; }
 .caja .x { width: 36px; height: 36px; border-radius: 50%; border: 0; background: #F1EEEA; font-size: 20px; cursor: pointer; line-height: 1; }
 .caja .cuerpo { padding: 16px 20px; overflow: auto; flex: 1; }
 .caja .pie { padding: 14px 20px 18px; border-top: 1px solid var(--line); }
-.caja .ph-g { aspect-ratio: 4 / 3; background: var(--c2) center/cover no-repeat; }
+.caja .ph-g { aspect-ratio: 4 / 3; max-height: 38vh; width: calc(100% + 40px); background: var(--c2); overflow: hidden; }
+.caja .ph-g img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lin .mini { overflow: hidden; position: relative; } .lin .mini img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .caja .desc { color: var(--ink2); font-size: 14.5px; margin: 4px 0 0; }
 .opc h4 { margin: 18px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink2); display: flex; justify-content: space-between; }
 .opc h4 em { font-style: normal; background: #F1EEEA; color: var(--ink); border-radius: 6px; padding: 1px 7px; font-size: 11px; letter-spacing: .04em; }
@@ -351,7 +353,9 @@ body.con-barra footer { padding-bottom: 110px; }
       tienda: '<path d="M4 8h16l-1.2 12.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z"/><path d="M8.5 10V6.5a3.5 3.5 0 0 1 7 0V10"/>' };
     var icoR = ICO[SLUG] || ICO.tienda;
     INI = function () { return '<svg class="ico-r" viewBox="0 0 24 24" aria-hidden="true">' + icoR + '</svg>'; };
-    FOTO = function (pr) { return pr.foto ? (/^https?:|^\//.test(pr.foto) ? pr.foto : FOTOS + pr.foto) : ''; };
+    // Tiendas: si no viene "foto", se busca /Identidad/demos/<slug>/p/<nombre-del-producto>.webp (si no existe, queda el ícono).
+    var slugify = function (t) { return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); };
+    FOTO = function (pr) { return pr.foto ? (/^https?:|^\//.test(pr.foto) ? pr.foto : FOTOS + pr.foto) : (TIENDA ? FOTOS + 'p/' + slugify(pr.nombre) + '.webp' : ''); };
     function mostrar(i) {
       [].forEach.call($('tabs').children, function (b, j) { b.setAttribute('aria-selected', j === i); });
       if (f.flujo === 'pedidos') {
@@ -360,7 +364,7 @@ body.con-barra footer { padding-bottom: 110px; }
         $('items').innerHTML = lista.map(function (pr) {
           var enCarro = cantDe(pr);
           if (TIENDA) {
-            return '<button class="prod" data-prod="' + pr.id + '"><div class="ph">' + (FOTO(pr) ? '<img src="' + esc(FOTO(pr)) + '" alt="" loading="lazy">' : INI()) + '<i>' + (desde(pr) == null ? 'Consultar' : pr.variantes.length ? 'Elegir talla' : 'Agregar al carro') + '</i></div>' +
+            return '<button class="prod" data-prod="' + pr.id + '"><div class="ph">' + INI() + (FOTO(pr) ? '<img src="' + esc(FOTO(pr)) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<i>' + (desde(pr) == null ? 'Consultar' : pr.variantes.length ? 'Elegir talla' : 'Agregar al carro') + '</i></div>' +
               '<b>' + esc(pr.nombre) + '</b><div class="pr">' + precioTxt(pr) + '</div>' +
               (pr.variantes.length ? '<div class="tl">' + pr.variantes.map(function (v) { return esc(v.nombre); }).join(' · ') + '</div>' : '') + '</button>';
           }
@@ -459,7 +463,7 @@ body.con-barra footer { padding-bottom: 110px; }
     pr.variantes.forEach(function (v) { ops.push({ n: v.nombre, p: v.precio }); });
     var conOps = ops.length > 1 || ops[0].n;
     var html = cab(esc(pr.nombre)) + '<div class="cuerpo">' +
-      (FOTO(pr) ? '<div class="ph-g" style="margin:-16px -20px 14px;background-image:url(' + esc(FOTO(pr)) + ')"></div>' : '') +
+      (FOTO(pr) ? '<div class="ph-g" style="margin:-16px -20px 14px"><img src="' + esc(FOTO(pr)) + '" alt="' + esc(pr.nombre) + '" onerror="this.parentNode.remove()"></div>' : '') +
       '<div style="font-size:20px;font-weight:800" id="pPrecio"></div>' +
       (pr.descripcion ? '<p class="desc">' + esc(pr.descripcion) + '</p>' : '') +
       (conOps ? '<div class="opc"><h4>' + (TIENDA ? 'Talla' : 'Elige una opción') + '<em>Obligatorio</em></h4>' +
@@ -499,7 +503,7 @@ body.con-barra footer { padding-bottom: 110px; }
     var envio = ENTREGA.delivery ? (ENTREGA.costo ? 'Se calcula según tu dirección' : '') : '';
     var html = cab(msg ? '✓ ' + esc(msg) : (TIENDA ? 'Tu carro' : 'Tu pedido')) + '<div class="cuerpo">' +
       (carro.length ? carro.map(function (l, k) {
-        return '<div class="lin"><div class="mini">' + (TIENDA ? INI() : '<b style="color:var(--c)">' + l.cant + '×</b>') + '</div><div class="tx"><b>' + esc(l.base) + '</b>' +
+        return '<div class="lin"><div class="mini">' + (TIENDA ? INI() + (PRODS[l.prod] && FOTO(PRODS[l.prod]) ? '<img src="' + esc(FOTO(PRODS[l.prod])) + '" alt="" onerror="this.remove()">' : '') : '<b style="color:var(--c)">' + l.cant + '×</b>') + '</div><div class="tx"><b>' + esc(l.base) + '</b>' +
           (l.op ? '<small>' + (TIENDA ? 'Talla ' : '') + esc(l.op) + '</small>' : '') + (l.nota ? '<small>“' + esc(l.nota) + '”</small>' : '') +
           '<div class="stepper chico" style="margin-top:6px"><button data-l="' + k + '" data-d="-1" aria-label="Quitar uno">' + (l.cant === 1 ? '🗑' : '−') + '</button><output>' + l.cant + '</output><button data-l="' + k + '" data-d="1" aria-label="Agregar uno">+</button></div></div>' +
           '<div class="pr">' + (l.precio ? dinero(l.precio * l.cant) : 'Gratis') + '</div></div>';
