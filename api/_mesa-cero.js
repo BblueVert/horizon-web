@@ -87,4 +87,15 @@ function enviarDelAgente(ficha, accion, { telefono, canal }) {
   });
 }
 
-module.exports = { enviarPedido, enviarAccion, enviarDelAgente, panelUrl, esTenant, itemsDeDetalle };
+// Al abrir la web de una demo: deja creado su negocio en Mesa Cero (carta, locales, rubro) para que el
+// panel no aparezca vacío antes del primer pedido. Una vez cada 10 min por demo y por instancia; si la
+// ficha no cambió, la base no toca nada (compara un hash).
+const ultimaSync = new Map();
+async function asegurarTenant(ficha) {
+  const slug = ficha && ficha.slug;
+  if (!esTenant(slug) || Date.now() - (ultimaSync.get(slug) || 0) < 600_000) return;
+  ultimaSync.set(slug, Date.now());
+  try { await sincronizar(ficha); } catch (e) { ultimaSync.delete(slug); console.error('mesa-cero demo:', e.message); }
+}
+
+module.exports = { enviarPedido, enviarAccion, enviarDelAgente, asegurarTenant, panelUrl, esTenant, itemsDeDetalle };

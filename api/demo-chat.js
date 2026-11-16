@@ -201,6 +201,7 @@ module.exports = async function handler(req, res) {
     const f = await fichaWeb(String((req.query && req.query.slug) || '')).catch(() => null);
     if (!f) return res.status(404).json({ error: 'Demo no encontrada' });
     const { nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega } = f;
+    await mesaCero.asegurarTenant(f); // el panel de Mesa Cero queda creado desde la primera visita a la web
     res.setHeader('Cache-Control', 'public, max-age=300');
     // panel: el de Mesa Cero si la demo es un tenant allá; si no, /visita/<slug>/panel
     return res.status(200).json({ nombre, saludo, color, catalogo, locales, reservas, descripcion, flujo, horario, asistente, entrega, panel: mesaCero.panelUrl(f.slug) });
