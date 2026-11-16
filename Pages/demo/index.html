@@ -148,14 +148,14 @@ body.con-barra footer { padding-bottom: 110px; }
 #capaProd { align-items: center; justify-content: center; padding: 16px; }
 #capaProd .caja { width: min(480px, 100%); max-height: 90vh; border-radius: 22px; transform: translateY(16px); overflow: hidden; }
 #capaProd.on .caja { transform: none; }
-#capaCarro { justify-content: flex-end; }
-#capaCarro .caja { width: min(420px, 100%); height: 100%; transform: translateX(100%); }
-#capaCarro.on .caja { transform: none; }
+#capaCarro, #capaReserva { justify-content: flex-end; }
+#capaCarro .caja, #capaReserva .caja { width: min(440px, 100%); height: 100%; transform: translateX(100%); }
+#capaCarro.on .caja, #capaReserva.on .caja { transform: none; }
 @media (max-width: 600px) {
   #capaProd { align-items: flex-end; padding: 0; }
   #capaProd .caja { border-radius: 22px 22px 0 0; transform: translateY(100%); }
-  #capaCarro { align-items: flex-end; }
-  #capaCarro .caja { width: 100%; height: auto; max-height: 92vh; border-radius: 22px 22px 0 0; transform: translateY(100%); }
+  #capaCarro, #capaReserva { align-items: flex-end; }
+  #capaCarro .caja, #capaReserva .caja { width: 100%; height: auto; max-height: 92vh; border-radius: 22px 22px 0 0; transform: translateY(100%); }
 }
 .caja .cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 18px 20px 12px; border-bottom: 1px solid var(--line); }
 .caja .cab h3 { margin: 0; font-size: 19px; letter-spacing: -.01em; }
@@ -212,6 +212,33 @@ body.con-barra footer { padding-bottom: 110px; }
 .ok-ico { width: 64px; height: 64px; border-radius: 50%; background: #E7F6EC; color: #1E7B45; display: grid; place-items: center; font-size: 32px; margin: 6px auto 12px; }
 .aviso { background: var(--ink); color: #fff; border-radius: 14px; padding: 12px 14px; white-space: pre-wrap; font-size: 13.5px; margin: 14px 0; }
 .aviso b:first-child { display: block; color: #FFD7A8; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+.plato .res { border: 0; background: var(--c); color: #fff; border-radius: 999px; padding: 10px 16px; font: 700 14px var(--f); flex: none; }
+/* Agenda (reservas): días en fila, horas en grilla */
+.pasos { display: flex; gap: 6px; margin-bottom: 14px; }
+.pasos i { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+.pasos i.on { background: var(--c); }
+.resumen { background: #F7F4F0; border-radius: 14px; padding: 12px 14px; font-size: 14px; margin-bottom: 12px; }
+.resumen b { display: block; font-size: 15px; }
+.resumen span { color: var(--ink2); }
+.mes { font-weight: 800; font-size: 15px; margin: 4px 0 10px; text-transform: capitalize; }
+.dias { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+.dias button { flex: none; width: 62px; border: 1.5px solid var(--line); border-radius: 14px; background: #fff; padding: 9px 0 8px; cursor: pointer; font: inherit; text-align: center; color: var(--ink); }
+.dias button small { display: block; font-size: 11.5px; color: var(--ink2); text-transform: capitalize; }
+.dias button b { display: block; font-size: 19px; }
+.dias button em { display: block; font-style: normal; font-size: 10.5px; color: #1E7B45; font-weight: 700; }
+.dias button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: #fff; }
+.dias button[aria-pressed="true"] small, .dias button[aria-pressed="true"] em { color: #fff; }
+.dias button:disabled { opacity: .4; cursor: default; }
+.dias button:disabled em { color: var(--ink2); }
+.horas { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-top: 14px; }
+.horas.bloques { grid-template-columns: 1fr; }
+.horas button { border: 1.5px solid var(--line); border-radius: 12px; background: #fff; padding: 11px 6px; font: 700 15px var(--f); cursor: pointer; color: var(--ink); }
+.horas button[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #fff; }
+.horas button:disabled { color: #B9B3AC; text-decoration: line-through; background: #F7F4F0; cursor: default; }
+.leyenda { display: flex; gap: 14px; font-size: 12px; color: var(--ink2); margin-top: 12px; }
+.leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid var(--line); margin-right: 5px; vertical-align: -1px; }
+.leyenda i.oc { background: #F7F4F0; }
+.cargando { text-align: center; color: var(--ink2); padding: 30px 0; }
 .toast { position: fixed; left: 50%; top: 84px; transform: translate(-50%, -20px); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 999px; font: 600 14px var(--f); z-index: 70; opacity: 0; transition: .25s; pointer-events: none; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 .vacio { padding: 30vh 16px; text-align: center; color: var(--ink2); }
@@ -272,6 +299,7 @@ body.con-barra footer { padding-bottom: 110px; }
 <button class="barra-p" id="barraP"><span class="q" id="barraQ">0</span><span>Ver pedido</span><span id="barraT">$0</span></button>
 <div class="capa" id="capaProd" aria-hidden="true"><div class="caja" role="dialog" aria-modal="true" aria-label="Producto" id="prodCaja"></div></div>
 <div class="capa" id="capaCarro" aria-hidden="true"><div class="caja" role="dialog" aria-modal="true" aria-label="Tu pedido" id="carroCaja"></div></div>
+<div class="capa" id="capaReserva" aria-hidden="true"><div class="caja" role="dialog" aria-modal="true" aria-label="Reservar" id="resCaja"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <a class="fab" id="fab" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
 
@@ -294,8 +322,8 @@ body.con-barra footer { padding-bottom: 110px; }
   // Textos según cómo atiende el negocio: pedidos, reservas o consultas
   var TEXTOS = {
     pedidos:  { cta: 'Hacer mi pedido', dest: 'Lo más pedido', tDest: 'Hecho para que vuelvas', carta: 'Carta', tCarta: 'Elige y te lo dejamos listo', accion: 'Pedir' },
-    reservas: { cta: 'Agendar por WhatsApp', dest: 'Nuestros servicios', tDest: 'Lo que hacemos por ti', carta: 'Servicios y precios', tCarta: 'Elige tu servicio y agendamos', accion: 'Agendar' },
-    consultas:{ cta: 'Consultar por WhatsApp', dest: 'Lo que ofrecemos', tDest: 'Te ayudamos a elegir', carta: 'Catálogo', tCarta: 'Pregunta por lo que te interese', accion: 'Consultar' },
+    reservas: { cta: 'Reservar hora', dest: 'Nuestros servicios', tDest: 'Lo que hacemos por ti', carta: 'Servicios y precios', tCarta: 'Elige tu servicio y reserva en línea', accion: 'Agendar', boton: 'Reservar' },
+    consultas:{ cta: 'Agendar visita', dest: 'Lo que ofrecemos', tDest: 'Te ayudamos a elegir', carta: 'Catálogo', tCarta: 'Elige y agenda tu visita en línea', accion: 'Consultar', boton: 'Agendar' },
   };
 
   // El negrita de WhatsApp (*así*) se ve como negrita en la web
@@ -374,6 +402,17 @@ body.con-barra footer { padding-bottom: 110px; }
         }).join('');
         return;
       }
+      if (f.flujo === 'reservas' || f.flujo === 'consultas') {
+        $('items').className = 'platos';
+        $('items').innerHTML = cats[i].items.map(function (it) {
+          var dur = (it.descripcion || '').match(/\d+\s*(?:min|h\b|horas?)/i);
+          return '<div class="plato" style="cursor:default"><div class="tx"><b>' + esc(it.nombre) + '</b>' +
+            (it.descripcion ? '<p>' + esc(it.descripcion) + '</p>' : '') +
+            '<div class="pr">' + (it.precio == null ? 'A cotizar' : it.precio === 0 ? 'Gratis' : dinero(it.precio)) + (dur ? ' <small>· ' + esc(dur[0]) + '</small>' : '') + '</div></div>' +
+            '<button class="res" data-reservar="' + esc(it.nombre) + '">' + esc(T.boton) + '</button></div>';
+        }).join('');
+        return;
+      }
       $('items').innerHTML = cats[i].items.map(function (it) {
         var vars = (it.variantes || []).length;
         var precio = vars ? 'desde ' + dinero(Math.min.apply(null, it.variantes.map(function (v) { return v.precio; }).concat(it.precio != null ? [it.precio] : []))) : (it.precio == null ? 'A cotizar' : it.precio === 0 ? 'Gratis' : dinero(it.precio));
@@ -384,6 +423,10 @@ body.con-barra footer { padding-bottom: 110px; }
       }).join('');
     }
     MOSTRAR = function () { var b = [].indexOf.call($('tabs').children, $('tabs').querySelector('[aria-selected="true"]')); if (b >= 0) mostrar(b); };
+    if (f.flujo === 'reservas' || f.flujo === 'consultas') {
+      ['ctaHero', 'ctaTop'].forEach(function (id) { var a = $(id); a.removeAttribute('target'); a.removeAttribute('data-wa'); a.href = '#'; a.setAttribute('data-reservar', ''); });
+      $('ctaTop').textContent = T.cta;
+    }
     if (f.flujo === 'pedidos') { $('cartBtn').classList.add('on'); if (TIENDA) { $('ctaHero').textContent = 'Ver productos'; $('ebCarta').textContent = 'Tienda'; $('navCarta').textContent = 'Tienda'; $('tituloCarta').textContent = 'Elige y te lo enviamos'; $('ctaCarta').textContent = 'Ver tienda'; } }
     // Automotora: vitrina de autos en vez de carta (fotos auto-1…N, si no hay usa la foto del auto destacado)
     if (SLUG === 'automotora') {
@@ -397,7 +440,7 @@ body.con-barra footer { padding-bottom: 110px; }
         return '<div class="auto"><figure><span class="tag">Revisado</span><img src="' + FOTOS + 'auto-' + (n + 1) + '.webp" alt="' + esc(titulo) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + FOTOS + 'producto-1.webp\'"></figure>' +
           '<div><h3>' + esc(titulo) + '</h3><div class="spec">' + esc([km, it.descripcion].filter(Boolean).join(' · ')) + '</div>' +
           '<div class="precio">' + (it.precio ? dinero(it.precio) : 'A cotizar') + '</div></div>' +
-          '<div class="btns"><a class="b-wa" data-wa target="_blank" rel="noopener" aria-label="WhatsApp">' + WAICO + '</a><a class="b-res" data-wa target="_blank" rel="noopener">RESERVAR</a><a class="b-cot" data-wa target="_blank" rel="noopener">COTIZAR</a></div></div>';
+          '<div class="btns"><a class="b-wa" data-wa target="_blank" rel="noopener" aria-label="WhatsApp">' + WAICO + '</a><a class="b-res" href="#" data-reservar="' + esc(it.nombre) + '">AGENDAR</a><a class="b-cot" href="#" data-cotizar="' + esc(it.nombre) + '">COTIZAR</a></div></div>';
       }).join('');
       [].forEach.call(document.querySelectorAll('[data-wa]'), function (a) { a.href = WA; });
     } else {
@@ -566,6 +609,151 @@ body.con-barra footer { padding-bottom: 110px; }
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && abierta) cerrar(); });
   document.addEventListener('click', function (e) { var p = e.target.closest('[data-prod]'); if (p) verProducto(+p.dataset.prod); });
+
+  // ── Agenda en línea (reservas y consultas) ─────────────────────────────
+  // 1 servicio → 2 día y hora (solo horas libres, de /api/demo-chat?agenda=1) → 3 datos → 4 confirmada.
+  var RES = { servicio: '', fecha: '', hora: '', etiqueta: '', dias: null, dur: 0 };
+  var DSEM = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'], MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  var dF = function (f) { return new Date(f + 'T12:00:00'); };
+  var fechaLarga = function (f) { var d = dF(f); return ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()]; };
+  function itemsRes() { var out = []; ((ficha && ficha.catalogo) || []).forEach(function (c) { (c.items || []).forEach(function (it) { out.push({ cat: c.categoria, it: it }); }); }); return out; }
+  function pasos(n) { return '<div class="pasos" aria-hidden="true">' + [1, 2, 3].map(function (k) { return '<i class="' + (k <= n ? 'on' : '') + '"></i>'; }).join('') + '</div>'; }
+  function precioDe(nombre) { var x = itemsRes().filter(function (o) { return o.it.nombre === nombre; })[0]; return x ? x.it.precio : null; }
+  function resumenRes(conHora) {
+    var p = precioDe(RES.servicio);
+    return '<div class="resumen"><b>' + esc(RES.servicio) + '</b><span>' + (p ? dinero(p) : p === 0 ? 'Gratis' : 'A cotizar') + (RES.dur ? ' · ' + RES.dur + ' min' : '') + '</span>' +
+      (conHora && RES.fecha ? '<div style="margin-top:6px;font-weight:700">' + esc(fechaLarga(RES.fecha)) + ' · ' + esc(RES.etiqueta || RES.hora) + '</div>' : '') + '</div>';
+  }
+  function abrirReserva(servicio) {
+    RES = { servicio: '', fecha: '', hora: '', etiqueta: '', dias: null, dur: 0 };
+    if (servicio) { RES.servicio = servicio; verHoras(); } else verServicios();
+    if (abierta !== 'capaReserva') abrir('capaReserva');
+  }
+  function verServicios() {
+    var lista = itemsRes(), cat = '';
+    $('resCaja').innerHTML = cab(ficha && ficha.flujo === 'consultas' ? 'Agendar visita' : 'Reservar hora') + '<div class="cuerpo">' + pasos(1) +
+      '<div class="opc"><h4>¿Qué necesitas?</h4>' + lista.map(function (o, k) {
+        var h = o.cat !== cat ? '<div style="font-size:12px;font-weight:800;color:var(--ink2);margin:14px 0 2px;text-transform:uppercase;letter-spacing:.06em">' + esc(o.cat) + '</div>' : ''; cat = o.cat;
+        return h + '<label class="radio"><input type="radio" name="srv" value="' + k + '"' + (o.it.nombre === RES.servicio ? ' checked' : '') + '><span>' + esc(o.it.nombre) +
+          (o.it.descripcion ? '<br><small style="font-size:12.5px">' + esc(o.it.descripcion) + '</small>' : '') + '</span><small>' + (o.it.precio == null ? 'A cotizar' : o.it.precio ? dinero(o.it.precio) : 'Gratis') + '</small></label>';
+      }).join('') + '</div></div><div class="pie"><button class="btn-ok full" id="rSig1" disabled>Elegir día y hora</button></div>';
+    $('resCaja').onchange = function () { var r = $('resCaja').querySelector('input[name=srv]:checked'); if (r) { RES.servicio = lista[+r.value].it.nombre; $('rSig1').disabled = false; } };
+    if (RES.servicio) $('rSig1').disabled = false;
+  }
+  async function verHoras(msg) {
+    $('resCaja').innerHTML = cab('Elige día y hora') + '<div class="cuerpo">' + pasos(2) + resumenRes(false) + (msg ? '<p class="err">' + esc(msg) + '</p>' : '') + '<div class="cargando">Buscando horas libres…</div></div>';
+    try {
+      var r = await fetch('/api/demo-chat?slug=' + SLUG + '&agenda=1&servicio=' + encodeURIComponent(RES.servicio));
+      var d = await r.json(); if (!r.ok) throw new Error(d.error || 'error');
+      RES.dias = d.dias; RES.dur = d.duracion;
+    } catch (e) { $('resCaja').querySelector('.cargando').textContent = 'No pudimos cargar la agenda. Intenta de nuevo.'; return; }
+    var conLibres = RES.dias.filter(function (x) { return x.slots.some(function (s) { return s.libre; }); });
+    if (!RES.fecha || !conLibres.some(function (x) { return x.fecha === RES.fecha; })) RES.fecha = conLibres.length ? conLibres[0].fecha : '';
+    RES.hora = ''; pintarHoras(msg);
+  }
+  function pintarHoras(msg) {
+    var dia = (RES.dias || []).filter(function (x) { return x.fecha === RES.fecha; })[0];
+    var bloques = dia && dia.slots.some(function (s) { return s.etiqueta; });
+    $('resCaja').innerHTML = cab('Elige día y hora') + '<div class="cuerpo">' + pasos(2) + resumenRes(false) + (msg ? '<p class="err">' + esc(msg) + '</p>' : '') +
+      '<div class="mes">' + (RES.fecha ? MESES[dF(RES.fecha).getMonth()] + ' ' + dF(RES.fecha).getFullYear() : '') + '</div>' +
+      '<div class="dias" role="group" aria-label="Días">' + RES.dias.map(function (x) {
+        var n = x.slots.filter(function (s) { return s.libre; }).length, d = dF(x.fecha);
+        return '<button data-f="' + x.fecha + '" aria-pressed="' + (x.fecha === RES.fecha) + '"' + (n ? '' : ' disabled') + '><small>' + DSEM[d.getDay()] + '</small><b>' + d.getDate() + '</b><em>' + (x.slots.length ? (n ? n + ' libres' : 'Lleno') : 'Cerrado') + '</em></button>';
+      }).join('') + '</div>' +
+      (dia ? '<div class="horas' + (bloques ? ' bloques' : '') + '" role="group" aria-label="Horas">' + dia.slots.map(function (s) {
+        return '<button data-h="' + s.hora + '" data-e="' + esc(s.etiqueta || '') + '" aria-pressed="' + (s.hora === RES.hora) + '"' + (s.libre ? '' : ' disabled aria-label="' + s.hora + ' ocupada"') + '>' + esc(s.etiqueta || s.hora) + '</button>';
+      }).join('') + '</div><div class="leyenda"><span><i></i>Libre</span><span><i class="oc"></i>Ocupada</span></div>' : '<p class="cargando">No hay horas disponibles en los próximos días.</p>') +
+      '</div><div class="pie"><button class="btn-ok full" id="rSig2"' + (RES.hora ? '' : ' disabled') + '>' + (RES.hora ? 'Continuar · ' + esc(fechaLarga(RES.fecha)) + ' ' + esc(RES.etiqueta || RES.hora) : 'Elige una hora') + '</button>' +
+      '<p style="text-align:center;margin:10px 0 0;font-size:13.5px"><a href="#" id="rVolver1" style="color:var(--ink2)">← Cambiar servicio</a></p></div>';
+    var sel = $('resCaja').querySelector('.dias [aria-pressed="true"]'); if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+  var EXCLUIR = /^nombre( del tutor)?$|tel[eé]fono|servicio|^d[ií]a|^hora|bloque|clase de prueba o visita|auto de inter[eé]s|visita al local o llamada|consulta o domicilio/i;
+  function camposExtra() {
+    return (((ficha && ficha.reservas) || {}).datos || []).filter(function (x) { return !EXCLUIR.test(x); }).map(function (x, k) {
+      var etq = x.replace(/\s*\((con fotos.*?)\)/i, '').replace(/^./, function (c) { return c.toUpperCase(); });
+      if (/contado, cr[eé]dito/i.test(x)) return '<label class="campo"><span>Forma de pago</span><select data-x="' + esc(etq) + '"><option>Contado</option><option>Crédito</option><option>Parte de pago</option></select></label>';
+      return '<label class="campo"><span>' + esc(etq) + '</span><input data-x="' + esc(etq) + '"' + (/rut/i.test(x) ? ' placeholder="12.345.678-9"' : '') + '></label>';
+    }).join('');
+  }
+  function verDatosRes() {
+    $('resCaja').innerHTML = cab('Tus datos') + '<div class="cuerpo">' + pasos(3) + resumenRes(true) +
+      '<label class="campo"><span>Nombre</span><input id="rNom" autocomplete="name"></label>' +
+      '<label class="campo"><span>Teléfono</span><input id="rTel" inputmode="tel" autocomplete="tel" placeholder="9 1234 5678"></label>' + camposExtra() +
+      '<label class="campo"><span>Comentario (opcional)</span><input id="rNota" maxlength="200"></label><p class="err" id="rErr" hidden></p></div>' +
+      '<div class="pie"><button class="btn-ok full" id="rOk">Confirmar reserva</button><p style="text-align:center;margin:10px 0 0;font-size:13.5px"><a href="#" id="rVolver2" style="color:var(--ink2)">← Cambiar hora</a></p></div>';
+    setTimeout(function () { $('rNom').focus(); }, 60);
+  }
+  function ics(codigo) {
+    var d = RES.fecha.replace(/-/g, ''), h = RES.hora.replace(':', '') + '00';
+    var fin = new Date(dF(RES.fecha).setHours(+RES.hora.slice(0, 2), +RES.hora.slice(3) + (RES.dur || 30)));
+    var hf = String(fin.getHours()).padStart(2, '0') + String(fin.getMinutes()).padStart(2, '0') + '00';
+    var l0 = (ficha.locales || [])[0] || {};
+    var txt = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HORIZON//demo//ES', 'BEGIN:VEVENT', 'UID:' + codigo + '@horizonweb.cl', 'DTSTART;TZID=America/Santiago:' + d + 'T' + h,
+      'DTEND;TZID=America/Santiago:' + d + 'T' + hf, 'SUMMARY:' + RES.servicio + ' · ' + ficha.nombre, 'LOCATION:' + [l0.direccion, l0.comuna].filter(Boolean).join(', '), 'DESCRIPTION:Reserva ' + codigo, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(txt);
+  }
+  async function confirmarRes() {
+    var extras = [].map.call($('resCaja').querySelectorAll('[data-x]'), function (el) { return { k: el.getAttribute('data-x'), v: el.value }; });
+    $('rOk').disabled = true; $('rErr').hidden = true;
+    try {
+      var r = await fetch('/api/demo-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: SLUG,
+        reserva: { servicio: RES.servicio, fecha: RES.fecha, hora: RES.hora, nombre: $('rNom').value, telefono: $('rTel').value, extras: extras, nota: $('rNota').value } }) });
+      var d = await r.json();
+      if (r.status === 409) { RES.fecha = RES.fecha; return verHoras(d.error); }
+      if (!r.ok) throw new Error(d.error || 'No se pudo reservar');
+      var links = fmt((d.extras || []).join('\n\n')).replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" rel="noopener">Pagar ahora →</a>');
+      $('resCaja').innerHTML = cab('Reserva confirmada') + '<div class="cuerpo" style="text-align:center"><div class="ok-ico">✓</div>' +
+        '<div style="font-size:20px;font-weight:800">¡Listo, ' + esc($('rNom') ? $('rNom').value.split(' ')[0] : '') + '!</div>' +
+        '<div style="margin:6px 0 2px;font-weight:700">' + esc(fechaLarga(RES.fecha)) + ' · ' + esc(RES.etiqueta || RES.hora) + '</div><div style="color:var(--ink2)">' + esc(RES.servicio) + ' · código ' + esc(d.codigo) + '</div>' +
+        '<p><a class="btn" href="' + ics(d.codigo) + '" download="reserva-' + esc(d.codigo) + '.ics" style="margin-top:12px">Agregar a mi calendario</a></p>' +
+        (links ? '<p style="white-space:pre-wrap;text-align:left">' + links + '</p>' : '') +
+        '<div class="aviso" style="text-align:left"><b>Así le llega al dueño</b>' + fmt(d.aviso || '') + '</div></div>' +
+        '<div class="pie"><a class="btn-ok full" href="' + esc(d.panel || PANEL) + '" target="_blank" rel="noopener" style="text-decoration:none">Ver agenda del dueño</a></div>';
+    } catch (err) { $('rErr').hidden = false; $('rErr').textContent = err.message; $('rOk').disabled = false; }
+  }
+  // Automotora: cotizar un auto (sin hora) → consulta en la agenda del panel.
+  function verCotizar(auto) {
+    $('resCaja').innerHTML = cab('Cotizar') + '<div class="cuerpo"><div class="resumen"><b>' + esc(auto) + '</b><span>' + (precioDe(auto) ? dinero(precioDe(auto)) : '') + '</span></div>' +
+      '<label class="campo"><span>Forma de pago</span><select id="qPago"><option>Contado</option><option>Crédito</option><option>Parte de pago</option></select></label>' +
+      '<div id="qCred" hidden><label class="campo"><span>Pie disponible</span><input id="qPie" inputmode="numeric" placeholder="$2.000.000"></label>' +
+      '<label class="campo"><span>Plazo</span><select id="qPlazo"><option>24 meses</option><option>36 meses</option><option>48 meses</option></select></label>' +
+      '<label class="campo"><span>Situación laboral</span><select id="qLab"><option>Dependiente</option><option>Independiente</option></select></label></div>' +
+      '<label class="campo"><span>Nombre</span><input id="rNom" autocomplete="name"></label><label class="campo"><span>Teléfono</span><input id="rTel" inputmode="tel" placeholder="9 1234 5678"></label>' +
+      '<p class="err" id="rErr" hidden></p></div><div class="pie"><button class="btn-ok full" id="qOk">Pedir cotización</button></div>';
+    $('resCaja').onchange = function () { $('qCred').hidden = $('qPago').value !== 'Crédito'; };
+    $('resCaja').setAttribute('data-auto', auto);
+    if (abierta !== 'capaReserva') abrir('capaReserva');
+  }
+  async function enviarCotizacion() {
+    var auto = $('resCaja').getAttribute('data-auto'), cred = $('qPago').value === 'Crédito';
+    var extras = [{ k: 'Forma de pago', v: $('qPago').value }].concat(cred ? [{ k: 'Pie', v: $('qPie').value }, { k: 'Plazo', v: $('qPlazo').value }, { k: 'Situación laboral', v: $('qLab').value }] : []);
+    $('qOk').disabled = true;
+    try {
+      var r = await fetch('/api/demo-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: SLUG,
+        consulta: { asunto: 'Cotización: ' + auto, nombre: $('rNom').value, telefono: $('rTel').value, extras: extras } }) });
+      var d = await r.json(); if (!r.ok) throw new Error(d.error || 'No se pudo enviar');
+      $('resCaja').innerHTML = cab('Cotización enviada') + '<div class="cuerpo" style="text-align:center"><div class="ok-ico">✓</div><div style="font-size:19px;font-weight:800">Te contactamos hoy con tu cotización</div>' +
+        '<p style="color:var(--ink2)">' + esc(auto) + '</p><div class="aviso" style="text-align:left"><b>Así le llega al dueño</b>' + fmt(d.aviso || '') + '</div>' +
+        '<button class="btn" data-reservar="' + esc(auto) + '" style="margin-top:6px">Agendar una visita para verlo</button></div>' +
+        '<div class="pie"><a class="btn-ok full" href="' + esc(d.panel || PANEL) + '" target="_blank" rel="noopener" style="text-decoration:none">Ver panel del dueño</a></div>';
+    } catch (err) { $('rErr').hidden = false; $('rErr').textContent = err.message; $('qOk').disabled = false; }
+  }
+  $('capaReserva').addEventListener('click', function (e) { if (e.target === $('capaReserva') || e.target.closest('[data-cerrar]')) { e.preventDefault(); cerrar('capaReserva'); } });
+  $('resCaja').addEventListener('click', function (e) {
+    var t = e.target;
+    if (t.closest('#rSig1')) { RES.fecha = ''; verHoras(); return; }
+    var df = t.closest('[data-f]'); if (df) { RES.fecha = df.getAttribute('data-f'); RES.hora = ''; pintarHoras(); return; }
+    var dh = t.closest('[data-h]'); if (dh) { RES.hora = dh.getAttribute('data-h'); RES.etiqueta = dh.getAttribute('data-e') || ''; pintarHoras(); return; }
+    if (t.closest('#rSig2')) { verDatosRes(); return; }
+    if (t.closest('#rVolver1')) { e.preventDefault(); verServicios(); return; }
+    if (t.closest('#rVolver2')) { e.preventDefault(); pintarHoras(); return; }
+    if (t.closest('#rOk')) { confirmarRes(); return; }
+    if (t.closest('#qOk')) { enviarCotizacion(); return; }
+  });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-reservar]'); if (a) { e.preventDefault(); abrirReserva(a.getAttribute('data-reservar')); return; }
+    var c = e.target.closest('[data-cotizar]'); if (c) { e.preventDefault(); verCotizar(c.getAttribute('data-cotizar')); }
+  });
   pintarCarro();
   [].forEach.call(document.querySelectorAll('[data-wa], #fab'), function (a) { a.href = WA; });
   document.addEventListener('click', function (e) {
