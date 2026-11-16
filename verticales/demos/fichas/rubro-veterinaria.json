@@ -3,6 +3,7 @@
   "nombre": "Veterinaria Patitas",
   "rubro": "veterinaria",
   "flujo": "reservas",
+  "web": true,
   "asistente": "Pati",
   "color": "#2F7A5B",
   "descripcion": "Clínica veterinaria de barrio: consultas, vacunas, desparasitación y cirugías menores.",

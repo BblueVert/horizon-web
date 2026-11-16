@@ -36,8 +36,14 @@ Negocios ficticios en Rancagua para mostrar sin preparar nada. Escribe `#<slug>`
 | `cafeteria` | Café Esquina Norte | Pedido para retirar sin fila: hora + pago + código de retiro |
 | `floreria` | Florería Rosa Blanca | Pedido con despacho, mensaje de tarjeta y pago |
 | `veterinaria` | Veterinaria Patitas | Reserva de consulta/vacuna y derivación de urgencias |
+| `dental` | Clínica Dental Sonríe | Reserva con RUT y motivo, urgencia por dolor primero, sin diagnósticos |
+| `kine` | Kine Movimiento | Evaluación inicial en consulta o a domicilio, orden médica, señales de alerta y abono 50% |
+| `gimnasio` | Gimnasio Pulso | Planes y membresías, clase de prueba gratis, inscripción con pago y acompañamiento al socio (bienvenida, aviso antes de perder la matrícula) |
+| `ropa` | Boutique Alma | Tallas y combinaciones, reserva 24 h, retiro o despacho y pago |
+| `automotora` | Automotora Ruta 5 | "¿Sigue disponible?", tasación en parte de pago, financiamiento y visita con prueba de manejo |
+| `general` | Servicios Rancagua | Cotizar con fotos, visita de diagnóstico, urgencias y abono 30% |
 
-En todas: precios y servicios, ubicación con **pin de WhatsApp**, horario, y al confirmar el aviso *"así le llega al dueño"*. Para un negocio real, Claude parte de la de su rubro y cambia nombre, dirección y precios (`fichas/rubro-*.json`).
+En todas: precios y servicios, ubicación con **pin de WhatsApp**, horario, y al confirmar el aviso *"así le llega al dueño"*. Para un negocio real, Claude parte de la de su rubro y cambia nombre, dirección y precios (`fichas/rubro-*.json`). Todas las de rubro llevan `"web": true`: también funcionan sin el bot, en `/visita/<slug>` (chat web), con los mismos slugs que los rubros de la radiografía.
 
 **Al confirmar un pedido o reserva el cliente recibe:**
 1. 💳 Link de pago (total o abono) → pantalla `/pago-demo` con el color del negocio → "Pago recibido" → *Volver a WhatsApp* con "Listo, ya pagué ✅ (R-1234)".

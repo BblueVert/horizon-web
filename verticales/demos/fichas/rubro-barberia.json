@@ -3,6 +3,7 @@
   "nombre": "Barbería Don Fígaro",
   "rubro": "barberia",
   "flujo": "reservas",
+  "web": true,
   "asistente": "Fígaro",
   "color": "#1F4E5F",
   "descripcion": "Barbería de barrio con 2 sillones. Cortes clásicos y modernos, barba con toalla caliente.",

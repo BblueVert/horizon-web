@@ -130,7 +130,6 @@ const rewrites = {
   '/privacidad':      '/Pages/privacidad.html',
   '/booking-confirm': '/Pages/booking-confirm/index.html',
   '/pago-demo':       '/Pages/pago-demo/index.html',
-  '/demo/cafe-boutique': '/Pages/demo-cafe-boutique/index.html', // demo web + agente para Andrea Escobar Cake Boutique   // pago simulado de las demos WhatsApp (verticales/demos)
 };
 
 Object.entries(rewrites).forEach(([from, to]) => {
@@ -139,6 +138,7 @@ Object.entries(rewrites).forEach(([from, to]) => {
 
 // /crm → redirect al pipeline OPS unificado
 app.get('/crm', (_req, res) => res.redirect(301, '/ops/pipeline'));
+app.get('/demo/cafe-boutique', (_req, res) => res.redirect(302, '/visita/pasteleria-cafe')); // demo genérica
 app.get('/plan-05', (_req, res) => res.redirect(301, '/servicios'));
 
 // Recursos: /recursos/<slug> y /recursos/r/<token> los resuelve la misma página

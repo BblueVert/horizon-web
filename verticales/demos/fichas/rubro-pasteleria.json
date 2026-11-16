@@ -3,6 +3,7 @@
   "nombre": "Pastelería Dulce Abril",
   "rubro": "panaderia",
   "flujo": "pedidos",
+  "web": true,
   "asistente": "Abril",
   "color": "#C2662D",
   "descripcion": "Pastelería artesanal. Tortas por encargo, kuchen y pies. Las tortas se encargan con 48 horas.",

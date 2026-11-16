@@ -1,0 +1,68 @@
+{
+  "slug": "general",
+  "nombre": "Servicios Rancagua",
+  "rubro": "servicios",
+  "flujo": "consultas",
+  "web": true,
+  "asistente": "Cami",
+  "color": "#7B3FA0",
+  "descripcion": "Negocio de servicios a domicilio en Rancagua: gasfitería, electricidad, mantención de calefont y pequeñas reparaciones del hogar. Cotiza por WhatsApp y agenda la visita.",
+  "tono": "Amable, práctico y rápido. Trata de tú. Pide los datos justos para cotizar.",
+  "saludo": "¡Hola! Soy Cami, de Servicios Rancagua. Cuéntame qué necesitas y te ayudo con el presupuesto o a agendar una visita.",
+  "locales": [
+    {
+      "nombre": "Oficina",
+      "direccion": "Calle Brasil 1020",
+      "comuna": "Rancagua",
+      "horario": "lunes a viernes 8:30 a 19:00, sábado 9:00 a 14:00; urgencias todos los días hasta las 22:00",
+      "lat": -34.1734,
+      "lng": -70.7353,
+      "referencia": "atendemos a domicilio en Rancagua, Machalí y Graneros"
+    }
+  ],
+  "catalogo": [
+    {
+      "categoria": "Servicios",
+      "items": [
+        { "nombre": "Visita de diagnóstico", "precio": 15000, "descripcion": "se descuenta si se hace el trabajo" },
+        { "nombre": "Mantención de calefont", "precio": 35000 },
+        { "nombre": "Cambio de llave o grifería", "precio": 20000, "descripcion": "mano de obra, materiales aparte" },
+        { "nombre": "Destape de cañería", "precio": 30000, "descripcion": "desde" },
+        { "nombre": "Instalación de enchufe o interruptor", "precio": 15000, "descripcion": "por punto, materiales aparte" },
+        { "nombre": "Trabajos mayores", "precio": null, "descripcion": "se cotiza con fotos o en la visita" }
+      ]
+    },
+    {
+      "categoria": "Urgencias",
+      "items": [
+        { "nombre": "Urgencia en el día", "precio": 25000, "descripcion": "recargo sobre el trabajo, hasta las 22:00" }
+      ]
+    }
+  ],
+  "reservas": {
+    "activo": true,
+    "datos": ["nombre", "teléfono", "dirección y comuna", "qué necesita (con fotos si puede)", "día", "bloque horario"],
+    "horarios": "bloques de mañana (9:00 a 13:00) y tarde (14:00 a 19:00), de lunes a sábado",
+    "notas": "El técnico avisa por WhatsApp cuando va en camino."
+  },
+  "pago_online": {
+    "activo": true,
+    "porcentaje": 30
+  },
+  "pagos": ["transferencia", "débito", "crédito", "efectivo"],
+  "faq": [
+    { "p": "¿Cuánto cuesta?", "r": "Depende del trabajo. Si me mandas fotos te doy un rango; si no, agendamos la visita de diagnóstico, que se descuenta si hacemos el trabajo." },
+    { "p": "¿Tienen garantía?", "r": "Sí, 30 días sobre la mano de obra." },
+    { "p": "¿Atienden hoy?", "r": "Si es urgencia, sí, hasta las 22:00 con recargo. Si no es urgente, te agendo en el próximo bloque libre." }
+  ],
+  "reglas": [
+    "Antes de dar un precio, pregunta qué pasa y pide fotos. Si el trabajo no está en el catálogo, no inventes un precio: ofrece la visita de diagnóstico.",
+    "Si hay olor a gas, chispas o agua sobre un enchufe: dile que corte el gas o la luz desde el medidor, que se aleje y que llame a emergencias si hay riesgo, y después agendas la urgencia.",
+    "Para agendar: confirma nombre, teléfono, dirección y comuna, qué necesita, día y bloque horario.",
+    "La visita queda reservada con el abono del 30%; el resto se paga al terminar el trabajo."
+  ],
+  "datos_pedido": ["nombre", "teléfono", "dirección y comuna", "qué necesita", "día y bloque"],
+  "derivar_a": "Di que el técnico le responde personalmente en cuanto termine el trabajo en el que está.",
+  "notas_internas": "Negocio ficticio de demostración (HORIZON) para el rubro \"Otro negocio\" de la radiografía: muestra el flujo de cotizar con fotos y agendar visita. Para un negocio real de otro rubro, parte de esta ficha y cambia servicios, reglas y precios.",
+  "fuentes": ["demo por rubro: datos de ejemplo, no de un negocio real"]
+}

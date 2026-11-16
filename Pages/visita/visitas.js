@@ -1,54 +1,67 @@
 /* HORIZON — Negocios con visita armada (/visita/<slug>).
    web: demo publicada en horizon-propuestas · chat: slug de demo_fichas con "web": true (responde /api/demo-chat)
    chatEnWeb: el agente vive dentro de la web (motor Mesa Cero) · panel: panel real para abrir en otra pestaña.
+   rubroFoto: rubro de la radiografía (fotos de los documentos). Demos genéricas "Tu …": sin nombre real.
    Un negocio nuevo: agrega una entrada. Si no está aquí, la página intenta igual con /api/demo-chat?slug=<slug>. */
 window.HZ_VISITAS = {
-  'que-rolls': {
+  'hamburgueseria': {
     modelo: 'comida',
-    nombre: 'Qué Rolls',
-    rubro: 'Sushi · Rancagua',
-    color: '#D7263D',
-    web: 'https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app/que-rolls/',
-    chat: null,
-    chatEnWeb: true,
-    panel: 'https://mesa-cero.vercel.app/panel/que-rolls',
-    sugerencias: ['¿Qué promos tienen hoy?', 'Quiero pedir para retiro', '¿Hacen delivery a mi casa?']
+    rubroFoto: 'comida',
+    nombre: 'Tu Hamburguesería',
+    rubro: 'Hamburguesería · Rancagua',
+    color: '#E2231A',
+    web: null,
+    chat: 'hamburgueseria',
+    sugerencias: ['¿Qué hamburguesas tienen?', 'Quiero una doble para retiro', '¿Hasta qué hora atienden?']
   },
-  'cake-boutique': {
+  'sushi': {
+    modelo: 'comida',
+    rubroFoto: 'comida',
+    nombre: 'Tu Sushi',
+    rubro: 'Sushi · Rancagua',
+    color: '#E21B23',
+    web: null,
+    chat: 'sushi',
+    sugerencias: ['¿Qué promos tienen hoy?', 'Quiero pedir para delivery', '¿Tienen handrolls?']
+  },
+  'sangucheria': {
+    modelo: 'comida',
+    rubroFoto: 'comida',
+    nombre: 'Tu Sanguchería',
+    rubro: 'Sanguchería · Rancagua',
+    color: '#C8102E',
+    web: null,
+    chat: 'sangucheria',
+    sugerencias: ['¿Cuánto cuesta un churrasco?', 'Quiero una chorrillana para retiro', '¿Hacen delivery?']
+  },
+  'pasteleria-cafe': {
     modelo: 'pasteleria',
-    nombre: 'Andrea Escobar Cake Boutique',
+    rubroFoto: 'pasteleria',
+    nombre: 'Tu Pastelería y Café',
     rubro: 'Pastelería y café · Rancagua',
     color: '#B5838D',
-    web: 'https://horizon-propuestas-git-claude-plan-acele-694a99-horizon-landing.vercel.app/cake-boutique/',
-    chat: 'cafe-boutique',
-    panel: 'https://mesa-cero-git-claude-plan-acelerador-neg-f85444-horizon-landing.vercel.app/panel/cafe-boutique',
+    web: null,
+    chat: 'pasteleria-cafe',
     sugerencias: ['¿Qué tortas tienen?', 'Quiero una torta para 15 personas el sábado', '¿Hasta qué hora atienden?']
   },
-  'hospital-burgers': {
-    modelo: 'comida',
-    nombre: 'Hospital Burgers',
-    rubro: 'Smash burgers · Rancagua',
-    color: '#D62828',
-    web: null,
-    chat: 'hospital-burgers',
-    sugerencias: ['¿Qué hamburguesas tienen?', 'Quiero una Hospital Smoke para retiro', '¿Hasta qué hora atienden?']
-  },
-  'clinica-dental-recreo': {
+  'clinica-dental': {
     modelo: 'clinica',
-    nombre: 'Clínica Dental Recreo',
+    rubroFoto: 'dental',
+    nombre: 'Tu Clínica Dental',
     rubro: 'Clínica dental · Rancagua',
     color: '#B08D57',
     web: null,
-    chat: 'clinica-dental-recreo',
+    chat: 'clinica-dental',
     sugerencias: ['¿La evaluación es gratis?', 'Me duele una muela, ¿me pueden atender hoy?', 'Quiero agendar una limpieza']
   },
-  'medic-center-dental': {
+  'centro-dental': {
     modelo: 'clinica',
-    nombre: 'Medic Center · Clínica Dental',
+    rubroFoto: 'dental',
+    nombre: 'Tu Centro Dental',
     rubro: 'Clínica dental · Rancagua',
     color: '#2E9E7A',
     web: null,
-    chat: 'medic-center-dental',
+    chat: 'centro-dental',
     sugerencias: ['¿Cuánto cuesta una limpieza?', 'Tengo dolor, ¿me pueden ver hoy?', 'Quiero agendar una evaluación']
   }
 };

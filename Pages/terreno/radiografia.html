@@ -115,7 +115,7 @@
   // ?n=<slug> viene desde /visita/<slug>: precarga el nombre del negocio y lo asocia al lead.
   var SLUG = (new URLSearchParams(location.search).get('n') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
   var VIS = SLUG && window.HZ_VISITAS ? window.HZ_VISITAS[SLUG] : null;
-  function reset() { st = { scr: 'intro', i: 0, negocio: VIS ? VIS.nombre : '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', rut: '', razon: '', dir: '', notas: '', portal: '', decision: null, err: '', modelo: R.modelo(VIS && VIS.modelo), rubro: (VIS && VIS.rubro) || '' }; usarModelo(st.modelo); }
+  function reset() { st = { scr: 'intro', i: 0, negocio: VIS ? VIS.nombre : '', r: {}, ticket: 0, elegido: null, nombre: '', tel: '', email: '', rut: '', razon: '', dir: '', notas: '', portal: '', decision: null, err: '', modelo: R.modelo(VIS && VIS.modelo), rubro: (VIS && VIS.rubroFoto) || '' }; usarModelo(st.modelo); }
   reset();
 
   var app = document.getElementById('app');
