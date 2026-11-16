@@ -74,7 +74,7 @@ Cómo se arma con el mismo código: el Esencial es la base (web + agente complet
 
 - **Precio piso:** estos montos no se rebajan en la mesa. Si no le alcanza, se baja de pack (Pro → Esencial), no se hace descuento.
 - **Mes 1 de mensualidad incluido como marcha blanca.** Compromiso inicial de 90 días: se pagan los meses 2 y 3; después, mes a mes y sin permanencia (decisión del 16 nov).
-- **Medios de pago:** Mercado Pago (portal del cliente o lector de tarjetas), transferencia o efectivo. Lo que no pasa por el portal se marca a mano en OPS.
+- **Medios de pago:** Mercado Pago (portal del cliente o lector de tarjetas) como primera opción, o transferencia. Lo que no pasa por el portal se marca a mano en OPS.
 - **Fundadores (los 3 primeros):** mismo precio, 2.º mes de mensualidad sin costo y mensualidad congelada 12 meses. A cambio, testimonio en video y permiso para mostrar el caso.
 - **Garantía del agente (para compensar que todavía no hay casos):** si al terminar la marcha blanca (primeros 30 días) el agente no le sirvió, se apaga y no paga los meses 2 y 3. La web y el panel quedan igual. Le baja el riesgo al dueño sin bajar el precio.
 - Agente suelto, sin web ni panel: **no se ofrece.**
