@@ -91,8 +91,44 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .sello img { height: 15px; }
 
 /* Botón flotante: abre el WhatsApp de demos con "#demo <slug>" (el bot conecta ese chat al agente del rubro) */
-.fab { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 64px; height: 64px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 14px 30px -10px rgba(0,0,0,.45); }
+.fab { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 64px; height: 64px; border-radius: 50%; background: var(--wa); border: 0; cursor: pointer; display: grid; place-items: center; box-shadow: 0 14px 30px -10px rgba(0,0,0,.45); }
 .fab svg { width: 34px; height: 34px; fill: #fff; }
+.fab .dot { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: #E8462F; border: 3px solid #fff; }
+
+/* Chat en la página (canal principal): /api/demo-chat con historial; lo que se cierra llega al panel del dueño */
+.chat { position: fixed; right: 20px; bottom: 96px; z-index: 50; width: 380px; height: min(640px, calc(100vh - 120px)); background: var(--wa-bg); border-radius: 22px; overflow: hidden; display: none; flex-direction: column; box-shadow: 0 30px 70px -20px rgba(0,0,0,.5); }
+.chat.open { display: flex; }
+@media (max-width: 520px) { .chat { inset: 0; width: auto; height: auto; border-radius: 0; } }
+.chat header { background: #008069; color: #fff; display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.chat .av { width: 40px; height: 40px; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 18px; flex: none; }
+.chat header b { display: block; font-size: 16px; }
+.chat header small { font-size: 13px; opacity: .85; }
+.chat .cerrar { margin-left: auto; background: none; border: 0; color: #fff; font-size: 26px; cursor: pointer; line-height: 1; padding: 4px 8px; }
+.msgs { flex: 1; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 6px; }
+.aviso-demo { align-self: center; background: #FFF5C4; color: #54491A; font-size: 12px; text-align: center; padding: 6px 10px; border-radius: 8px; max-width: 92%; margin-bottom: 6px; }
+.m { max-width: 82%; min-width: 92px; padding: 7px 10px 18px; border-radius: 10px; font-size: 15px; position: relative; white-space: pre-wrap; word-wrap: break-word; box-shadow: 0 1px 1px rgba(0,0,0,.08); }
+.m.in { align-self: flex-start; background: #fff; border-top-left-radius: 2px; }
+.m.out { align-self: flex-end; background: var(--wa-out); border-top-right-radius: 2px; }
+.m time { position: absolute; right: 8px; bottom: 3px; font-size: 11px; color: #667781; }
+.m.out time::after { content: ' ✓✓'; color: #53BDEB; }
+.m a { color: #027EB5; word-break: break-all; }
+.dueno { align-self: stretch; background: var(--ink); color: #fff; border-radius: 14px; padding: 12px 14px; font-size: 13.5px; white-space: pre-wrap; margin: 8px 0; }
+.dueno strong { display: block; color: #FFD7A8; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.dueno a { color: #FFD7A8; font-weight: 700; }
+.typing { align-self: flex-start; background: #fff; border-radius: 10px; padding: 10px 14px; display: none; gap: 4px; }
+.typing.on { display: flex; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: #9AA5AC; animation: tp 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes tp { 0%, 60%, 100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+.sugeridas { display: flex; gap: 6px; overflow-x: auto; padding: 0 10px 8px; scrollbar-width: none; }
+.sugeridas button { flex: none; background: #fff; border: 1px solid #D5DADD; border-radius: 999px; padding: 7px 12px; font: 500 13px var(--f); color: #008069; cursor: pointer; }
+.barra { display: flex; gap: 8px; padding: 8px 10px 4px; align-items: center; }
+.barra input { flex: 1; border: 0; border-radius: 999px; padding: 12px 16px; font: 15px var(--f); outline: none; }
+.barra button { width: 46px; height: 46px; border-radius: 50%; border: 0; background: #008069; display: grid; place-items: center; cursor: pointer; flex: none; }
+.barra button svg { width: 20px; height: 20px; fill: #fff; }
+.barra button:disabled { opacity: .5; }
+.wa2 { text-align: center; font-size: 12.5px; color: #54656F; padding: 2px 0 10px; }
+.wa2 a { color: #008069; font-weight: 700; }
 
 /* Carrito (flujo pedidos): el pedido va a /api/demo-chat y llega al panel /visita/<slug>/panel */
 .cinta { background: var(--ink); color: #fff; text-align: center; font-size: 13px; padding: 7px 12px; }
@@ -111,15 +147,15 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .hoja .err { color: #B42318; font-size: 14px; }
 .hoja .aviso { background: var(--ink); color: #fff; border-radius: 14px; padding: 12px 14px; white-space: pre-wrap; font-size: 13.5px; margin: 12px 0; }
 .vacio { padding: 30vh 16px; text-align: center; color: var(--ink2); }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .galeria img { transition: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .galeria img { transition: none; } .typing i { animation: none; } }
 </style>
 </head>
 <body>
-<div class="cinta">Demo HORIZON · los pedidos de esta web llegan al <a id="linkPanel" target="_blank" rel="noopener">panel del dueño</a></div>
+<div class="cinta">Demo HORIZON · <a id="linkPanel" target="_blank" rel="noopener">Ver panel del dueño</a></div>
 <header class="top"><div class="wrap">
   <a class="marca" href="#inicio"><i></i><span id="nombreTop">…</span></a>
   <nav class="menu"><a href="#destacados" id="navDest">Destacados</a><a href="#carta" id="navCarta">Carta</a><a href="#donde">Dónde estamos</a></nav>
-  <a class="btn" data-wa target="_blank" rel="noopener" id="ctaTop">Escríbenos</a>
+  <button class="btn" data-abrir id="ctaTop">Escríbenos</button>
 </div></header>
 
 <main id="app">
@@ -127,7 +163,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     <span class="eb" id="rubro">Rancagua</span>
     <h1 id="nombre">…</h1>
     <p id="descripcion"></p>
-    <div class="acc"><a class="btn" data-wa target="_blank" rel="noopener" id="ctaHero">Pedir por WhatsApp</a><a class="btn claro" href="#carta" id="ctaCarta">Ver la carta</a></div>
+    <div class="acc"><a class="btn" href="#carta" id="ctaHero">Escríbenos</a><a class="btn claro" href="#carta" id="ctaCarta">Ver la carta</a></div>
   </div></div>
 
   <section id="destacados"><div class="wrap">
@@ -151,8 +187,9 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     </div>
     <div class="card">
       <b style="font-size:18px">¿Dudas? Escríbenos</b>
-      <p style="color:var(--ink2);margin:8px 0 18px">Te respondemos al tiro por WhatsApp, a cualquier hora: precios, horarios, pedidos y reservas.</p>
-      <a class="btn" data-wa target="_blank" rel="noopener">Abrir WhatsApp</a>
+      <p style="color:var(--ink2);margin:8px 0 18px">Te respondemos al tiro aquí mismo, a cualquier hora: precios, horarios, pedidos y reservas.</p>
+      <button class="btn" data-abrir>Abrir el chat</button>
+      <p style="font-size:14px;margin:12px 0 0;color:var(--ink2)">¿Prefieres WhatsApp? <a data-wa target="_blank" rel="noopener" style="font-weight:700">Escríbenos por WhatsApp</a></p>
     </div>
   </div></section>
 </main>
@@ -164,7 +201,17 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <button class="btn carro" id="carro">🛒 Ver pedido · <span id="carroTot">$0</span></button>
 <div class="panel-c" id="pc"><div class="hoja" id="hoja"></div></div>
-<a class="fab" id="fab" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+<button class="fab" id="fab" aria-label="Abrir el chat"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg><span class="dot"></span></button>
+<div class="chat" id="chat" role="dialog" aria-label="Chat">
+  <header><div class="av" id="chatAv">·</div><div><b id="chatNom">…</b><small id="estado">en línea</small></div><button class="cerrar" id="cerrar" aria-label="Cerrar chat">×</button></header>
+  <div class="msgs" id="msgs">
+    <div class="aviso-demo">Demo de asistente con IA preparada por HORIZON. Pruébalo como cliente: pide, agenda o pregunta lo que quieras.</div>
+    <div class="typing" id="typing"><i></i><i></i><i></i></div>
+  </div>
+  <div class="sugeridas" id="sugeridas"></div>
+  <form class="barra" id="form"><input id="txt" placeholder="Escribe un mensaje" autocomplete="off" maxlength="600" aria-label="Mensaje"><button id="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M3 20.5l18-8.5L3 3.5v6.6l12.5 1.9L3 13.9z"/></svg></button></form>
+  <div class="wa2">o sigue en <a data-wa target="_blank" rel="noopener">WhatsApp</a></div>
+</div>
 
 <script>
 (function () {
@@ -182,10 +229,15 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
   // Textos según cómo atiende el negocio: pedidos, reservas o consultas
   var TEXTOS = {
-    pedidos:  { cta: 'Hacer mi pedido', dest: 'Lo más pedido', tDest: 'Hecho para que vuelvas', carta: 'Carta', tCarta: 'Elige y te lo dejamos listo', accion: 'Pedir' },
-    reservas: { cta: 'Agendar por WhatsApp', dest: 'Nuestros servicios', tDest: 'Lo que hacemos por ti', carta: 'Servicios y precios', tCarta: 'Elige tu servicio y agendamos', accion: 'Agendar' },
-    consultas:{ cta: 'Consultar por WhatsApp', dest: 'Lo que ofrecemos', tDest: 'Te ayudamos a elegir', carta: 'Catálogo', tCarta: 'Pregunta por lo que te interese', accion: 'Consultar' },
+    pedidos:  { cta: 'Hacer mi pedido', dest: 'Lo más pedido', tDest: 'Hecho para que vuelvas', carta: 'Carta', tCarta: 'Elige y te lo dejamos listo', accion: 'Pedir', pide: 'Quiero pedir ',
+                sug: ['¿Qué me recomiendas?', 'Quiero hacer un pedido', '¿Tienen delivery?', '¿A qué hora abren?'] },
+    reservas: { cta: 'Agendar mi hora', dest: 'Nuestros servicios', tDest: 'Lo que hacemos por ti', carta: 'Servicios y precios', tCarta: 'Elige tu servicio y agendamos', accion: 'Agendar', pide: 'Quiero agendar ',
+                sug: ['Quiero agendar una hora', '¿Qué precios tienen?', '¿Qué horas tienen esta semana?', '¿Dónde están?'] },
+    consultas:{ cta: 'Consultar', dest: 'Lo que ofrecemos', tDest: 'Te ayudamos a elegir', carta: 'Catálogo', tCarta: 'Pregunta por lo que te interese', accion: 'Consultar', pide: 'Quiero consultar por ',
+                sug: ['Quiero cotizar', '¿Qué tienen disponible?', '¿Dónde están?', '¿A qué hora atienden?'] },
   };
+  // El negrita de WhatsApp (*así*) se ve como negrita en la web
+  var fmt = function (s) { return esc(s).replace(/\*([^*\n]+)\*/g, '<b>$1</b>'); };
 
   if (!SLUG) { $('app').innerHTML = '<p class="vacio">Demo no encontrada.</p>'; return; }
 
@@ -201,7 +253,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     $('descripcion').textContent = f.descripcion || '';
     var l0 = (f.locales || [])[0];
     $('rubro').textContent = (l0 && l0.comuna) || 'Rancagua';
-    $('ctaHero').textContent = T.cta; if (f.flujo === 'pedidos') { $('ctaHero').removeAttribute('target'); $('ctaHero').removeAttribute('data-wa'); $('ctaHero').href = '#carta'; } $('ctaTop').textContent = 'Escríbenos';
+    // Pedidos: el CTA lleva a la carta (carrito). Reservas y consultas: abre el chat de la página.
+    $('ctaHero').textContent = T.cta; if (f.flujo !== 'pedidos') { $('ctaHero').setAttribute('data-abrir', T.sug[0]); $('ctaHero').removeAttribute('href'); $('ctaHero').setAttribute('role', 'button'); $('ctaHero').tabIndex = 0; }
+    $('chatNom').textContent = f.nombre; $('chatAv').textContent = (f.nombre || '·').replace(/^(tu|el|la)\s+/i, '').charAt(0).toUpperCase(); $('chat').setAttribute('aria-label', 'Chat con ' + f.nombre);
+    $('sugeridas').innerHTML = T.sug.map(function (t) { return '<button type="button">' + esc(t) + '</button>'; }).join('');
     $('ebDest').textContent = T.dest; $('tituloDest').textContent = T.tDest; $('navDest').textContent = T.dest;
     $('ebCarta').textContent = T.carta; $('tituloCarta').textContent = T.tCarta; $('navCarta').textContent = T.carta; $('ctaCarta').textContent = 'Ver ' + T.carta.toLowerCase();
     $('pie').textContent = '© ' + new Date().getFullYear() + ' ' + f.nombre + ' · negocio ficticio de demostración';
@@ -220,13 +275,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       [].forEach.call($('tabs').children, function (b, j) { b.setAttribute('aria-selected', j === i); });
       $('items').innerHTML = cats[i].items.map(function (it) {
         var vars = (it.variantes || []).length;
-        var precio = vars ? 'desde ' + dinero(Math.min.apply(null, it.variantes.map(function (v) { return v.precio; }))) : (it.precio == null ? 'A cotizar' : it.precio === 0 ? 'Gratis' : dinero(it.precio));
+        var precio = vars ? 'desde ' + dinero(Math.min.apply(null, it.variantes.map(function (v) { return v.precio; }).concat(it.precio != null ? [it.precio] : []))) : (it.precio == null ? 'A cotizar' : it.precio === 0 ? 'Gratis' : dinero(it.precio));
         return '<div class="item"><div class="t"><b>' + esc(it.nombre) + '</b><span class="precio">' + esc(precio) + '</span></div>' +
           (it.descripcion ? '<p>' + esc(it.descripcion) + '</p>' : '') +
           (vars ? '<div class="vars">' + it.variantes.map(function (v) { return '<span>' + esc(v.nombre) + ' ' + dinero(v.precio) + '</span>'; }).join('') + '</div>' : '') +
           (f.flujo === 'pedidos' && it.precio != null && !vars ? '<button class="pedir" data-add="' + esc(it.nombre) + '" data-p="' + it.precio + '">Agregar +</button>' :
-           f.flujo === 'pedidos' && vars ? '<div class="vars">' + it.variantes.map(function (v) { return '<button class="pedir" data-add="' + esc(it.nombre + ' (' + v.nombre + ')') + '" data-p="' + v.precio + '">+ ' + esc(v.nombre) + '</button>'; }).join(' ') + '</div>' :
-           '<button class="pedir" data-pedir>' + T.accion + ' →</button>') + '</div>';
+           f.flujo === 'pedidos' && vars ? '<div class="vars">' + (it.precio != null ? '<button class="pedir" data-add="' + esc(it.nombre) + '" data-p="' + it.precio + '">Agregar +</button> ' : '') + it.variantes.map(function (v) { return '<button class="pedir" data-add="' + esc(it.nombre + ' (' + v.nombre + ')') + '" data-p="' + v.precio + '">+ ' + esc(v.nombre) + '</button>'; }).join(' ') + '</div>' :
+           '<button class="pedir" data-pedir="' + esc(T.pide + it.nombre) + '">' + T.accion + ' →</button>') + '</div>';
       }).join('');
     }
     // Automotora: vitrina de autos en vez de carta (fotos auto-1…N, si no hay usa la foto del auto destacado)
@@ -241,7 +296,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         return '<div class="auto"><figure><span class="tag">Revisado</span><img src="' + FOTOS + 'auto-' + (n + 1) + '.webp" alt="' + esc(titulo) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + FOTOS + 'producto-1.webp\'"></figure>' +
           '<div><h3>' + esc(titulo) + '</h3><div class="spec">' + esc([km, it.descripcion].filter(Boolean).join(' · ')) + '</div>' +
           '<div class="precio">' + (it.precio ? dinero(it.precio) : 'A cotizar') + '</div></div>' +
-          '<div class="btns"><a class="b-wa" data-wa target="_blank" rel="noopener" aria-label="WhatsApp">' + WAICO + '</a><a class="b-res" data-wa target="_blank" rel="noopener">RESERVAR</a><a class="b-cot" data-wa target="_blank" rel="noopener">COTIZAR</a></div></div>';
+          '<div class="btns"><a class="b-wa" data-wa target="_blank" rel="noopener" aria-label="WhatsApp">' + WAICO + '</a><a class="b-res" href="#" data-pedir="' + esc('Quiero agendar una visita para ver el ' + titulo) + '">RESERVAR</a><a class="b-cot" href="#" data-pedir="' + esc('Quiero cotizar el ' + titulo + ' con crédito') + '">COTIZAR</a></div></div>';
       }).join('');
       [].forEach.call(document.querySelectorAll('[data-wa]'), function (a) { a.href = WA; });
     } else {
@@ -273,7 +328,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       '<label>Entrega</label><select id="cEnt"><option value="retiro">Retiro en el local</option><option value="delivery">Delivery</option></select>' +
       '<label>Dirección (si es delivery)</label><input id="cDir"><label>Hora</label><input id="cHora" placeholder="Ej: 20:30">' +
       '<p class="err" id="cErr"></p><button class="btn" id="cOk" style="width:100%;justify-content:center">Confirmar pedido</button>' +
-      '<p style="text-align:center;font-size:13px"><a href="' + WA + '" target="_blank" rel="noopener">o pídelo por WhatsApp</a> · <a href="#" data-cerrar>Seguir mirando</a></p>');
+      '<p style="text-align:center;font-size:13px"><a href="#" data-cerrar>Seguir mirando</a> · <a href="' + WA + '" target="_blank" rel="noopener">o pídelo por WhatsApp</a></p>');
   }
   async function confirmar() {
     var body = { slug: SLUG, pedido: { items: Object.keys(carro).map(function (k) { return { nombre: k, cant: carro[k].n }; }),
@@ -284,9 +339,9 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       var d = await r.json();
       if (!r.ok) throw new Error(d.error || 'No se pudo enviar');
       carro = {}; pintarCarro();
-      var links = (d.extras || []).join('\n\n').replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" rel="noopener">Pagar ahora →</a>');
+      var links = fmt((d.extras || []).join('\n\n')).replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" rel="noopener">Pagar ahora →</a>');
       hoja('<h3>¡Pedido recibido! ' + esc(d.codigo) + '</h3><p style="white-space:pre-wrap">' + links + '</p>' +
-        '<div class="aviso"><b>Así le llega al dueño</b>\n' + esc(d.aviso || '') + '</div>' +
+        '<div class="aviso"><b>Así le llega al dueño</b>\n' + fmt(d.aviso || '') + '</div>' +
         '<a class="btn" style="width:100%;justify-content:center" href="/visita/' + SLUG + '/panel" target="_blank" rel="noopener">Ver panel del dueño</a>' +
         '<p style="text-align:center"><a href="#" data-cerrar>Cerrar</a></p>');
     } catch (e) { $('cErr').textContent = e.message; $('cOk').disabled = false; }
@@ -302,9 +357,63 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     var k = a.getAttribute('data-add'); carro[k] = carro[k] || { p: Number(a.getAttribute('data-p')), n: 0 }; carro[k].n++; pintarCarro();
     a.textContent = '✓ Agregado'; setTimeout(function () { a.textContent = a.getAttribute('data-add').indexOf('(') > 0 ? '+ ' + a.getAttribute('data-add').split('(').pop().replace(')', '') : 'Agregar +'; }, 900);
   });
-  [].forEach.call(document.querySelectorAll('[data-wa], #fab'), function (a) { a.href = WA; });
+  [].forEach.call(document.querySelectorAll('[data-wa]'), function (a) { a.href = WA; });
+
+  // Chat en la página: canal principal para reservas y consultas (en pedidos, además del carrito).
+  // WhatsApp queda como opción secundaria ("o sigue en WhatsApp").
+  var historial = [], ocupado = false, saludado = false;
+  var espera = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  function linkify(s) { return fmt(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">Abrir link →</a>'); }
+  function meter(el) { $('msgs').insertBefore(el, $('typing')); $('msgs').scrollTop = $('msgs').scrollHeight; }
+  function burbuja(texto, tipo) { var d = document.createElement('div'); d.className = 'm ' + tipo; d.innerHTML = linkify(texto) + '<time>' + hora() + '</time>'; meter(d); }
+  function avisoDueno(texto) {
+    var d = document.createElement('div'); d.className = 'dueno';
+    d.innerHTML = '<strong>Así le llega este aviso al dueño</strong>' + linkify(texto) + '\n<a href="/visita/' + SLUG + '/panel" target="_blank" rel="noopener">Ver panel del dueño →</a>'; meter(d);
+  }
+  function escribiendo(on) { $('typing').classList.toggle('on', on); $('estado').textContent = on ? 'escribiendo…' : 'en línea'; $('msgs').scrollTop = $('msgs').scrollHeight; }
+  function saludo() {
+    var h = new Date().getHours(), s = h >= 5 && h < 12 ? '¡Buenos días!' : h >= 12 && h < 20 ? '¡Buenas tardes!' : '¡Buenas noches!';
+    return ((ficha && ficha.saludo) || '¡Hola! ¿En qué te ayudo?').replace(/^¡Hola!/, s);
+  }
+  function abrir(texto) {
+    $('chat').classList.add('open'); $('fab').querySelector('.dot').style.display = 'none'; $('pc').classList.remove('on');
+    if (!saludado) {
+      saludado = true;
+      var s = saludo(); historial.push({ role: 'assistant', content: JSON.stringify({ respuestas: [s], accion: null }) });
+      if (texto) burbuja(s, 'in');
+      else { escribiendo(true); setTimeout(function () { escribiendo(false); burbuja(s, 'in'); }, 700); }
+    }
+    if (texto) enviar(texto); else $('txt').focus();
+  }
+  async function enviar(texto) {
+    texto = String(texto || '').trim();
+    if (!texto || ocupado) return;
+    ocupado = true; $('enviar').disabled = true; $('sugeridas').style.display = 'none';
+    burbuja(texto, 'out');
+    await espera(400); escribiendo(true);
+    try {
+      var r = await fetch('/api/demo-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: SLUG, historial: historial, mensaje: texto }) });
+      var data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'error');
+      historial.push({ role: 'user', content: texto });
+      var resp = data.respuestas || [];
+      historial.push({ role: 'assistant', content: JSON.stringify({ respuestas: resp, accion: data.accion || null }) });
+      for (var i = 0; i < resp.length; i++) { if (i) { escribiendo(true); await espera(700); } escribiendo(false); burbuja(resp[i], 'in'); }
+      for (var j = 0; j < (data.extras || []).length; j++) { await espera(600); burbuja(data.extras[j], 'in'); }
+      if (data.aviso) { await espera(900); avisoDueno(data.aviso); }
+    } catch (e) {
+      escribiendo(false); burbuja('Uy, se me cortó la conexión. ¿Me lo escribes de nuevo?', 'in');
+    }
+    escribiendo(false); ocupado = false; $('enviar').disabled = false; $('txt').focus();
+  }
+  $('fab').onclick = function () { $('chat').classList.contains('open') ? $('chat').classList.remove('open') : abrir(); };
+  $('cerrar').onclick = function () { $('chat').classList.remove('open'); };
+  $('form').onsubmit = function (e) { e.preventDefault(); var t = $('txt').value; $('txt').value = ''; enviar(t); };
+  $('sugeridas').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) enviar(b.textContent); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('chat').classList.remove('open'); $('pc').classList.remove('on'); } });
   document.addEventListener('click', function (e) {
-    var p = e.target.closest('[data-pedir]'); if (p) { e.preventDefault(); window.open(WA, '_blank', 'noopener'); }
+    var p = e.target.closest('[data-pedir]'); if (p) { e.preventDefault(); abrir(p.getAttribute('data-pedir')); return; }
+    var a = e.target.closest('[data-abrir]'); if (a) { e.preventDefault(); abrir(a.getAttribute('data-abrir') || ''); }
   });
 })();
 </script>
