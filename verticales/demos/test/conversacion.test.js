@@ -431,3 +431,30 @@ test('si la demo del chat se dio de baja, el chat toma la demo activada desde tu
   assert.equal(estado.demoDe(CLIENTE), 'ejemplo-sangucheria');
   assert.ok(out.length > 0, 'responde en vez de quedar mudo');
 });
+
+test('tu número de prueba cambia a la nueva demo activada aunque esté en medio de otra', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'e.json'));
+  const otra = { ...ejemplo, slug: 'otra-demo', nombre: 'Otra demo' };
+  const fichas = new Map([[ejemplo.slug, ejemplo], [otra.slug, otra]]);
+  const conv = crearConversacion({
+    estado, fichas: { obtener: s => fichas.get(s) || null, todas: () => [...fichas.values()] },
+    responder: async () => ({ respuestas: ['ok'], accion: null }), log: silencioso,
+  });
+  conv.conectado(YO, '569');
+  const PROSPECTO = '56955556666@s.whatsapp.net';
+  // Benja activa la sanguchería y le escribe desde su personal: queda como probador
+  await conv.delLocal({ jid: YO, telefono: '569', texto: '#demo ejemplo-sangucheria' });
+  await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'hola' });
+  assert.equal(estado.demoDe(CLIENTE), 'ejemplo-sangucheria');
+  // un prospecto está en medio de la sanguchería
+  await conv.entrante({ jid: PROSPECTO, telefono: '5695', texto: 'demo ejemplo-sangucheria' });
+  // Benja activa otra demo: el prospecto que sigue escribiendo no se la lleva
+  await conv.delLocal({ jid: YO, telefono: '569', texto: '#demo otra-demo' });
+  await conv.entrante({ jid: PROSPECTO, telefono: '5695', texto: 'otra pregunta' });
+  assert.equal(estado.demoDe(PROSPECTO), 'ejemplo-sangucheria');
+  assert.equal(estado.armada(), 'otra-demo');
+  // su personal (con conversación reciente) pasa a la nueva al tiro
+  await conv.entrante({ jid: CLIENTE, telefono: '569', texto: 'hola' });
+  assert.equal(estado.demoDe(CLIENTE), 'otra-demo');
+  assert.equal(estado.armada(), null);
+});

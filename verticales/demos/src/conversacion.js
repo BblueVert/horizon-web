@@ -181,11 +181,12 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     }
 
     // Demo activada desde tu chat (#slug): la toma el primer chat que escribe sin una demo en curso
-    // (sin demo, o con una que lleva 30 min sin mensajes, como tu número personal de una prueba anterior).
-    if ((!slug || estado.inactivo(jid, 30)) && estado.armada()) {
+    // (sin demo, o con una que lleva 30 min sin mensajes), o el chat que tomó la última demo activada
+    // (tu número personal de prueba), aunque esté en medio de otra: así cambias de demo al tiro.
+    if ((!slug || estado.inactivo(jid, 30) || (estado.esProbador(jid) && estado.armada() !== slug)) && estado.armada()) {
       const ficha = fichas.obtener(estado.armada());
       if (ficha) {
-        estado.tomarArmada();
+        estado.tomarArmada(jid);
         estado.asignar(jid, ficha.slug, telefono);
         const salida = await turno(jid, telefono, texto, ficha, audio, obsoleto);
         if (!salida) return null;
