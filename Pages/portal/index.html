@@ -287,6 +287,15 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
 .seg{display:flex;gap:6px;flex-wrap:wrap;}
 .seg button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:9px 15px;font-size:14px;font-weight:600;color:var(--ink2);}
 .seg button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand);}
+/* Colores de la referencia: muestra (selector nativo) + nombre */
+.cols{display:grid;gap:8px;}
+.col-row{display:flex;align-items:center;gap:8px;}
+.col-row .ctl{flex:1;min-width:0;}
+.swatch{position:relative;width:44px;height:44px;border-radius:50%;flex-shrink:0;border:1px solid var(--line2);box-shadow:inset 0 0 0 3px var(--surface);overflow:hidden;cursor:pointer;}
+.swatch input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;}
+.col-add{border:1.5px dashed var(--line2);background:none;border-radius:12px;padding:10px;font-size:14px;font-weight:600;color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:6px;}
+.dots{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(26,22,18,.18);}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:600;border:1px solid transparent;}
 .btn .hz-i{font-size:17px;}
 .btn-send{background:#1A1626;color:#fff;cursor:pointer;text-decoration:none;}
@@ -419,7 +428,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
         <div class="card fstat">
           <div class="fstat-n" id="f-n"></div>
           <div style="flex:1;display:grid;gap:8px;">
-            <div class="fstat-l">Toca un producto para elegir sus fotos y completar medidas y detalles. Todo se guarda solo.</div>
+            <div class="fstat-l">Toca un producto para ponerle nombre, revisar sus colores y fotos, y completar medidas y detalles. Todo se guarda solo.</div>
             <div class="meter-bar"><div class="meter-fill" id="f-fill" style="width:0"></div></div>
           </div>
         </div>
@@ -824,6 +833,25 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     const f = fotosOf(p.id)[0]; if (f) return photoById()[f].thumb_url;
     return p.imagen_url && /^https:\/\//.test(p.imagen_url) ? p.imagen_url : null;
   }
+  // Nombre comercial: el que puso el cliente; si no, el del catálogo
+  const nameOf = p => detail(p.id)?.data?.nombre || p.nombre;
+  // Colores de la referencia: los que guardó el cliente; si no, los del catálogo ("Camel · Negro")
+  const COLOR_HEX = { negro:'#1c1a17', nero:'#1c1a17', notte:'#1c1a17', blanco:'#f4f1ea', perla:'#ece6da', crema:'#efe4cf', beige:'#d9c8a9', nude:'#e3bc9a',
+    natural:'#d8b98a', camel:'#c19a6b', cognac:'#9a4f22', miel:'#c58b3c', cafe:'#6f4e37', caffe:'#6f4e37', cuoio:'#8b5a2b', moka:'#6b4f3f', cacao:'#5a3a29',
+    chocolate:'#4a3326', moro:'#4a3326', rojizo:'#7b3b26', oscuro:'#4a3326', taupe:'#8b7d6b', topo:'#8a7f72', humo:'#8e8378', gris:'#8d8d8d', plata:'#c0c0c0',
+    oro:'#c9a54a', dorado:'#c9a54a', burdeos:'#6d1a24', bordeaux:'#6d1a24', borgona:'#6d1a24', navy:'#1f2a44', marino:'#1f2a44', grisaceo:'#6b829a',
+    azul:'#2f4f7f', celeste:'#9cc3e0', cielo:'#9cc3e0', verde:'#3e6b48', oliva:'#6b6b2f', esmeralda:'#1f6b4f', pavo:'#1d5c63', fucsia:'#c2185b',
+    frambuesa:'#b0204f', rojo:'#b3202a', naranja:'#d9692b', cipria:'#e3b7a8', tostado:'#a0673a', arena:'#d8c3a0' };
+  const normTxt = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  // el color "manda" la palabra más específica: "Verde Oliva" → oliva, "Café Oscuro" → oscuro
+  const hexFor = name => { const w = normTxt(name).split(/[^a-z]+/).filter(x => COLOR_HEX[x]); return w.length ? COLOR_HEX[w[w.length - 1]] : '#cccccc'; };
+  function colorsOf(p){
+    const saved = detail(p.id)?.data?.colores;
+    if (Array.isArray(saved) && saved.length) return saved.map(c => ({ nombre: c.nombre, hex: c.hex || hexFor(c.nombre) }));
+    return String(p.color || '').split('·').map(s => s.trim()).filter(Boolean).map(n => ({ nombre: n, hex: hexFor(n) }));
+  }
+  const dotsOf = p => { const cs = colorsOf(p); return cs.length > 1 || cs[0]?.hex !== '#cccccc'
+    ? `<span class="dots">${cs.map(c => `<span class="dot" style="background:${esc(c.hex)}" title="${esc(c.nombre)}"></span>`).join('')}</span>` : ''; };
   const imgTag = (src, alt = '') => src ? `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" data-fallback>` : '';
   document.addEventListener('error', e => { if (e.target.matches?.('img[data-fallback]')) e.target.outerHTML = `<span class="nophoto">${ic('image')}Sin foto</span>`; }, true);
 
@@ -833,7 +861,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
       const st = estadoOf(p.id);
       if (F.filter === 'pendientes' && st === 'listo') return false;
       if (F.filter === 'listos' && st !== 'listo') return false;
-      return !q || [p.nombre, p.marca, p.color, p.modelo, p.id].join(' ').toLowerCase().includes(q);
+      return !q || [nameOf(p), p.nombre, p.marca, colorsOf(p).map(c => c.nombre).join(' '), p.modelo, p.id].join(' ').toLowerCase().includes(q);
     });
   }
   function renderFichasHeader(){
@@ -851,9 +879,9 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     $('pgrid').innerHTML = list.map(p => {
       const st = estadoOf(p.id), src = imgOf(p);
       return `<button class="pcard" type="button" data-open="${esc(p.id)}">
-        <span class="pimg">${src ? imgTag(src, p.nombre) : `<span class="nophoto">${ic('image')}Elegir foto</span>`}
+        <span class="pimg">${src ? imgTag(src, nameOf(p)) : `<span class="nophoto">${ic('image')}Elegir foto</span>`}
           ${st ? `<span class="pbadge ${st}">${st === 'listo' ? 'Lista' : 'Empezada'}</span>` : ''}</span>
-        <span class="pbody"><span class="pc-name">${esc(p.nombre)}</span><span class="pc-sub" style="display:block">${esc([p.marca, p.color].filter(Boolean).join(' · '))}</span></span>
+        <span class="pbody"><span class="pc-name">${esc(nameOf(p))}</span><span class="pc-sub" style="display:block">${esc([p.marca, colorsOf(p).map(c => c.nombre).join(' · ')].filter(Boolean).join(' · '))}</span>${dotsOf(p)}</span>
       </button>`;
     }).join('') || `<div class="fempty">${ic(F.q ? 'search' : EMPTY[F.filter][0])}${F.q ? 'Ningún producto coincide con la búsqueda.' : EMPTY[F.filter][1]}</div>`;
   }
@@ -899,6 +927,16 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
       + (n > 1 ? '<p class="hint">Toca una foto para dejarla como principal.</p>' : '');
     $('f-photos-n').textContent = n ? `${n} ${n === 1 ? 'foto' : 'fotos'}` : '';
   }
+  // Los inputs de color no llevan name: readForm los toma de F.colores
+  function renderColors(){
+    $('f-colors').innerHTML = `<div class="cols">${F.colores.map((c, i) => `<div class="col-row" data-ci="${i}">
+        <label class="swatch" style="background:${esc(c.hex)}"><span class="sr">Tono de ${esc(c.nombre || 'color')}</span><input type="color" data-chex value="${esc(c.hex)}"></label>
+        <label class="sr" for="col-${i}">Nombre del color</label>
+        <input class="ctl" id="col-${i}" data-cname maxlength="40" placeholder="Ej: Camel" value="${esc(c.nombre)}">
+        <button class="ibtn" type="button" data-crm aria-label="Quitar ${esc(c.nombre || 'color')}">${ic('trash')}</button></div>`).join('')}
+      ${F.colores.length < 12 ? `<button class="col-add" type="button" data-cadd>${ic('plus')}Agregar color</button>` : ''}</div>`;
+    $('f-colors-n').textContent = F.colores.length ? `${F.colores.length} ${F.colores.length === 1 ? 'color' : 'colores'}` : '';
+  }
   function renderActions(){
     const st = estadoOf(F.current), n = neighbours();
     $('sh-actions').innerHTML = (st === 'listo'
@@ -911,12 +949,18 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     F.current = id; clearTimeout(F.saveT); F.saveT = null;
     const p = S.catalog.items.find(x => x.id === id), d = detail(id) || { data:{}, estado:null }, v = d.data || {};
     F.fotos = fotosOf(id);
+    F.colores = colorsOf(p);
     const reg = v.correa_regulable || '';
-    $('sh-title').textContent = p.nombre;
+    $('sh-title').textContent = nameOf(p);
     $('ficha').innerHTML = `
-      <div class="f-head"><div class="f-name">${esc(p.nombre)}</div>
-        <div class="f-sub">${esc([p.marca, p.modelo, p.color].filter(Boolean).join(' · '))}</div>
+      <div class="f-head"><div class="f-name" id="f-name">${esc(nameOf(p))}</div>
+        <div class="f-sub">${esc([p.marca, p.modelo, v.nombre && v.nombre !== p.nombre ? 'Ref: ' + p.nombre : ''].filter(Boolean).join(' · '))}</div>
         <div class="f-save ${d.updated_at ? 'ok' : ''}" id="f-save">${d.updated_at ? ic('check') + 'Guardado ' + ago(d.updated_at) : 'Sin datos todavía'}</div></div>
+      <div class="fgroup"><div class="fg-t">${ic('pencil')}Nombre</div>
+        <div class="grid">${textField('nombre','Nombre del producto', esc(p.nombre), 120, v.nombre, true)}</div>
+        <p class="hint">Así se va a llamar en la tienda. Si lo dejas vacío, queda "${esc(p.nombre)}".</p></div>
+      <div class="fgroup"><div class="fg-t">${ic('palette')}Colores<small id="f-colors-n"></small></div><div id="f-colors"></div>
+        <p class="hint">Un mismo producto en varios colores va en esta ficha. Toca el círculo para ajustar el tono.</p></div>
       <div class="fgroup"><div class="fg-t">${ic('image')}Fotos<small id="f-photos-n"></small></div><div id="f-photos"></div></div>
       <div class="fgroup"><div class="fg-t">${ic('ruler')}Medidas</div>
         <div class="dims">${BAG_SVG}<div class="grid g3">${numField('alto_cm','Alto','cm',v.alto_cm)}${numField('ancho_cm','Ancho','cm',v.ancho_cm)}${numField('fondo_cm','Fondo','cm',v.fondo_cm)}</div></div></div>
@@ -930,7 +974,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
           ${textField('compartimentos','Compartimentos interiores','Ej: 1 bolsillo con cierre y 2 para celular',300,v.compartimentos,true)}
           <div class="fld full"><label for="f-notas">Notas</label><textarea class="ctl" id="f-notas" name="notas" maxlength="1000" placeholder="Cualquier detalle que quieras que aparezca en la ficha">${esc(v.notas || '')}</textarea></div>
         </div></div>`;
-    renderChosen(); renderActions();
+    renderChosen(); renderColors(); renderActions();
     if ($('sheet').hidden) openSheet('sheet');
     $('sheet').querySelector('.sheet-b').scrollTop = 0;
   }
@@ -939,6 +983,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     $('ficha').querySelectorAll('[name]').forEach(el => { if (el.value.trim() !== '') data[el.name] = el.value.trim(); });
     const seg = $('ficha').querySelector('[data-seg] [aria-pressed="true"]'); if (seg) data.correa_regulable = seg.dataset.v;
     data.fotos = F.fotos.slice();
+    data.colores = F.colores.filter(c => c.nombre.trim()).map(c => ({ nombre: c.nombre.trim(), hex: c.hex }));
     return data;
   }
   async function saveFicha(estado){
@@ -955,7 +1000,23 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     } catch { if (el) el.innerHTML = ic('alert') + 'No se pudo guardar. Revisa tu conexión.'; return false; }
   }
   const queueSave = (ms = 900) => { clearTimeout(F.saveT); F.saveT = setTimeout(() => saveFicha(), ms); };
-  $('ficha').addEventListener('input', () => queueSave());
+  $('ficha').addEventListener('input', e => {
+    const row = e.target.closest('[data-ci]');
+    if (row) {
+      const c = F.colores[Number(row.dataset.ci)];
+      if (e.target.matches('[data-cname]')) {
+        c.nombre = e.target.value;
+        // color nuevo sin tono elegido a mano: se sugiere por el nombre ("Burdeos" → burdeos)
+        if (c.auto) { c.hex = hexFor(c.nombre); const h = row.querySelector('[data-chex]'); h.value = c.hex; h.parentElement.style.background = c.hex; }
+      }
+      if (e.target.matches('[data-chex]')) { c.hex = e.target.value; c.auto = false; e.target.parentElement.style.background = c.hex; }
+    }
+    if (e.target.id === 'f-nombre') {
+      const t = e.target.value.trim() || S.catalog.items.find(x => x.id === F.current)?.nombre || '';
+      $('f-name').textContent = t; $('sh-title').textContent = t;
+    }
+    queueSave();
+  });
   $('ficha').addEventListener('change', e => { if (e.target.matches('select')) saveFicha(); });
   $('ficha').addEventListener('submit', e => e.preventDefault());
   $('ficha').addEventListener('click', e => {
@@ -965,6 +1026,12 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     if (rm) { F.fotos = F.fotos.filter(x => x !== rm.dataset.rm); renderChosen(); saveFicha(); }
     if (mk) { F.fotos = [mk.dataset.main, ...F.fotos.filter(x => x !== mk.dataset.main)]; renderChosen(); saveFicha(); }
     if (e.target.closest('#open-gal')) openGallery();
+    const crm = e.target.closest('[data-crm]');
+    if (crm) { F.colores.splice(Number(crm.closest('[data-ci]').dataset.ci), 1); renderColors(); saveFicha(); }
+    if (e.target.closest('[data-cadd]')) {
+      F.colores.push({ nombre:'', hex:'#cccccc', auto:true }); renderColors();
+      $('col-' + (F.colores.length - 1))?.focus();
+    }
   });
   $('sh-actions').addEventListener('click', async e => {
     if (e.target.closest('#f-done'))        { if (await saveFicha('listo')) { toast('Ficha lista'); goNext(true); } }
@@ -982,7 +1049,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   // Galería: elegir fotos (orden de toque = orden final)
   function takenBy(){
     const m = {};
-    for (const [pid, d] of Object.entries(S.catalog.details)) if (pid !== F.current) (d.data?.fotos || []).forEach(f => { m[f] = m[f] || S.catalog.items.find(p => p.id === pid)?.nombre; });
+    for (const [pid, d] of Object.entries(S.catalog.details)) if (pid !== F.current) (d.data?.fotos || []).forEach(f => { m[f] = m[f] || (p => p && nameOf(p))(S.catalog.items.find(p => p.id === pid)); });
     return m;
   }
   function renderGallery(){

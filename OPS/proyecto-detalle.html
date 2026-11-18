@@ -508,7 +508,7 @@ function renderFichas(){
     const chosen = (v.fotos || []).map(id => photoById[id]).filter(Boolean);
     if (chosen.length) p = { ...p, imagen_url: chosen[0].thumb_url };
     return `<tr><td>${p.imagen_url ? `<img src="${esc(p.imagen_url)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=&quot;ph&quot;><i class=&quot;hz-i&quot; data-i=&quot;bag&quot;></i></span>'">` : `<span class="ph">${ic('bag')}</span>`}</td>
-      <td><strong>${esc(p.nombre)}</strong><div class="muted" style="font-size:12px">${esc([p.id, p.marca].filter(Boolean).join(' · '))}</div></td>
+      <td><strong>${esc(v.nombre || p.nombre)}</strong><div class="muted" style="font-size:12px">${esc([p.id, v.nombre && v.nombre !== p.nombre ? 'Ref: ' + p.nombre : '', p.marca, (v.colores?.length ? v.colores.map(c => c.nombre) : [p.color]).filter(Boolean).join(' · ')].filter(Boolean).join(' · '))}</div></td>
       <td>${d ? (d.estado === 'listo' ? '<span class="badge badge-green">Lista</span>' : '<span class="badge badge-yellow">Empezada</span>') : '<span class="badge badge-gray">Sin datos</span>'}</td>
       <td class="num">${d ? `${n(v.alto_cm)} × ${n(v.ancho_cm)} × ${n(v.fondo_cm)} cm` : ''}</td>
       <td class="num">${d ? `${n(v.asa_cm)} / ${n(v.correa_cm)} cm${v.correa_regulable ? ' · ' + (L[v.correa_regulable] || '') : ''}` : ''}</td>
@@ -591,11 +591,11 @@ $('photoGrid').addEventListener('click', async e => {
   await loadPhotos(); renderFichas(); opsToast('Foto borrada');
 });
 $('exportCsv').addEventListener('click', () => {
-  const cols = ['id','nombre','marca','categoria','estado','foto_principal','otras_fotos','alto_cm','ancho_cm','fondo_cm','asa_cm','correa_cm','correa_regulable','peso_g','cierre','herrajes','compartimentos','forro','notas','actualizado'];
+  const cols = ['id','nombre','nombre_catalogo','colores','marca','categoria','estado','foto_principal','otras_fotos','alto_cm','ancho_cm','fondo_cm','asa_cm','correa_cm','correa_regulable','peso_g','cierre','herrajes','compartimentos','forro','notas','actualizado'];
   const q = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const lines = [cols.join(',')].concat(catalog.map(p => { const d = details[p.id] || {}, v = d.data || {};
     const fs = (v.fotos || []).map(id => photoById[id]?.nombre).filter(Boolean);
-    return [p.id, p.nombre, p.marca, p.categoria, d.estado || '', fs[0] || '', fs.slice(1).join(' | '), v.alto_cm, v.ancho_cm, v.fondo_cm, v.asa_cm, v.correa_cm, v.correa_regulable, v.peso_g, v.cierre, v.herrajes, v.compartimentos, v.forro, v.notas, d.updated_at || ''].map(q).join(','); }));
+    return [p.id, v.nombre || p.nombre, p.nombre, (v.colores?.length ? v.colores.map(c => c.nombre).join(' | ') : p.color || ''), p.marca, p.categoria, d.estado || '', fs[0] || '', fs.slice(1).join(' | '), v.alto_cm, v.ancho_cm, v.fondo_cm, v.asa_cm, v.correa_cm, v.correa_regulable, v.peso_g, v.cierre, v.herrajes, v.compartimentos, v.forro, v.notas, d.updated_at || ''].map(q).join(','); }));
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type:'text/csv;charset=utf-8' }));
   a.download = `fichas-${(P.brand?.nombre || P.nombre).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.csv`; a.click();
