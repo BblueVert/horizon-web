@@ -10,7 +10,7 @@
 //      brief    { brief }                          guarda el brief pre-diagnóstico
 //      reorder  { ids: [milestone_id, ...] }        el cliente prioriza lo que viene
 //      comment  { milestone_id?, contenido }        comentario del cliente (general o de un hito)
-//      product  { product_id, data, estado }        ficha de producto (medidas, detalles y fotos elegidas)
+//      product  { product_id, data, estado }        ficha de producto (nombre, colores, medidas, detalles y fotos elegidas)
 //
 // Usa la anon key: las políticas RLS dejan ver y tocar solo el proyecto cuyo portal_token viene
 // en el header x-portal-token, y los permisos por columna limitan qué campos puede escribir.
@@ -33,10 +33,19 @@ const PRODUCT_FIELDS = {
   compartimentos: TXT(300), forro: TXT(200),
   herrajes: ONE('dorado', 'plateado', 'bronce', 'negro', 'sin_herrajes', 'otro'),
   notas: TXT(1000),
+  nombre: TXT(120),          // nombre comercial que pone el cliente (si falta, se usa el del catálogo)
 };
+const HEX_RE = /^#[0-9a-f]{6}$/i;
 
 function cleanProductData(src) {
   const out = {};
+  // variantes de color de la misma referencia: [{ nombre, hex }]
+  if (Array.isArray(src?.colores)) {
+    out.colores = src.colores
+      .map(c => ({ nombre: String(c?.nombre || '').trim().substring(0, 40), hex: HEX_RE.test(String(c?.hex || '')) ? String(c.hex).toLowerCase() : null }))
+      .filter(c => c.nombre)
+      .slice(0, 12);
+  }
   for (const [k, spec] of Object.entries(PRODUCT_FIELDS)) {
     const v = src?.[k];
     if (v === undefined || v === null || v === '') continue;
@@ -142,7 +151,7 @@ module.exports = async function handler(req, res) {
         const data = cleanProductData(b.data || {});
         // fotos elegidas: solo ids de fotos de este proyecto, sin repetir, en el orden del cliente
         if (Array.isArray(b.data?.fotos)) {
-          const wanted = [...new Set(b.data.fotos.map(String).filter(id => UUID_RE.test(id)))].slice(0, 12);
+          const wanted = [...new Set(b.data.fotos.map(String).filter(id => UUID_RE.test(id)))].slice(0, 30);
           if (wanted.length) {
             const ok = await get(`catalog_photos?project_id=eq.${pid}&id=in.(${wanted.join(',')})&select=id`);
             const valid = new Set(ok.map(r => r.id));
