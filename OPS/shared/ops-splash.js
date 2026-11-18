@@ -33,7 +33,7 @@
   el.id = 'hz-splash';
   el.setAttribute('aria-hidden', 'true');
   // En la app el logo ya viene en pantalla (splash del sistema): parte quieto. En el navegador, aparece.
-  el.innerHTML = '<img src="/OPS/app/splash-logo.png" alt="" style="' + (app ? '' : 'opacity:0;transform:scale(.9)') + '">';
+  el.innerHTML = '<img src="/Identidad/app/splash-logo.png" alt="" style="' + (app ? '' : 'opacity:0;transform:scale(.9)') + '">';
   de.appendChild(el);
   var img = el.firstChild;
   requestAnimationFrame(function () { requestAnimationFrame(function () {
