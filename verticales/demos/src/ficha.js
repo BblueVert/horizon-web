@@ -22,6 +22,13 @@ export function validarFicha(f) {
   if (!FLUJOS.includes(f.flujo)) errores.push(`"flujo" debe ser: ${FLUJOS.join(' | ')}`);
 
   if (f.motor !== undefined && !SLUG.test(String(f.motor))) errores.push('"motor" debe ser un nombre como "mesa-cero" o "minimarket"');
+  if (f.documento !== undefined) {
+    const d = f.documento;
+    if (!d || !String(d.plantilla || '').trim()) errores.push('"documento" necesita "plantilla" (ruta o URL del PDF base)');
+    if (!Array.isArray(d?.campos) || !d.campos.length) errores.push('"documento.campos" vacío: mide la plantilla con scripts/medir-plantilla.js');
+    else if (d.campos.some(c => !c?.clave || !Number.isInteger(c.pagina) || !Number.isFinite(c.x) || !Number.isFinite(c.y) || !Number.isFinite(c.ancho))) errores.push('"documento.campos": cada campo necesita clave, pagina, x, y y ancho');
+    if (!d?.datos || typeof d.datos !== 'object') avisos.push('"documento.datos" vacío: el agente no sabrá qué datos juntar para el PDF');
+  }
 
   const catalogo = Array.isArray(f.catalogo) ? f.catalogo : [];
   let items = 0;
@@ -59,6 +66,16 @@ export function linkDemo(numero, ficha) {
 export function codigoDemo(texto) {
   const m = String(texto || '').match(/\bdemo[:\s]+([a-z0-9][a-z0-9-]{1,40})\b/i);
   return m ? m[1].toLowerCase() : null;
+}
+
+// El mensaje del link sin el código. Si era solo el saludo genérico del link de demo, queda "Hola";
+// si trae algo más (ej. el resumen del cotizador de una web), se conserva para que el agente lo use.
+export function mensajeInicial(texto) {
+  const limpio = String(texto || '')
+    .replace(/\(?\s*\bdemo[:\s]+[a-z0-9][a-z0-9-]{1,40}\b\s*\)?/i, ' ')
+    .replace(/\s+/g, ' ').trim();
+  if (!limpio || /^(hola!?\s*)?quiero probar el asistente de\b/i.test(limpio)) return 'Hola';
+  return limpio;
 }
 
 // Link de Google Maps de un local: el que trae la ficha, o una búsqueda por dirección.

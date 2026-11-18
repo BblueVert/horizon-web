@@ -4,6 +4,7 @@
 
 import { config } from './config.js';
 import { mapaDe } from './ficha.js';
+import { promptDocumento } from './documento.js';
 
 const dinero = (n) => '$' + Math.round(Number(n)).toLocaleString('es-CL');
 
@@ -56,6 +57,7 @@ export function construirPrompt(ficha) {
     (ficha.reglas || []).length && `Cómo funciona la atención (respétalo):\n${ficha.reglas.map(x => `- ${x}`).join('\n')}`,
     (ficha.datos_pedido || []).length && `Para cerrar un ${ficha.flujo === 'reservas' ? 'agendamiento' : 'pedido'} necesitas: ${ficha.datos_pedido.join(', ')}.`,
     ficha.derivar_a && `Si no puedes resolver algo: ${ficha.derivar_a}`,
+    promptDocumento(ficha),
   ].filter(Boolean);
 
   bloques.push(`Saludo y trato (va antes que todo):
@@ -152,6 +154,7 @@ export function avisoDueno(ficha, accion, telefono) {
     d.detalle && `Detalle: ${d.detalle}`,
     Number.isFinite(d.total) && `Total: ${dinero(d.total)}`,
     accion.pago && `Pago: link enviado por ${dinero(accion.pago)}`,
+    accion.documento && `PDF enviado: ${accion.documento}`,
     d.otros && d.otros,
     telefono && `WhatsApp: +${telefono}`,
   ];

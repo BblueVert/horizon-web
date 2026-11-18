@@ -2,7 +2,8 @@
 // Devuelve siempre una lista de mensajes a enviar: [{ jid, texto }].
 
 import { config } from './config.js';
-import { codigoDemo, linkDemo } from './ficha.js';
+import { codigoDemo, linkDemo, mensajeInicial } from './ficha.js';
+import { generarDocumento as generarDocumentoReal, llevaDocumento } from './documento.js';
 import { responder as responderIA, avisoDueno, extrasConfirmacion } from './agente.js';
 import { mapaDe } from './ficha.js';
 import { responderMotor as motorReal } from './motores.js';
@@ -85,7 +86,7 @@ const AYUDA = [
   '• #bot off / #bot on → silencia o reactiva el bot en un chat',
 ].join('\n');
 
-export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, cartaDe = cartaLocal, log = console }) {
+export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, cartaDe = cartaLocal, generarDocumento = generarDocumentoReal, log = console }) {
   let yo = null;      // jid del chat contigo mismo
   let numero = '';    // número vinculado (para los links)
 
@@ -137,6 +138,17 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       const extras = extrasConfirmacion(ficha, r.accion, numero);
       r.accion = extras.accion;
       salida.push(...extras.mensajes.map(t => ({ jid, texto: t })));
+      // Propuesta o cotización en PDF con los datos que juntó el agente (ficha.documento).
+      if (llevaDocumento(ficha, r.accion)) {
+        try {
+          const documento = await generarDocumento(ficha, r.accion.datos?.documento || {});
+          salida.push({ jid, documento, texto: ficha.documento.mensaje || '' });
+          r.accion = { ...r.accion, documento: documento.nombre };
+        } catch (e) {
+          log.error(`[demo ${ficha.slug}] no se pudo armar el documento:`, e.message);
+          salida.push(...aYo(`⚠️ La demo *${ficha.slug}* no pudo armar el PDF: ${String(e.message).slice(0, 200)}`));
+        }
+      }
       const aviso = avisoDueno(ficha, r.accion, telefono);
       if (['chat', 'ambos'].includes(config.bot.aviso)) salida.push({ jid, texto: `📲 _Así le llegaría este aviso al dueño de ${ficha.nombre}:_\n\n${aviso}` });
       if (['yo', 'ambos'].includes(config.bot.aviso) && jid !== yo) salida.push(...aYo(aviso));
@@ -175,7 +187,8 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
         ];
       }
       estado.asignar(jid, codigo, telefono);
-      const salida = await turno(jid, telefono, 'Hola', ficha);
+      // El primer mensaje se pasa entero si trae algo más que el saludo del link (ej. el cotizador de una web).
+      const salida = await turno(jid, telefono, mensajeInicial(texto), ficha);
       if (jid !== yo) salida.push(...aYo(`▶️ +${telefono} empezó la demo de ${ficha.nombre}.`));
       return salida;
     }
