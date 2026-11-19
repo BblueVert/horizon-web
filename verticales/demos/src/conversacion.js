@@ -275,6 +275,10 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (tl === '#bot off') { estado.pausar(jid, 'siempre'); return aYo('Bot silenciado en ese chat. #bot on para reactivarlo.'); }
     if (tl === '#bot on') { estado.pausar(jid, null); return aYo('Bot reactivado en ese chat.'); }
 
+    // "#demo prueba-xxxxxx" / "#prueba-xxxxxx": las pruebas de 15 días se arman al vuelo.
+    const pr = tl.match(/^#(?:demo\s+)?(prueba-[a-z0-9]{6})$/);
+    if (pr) await fichas.asegurarPrueba?.(pr[1]);
+
     // "#demo cafeteria" o el atajo "#cafeteria"
     const m = tl.match(/^#demo\s+([a-z0-9][a-z0-9-]{1,40})$/) || (fichas.obtener(tl.slice(1)) && tl.match(/^#([a-z0-9][a-z0-9-]{1,40})$/));
     if (m) {
