@@ -75,8 +75,29 @@ export function crearFichas({ log = console, alNueva = () => {} } = {}) {
     else log.warn('[fichas] DEMOS_TOKEN vacío: solo se usan las fichas locales de', config.bot.carpetaFichas);
   }
 
+  // Prueba de 15 días (prueba-xxxxxx): no tiene ficha propia. Si la licencia está vigente,
+  // se arma una al vuelo con el motor de Mesa Cero, que responde con la carta de ese tenant.
+  async function asegurarPrueba(slug) {
+    if (!/^prueba-[a-z0-9]{6}$/.test(String(slug || ''))) return null;
+    if (fichas.has(slug)) return fichas.get(slug);
+    try {
+      const { url, anon } = config.mesaCero;
+      const res = await fetch(`${url}/rest/v1/rpc/licencia_prueba_estado`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: anon, Authorization: `Bearer ${anon}` },
+        body: JSON.stringify({ p_slug: slug }),
+        signal: AbortSignal.timeout(10000),
+      });
+      const lic = res.ok ? await res.json() : null;
+      if (!lic || !lic.activa) return null;
+      poner({ slug, nombre: lic.nombre || 'tu local', rubro: 'restaurante', flujo: 'pedidos', motor: 'mesa-cero', tenant: slug, locales: [] }, 'prueba');
+      return fichas.get(slug) || null;
+    } catch (e) { log.warn(`[fichas] prueba ${slug}:`, e.message); return null; }
+  }
+
   return {
     iniciar,
+    asegurarPrueba,
     sincronizar,
     cargarLocales,
     obtener: (slug) => fichas.get(slug) || null,

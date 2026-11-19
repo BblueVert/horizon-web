@@ -458,3 +458,35 @@ test('tu número de prueba cambia a la nueva demo activada aunque esté en medio
   assert.equal(estado.demoDe(CLIENTE), 'otra-demo');
   assert.equal(estado.armada(), null);
 });
+
+test('"quiero activar el plan (prueba-…)": ninguna demo responde, se suelta el chat y avisa a Benja', async () => {
+  const { conv, estado, llamadas } = armar();
+  await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'demo: ejemplo-sangucheria' });
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'Hola Benja, quiero activar el plan Pro de Mesa Cero para Binks burger (prueba-48f854).' });
+  assert.equal(estado.demoDe(CLIENTE), null);
+  assert.equal(llamadas.length, 1); // solo el saludo de la demo, no el mensaje de activar
+  assert.match(out[0].texto, /plan Pro\* a valor fundador[\s\S]*\$490\.000[\s\S]*\$199\.000/);
+  assert.match(out[1].texto, /50% de la implementación/);
+  assert.equal(out[2].jid, YO);
+  assert.match(out[2].texto, /activar el plan Pro de Mesa Cero \(prueba-48f854\)/);
+});
+
+test('link de una prueba de 15 días: conecta el chat al motor Mesa Cero con el tenant de la prueba', async () => {
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'estado.json'));
+  const mapa = new Map();
+  const motor = [];
+  const conv = crearConversacion({
+    estado,
+    fichas: {
+      obtener: s => mapa.get(s) || null, todas: () => [...mapa.values()],
+      asegurarPrueba: async s => { const f = { slug: s, nombre: 'Binks burger', rubro: 'restaurante', flujo: 'pedidos', motor: 'mesa-cero', tenant: s }; mapa.set(s, f); return f; },
+    },
+    responderMotor: async (nombre, tel, mensaje, ficha) => { motor.push({ nombre, tenant: ficha.tenant, mensaje }); return { respuestas: ['¡Hola! Bienvenido a Binks burger'], accion: null }; },
+    log: silencioso,
+  });
+  conv.conectado(YO, '56900000001');
+  const out = await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'Hola! Quiero probar el asistente de Binks burger (demo: prueba-48f854)' });
+  assert.equal(estado.demoDe(CLIENTE), 'prueba-48f854');
+  assert.deepEqual(motor[0], { nombre: 'mesa-cero', tenant: 'prueba-48f854', mensaje: 'Hola' });
+  assert.match(out[0].texto, /Binks burger/);
+});
