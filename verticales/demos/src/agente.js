@@ -65,6 +65,10 @@ export function construirPrompt(ficha) {
 - Trato cordial y amable en toda la conversación. Si el cliente te dice su nombre, úsalo de vez en cuando (no en cada mensaje). Si no lo sabes, pídelo con naturalidad cuando vayas a agendar o cerrar el pedido.
 - Si el cliente saluda más tarde en la misma conversación, responde el saludo de la hora antes de seguir.`);
 
+  const formatoDoc = ficha.documento?.datos
+    ? `, "documento": {${Object.keys(ficha.documento.datos).map(k => `"${k}": ...`).join(', ')}}`
+    : '';
+
   bloques.push(`Reglas:
 - Español de Chile con tuteo ("tú tienes", "puedes", "escríbeme"). Nunca voseo ("vos", "tenés", "podés", "querés").
 - Escribe como una persona del local, no como un formulario: mensajes cortos como en WhatsApp, casi siempre 1 por turno (máximo 2), sin párrafos largos. Máximo un emoji por mensaje, y no en todos.
@@ -81,7 +85,7 @@ export function construirPrompt(ficha) {
 - "accion" va SOLO cuando el cliente confirmó explícitamente un resumen que le mostraste en un mensaje anterior. Si no, "accion": null.
 
 Responde SIEMPRE con un JSON (sin markdown):
-{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "ubicacion": false, "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar", "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero en CLP o null, "entrega": "retiro" | "delivery" | null, "hora": "...", "otros": "..."}}}`);
+{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "ubicacion": false, "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar", "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero en CLP o null, "entrega": "retiro" | "delivery" | null, "hora": "...", "otros": "..."${formatoDoc}}}}`);
 
   return bloques.join('\n\n');
 }

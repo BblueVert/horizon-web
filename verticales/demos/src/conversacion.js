@@ -3,7 +3,7 @@
 
 import { config } from './config.js';
 import { codigoDemo, linkDemo, mensajeInicial } from './ficha.js';
-import { generarDocumento as generarDocumentoReal, llevaDocumento } from './documento.js';
+import { generarDocumento as generarDocumentoReal, llevaDocumento, datosDocumento } from './documento.js';
 import { responder as responderIA, avisoDueno, extrasConfirmacion } from './agente.js';
 import { mapaDe } from './ficha.js';
 import { responderMotor as motorReal } from './motores.js';
@@ -141,7 +141,8 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       // Propuesta o cotización en PDF con los datos que juntó el agente (ficha.documento).
       if (llevaDocumento(ficha, r.accion)) {
         try {
-          const documento = await generarDocumento(ficha, r.accion.datos?.documento || {});
+          const delCliente = estado.historial(jid).filter(t => t.role === 'user').map(t => t.content);
+          const documento = await generarDocumento(ficha, datosDocumento(ficha, r.accion, delCliente));
           salida.push({ jid, documento, texto: ficha.documento.mensaje || '' });
           r.accion = { ...r.accion, documento: documento.nombre };
         } catch (e) {

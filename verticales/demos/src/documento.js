@@ -89,6 +89,42 @@ export async function generarDocumento(ficha, datos = {}, { fecha = new Date() }
   return { buffer, nombre: nombre.endsWith('.pdf') ? nombre : `${nombre}.pdf` };
 }
 
+const vacio = (v) => v === null || v === undefined || String(v).trim() === '';
+
+// Datos del PDF, de menos a más confiable:
+// 1. Reglas de la ficha (documento.extraer) sobre lo que escribió el cliente: así el resumen del
+//    cotizador de una web llega al PDF aunque la IA no lo repita.
+// 2. Lo que mandó la IA suelto en accion.datos con el nombre de un campo.
+// 3. Lo que mandó la IA en accion.datos.documento (lo pedido en el prompt).
+// Al final, documento.alias rellena lo que siga vacío con otro dato de la IA (ej. novios ← cliente).
+export function datosDocumento(ficha, accion, mensajesCliente = []) {
+  const doc = ficha.documento || {};
+  const out = {};
+  const texto = mensajesCliente.join('\n');
+  for (const [clave, reglas] of Object.entries(doc.extraer || {})) {
+    for (const regla of [].concat(reglas)) {
+      let m;
+      try { m = texto.match(new RegExp(regla.re, 'iu')); } catch { continue; }
+      if (!m) continue;
+      out[clave] = regla.valor === undefined ? (m[1] ?? m[0]).trim()
+        : typeof regla.valor === 'string' ? regla.valor.replace(/\$(\d)/g, (_, n) => (m[n] ?? '').trim()) : regla.valor;
+      break;
+    }
+  }
+  const d = accion?.datos && typeof accion.datos === 'object' ? accion.datos : {};
+  const claves = new Set([...Object.keys(doc.datos || {}), ...(doc.campos || []).map(c => c.clave)]);
+  for (const k of claves) if (!vacio(d[k])) out[k] = d[k];
+  if (d.documento && typeof d.documento === 'object') {
+    for (const [k, v] of Object.entries(d.documento)) if (!vacio(v)) out[k] = v;
+  }
+  for (const [k, alias] of Object.entries(doc.alias || {})) {
+    if (!vacio(out[k])) continue;
+    const v = [].concat(alias).map(a => d[a]).find(x => !vacio(x));
+    if (v !== undefined) out[k] = v;
+  }
+  return out;
+}
+
 // Instrucciones para el agente: qué datos poner en accion.datos.documento.
 export function promptDocumento(ficha) {
   const doc = ficha.documento;

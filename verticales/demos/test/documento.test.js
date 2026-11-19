@@ -4,7 +4,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { PDFDocument } from 'pdf-lib';
-import { generarDocumento, llevaDocumento, fechaLarga, promptDocumento } from '../src/documento.js';
+import { generarDocumento, llevaDocumento, fechaLarga, promptDocumento, datosDocumento } from '../src/documento.js';
 import { mensajeInicial, validarFicha } from '../src/ficha.js';
 import { crearEstado } from '../src/estado.js';
 import { crearConversacion } from '../src/conversacion.js';
@@ -77,4 +77,36 @@ test('al confirmar la consulta se manda el PDF y el aviso lo menciona', async ()
   assert.equal(doc.documento.nombre, 'Propuesta - Camila y Diego.pdf');
   assert.equal(doc.texto, 'Te dejo la propuesta 💍');
   assert.ok(out.some(m => /PDF enviado: Propuesta - Camila y Diego\.pdf/.test(m.texto || '')));
+});
+
+test('los datos del cotizador llegan al PDF aunque la IA no los repita', async () => {
+  const { readFileSync } = await import('node:fs');
+  const conExtraer = {
+    ...ficha,
+    documento: {
+      ...ficha.documento,
+      extraer: {
+        invitados: { re: 'invitados:\\s*(?:aprox\\.?\\s*)?(\\d{1,4})', valor: '$1 personas' },
+        fecha: { re: 'fecha:\\s*([^.\\n]+?)\\.(?:\\s|$)' },
+        lugar: { re: 'lugar:\\s*(.+?)\\.(?:\\s|$)' },
+        formato: [{ re: 'formato:\\s*cena servida', valor: 'Cena servida' }],
+        barra: { re: 'barra de tragos', valor: true },
+        montaje: { re: 'montaje', valor: true },
+      },
+      alias: { novios: ['cliente'] },
+    },
+  };
+  const cotizador = 'Hola! Quiero cotizar el banquete para mi matrimonio. Invitados: aprox. 120. Fecha: 14 de marzo de 2027. Lugar: Viña en Machalí. Formato: cena servida. También necesito: barra de tragos, garzones.';
+  // La IA solo mandó el nombre en "cliente" y nada en "documento".
+  const datos = datosDocumento(conExtraer, { tipo: 'consulta', datos: { cliente: 'Camila y Diego' } }, [cotizador, 'Camila y Diego', 'sí']);
+  assert.deepEqual(datos, { invitados: '120 personas', fecha: '14 de marzo de 2027', lugar: 'Viña en Machalí', formato: 'Cena servida', barra: true, novios: 'Camila y Diego' });
+  // Lo que manda la IA en documento gana (el cliente cambió de opinión en el chat).
+  const corregido = datosDocumento(conExtraer, { tipo: 'consulta', datos: { documento: { invitados: '150 personas' } } }, [cotizador]);
+  assert.equal(corregido.invitados, '150 personas');
+  assert.ok(readFileSync);
+});
+
+test('el formato de respuesta pide el bloque documento cuando la ficha lo tiene', async () => {
+  const { construirPrompt } = await import('../src/agente.js');
+  assert.match(construirPrompt(ficha), /"documento": \{"novios": \.\.\., "barra": \.\.\.\}/);
 });
