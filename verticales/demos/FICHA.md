@@ -47,6 +47,8 @@ Al confirmar una acción (por defecto `consulta`), el bot completa una plantilla
 | `plantilla` | Ruta relativa a `verticales/demos` (ej. `plantillas/eventos.pdf`) o URL |
 | `campos[]` | Lo que imprimió el script. Opcionales: `tam` (pt), `fuente` (`medio` · `negrita` · `serif`), `color`, `alinear` (`izquierda` · `centro` · `derecha`), `marca: true` (sí/no) |
 | `datos` | `{ clave: "qué poner" }`: lo que el agente debe juntar y mandar en `accion.datos.documento`. `emision` se llena sola con la fecha |
+| `extraer` | `{ clave: { re, valor } }` (o lista, gana la primera que calce): reglas sobre lo que escribió el cliente, para que el resumen de un cotizador web llegue al PDF aunque la IA no lo repita. `valor` acepta `$1` o `true`. Lo que manda la IA en `documento` tiene prioridad |
+| `alias` | `{ clave: ["cliente"] }`: si el campo queda vacío, usa ese dato de `accion.datos` |
 | `marcas` | Texto de las marcas: `{ "si": "Incluido", "no": "—" }` |
 | `archivo` | Nombre del PDF; acepta `{clave}` (ej. `Propuesta - {novios}.pdf`) |
 | `mensaje` | Texto que acompaña al PDF |
