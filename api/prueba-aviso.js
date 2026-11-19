@@ -23,6 +23,8 @@ const PLANES = {
 
 const clp = n => '$' + Math.round(n).toLocaleString('es-CL');
 const h = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Correo parcialmente oculto para mostrarlo en pantalla: so•••••ks@gmail.com
+const ocultar = e => { const [u, d] = String(e || '').split('@'); if (!d) return ''; return (u.length <= 3 ? u[0] + '•••' : u.slice(0, 2) + '•••••' + u.slice(-2)) + '@' + d; };
 const fecha = iso => new Date(iso).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', timeZone: 'America/Santiago' });
 
 function mcHeaders() {
@@ -64,7 +66,7 @@ module.exports = async function handler(req, res) {
     if (tipo === 'nueva') {
       // Solo recién creada y una vez.
       if (ahora - Date.parse(lic.created_at) > 20 * 60_000) return res.status(409).json({ error: 'Fuera de plazo' });
-      if (await ultimoAviso(slug, 'aviso_nueva')) return res.status(200).json({ ok: true, repetido: true });
+      if (await ultimoAviso(slug, 'aviso_nueva')) return res.status(200).json({ ok: true, repetido: true, correo_a: ocultar(lic.email) });
       await registrar(slug, 'aviso_nueva', 'bienvenida + aviso');
       const c = correoBienvenida(lic, false);
       out.dueno = lic.email ? await enviarCorreo({ to: lic.email, subject: c.subject, html: c.html, text: c.text }) : 'sin correo';
@@ -72,7 +74,7 @@ module.exports = async function handler(req, res) {
       out.benja = await enviarCorreo({ to: benja, subject: b.subject, html: b.html, text: b.text });
     } else if (tipo === 'acceso') {
       // Reenvío del link: como máximo uno cada 10 minutos por licencia.
-      if (ahora - (await ultimoAviso(slug, 'aviso_acceso')) < 10 * 60_000) return res.status(200).json({ ok: true, repetido: true });
+      if (ahora - (await ultimoAviso(slug, 'aviso_acceso')) < 10 * 60_000) return res.status(200).json({ ok: true, repetido: true, correo_a: ocultar(lic.email) });
       await registrar(slug, 'aviso_acceso', 'reenvío del link');
       const c = correoBienvenida(lic, true);
       out.dueno = lic.email ? await enviarCorreo({ to: lic.email, subject: c.subject, html: c.html, text: c.text }) : 'sin correo';
@@ -91,7 +93,7 @@ module.exports = async function handler(req, res) {
       }
     }
     Object.keys(out).forEach(k => { if (out[k] !== 'enviado') console.warn('[prueba-aviso]', tipo, k, out[k]); });
-    return res.status(200).json({ ok: true, correos: out });
+    return res.status(200).json({ ok: true, correos: out, correo_a: tipo === 'activar' ? undefined : ocultar(lic.email) });
   } catch (e) {
     console.error('[prueba-aviso]', e.message);
     return res.status(500).json({ error: 'Error interno' });
