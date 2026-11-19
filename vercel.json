@@ -44,6 +44,7 @@
     { "source": "/ops/tareas",          "destination": "/OPS/tareas.html" },
     { "source": "/ops/notas",           "destination": "/OPS/notas.html" },
     { "source": "/ops/saas-clientes",   "destination": "/OPS/saas-clientes.html" },
+    { "source": "/ops/licencias",       "destination": "/OPS/licencias.html" },
     { "source": "/ops/recursos",        "destination": "/OPS/recursos.html" }
   ],
   "headers": [

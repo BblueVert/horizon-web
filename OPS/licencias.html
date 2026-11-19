@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>HORIZON OPS · Licencias Mesa Cero</title>
+<link rel="icon" type="image/png" href="../Identidad/Logo ISO.png">
+<link rel="manifest" href="/OPS/manifest.webmanifest">
+<meta name="theme-color" content="#1A1626">
+<link rel="apple-touch-icon" href="/Identidad/app/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="HORIZON OPS">
+<script src="/OPS/shared/ops-splash.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/OPS/shared/ops.css">
+<style>
+.lc-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+.lc-kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+.lc-kpi small{display:block;font-family:var(--fm);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);}
+.lc-kpi b{font-size:26px;font-variant-numeric:tabular-nums;color:var(--text);}
+.lc-kpi span{display:block;font-size:12px;color:var(--text3);margin-top:2px;}
+.lc-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px;}
+.lc-bar a{font-size:13px;font-weight:600;padding:8px 12px;border-radius:99px;border:1px solid var(--border2);color:var(--text2);text-decoration:none;background:var(--card);cursor:pointer;}
+.lc-bar a.on{background:var(--text);color:var(--card);border-color:var(--text);}
+.lc-bar a i{font-style:normal;opacity:.6;margin-left:4px;}
+.lc-bar input{margin-left:auto;min-width:220px;padding:9px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--card);color:var(--text);font:inherit;font-size:14px;}
+.lc-list{display:grid;gap:10px;}
+.lc-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:1.4fr 1fr auto;gap:14px 20px;align-items:center;}
+.lc-item.warn{border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.14);}
+.lc-name{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;color:var(--text);}
+.lc-name i{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.lc-meta{font-size:13px;color:var(--text3);margin-top:4px;line-height:1.5;}
+.lc-meta b{color:var(--text2);font-weight:600;}
+.lc-chip{display:inline-block;font-family:var(--fm);font-size:11px;padding:3px 8px;border-radius:6px;background:var(--card2);color:var(--text2);margin-top:6px;}
+.lc-time small{display:block;font-size:12px;color:var(--text3);}
+.lc-time b{font-size:15px;color:var(--text);}
+.lc-prog{height:6px;border-radius:6px;background:var(--card3);margin:6px 0 4px;overflow:hidden;}
+.lc-prog i{display:block;height:100%;border-radius:6px;background:var(--h1);}
+.lc-use{font-size:12px;color:var(--text3);}
+.lc-use b{color:var(--text);}
+.lc-acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:340px;}
+.lc-acts .btn{white-space:nowrap;}
+.lc-wa{background:#25D366!important;color:#fff!important;border-color:#25D366!important;}
+.lc-next{grid-column:1 / -1;font-size:13px;color:var(--text2);background:var(--card2);border-radius:10px;padding:10px 12px;}
+.lc-next b{color:var(--text);}
+.lc-nota{grid-column:1 / -1;font-size:13px;color:var(--text2);border-left:3px solid var(--border3);padding-left:10px;}
+.lc-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--card);padding:12px 18px;border-radius:12px;font-size:14px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;}
+.lc-toast.on{opacity:1;}
+@media(max-width:1000px){.lc-kpis{grid-template-columns:repeat(3,1fr);} .lc-item{grid-template-columns:1fr;} .lc-acts{justify-content:flex-start;max-width:none;}}
+@media(max-width:600px){.lc-kpis{grid-template-columns:repeat(2,1fr);} .lc-bar input{margin-left:0;width:100%;}}
+</style>
+<script src="/shared/hz-icons.js"></script>
+</head>
+<body>
+<div class="ops-layout">
+  <main class="ops-main">
+    <div class="ops-header">
+      <div>
+        <div class="ops-page-title">Licencias Mesa Cero</div>
+        <div class="ops-page-sub">Pruebas de 15 días creadas desde /prueba · seguimiento y activación</div>
+      </div>
+      <div class="ops-header-actions"><a class="btn btn-ghost btn-sm" href="https://mesa-cero.vercel.app/prueba" target="_blank" rel="noopener">Ver landing</a></div>
+    </div>
+    <div class="ops-content">
+      <div class="lc-kpis" id="lcKpis"></div>
+      <div class="lc-bar" id="lcBar"></div>
+      <div id="lcBody"><div class="ops-loading"><div class="ops-spinner"></div>Cargando…</div></div>
+    </div>
+  </main>
+</div>
+<div class="lc-toast" id="lcToast" role="status"></div>
+<script src="/OPS/shared/ops-auth.js"></script>
+<script src="/OPS/shared/ops-nav.js"></script>
+<script>
+const MC = 'https://mesa-cero.vercel.app';
+const DAY = 86400000;
+const RUBRO = { hamburgueseria: 'Hamburguesas', sangucheria: 'Sánguches', sushi: 'Sushi', pizzeria: 'Pizzas', cafeteria: 'Cafetería', otro: 'Otro' };
+// Seguimiento (VENTAS/FACEBOOK-PRUEBA-15-DIAS.md en mesa-cero): el mensaje que toca según el día de la prueba.
+const SEG = [
+  [0, 'Activación', n => `¡Hola ${n.nombre}! Soy Benja de HORIZON. Vi que ya entraste a tu panel de ${n.local}. Haz esta prueba: abre "Ver vista de pedido", pide algo desde tu web y mira cómo cae en el tablero. Toma 1 minuto.`],
+  [2, 'Carta real', n => `${n.nombre}, ¿te armo la carta real de ${n.local}? Mándame una foto del menú o el link de tu Instagram y te la dejo cargada hoy, así la prueba es con tus productos.`],
+  [5, 'Dolor', n => `Pregunta rápida, ${n.nombre}: ¿cuántos pedidos te llegan por WhatsApp en un día normal? Te muestro cuánto tiempo te ahorraría el agente respondiendo solo.`],
+  [10, 'Demo en vivo', n => `${n.nombre}, te quedan 5 días de prueba. ¿Te muestro el agente de WhatsApp funcionando con la carta de ${n.local}? Son 15 minutos por videollamada o paso por el local.`],
+  [13, 'Propuesta', n => `En 2 días termina tu prueba de ${n.local}. ¿Lo dejamos activo para que no se corte? Te recomiendo el plan que calza con lo que me contaste y lo vemos juntos.`],
+  [15, 'Vence hoy', n => `Hoy terminó tu prueba, ${n.nombre}. La carta, los clientes y los pedidos de ${n.local} quedan guardados: si activas esta semana, sigues donde lo dejaste.`],
+  [18, 'Último', n => `Último mensaje, ${n.nombre}, no te quiero llenar el inbox. Si más adelante quieres retomar, me escribes y te reactivo la prueba.`],
+];
+let LIC = [], filtro = 'activas', q = '';
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fecha(iso){return iso?new Date(iso).toLocaleDateString('es-CL',{day:'2-digit',month:'short'}):'—';}
+function hace(iso){if(!iso)return 'sin actividad';const m=Math.round((Date.now()-new Date(iso))/60000);if(m<60)return 'hace '+m+' min';const h=Math.round(m/60);if(h<24)return 'hace '+h+' h';return 'hace '+Math.round(h/24)+' d';}
+function toast(t){const el=document.getElementById('lcToast');el.textContent=t;el.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('on'),2200);}
+function tel(w){return String(w||'').replace(/\D/g,'');}
+
+function estado(l){
+  const left = new Date(l.expires_at) - Date.now();
+  if (l.estado === 'convertida') return { k: 'cliente', label: 'Cliente', badge: 'badge-green', left };
+  if (l.estado === 'vencida' || left <= 0) return { k: 'vencida', label: 'Vencida', badge: 'badge-gray', left };
+  if (left <= 3 * DAY) return { k: 'porvencer', label: 'Por vencer', badge: 'badge-yellow', left };
+  return { k: 'activa', label: 'Activa', badge: 'badge-orange', left };
+}
+function seguimiento(l){
+  const dia = Math.floor((Date.now() - new Date(l.created_at)) / DAY);
+  let s = SEG[0]; SEG.forEach(x => { if (dia >= x[0]) s = x; });
+  return { dia, etapa: s[1], texto: s[2]({ nombre: (l.nombre_contacto || '').split(' ')[0] || 'hola', local: l.nombre_local }) };
+}
+
+async function api(method, body){
+  const r = await fetch('/api/ops/licencias', { method, headers: Object.assign({ 'Content-Type': 'application/json' }, await opsAuthHeaders()), body: body ? JSON.stringify(body) : undefined });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || r.status);
+  return j;
+}
+
+function render(){
+  const E = LIC.map(l => Object.assign({ _e: estado(l) }, l));
+  const c = k => E.filter(l => l._e.k === k).length;
+  const total = E.length, clientes = c('cliente'), conUso = E.filter(l => l.pedidos_propios > 0).length;
+  document.getElementById('lcKpis').innerHTML =
+    `<div class="lc-kpi"><small>Activas</small><b>${c('activa') + c('porvencer')}</b><span>${total} en total</span></div>
+     <div class="lc-kpi"><small>Por vencer</small><b>${c('porvencer')}</b><span>en 3 días o menos</span></div>
+     <div class="lc-kpi"><small>Vencidas</small><b>${c('vencida')}</b><span>sin activar</span></div>
+     <div class="lc-kpi"><small>Clientes</small><b>${clientes}</b><span>${total ? Math.round(clientes / total * 100) : 0}% de conversión</span></div>
+     <div class="lc-kpi"><small>Con uso real</small><b>${conUso}</b><span>hicieron al menos 1 pedido</span></div>`;
+  const F = [['activas', 'Activas', c('activa') + c('porvencer')], ['porvencer', 'Por vencer', c('porvencer')], ['vencida', 'Vencidas', c('vencida')], ['cliente', 'Clientes', clientes], ['todas', 'Todas', total]];
+  document.getElementById('lcBar').innerHTML = F.map(f => `<a data-f="${f[0]}" class="${filtro === f[0] ? 'on' : ''}">${f[1]}<i>${f[2]}</i></a>`).join('') +
+    `<input id="lcQ" type="search" placeholder="Buscar local, nombre o WhatsApp" value="${esc(q)}" aria-label="Buscar licencia">`;
+  document.getElementById('lcQ').oninput = e => { q = e.target.value; renderList(E); };
+  document.querySelectorAll('#lcBar a').forEach(a => a.onclick = () => { filtro = a.dataset.f; render(); });
+  renderList(E);
+}
+
+function renderList(E){
+  const qq = q.trim().toLowerCase();
+  const L = E.filter(l => filtro === 'todas' || (filtro === 'activas' ? ['activa', 'porvencer'].includes(l._e.k) : l._e.k === filtro))
+    .filter(l => !qq || [l.nombre_local, l.nombre_contacto, l.whatsapp, l.email, l.comuna].join(' ').toLowerCase().includes(qq));
+  if (!L.length) { document.getElementById('lcBody').innerHTML = '<div class="ops-empty"><div class="ops-empty-text">' + (LIC.length ? 'No hay licencias en este filtro.' : 'Todavía no hay pruebas. Cuando alguien cree una en /prueba, aparece aquí.') + '</div></div>'; return; }
+  document.getElementById('lcBody').innerHTML = '<div class="lc-list">' + L.map(l => {
+    const e = l._e, s = seguimiento(l);
+    const dias = Math.max(0, Math.ceil(e.left / DAY));
+    const pct = Math.max(0, Math.min(100, (Date.now() - new Date(l.created_at)) / (new Date(l.expires_at) - new Date(l.created_at)) * 100));
+    const wa = 'https://wa.me/' + tel(l.whatsapp) + '?text=' + encodeURIComponent(s.texto);
+    const acts = e.k === 'cliente'
+      ? `<a class="btn btn-ghost btn-sm" href="https://wa.me/${tel(l.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>`
+      : `<a class="btn btn-sm lc-wa" href="${wa}" target="_blank" rel="noopener">Seguimiento · día ${s.dia}</a>
+         ${e.k === 'vencida' ? `<button class="btn btn-ghost btn-sm" data-a="reactivar" data-s="${l.slug}">Reactivar 7 días</button>` : `<button class="btn btn-ghost btn-sm" data-a="extender" data-s="${l.slug}">+7 días</button>`}
+         <button class="btn btn-primary btn-sm" data-a="convertir" data-s="${l.slug}">Pasó a cliente</button>
+         ${e.k !== 'vencida' ? `<button class="btn btn-ghost btn-sm" data-a="vencer" data-s="${l.slug}">Vencer</button>` : ''}`;
+    return `<div class="lc-item${e.k === 'porvencer' ? ' warn' : ''}">
+      <div>
+        <div class="lc-name"><i style="background:${esc(l.color || '#E2231A')}"></i>${esc(l.nombre_local)} <span class="badge ${e.badge}">${e.label}</span></div>
+        <div class="lc-meta"><b>${esc(l.nombre_contacto || '—')}</b> · +${esc(tel(l.whatsapp))} · ${esc(l.email || '')}<br>${esc(RUBRO[l.rubro] || l.rubro || '')}${l.comuna ? ' · ' + esc(l.comuna) : ''} · creada ${fecha(l.created_at)}</div>
+        <span class="lc-chip">${esc(l.origen || 'web')}</span>
+      </div>
+      <div class="lc-time">
+        ${e.k === 'cliente' ? '<small>Licencia</small><b>Activa sin vencimiento</b>' : `<small>${e.k === 'vencida' ? 'Venció el ' + fecha(l.expires_at) : 'Vence el ' + fecha(l.expires_at)}</small><b>${e.k === 'vencida' ? 'Sin acceso' : dias === 1 ? 'Queda 1 día' : 'Quedan ' + dias + ' días'}</b><div class="lc-prog"><i style="width:${pct}%"></i></div>`}
+        <div class="lc-use">${l.pedidos_propios > 0 ? `<b>${l.pedidos_propios} pedido${l.pedidos_propios === 1 ? '' : 's'} propio${l.pedidos_propios === 1 ? '' : 's'}</b> · ${hace(l.ultima_actividad)}` : 'Aún no hace pedidos propios'}</div>
+      </div>
+      <div class="lc-acts">${acts}
+        <a class="btn btn-ghost btn-sm" href="${MC}/admin/dashboard.html?t=${l.slug}" target="_blank" rel="noopener">Panel</a>
+        <a class="btn btn-ghost btn-sm" href="${MC}/mi-web?t=${l.slug}" target="_blank" rel="noopener">Web</a>
+        <button class="btn btn-ghost btn-sm" data-a="nota" data-s="${l.slug}">Nota</button>
+      </div>
+      ${e.k !== 'cliente' ? `<div class="lc-next"><b>Toca: ${esc(s.etapa)}</b> · ${esc(s.texto)}</div>` : ''}
+      ${l.nota ? `<div class="lc-nota">${esc(l.nota)}</div>` : ''}
+    </div>`;
+  }).join('') + '</div>';
+  document.querySelectorAll('#lcBody [data-a]').forEach(b => b.onclick = () => accion(b.dataset.s, b.dataset.a));
+}
+
+async function accion(slug, a){
+  const l = LIC.find(x => x.slug === slug); if (!l) return;
+  const body = { slug, accion: a, dias: 7 };
+  if (a === 'vencer' && !confirm('¿Vencer ahora la prueba de ' + l.nombre_local + '? El panel se bloquea al tiro.')) return;
+  if (a === 'convertir' && !confirm('¿Marcar ' + l.nombre_local + ' como cliente? La licencia queda activa sin vencimiento.')) return;
+  if (a === 'nota') { const n = prompt('Nota para ' + l.nombre_local, l.nota || ''); if (n === null) return; body.nota = n; }
+  try {
+    await api('POST', body);
+    toast({ extender: 'Extendida 7 días', reactivar: 'Reactivada 7 días', convertir: '¡Pasó a cliente!', vencer: 'Prueba vencida', nota: 'Nota guardada' }[a]);
+    await cargar();
+  } catch (e) { toast('No se pudo: ' + e.message); }
+}
+
+async function cargar(){ LIC = (await api('GET')).licencias || []; render(); }
+
+(async () => {
+  const s = await opsRequireAuth(); if (!s) return;
+  try { await cargar(); } catch (e) { document.getElementById('lcBody').innerHTML = '<div class="ops-empty"><div class="ops-empty-text">No se pudo cargar: ' + esc(e.message) + '</div></div>'; }
+  setInterval(() => cargar().catch(() => {}), 60000);
+})();
+</script>
+<script src="/shared/analytics.js"></script>
+</body>
+</html>
