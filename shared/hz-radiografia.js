@@ -10,7 +10,7 @@
 (function () {
   var PACK = {
     esencial: { nm: 'Esencial', cl: 'Atiende y agenda', impl: 290000, mes: 99000 },
-    pro:      { nm: 'Pro', cl: 'Llena la agenda y hace volver', impl: 490000, mes: 149000 }
+    pro:      { nm: 'Pro', cl: 'Llena la agenda y hace volver', impl: 490000, mes: 199000 }
   };
   // Lo que cuesta de más el Pro al mes: diferencia de mensualidad + diferencia de implementación en 12 meses.
   var EXTRA_PRO = (PACK.pro.mes - PACK.esencial.mes) + (PACK.pro.impl - PACK.esencial.impl) / 12;
