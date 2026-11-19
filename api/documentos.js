@@ -27,7 +27,7 @@ const PACKS = {
     no: 'Seguimiento automático a quien no agendó, recordatorios el día antes, reactivación de clientes, historial de clientes y tablero de resultados (Pack Pro). Campañas pagadas y producción de contenido para redes.',
   },
   pro: {
-    nm: 'Pack Pro', impl: 490000, palabras: 'cuatrocientos noventa mil', mes: 149000, plazo: '3 a 4 semanas',
+    nm: 'Pack Pro', impl: 490000, palabras: 'cuatrocientos noventa mil', mes: 199000, plazo: '3 a 4 semanas',
     soporte: 'mensual del Pack Pro (agente IA y sistema completo)',
     incluye: [
       ['Todo lo del Pack Esencial', 'Web, Google Business, agente IA completo en WhatsApp, panel de leads y agenda, y aviso al dueño.'],
