@@ -17,15 +17,22 @@ const hex = (h, d = '#231A1F') => {
   return rgb(parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255);
 };
 
+const vacio = (v) => v === null || v === undefined || String(v).trim() === '';
+
 export function fechaLarga(fecha = new Date()) {
   const p = new Intl.DateTimeFormat('es-CL', { timeZone: 'America/Santiago', day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(fecha);
   const v = (t) => Number(p.find(x => x.type === t)?.value);
   return `${v('day')} de ${MESES[v('month') - 1]} de ${v('year')}`;
 }
 
-// El documento se manda solo si la ficha lo tiene y la acción confirmada es de las que lo llevan.
-export function llevaDocumento(ficha, accion) {
-  return Boolean(ficha?.documento?.plantilla && accion && (ficha.documento.al || ['consulta']).includes(accion.tipo));
+// El documento se manda solo si la ficha lo tiene, la acción confirmada es de las que lo llevan
+// y, si la ficha pide datos mínimos (documento.requiere), están todos. Así una derivación con
+// la cotización completa lleva su PDF, pero un reclamo derivado no.
+export function llevaDocumento(ficha, accion, datos = null) {
+  const doc = ficha?.documento;
+  if (!doc?.plantilla || !accion || !(doc.al || ['consulta']).includes(accion.tipo)) return false;
+  const requiere = Array.isArray(doc.requiere) ? doc.requiere : [];
+  return !requiere.length || (datos !== null && requiere.every(k => !vacio(datos[k])));
 }
 
 const esSi = (v) => v === true || /^(s[ií]|true|1|incluid[oa])$/i.test(String(v ?? '').trim());
@@ -88,8 +95,6 @@ export async function generarDocumento(ficha, datos = {}, { fecha = new Date() }
     .replace(/[\\/:*?"<>|]+/g, '').replace(/\s+-\s*\.pdf$/, '.pdf').replace(/\s+/g, ' ').trim();
   return { buffer, nombre: nombre.endsWith('.pdf') ? nombre : `${nombre}.pdf` };
 }
-
-const vacio = (v) => v === null || v === undefined || String(v).trim() === '';
 
 // Datos del PDF, de menos a más confiable:
 // 1. Reglas de la ficha (documento.extraer) sobre lo que escribió el cliente: así el resumen del

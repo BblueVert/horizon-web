@@ -139,10 +139,12 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       r.accion = extras.accion;
       salida.push(...extras.mensajes.map(t => ({ jid, texto: t })));
       // Propuesta o cotización en PDF con los datos que juntó el agente (ficha.documento).
-      if (llevaDocumento(ficha, r.accion)) {
+      const datosDoc = ficha.documento
+        ? datosDocumento(ficha, r.accion, estado.historial(jid).filter(t => t.role === 'user').map(t => t.content))
+        : null;
+      if (llevaDocumento(ficha, r.accion, datosDoc)) {
         try {
-          const delCliente = estado.historial(jid).filter(t => t.role === 'user').map(t => t.content);
-          const documento = await generarDocumento(ficha, datosDocumento(ficha, r.accion, delCliente));
+          const documento = await generarDocumento(ficha, datosDoc);
           salida.push({ jid, documento, texto: ficha.documento.mensaje || '' });
           r.accion = { ...r.accion, documento: documento.nombre };
         } catch (e) {

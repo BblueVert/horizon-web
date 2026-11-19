@@ -110,3 +110,10 @@ test('el formato de respuesta pide el bloque documento cuando la ficha lo tiene'
   const { construirPrompt } = await import('../src/agente.js');
   assert.match(construirPrompt(ficha), /"documento": \{"novios": \.\.\., "barra": \.\.\.\}/);
 });
+
+test('una derivación con los datos mínimos lleva PDF; un reclamo derivado no', () => {
+  const f = { ...ficha, documento: { ...ficha.documento, al: ['consulta', 'derivar'], requiere: ['novios', 'fecha'] } };
+  assert.equal(llevaDocumento(f, { tipo: 'derivar' }, { novios: 'Benjamín y Mira', fecha: '19 de marzo de 2027' }), true);
+  assert.equal(llevaDocumento(f, { tipo: 'derivar' }, { novios: '', fecha: '' }), false);
+  assert.equal(llevaDocumento(f, { tipo: 'derivar' }), false);
+});
