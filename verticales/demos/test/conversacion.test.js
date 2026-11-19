@@ -465,9 +465,10 @@ test('"quiero activar el plan (prueba-…)": ninguna demo responde, se suelta el
   const out = await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'Hola Benja, quiero activar el plan Pro de Mesa Cero para Binks burger (prueba-48f854).' });
   assert.equal(estado.demoDe(CLIENTE), null);
   assert.equal(llamadas.length, 1); // solo el saludo de la demo, no el mensaje de activar
-  assert.match(out[0].texto, /Recibí tu mensaje/);
-  assert.equal(out[1].jid, YO);
-  assert.match(out[1].texto, /activar su plan de Mesa Cero \(prueba-48f854\)/);
+  assert.match(out[0].texto, /plan Pro\* a valor fundador[\s\S]*\$490\.000[\s\S]*\$199\.000/);
+  assert.match(out[1].texto, /50% de la implementación/);
+  assert.equal(out[2].jid, YO);
+  assert.match(out[2].texto, /activar el plan Pro de Mesa Cero \(prueba-48f854\)/);
 });
 
 test('link de una prueba de 15 días: conecta el chat al motor Mesa Cero con el tenant de la prueba', async () => {

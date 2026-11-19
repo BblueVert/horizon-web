@@ -85,6 +85,12 @@ const AYUDA = [
   '• #bot off / #bot on → silencia o reactiva el bot en un chat',
 ].join('\n');
 
+// Planes de Mesa Cero a valor fundador (fuente: landing /prueba de mesa-cero).
+const PLANES = {
+  esencial: { nombre: 'Esencial', impl: '$290.000', mes: '$99.000', plazo: '2–3 semanas', incluye: 'Web de pedidos con tu marca, agente de WhatsApp 24/7 que toma el pedido y panel con pedidos, caja y carta.' },
+  pro: { nombre: 'Pro', impl: '$490.000', mes: '$199.000', plazo: '3–4 semanas', incluye: 'Todo lo del Esencial + CRM y dashboard, seguimiento automático a quien no pidió, reservas con recordatorio y reactivación mensual de clientes.' },
+};
+
 export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, cartaDe = cartaLocal, log = console }) {
   let yo = null;      // jid del chat contigo mismo
   let numero = '';    // número vinculado (para los links)
@@ -170,9 +176,16 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     const activa = String(texto || '').match(/\b(prueba-[a-z0-9]{6})\b/i);
     if (activa && /quiero activar|terminó la prueba|termino la prueba/i.test(texto)) {
       estado.soltar(jid);
+      const pro = /\bpro\b/i.test(texto);
+      const esencial = /esencial/i.test(texto);
+      const plan = pro ? PLANES.pro : esencial ? PLANES.esencial : null;
+      const detalle = plan
+        ? `Elegiste el *plan ${plan.nombre}* a valor fundador:\n• Implementación: *${plan.impl}* (pago único)\n• Soporte: *${plan.mes}/mes* desde el mes 2\n\n${plan.incluye}\nQueda listo en ${plan.plazo}.`
+        : `Tenemos dos planes a valor fundador:\n• *Esencial*: ${PLANES.esencial.impl} + ${PLANES.esencial.mes}/mes desde el 2º mes\n• *Pro*: ${PLANES.pro.impl} + ${PLANES.pro.mes}/mes desde el 2º mes`;
       return [
-        { jid, texto: '¡Buenísimo! Recibí tu mensaje. Te escribo en unos minutos para dejar tu plan activo 🙌' },
-        ...aYo(`💰 +${telefono} quiere activar su plan de Mesa Cero (${activa[1]}). Escríbele.`),
+        { jid, texto: `¡Buenísimo! 🙌 Recibí tu solicitud para activar Mesa Cero.\n\n${detalle}` },
+        { jid, texto: 'Cómo seguimos:\n1. Te confirmo los datos de tu local y te mando el acuerdo.\n2. Pagas el 50% de la implementación al firmar y el resto al entregar.\n3. Sigues en el mismo panel: tu carta, pedidos y clientes de la prueba quedan guardados.\n\nEl mes 1 de soporte va incluido y el agente tiene garantía de 30 días. Te escribo en unos minutos para cerrarlo; si tienes alguna duda, déjala aquí 👇' },
+        ...aYo(`💰 +${telefono} quiere activar ${plan ? 'el plan ' + plan.nombre : 'un plan'} de Mesa Cero (${activa[1]}). Ya le mandé el resumen y los pasos: escríbele para el pago.`),
       ];
     }
     if (codigo) await fichas.asegurarPrueba?.(codigo);
