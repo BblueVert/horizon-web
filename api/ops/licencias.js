@@ -22,7 +22,9 @@ module.exports = async function handler(req, res) {
 
   const KEY = process.env.MESA_CERO_SERVICE_KEY;
   if (!KEY) return res.status(503).json({ error: 'Falta MESA_CERO_SERVICE_KEY en el servidor' });
-  const h = { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' };
+  // Claves nuevas (sb_secret_…) van solo en "apikey"; las JWT antiguas, también en Authorization.
+  const h = KEY.startsWith('sb_') ? { apikey: KEY, 'Content-Type': 'application/json' }
+    : { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' };
 
   try {
     if (req.method === 'GET') {
