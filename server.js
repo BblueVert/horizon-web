@@ -10,6 +10,7 @@ const { sanitize, rateLimit, getIp, httpsPost } = require('./api/shared');
 const opsData     = require('./api/ops/dashboard');
 const opsLeads    = require('./api/ops/leads');
 const opsDemos    = require('./api/ops/demos');
+const opsLicencias = require('./api/ops/licencias');
 const documentos  = require('./api/documentos');
 const promoteLead = require('./api/ops/promote-lead');
 const tasks       = require('./api/ops/tasks');
@@ -179,6 +180,7 @@ const opsPages = {
   '/ops/tareas':          'OPS/tareas.html',
   '/ops/notas':           'OPS/notas.html',
   '/ops/saas-clientes':   'OPS/saas-clientes.html',
+  '/ops/licencias':       'OPS/licencias.html',
   '/ops/recursos':        'OPS/recursos.html',
 };
 Object.entries(opsPages).forEach(([from, to]) => {
@@ -205,6 +207,8 @@ app.all('/api/saas/mp/:action', mpHandler);
 app.get('/api/ops/dashboard',     opsData);
 app.get('/api/ops/leads',         opsLeads);
 app.get('/api/ops/demos',         opsDemos);
+app.get('/api/ops/licencias',     opsLicencias);
+app.post('/api/ops/licencias',    opsLicencias);
 app.post('/api/ops/promote-lead', promoteLead);
 app.get('/api/ops/tasks',         tasks);
 app.post('/api/ops/tasks',        tasks);
