@@ -159,9 +159,23 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
   async function entrante({ jid, telefono, texto, audio, obsoleto }) {
     if (jid === yo) return [];
     let slug = estado.demoDe(jid);
+    // Las pruebas de 15 días viven en memoria: tras reiniciar el bot se vuelven a armar.
+    if (slug && !fichas.obtener(slug)) await fichas.asegurarPrueba?.(slug);
     // Si la demo del chat se dio de baja (activa: false), el chat queda libre: si no, se quedaba mudo.
     if (slug && !fichas.obtener(slug)) { estado.soltar(jid); slug = null; }
     const codigo = codigoDemo(texto);
+
+    // "Quiero activar el plan… (prueba-xxxxxx)" (botón del panel de prueba): es una venta, la atiende Benja.
+    // Ninguna demo responde: el chat se suelta de la demo que tuviera y llega el aviso.
+    const activa = String(texto || '').match(/\b(prueba-[a-z0-9]{6})\b/i);
+    if (activa && /quiero activar|terminó la prueba|termino la prueba/i.test(texto)) {
+      estado.soltar(jid);
+      return [
+        { jid, texto: '¡Buenísimo! Recibí tu mensaje. Te escribo en unos minutos para dejar tu plan activo 🙌' },
+        ...aYo(`💰 +${telefono} quiere activar su plan de Mesa Cero (${activa[1]}). Escríbele.`),
+      ];
+    }
+    if (codigo) await fichas.asegurarPrueba?.(codigo);
 
     // Volver a mandar el link de la misma demo la reactiva si quedó en pausa (alguien respondió a mano).
     if (codigo && codigo === slug && estado.enPausa(jid)) estado.pausar(jid, null);

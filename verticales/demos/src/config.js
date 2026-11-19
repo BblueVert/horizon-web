@@ -41,6 +41,12 @@ export const config = {
   // Pantalla de pago simulado (Pages/pago-demo en horizon-web). No cobra nada.
   pagoDemoUrl: process.env.PAGO_DEMO_URL || 'https://www.horizonweb.cl/pago-demo',
   motorToken: process.env.AGENTE_TOKEN || '',
+  // Pruebas de 15 días de Mesa Cero (prueba-xxxxxx): el chat se conecta solo a la carta de esa prueba.
+  // La anon key es pública (es la misma del panel); solo lee licencia_prueba_estado().
+  mesaCero: {
+    url: (process.env.MESA_CERO_URL || 'https://wpljybwutgxvjjlmbdxc.supabase.co').replace(/\/$/, ''),
+    anon: process.env.MESA_CERO_ANON || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwbGp5Ynd1dGd4dmpqbG1iZHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5NjI5MDIsImV4cCI6MjEwMzUzODkwMn0.bGCgjoMqTwO-NQ0DZJQtcVyAn1r-e_1IW24BLR1qrcY',
+  },
   bot: {
     carpetaSesion: process.env.WA_CARPETA_SESION || './.wa-sesion',
     carpetaDatos: process.env.DEMOS_CARPETA_DATOS || './datos',
