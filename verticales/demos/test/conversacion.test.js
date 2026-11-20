@@ -500,11 +500,11 @@ test('agente de ventas mesa-cero: ficha válida, sin decir que es demo y el avis
   assert.match(prompt, /\$290\.000/);
 
   const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'estado.json'));
-  const accion = { tipo: 'consulta', resumen: 'Quiere el plan Pro', datos: { cliente: 'Ana', detalle: 'Pro · Sushi Ana, Rancagua · kickoff jueves 16:00' } };
+  const accion = { tipo: 'consulta', resumen: 'Quiere el plan Pro', datos: { cliente: 'Ana', detalle: 'Pro · Sushi Ana, Rancagua' } };
   const conv = crearConversacion({
     estado,
     fichas: { obtener: s => (s === 'mesa-cero' ? ventas : null), todas: () => [ventas] },
-    responder: async () => ({ respuestas: ['Listo, Benja te confirma el jueves 16:00'], accion }),
+    responder: async () => ({ respuestas: ['Listo, Benja te escribe para el kickoff'], accion }),
     registrarAccion: async () => {},
     log: silencioso,
   });
@@ -513,6 +513,9 @@ test('agente de ventas mesa-cero: ficha válida, sin decir que es demo y el avis
   const alCliente = salida.filter(m => m.jid === CLIENTE).map(m => m.texto).join('\n');
   assert.doesNotMatch(alCliente, /Así le llegaría/);
   assert.ok(salida.some(m => m.jid === YO && /Quiere el plan Pro/.test(m.texto)));
+  // Cerrada la venta, el chat es de Benja: el bot ya no responde ahí.
+  assert.ok(estado.enPausa(CLIENTE));
+  assert.deepEqual(await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: '¿y cuándo nos juntamos?' }), []);
 });
 
 test('ficha con aviso inválido no se publica', () => {

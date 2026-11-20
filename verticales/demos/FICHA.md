@@ -27,6 +27,7 @@ Ejemplo completo: `fichas/ejemplo-sangucheria.json`.
 | `derivar_a` | no | Qué decir cuando no sabe algo |
 | `identidad` | no | Qué responde si le preguntan si es un bot (por defecto: asistente de prueba de HORIZON) |
 | `aviso` | no | Dónde llega el aviso al confirmar: `chat` (al mismo cliente, como demo) · `yo` (solo a tu chat) · `ambos`. Si falta, usa `DEMO_AVISO` |
+| `pausar_al_cerrar` | no | `true`: al cerrar (`consulta`) o derivar, el bot se calla en ese chat y te lo pasa (agente de ventas). `#bot on` lo reactiva |
 | `documento` | no | PDF que el bot manda al confirmar (propuesta, cotización): `{ titulo, plantilla, archivo, mensaje, al, marcas, datos, campos }`. Ver abajo |
 | `fuentes[]` | recomendado | URLs o "dictado por Benja" de donde salió cada dato |
 | `notas_internas` | no | Para Benja, el bot no lo usa |
