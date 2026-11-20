@@ -25,6 +25,7 @@ Ejemplo completo: `fichas/ejemplo-sangucheria.json`.
 | `reglas[]` | no | Cómo funciona el negocio y la atención ("siempre ofrece bebida", "reservas con 24 h") |
 | `datos_pedido[]` | no | Qué pedir para cerrar ("nombre", "dirección", "hora de retiro") |
 | `derivar_a` | no | Qué decir cuando no sabe algo |
+| `documento` | no | PDF que el bot manda al confirmar (propuesta, cotización): `{ titulo, plantilla, archivo, mensaje, al, marcas, datos, campos }`. Ver abajo |
 | `fuentes[]` | recomendado | URLs o "dictado por Benja" de donde salió cada dato |
 | `notas_internas` | no | Para Benja, el bot no lo usa |
 | `activa` | no | `false` apaga la demo |
@@ -33,3 +34,22 @@ Ejemplo completo: `fichas/ejemplo-sangucheria.json`.
 - **Precios:** número en CLP (`6990`) o `null` si no se encontró. Nunca un precio "aproximado" escrito como si fuera real.
 - Precios de apps (PedidosYa, Uber Eats) suelen estar inflados: si es la única fuente, anótalo en `fuentes` y en `notas_internas`.
 - Máx. 60 KB. Para cartas enormes, deja las categorías y los productos más pedidos.
+
+## Documento PDF (`documento`)
+Al confirmar una acción (por defecto `consulta`), el bot completa una plantilla PDF con los datos que juntó el agente y la manda como documento de WhatsApp. Los montos no se inventan: la plantilla deja esos espacios para el negocio.
+
+1. Diseña la plantilla en HTML (A4, una `<section class="pag">` por página) y marca cada espacio con `data-campo="<clave>"`: un elemento con línea inferior (el texto se apoya encima) o una celda `<td>` (el texto va centrado).
+2. `node scripts/medir-plantilla.js plantilla.html plantillas/<slug>.pdf` → crea el PDF base e imprime `campos` (página, x, y en puntos PDF, ancho). Necesita Playwright y `pdftotext`; el bot no los necesita.
+3. En la ficha:
+
+| Campo | Qué va |
+|---|---|
+| `plantilla` | Ruta relativa a `verticales/demos` (ej. `plantillas/eventos.pdf`) o URL |
+| `campos[]` | Lo que imprimió el script. Opcionales: `tam` (pt), `fuente` (`medio` · `negrita` · `serif`), `color`, `alinear` (`izquierda` · `centro` · `derecha`), `marca: true` (sí/no) |
+| `datos` | `{ clave: "qué poner" }`: lo que el agente debe juntar y mandar en `accion.datos.documento`. `emision` se llena sola con la fecha |
+| `extraer` | `{ clave: { re, valor } }` (o lista, gana la primera que calce): reglas sobre lo que escribió el cliente, para que el resumen de un cotizador web llegue al PDF aunque la IA no lo repita. `valor` acepta `$1` o `true`. Lo que manda la IA en `documento` tiene prioridad |
+| `alias` | `{ clave: ["cliente"] }`: si el campo queda vacío, usa ese dato de `accion.datos` |
+| `marcas` | Texto de las marcas: `{ "si": "Incluido", "no": "—" }` |
+| `archivo` | Nombre del PDF; acepta `{clave}` (ej. `Propuesta - {novios}.pdf`) |
+| `mensaje` | Texto que acompaña al PDF |
+| `al` | Acciones que lo disparan (por defecto `["consulta"]`) |

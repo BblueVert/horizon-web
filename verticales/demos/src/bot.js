@@ -44,11 +44,13 @@ function encolar(jid, tarea) {
   actual.finally(() => { if (colas.get(jid) === actual) colas.delete(jid); });
 }
 
-async function enviar(jid, texto, ubicacion, imagen) {
+async function enviar(jid, texto, ubicacion, imagen, documento) {
   if (!sock) return;
   await sock.sendPresenceUpdate('composing', jid).catch(() => {});
-  await esperar(ubicacion || imagen ? 900 : Math.min(3000, 600 + texto.length * 20));
-  const contenido = imagen
+  await esperar(ubicacion || imagen || documento ? 900 : Math.min(3000, 600 + texto.length * 20));
+  const contenido = documento
+    ? { document: documento.buffer, mimetype: 'application/pdf', fileName: documento.nombre, ...(texto ? { caption: texto } : {}) }
+    : imagen
     ? { image: readFileSync(imagen), ...(texto ? { caption: texto } : {}) }
     : ubicacion
       ? { location: { degreesLatitude: ubicacion.lat, degreesLongitude: ubicacion.lng, name: ubicacion.nombre, address: ubicacion.direccion } }
@@ -59,7 +61,7 @@ async function enviar(jid, texto, ubicacion, imagen) {
 }
 
 function enviarTodo(mensajes) {
-  for (const { jid, texto, ubicacion, imagen } of mensajes) encolar(jid, () => enviar(jid, texto, ubicacion, imagen));
+  for (const { jid, texto, ubicacion, imagen, documento } of mensajes) encolar(jid, () => enviar(jid, texto, ubicacion, imagen, documento));
 }
 
 function telefonoDe(key) {

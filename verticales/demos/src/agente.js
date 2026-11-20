@@ -4,6 +4,7 @@
 
 import { config } from './config.js';
 import { mapaDe } from './ficha.js';
+import { promptDocumento } from './documento.js';
 
 const dinero = (n) => '$' + Math.round(Number(n)).toLocaleString('es-CL');
 
@@ -56,12 +57,17 @@ export function construirPrompt(ficha) {
     (ficha.reglas || []).length && `Cómo funciona la atención (respétalo):\n${ficha.reglas.map(x => `- ${x}`).join('\n')}`,
     (ficha.datos_pedido || []).length && `Para cerrar un ${ficha.flujo === 'reservas' ? 'agendamiento' : 'pedido'} necesitas: ${ficha.datos_pedido.join(', ')}.`,
     ficha.derivar_a && `Si no puedes resolver algo: ${ficha.derivar_a}`,
+    promptDocumento(ficha),
   ].filter(Boolean);
 
   bloques.push(`Saludo y trato (va antes que todo):
 - Tu primer mensaje de la conversación parte siempre con "${saludoHora()}" (es el saludo que corresponde a esta hora en Chile), seguido del nombre del cliente si ya lo sabes ("${saludoHora()}, Pedro").
 - Trato cordial y amable en toda la conversación. Si el cliente te dice su nombre, úsalo de vez en cuando (no en cada mensaje). Si no lo sabes, pídelo con naturalidad cuando vayas a agendar o cerrar el pedido.
 - Si el cliente saluda más tarde en la misma conversación, responde el saludo de la hora antes de seguir.`);
+
+  const formatoDoc = ficha.documento?.datos
+    ? `, "documento": {${Object.keys(ficha.documento.datos).map(k => `"${k}": ...`).join(', ')}}`
+    : '';
 
   bloques.push(`Reglas:
 - Español de Chile con tuteo ("tú tienes", "puedes", "escríbeme"). Nunca voseo ("vos", "tenés", "podés", "querés").
@@ -79,7 +85,7 @@ export function construirPrompt(ficha) {
 - "accion" va SOLO cuando el cliente confirmó explícitamente un resumen que le mostraste en un mensaje anterior. Si no, "accion": null.
 
 Responde SIEMPRE con un JSON (sin markdown):
-{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "ubicacion": false, "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar", "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero en CLP o null, "entrega": "retiro" | "delivery" | null, "hora": "...", "otros": "..."}}}`);
+{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "ubicacion": false, "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar", "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero en CLP o null, "entrega": "retiro" | "delivery" | null, "hora": "...", "otros": "..."${formatoDoc}}}}`);
 
   return bloques.join('\n\n');
 }
@@ -152,6 +158,7 @@ export function avisoDueno(ficha, accion, telefono) {
     d.detalle && `Detalle: ${d.detalle}`,
     Number.isFinite(d.total) && `Total: ${dinero(d.total)}`,
     accion.pago && `Pago: link enviado por ${dinero(accion.pago)}`,
+    accion.documento && `PDF enviado: ${accion.documento}`,
     d.otros && d.otros,
     telefono && `WhatsApp: +${telefono}`,
   ];

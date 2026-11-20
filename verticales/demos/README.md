@@ -123,6 +123,9 @@ npm test
 | `src/conversacion.js` | Qué demo atiende cada chat, comandos, aviso al dueño |
 | `src/agente.js` | Prompt desde la ficha + DeepSeek (JSON: respuestas + acción) |
 | `src/fichas.js` | Fichas locales + sincronización con `/api/demos` (con copia offline en `datos/`) |
+| `src/documento.js` | PDF de la ficha (`documento`): completa la plantilla con pdf-lib y lo manda al confirmar |
+| `plantillas/` | PDFs base de los documentos + fuentes (Albert Sans, Gloock; licencia OFL) |
+| `scripts/medir-plantilla.js` | Arma una plantilla desde HTML y mide sus espacios (Playwright + pdftotext) |
 | `scripts/publicar.js` | Lo usa Claude: valida, publica, devuelve link y QR |
 | `../../api/demos.js` | API (Vercel + `server.js`) con `DEMOS_TOKEN` |
 | `../../.claude/skills/demo-express/` | El flujo que sigue Claude en terreno |
