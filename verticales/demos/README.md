@@ -67,7 +67,7 @@ Si escribes a mano en un chat de demo, el bot se calla 30 min en ese chat.
 
 ## Agente de ventas de Mesa Cero (`mesa-cero`)
 
-`fichas/mesa-cero.json` no es la demo de un restaurante: es el **vendedor de Mesa Cero**. Le llegan los botones de WhatsApp de la landing `/` de Mesa Cero y el botón del panel de prueba (texto con `(demo: mesa-cero)`). Entiende el local, recomienda Esencial o Pro con los precios de `/prueba`, responde objeciones y cierra: la prueba gratis de 15 días (que instalas tú en el local) o un plan. Ahí termina: no agenda la visita ni el kickoff ni diseña nada, y nunca arma agentes ni webs con la carta del lead. Al cerrar (o si pide una persona) el resumen llega solo a tu chat (`"aviso": "yo"`) y el bot se calla en ese chat para siempre (`"pausar_al_cerrar": true`): el kickoff, el diseño a medida y la conversación con el cliente los llevas tú. `#bot on` lo reactiva.
+`fichas/mesa-cero.json` no es la demo de un restaurante: es el **vendedor de Mesa Cero**. Le llegan los botones de WhatsApp de la web de Mesa Cero y del panel de prueba (texto con `(demo: mesa-cero)`). Resuelve dudas (planes, precios de `/`, objeciones) y manda a la web: `mesa-cero.vercel.app` para probar gratis o `/#planes` para comprar en línea. No toma datos ni coordina nada, y nunca arma agentes ni webs con la carta del lead. Si piden una persona o algo fuera de la ficha, te avisa solo a ti (`"aviso": "yo"`) y se calla en ese chat (`"pausar_al_cerrar": true`); `#bot on` lo reactiva.
 
 ## Un solo puente para todo el número (Mesa Cero incluido)
 
