@@ -213,7 +213,8 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     if (codigo) await fichas.asegurarPrueba?.(codigo);
 
     // Volver a mandar el link de la misma demo la reactiva si quedó en pausa (alguien respondió a mano).
-    if (codigo && codigo === slug && estado.enPausa(jid)) estado.pausar(jid, null);
+    // Una pausa "siempre" (#bot off, o venta ya traspasada a Benja) no se levanta sola: solo #bot on.
+    if (codigo && codigo === slug && estado.enPausa(jid) && !estado.pausadoSiempre?.(jid)) estado.pausar(jid, null);
 
     if (codigo && codigo !== slug) {
       const ficha = fichas.obtener(codigo);

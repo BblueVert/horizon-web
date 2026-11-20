@@ -528,3 +528,12 @@ test('"una demo de mi local" no es un código; manda el "(demo: slug)" del link'
   assert.equal(codigoDemo('#demo tia-julia'), 'tia-julia');
   assert.equal(codigoDemo('demo cafeteria'), 'cafeteria');
 });
+
+test('volver a mandar el link no reactiva un chat traspasado (pausa "siempre")', async () => {
+  const { conv, estado, llamadas } = armar();
+  await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: `Hola (demo: ${ejemplo.slug})` });
+  estado.pausar(CLIENTE, 'siempre');
+  const antes = llamadas.length;
+  assert.deepEqual(await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: `Hola (demo: ${ejemplo.slug})` }), []);
+  assert.equal(llamadas.length, antes);
+});

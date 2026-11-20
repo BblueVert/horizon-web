@@ -52,6 +52,7 @@ export function crearEstado(ruta = join(config.bot.carpetaDatos, 'estado.json'))
     // Sin mensajes hace más de `min` minutos (o sin demo): una demo activada desde tu chat puede tomarlo.
     inactivo(jid, min) { const c = chats[jid]; return !c || Date.now() - (c.ultimo || c.asignadoEn || 0) > min * 60000; },
     pausar(jid, hasta) { if (chats[jid]) { chats[jid].pausaHasta = hasta; guardar(); } },
+    pausadoSiempre(jid) { return chats[jid]?.pausaHasta === 'siempre'; },
     enPausa(jid) {
       const h = chats[jid]?.pausaHasta;
       if (!h) return false;
