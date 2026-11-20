@@ -518,3 +518,10 @@ test('agente de ventas mesa-cero: ficha válida, sin decir que es demo y el avis
 test('ficha con aviso inválido no se publica', () => {
   assert.ok(validarFicha({ ...ejemplo, aviso: 'todos' }).errores.some(e => /aviso/.test(e)));
 });
+
+test('"una demo de mi local" no es un código; manda el "(demo: slug)" del link', () => {
+  assert.equal(codigoDemo('Hola, quiero agendar una demo de mi sistema para restaurante (demo: mesa-cero)'), 'mesa-cero');
+  assert.equal(codigoDemo('quiero agendar una demo para mi restaurante'), null);
+  assert.equal(codigoDemo('#demo tia-julia'), 'tia-julia');
+  assert.equal(codigoDemo('demo cafeteria'), 'cafeteria');
+});
