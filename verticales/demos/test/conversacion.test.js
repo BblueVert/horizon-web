@@ -537,3 +537,43 @@ test('volver a mandar el link no reactiva un chat traspasado (pausa "siempre")',
   assert.deepEqual(await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: `Hola (demo: ${ejemplo.slug})` }), []);
   assert.equal(llamadas.length, antes);
 });
+
+test('vendedor de Mesa Cero: crea la prueba desde el chat y manda el panel', async () => {
+  const ventas = JSON.parse(readFileSync(new URL('../fichas/mesa-cero.json', import.meta.url), 'utf8'));
+  assert.equal(ventas.crear_prueba, true);
+  assert.match(construirPrompt(ventas), /tipo "prueba"/);
+  const armarVentas = (accion, crearPrueba) => {
+    const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'estado.json'));
+    const creadas = [];
+    const conv = crearConversacion({
+      estado,
+      fichas: { obtener: s => (s === 'mesa-cero' ? ventas : null), todas: () => [ventas] },
+      responder: async () => ({ respuestas: ['¡Perfecto! Te armo tu panel ahora 🙌'], accion }),
+      crearPrueba: crearPrueba || (async (d, tel) => { creadas.push({ d, tel }); return { slug: 'prueba-abc123', nombre: d.local, correo_a: 'an•••••na@x.cl', panelUrl: 'https://mesa-cero.vercel.app/admin/dashboard.html?t=prueba-abc123' }; }),
+      log: silencioso,
+    });
+    conv.conectado(YO, '56900000001');
+    return { conv, estado, creadas };
+  };
+  const datos = { local: 'La Esquina', nombre: 'Ana Pérez', email: 'ana@x.cl', rubro: 'hamburgueseria', comuna: 'Talca' };
+
+  const ok = armarVentas({ tipo: 'prueba', resumen: '', datos });
+  const salida = await ok.conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'sí, dale (demo: mesa-cero)' });
+  assert.equal(ok.creadas.length, 1);
+  assert.equal(ok.creadas[0].tel, '56911112222');
+  const alCliente = salida.filter(m => m.jid === CLIENTE).map(m => m.texto).join('\n');
+  assert.match(alCliente, /dashboard\.html\?t=prueba-abc123/);
+  assert.match(alCliente, /an•••••na@x\.cl/);
+  assert.ok(salida.some(m => m.jid === YO && /Prueba creada por WhatsApp/.test(m.texto)));
+  assert.equal(ok.estado.enPausa(CLIENTE), false); // sigue acompañando
+
+  const sinCorreo = armarVentas({ tipo: 'prueba', resumen: '', datos: { ...datos, email: 'ana' } });
+  const s2 = await sinCorreo.conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'dale (demo: mesa-cero)' });
+  assert.equal(sinCorreo.creadas.length, 0);
+  assert.ok(s2.some(m => /me falta tu correo/.test(m.texto)));
+
+  const falla = armarVentas({ tipo: 'prueba', resumen: '', datos }, async () => { throw new Error('Mesa Cero respondió 503'); });
+  const s3 = await falla.conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'dale (demo: mesa-cero)' });
+  assert.ok(s3.some(m => m.jid === CLIENTE && /no pude armar tu panel/.test(m.texto)));
+  assert.ok(s3.some(m => m.jid === YO && /instalar=1/.test(m.texto)));
+});

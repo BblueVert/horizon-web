@@ -67,7 +67,9 @@ Si escribes a mano en un chat de demo, el bot se calla 30 min en ese chat.
 
 ## Agente de ventas de Mesa Cero (`mesa-cero`)
 
-`fichas/mesa-cero.json` no es la demo de un restaurante: es el **vendedor de Mesa Cero**. Le llegan los botones de WhatsApp de la web de Mesa Cero y del panel de prueba (texto con `(demo: mesa-cero)`). Resuelve dudas (planes, precios de `/`, objeciones) y manda a la web: `mesa-cero.vercel.app` para probar gratis o `/#planes` para comprar en línea. No toma datos ni coordina nada, y nunca arma agentes ni webs con la carta del lead. Si piden una persona o algo fuera de la ficha, te avisa solo a ti (`"aviso": "yo"`) y se calla en ese chat (`"pausar_al_cerrar": true`); `#bot on` lo reactiva.
+`fichas/mesa-cero.json` no es la demo de un restaurante: es el **vendedor de Mesa Cero**. Le llegan los botones de WhatsApp de la web de Mesa Cero y del panel de prueba (texto con `(demo: mesa-cero)`). Entiende el local, resuelve dudas (planes, precios, objeciones) y, cuando el lead quiere probar, **le crea la prueba de 15 días desde el chat** (`"crear_prueba": true`): junta local, nombre, correo, rubro y comuna, el bot llama a `mesa-cero /api/prueba` (`src/prueba.js`) y le manda el link de su panel; al lead le llegan también los accesos por correo y a tu chat el aviso. Después lo sigue acompañando hasta la compra ("Activar mi plan" en el panel). Nunca arma agentes ni webs con la carta del lead. Si piden una persona, te avisa solo a ti y se calla en ese chat; `#bot on` lo reactiva.
+
+Variables: `MESA_CERO_WEB` (por defecto `https://mesa-cero.vercel.app`) y `MESA_CERO_BOT_TOKEN`, igual a `PRUEBA_BOT_TOKEN` en Vercel de mesa-cero (sin él, la web limita a 5 pruebas por hora desde la IP del VPS).
 
 ## Un solo puente para todo el número (Mesa Cero incluido)
 

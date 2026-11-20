@@ -7,6 +7,7 @@ import { generarDocumento as generarDocumentoReal, llevaDocumento, datosDocument
 import { responder as responderIA, avisoDueno, extrasConfirmacion } from './agente.js';
 import { mapaDe } from './ficha.js';
 import { responderMotor as motorReal } from './motores.js';
+import { crearPruebaReal, faltanDatos } from './prueba.js';
 import { readdirSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
@@ -92,7 +93,7 @@ const PLANES = {
   pro: { nombre: 'Pro', impl: '$490.000', mes: '$199.000', plazo: '3–4 semanas', incluye: 'Todo lo del Esencial + CRM y dashboard, seguimiento automático a quien no pidió, reservas con recordatorio y reactivación mensual de clientes.' },
 };
 
-export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, cartaDe = cartaLocal, generarDocumento = generarDocumentoReal, log = console }) {
+export function crearConversacion({ estado, fichas, responder = responderIA, responderMotor = motorReal, registrarAccion = async () => {}, cartaDe = cartaLocal, generarDocumento = generarDocumentoReal, crearPrueba = crearPruebaReal, log = console }) {
   let yo = null;      // jid del chat contigo mismo
   let numero = '';    // número vinculado (para los links)
 
@@ -139,6 +140,30 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
     // Reclamo: le llega al dueño del local; sin su número configurado, a tu chat (demos con prospectos).
     if (r.avisoDueno) {
       salida.push(...(r.avisoDestino ? [{ jid: `${r.avisoDestino}@s.whatsapp.net`, texto: r.avisoDueno }] : aYo(r.avisoDueno)));
+    }
+    // Vendedor de Mesa Cero: crea la prueba de 15 días del lead y le manda su panel por el chat.
+    if (r.accion?.tipo === 'prueba') {
+      if (!ficha.crear_prueba) return salida;
+      const d = r.accion.datos || {};
+      const falta = faltanDatos(d);
+      if (falta.length) { salida.push({ jid, texto: `Para armarte el panel me falta ${falta.join(' y ')} 🙏` }); return salida; }
+      try {
+        const p = await crearPrueba(d, telefono);
+        const nombre = String(d.nombre).split(' ')[0];
+        salida.push({ jid, texto: p.existente
+          ? `${nombre}, ya tenías una prueba con este WhatsApp. Este es tu panel de *${p.nombre || d.local}* 👇\n${p.panelUrl}`
+          : `¡Listo, ${nombre}! Tu panel de *${p.nombre || d.local}* ya está armado 👇\n${p.panelUrl}\n\nTienes 15 días gratis.` });
+        salida.push({ jid, texto: `${p.correo_a ? `Te mandé también los accesos a tu correo (${p.correo_a}). ` : ''}Prueba esto primero: en el panel toca *Ver vista de pedido*, pide algo desde la web y mira cómo cae en el tablero. La carta es de ejemplo: cuando compras, diseñamos contigo la tuya.` });
+        // Queda en el historial para que el agente sepa que ya está creada y siga acompañando.
+        estado.agregarTurno(jid, '[sistema] prueba creada', JSON.stringify({ respuestas: [`Panel listo: ${p.panelUrl}`] }));
+        salida.push(...aYo(`🧪 Prueba creada por WhatsApp: ${p.nombre || d.local} · ${d.nombre} · +${telefono}${p.existente ? ' (ya existía)' : ''}\n${p.panelUrl}`));
+        registrarAccion({ slug: ficha.slug, telefono, tipo: 'prueba', resumen: `Prueba ${p.slug} · ${d.local}`, datos: d }).catch(() => {});
+      } catch (e) {
+        log.error(`[demo ${ficha.slug}] no se pudo crear la prueba:`, e.message);
+        salida.push({ jid, texto: 'Uy, no pude armar tu panel en este momento. Te lo dejo listo apenas se arregle y te aviso por aquí 🙏' });
+        salida.push(...aYo(`⚠️ No se pudo crear la prueba de ${d.local} (+${telefono}): ${String(e.message).slice(0, 200)}. Créala en mesa-cero.vercel.app/?instalar=1 y mándale el link.`));
+      }
+      return salida;
     }
     if (r.accion) {
       const extras = extrasConfirmacion(ficha, r.accion, numero);
