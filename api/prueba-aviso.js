@@ -118,7 +118,7 @@ function correoBienvenida(lic, reenvio) {
   const nombre = String(lic.nombre_contacto || '').split(' ')[0] || 'hola';
   const panel = `${MC_SITE}/admin/dashboard.html?t=${lic.slug}`;
   const web = `${MC_SITE}/mi-web?t=${lic.slug}`;
-  const planes = `${MC_SITE}/prueba#planes`;
+  const planes = `${MC_SITE}/#planes`;
   const vence = fecha(lic.expires_at);
   const subject = reenvio ? `Tu acceso a Mesa Cero · ${lic.nombre_local}` : `Tu prueba de Mesa Cero está lista · ${lic.nombre_local}`;
   const text = [
@@ -129,7 +129,8 @@ function correoBienvenida(lic, reenvio) {
     '1. Abre tu web de pedidos y haz un pedido de prueba.',
     '2. Mira cómo cae en el tablero de tu panel y acéptalo.',
     '3. Revisa el inicio: ventas del día, hora peak y pedidos atrasados.', '',
-    `Cuando quieras dejarlo funcionando con tu WhatsApp y tu carta real, mira los planes: ${planes}`,
+    'La carta y la web de la prueba son de ejemplo. Cuando compras tu plan, diseñamos contigo tu web y tu agente de WhatsApp, a la medida de tu local.',
+    `Para comprar, toca "Activar mi plan" en tu panel. Planes: ${planes}`,
     'Los primeros 3 locales tienen valor fundador: 2.º mes de soporte sin costo y valor congelado 12 meses.', '',
     'Guarda este correo: el link de arriba es tu acceso al panel.', '',
     'Benja · HORIZON', 'WhatsApp +56 9 7696 2659',
@@ -145,6 +146,7 @@ function correoBienvenida(lic, reenvio) {
       <li>Mira cómo cae en el tablero de tu panel y acéptalo.</li>
       <li>Revisa el inicio: ventas del día, hora peak y pedidos atrasados.</li>
     </ol>
+    <p style="margin:0 0 18px;font-size:14.5px;line-height:1.55">La carta y la web de la prueba son de ejemplo. Cuando compras tu plan, <b>diseñamos contigo tu web y tu agente de WhatsApp</b>, a la medida de tu local. Para comprar, toca <b>"Activar mi plan"</b> en tu panel.</p>
     <div style="background:#FFF4E3;border:1px solid #F3D9A6;border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.5">
       <b>Valor fundador:</b> los primeros 3 locales tienen el 2.º mes de soporte sin costo y el valor congelado 12 meses.
       Esencial ${clp(290000)} + ${clp(99000)}/mes · Pro ${clp(490000)} + ${clp(199000)}/mes. <a href="${planes}" style="color:#E5402C;font-weight:700">Ver planes</a>
@@ -189,3 +191,6 @@ function correoBenjaActivar(lic, plan) {
     <p style="margin:6px 0 0;font-size:13px;color:#6B5A46">El lead quedó en etapa "propuesta" en el pipeline.</p>`);
   return { subject, html, text };
 }
+
+// Lo reutiliza api/mesa-cero-compra.js (mismo diseño de correo y mismo registro de eventos).
+Object.assign(module.exports, { marco, boton, mcHeaders, registrar, ultimoAviso, fecha, h, clp, PLANES, MC_URL, MC_SITE, SITE });

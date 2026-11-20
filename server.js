@@ -22,6 +22,7 @@ const mpHandler   = require('./api/saas/mercadopago');
 const portal      = require('./api/portal');
 const recursos    = require('./api/recursos');
 const pagos       = require('./api/pagos');
+const mcCompra    = require('./api/mesa-cero-compra');
 const demos       = require('./api/demos');
 const demoChat    = require('./api/demo-chat');
 
@@ -211,6 +212,7 @@ app.get('/api/ops/demos',         opsDemos);
 app.get('/api/ops/licencias',     opsLicencias);
 app.post('/api/ops/licencias',    opsLicencias);
 app.post('/api/prueba-aviso',     pruebaAviso);
+app.post('/api/mesa-cero-compra', mcCompra);   // compra en línea de Mesa Cero + webhook de Mercado Pago (?webhook=1)
 app.post('/api/ops/promote-lead', promoteLead);
 app.get('/api/ops/tasks',         tasks);
 app.post('/api/ops/tasks',        tasks);
