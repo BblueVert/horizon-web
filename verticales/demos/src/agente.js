@@ -60,6 +60,13 @@ export function construirPrompt(ficha) {
     promptDocumento(ficha),
   ].filter(Boolean);
 
+  if (ficha.crear_prueba) bloques.push(`Crear la prueba de 15 días (tú mismo, desde este chat):
+- Cuando el cliente quiera probar, junta en la conversación, de a un dato por mensaje y solo los que falten: nombre del local, su nombre, su correo, qué vende (rubro) y comuna. Su WhatsApp ya lo tienes: es este chat, no lo pidas.
+- Rubro: elige tú el que corresponda según lo que te contó: "hamburgueseria", "sangucheria", "sushi", "pizzeria", "cafeteria" u "otro".
+- Muéstrale un resumen en un mensaje (local, nombre, correo) y pide confirmación. Cuando confirme, "accion" va con tipo "prueba" y "datos": {"local": "...", "nombre": "...", "email": "...", "rubro": "...", "comuna": "..."}.
+- En ese mismo turno, "respuestas" lleva solo un mensaje corto como "¡Perfecto! Te armo tu panel ahora 🙌". El link del panel lo manda el sistema: nunca escribas un link de panel tú.
+- Si el sistema te avisa en la conversación que el panel ya quedó listo, sigue acompañándolo: qué probar primero, resolver dudas y, si quiere, cómo comprar.`);
+
   bloques.push(`Saludo y trato (va antes que todo):
 - Tu primer mensaje de la conversación parte siempre con "${saludoHora()}" (es el saludo que corresponde a esta hora en Chile), seguido del nombre del cliente si ya lo sabes ("${saludoHora()}, Pedro").
 - Trato cordial y amable en toda la conversación. Si el cliente te dice su nombre, úsalo de vez en cuando (no en cada mensaje). Si no lo sabes, pídelo con naturalidad cuando vayas a agendar o cerrar el pedido.
@@ -85,7 +92,7 @@ export function construirPrompt(ficha) {
 - "accion" va SOLO cuando el cliente confirmó explícitamente un resumen que le mostraste en un mensaje anterior. Si no, "accion": null.
 
 Responde SIEMPRE con un JSON (sin markdown):
-{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "ubicacion": false, "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar", "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero en CLP o null, "entrega": "retiro" | "delivery" | null, "hora": "...", "otros": "..."${formatoDoc}}}}`);
+{"respuestas": ["mensaje 1", "mensaje 2 opcional"], "ubicacion": false, "accion": null | {"tipo": "pedido" | "reserva" | "consulta" | "derivar"${ficha.crear_prueba ? ' | "prueba"' : ''}, "resumen": "resumen en una línea para el dueño", "datos": {"cliente": "...", "detalle": "...", "total": numero en CLP o null, "entrega": "retiro" | "delivery" | null, "hora": "...", "otros": "..."${formatoDoc}}}}`);
 
   return bloques.join('\n\n');
 }
@@ -139,7 +146,7 @@ export function interpretar(raw) {
   const respuestas = (Array.isArray(out.respuestas) ? out.respuestas : [out.respuestas])
     .filter(x => typeof x === 'string' && x.trim()).map(x => x.trim()).slice(0, 3);
   const a = out.accion;
-  const accion = a && ['pedido', 'reserva', 'consulta', 'derivar'].includes(a.tipo)
+  const accion = a && ['pedido', 'reserva', 'consulta', 'derivar', 'prueba'].includes(a.tipo)
     ? { tipo: a.tipo, resumen: String(a.resumen || '').slice(0, 500), datos: a.datos && typeof a.datos === 'object' ? a.datos : {} }
     : null;
   return { respuestas, ubicacion: out.ubicacion === true, accion };

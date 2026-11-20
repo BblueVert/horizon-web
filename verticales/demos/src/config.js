@@ -47,6 +47,12 @@ export const config = {
     url: (process.env.MESA_CERO_URL || 'https://wpljybwutgxvjjlmbdxc.supabase.co').replace(/\/$/, ''),
     anon: process.env.MESA_CERO_ANON || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwbGp5Ynd1dGd4dmpqbG1iZHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5NjI5MDIsImV4cCI6MjEwMzUzODkwMn0.bGCgjoMqTwO-NQ0DZJQtcVyAn1r-e_1IW24BLR1qrcY',
   },
+  // Web de Mesa Cero: el vendedor (ficha con "crear_prueba") crea ahí la prueba de 15 días del lead.
+  // MESA_CERO_BOT_TOKEN = PRUEBA_BOT_TOKEN de Vercel (mesa-cero): salta el tope por IP, que es para el formulario.
+  mesaCeroWeb: {
+    url: (process.env.MESA_CERO_WEB || 'https://mesa-cero.vercel.app').replace(/\/$/, ''),
+    token: process.env.MESA_CERO_BOT_TOKEN || '',
+  },
   bot: {
     carpetaSesion: process.env.WA_CARPETA_SESION || './.wa-sesion',
     carpetaDatos: process.env.DEMOS_CARPETA_DATOS || './datos',
