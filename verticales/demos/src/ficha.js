@@ -21,6 +21,7 @@ export function validarFicha(f) {
   if (!RUBROS.includes(f.rubro)) errores.push(`"rubro" debe ser uno de: ${RUBROS.join(', ')}`);
   if (!FLUJOS.includes(f.flujo)) errores.push(`"flujo" debe ser: ${FLUJOS.join(' | ')}`);
 
+  if (f.aviso !== undefined && !['chat', 'yo', 'ambos'].includes(f.aviso)) errores.push('"aviso" debe ser: chat | yo | ambos');
   if (f.motor !== undefined && !SLUG.test(String(f.motor))) errores.push('"motor" debe ser un nombre como "mesa-cero" o "minimarket"');
   if (f.documento !== undefined) {
     const d = f.documento;

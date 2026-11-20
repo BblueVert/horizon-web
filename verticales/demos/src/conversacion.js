@@ -159,8 +159,10 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
         }
       }
       const aviso = avisoDueno(ficha, r.accion, telefono);
-      if (['chat', 'ambos'].includes(config.bot.aviso)) salida.push({ jid, texto: `📲 _Así le llegaría este aviso al dueño de ${ficha.nombre}:_\n\n${aviso}` });
-      if (['yo', 'ambos'].includes(config.bot.aviso) && jid !== yo) salida.push(...aYo(aviso));
+      // La ficha puede fijar su destino: el agente de ventas (aviso "yo") nunca le muestra el aviso al lead.
+      const destino = ficha.aviso || config.bot.aviso;
+      if (['chat', 'ambos'].includes(destino)) salida.push({ jid, texto: `📲 _Así le llegaría este aviso al dueño de ${ficha.nombre}:_\n\n${aviso}` });
+      if (['yo', 'ambos'].includes(destino) && jid !== yo) salida.push(...aYo(aviso));
       registrarAccion({ slug: ficha.slug, telefono, ...r.accion }).catch(e => log.warn('[demo] no se registró la acción:', e.message));
     }
     return salida;

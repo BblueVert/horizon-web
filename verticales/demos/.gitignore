@@ -8,3 +8,5 @@ fichas/*.json
 !fichas/rubro-*.json
 # Imágenes de carta por demo (fichas/cartas/<slug>/*.jpg): material de prospectos, no va al repo
 fichas/cartas/
+# Agente de ventas de Mesa Cero: producto propio, no es un prospecto
+!fichas/mesa-cero.json
