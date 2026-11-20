@@ -438,6 +438,11 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
             <button class="fbtn" data-f="listos" aria-pressed="false">Listas <span class="c" id="c-listos"></span></button>
             <button class="fbtn" data-f="todos" aria-pressed="false">Todas <span class="c" id="c-todos"></span></button>
           </div>
+          <div class="filters ses" id="f-ses" role="group" aria-label="Filtrar por sesión" hidden>
+            <button class="fbtn" data-s="s1" aria-pressed="false">Sesión 1 <span class="c" id="c-s1"></span></button>
+            <button class="fbtn" data-s="s2" aria-pressed="false">Sesión 2 <span class="c" id="c-s2"></span></button>
+            <button class="fbtn" data-s="sin" aria-pressed="false">Sin sesión <span class="c" id="c-sin"></span></button>
+          </div>
           <label class="fsearch"><i class="hz-i" data-i="search"></i><input id="f-q" placeholder="Buscar producto" autocomplete="off" aria-label="Buscar producto"></label>
         </div>
       </div>
@@ -822,7 +827,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   // ── Fichas de producto ────────────────────────────────────────────────────
   const CIERRE = [['','Selecciona'],['cremallera','Cremallera'],['iman','Imán'],['broche','Broche'],['solapa','Solapa'],['hebilla','Hebilla'],['abierto','Abierto'],['otro','Otro']];
   const HERRAJES = [['','Selecciona'],['dorado','Dorado'],['plateado','Plateado'],['bronce','Bronce'],['negro','Negro'],['sin_herrajes','Sin herrajes'],['otro','Otro']];
-  const F = { filter:'pendientes', q:'', current:null, fotos:[], saveT:null, galSel:[] };
+  const F = { filter:'pendientes', ses:null, q:'', current:null, fotos:[], saveT:null, galSel:[] };
 
   const detail = id => S.catalog.details[id] || null;
   const estadoOf = id => detail(id)?.estado || null;          // 'listo' | 'borrador' | null
@@ -833,8 +838,13 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     const f = fotosOf(p.id)[0]; if (f) return photoById()[f].thumb_url;
     return p.imagen_url && /^https:\/\//.test(p.imagen_url) ? p.imagen_url : null;
   }
-  // Nombre comercial: el que puso el cliente; si no, el del catálogo
-  const nameOf = p => detail(p.id)?.data?.nombre || p.nombre;
+  // Sesión de fotos: va como prefijo del nombre en catalog_items ("Sesión 1 · Cartera Roma", "Sin sesión · …")
+  const SES_RE = /^\s*(?:sesi[oó]n\s*([12])|(sin)\s+sesi[oó]n)\s*·\s*/i;
+  const sesOf = p => { const m = SES_RE.exec(p.nombre || ''); return m ? (m[2] ? 'sin' : 's' + m[1]) : null; };
+  const baseName = p => String(p.nombre || '').replace(SES_RE, '');
+  const inSes = p => !F.ses || sesOf(p) === F.ses;
+  // Nombre comercial: el que puso el cliente; si no, el del catálogo (sin el prefijo de sesión: lo indica el filtro)
+  const nameOf = p => String(detail(p.id)?.data?.nombre || '').replace(SES_RE, '') || baseName(p);
   // Colores de la referencia: los que guardó el cliente; si no, los del catálogo ("Camel · Negro")
   const COLOR_HEX = { negro:'#1c1a17', nero:'#1c1a17', notte:'#1c1a17', blanco:'#f4f1ea', perla:'#ece6da', crema:'#efe4cf', beige:'#d9c8a9', nude:'#e3bc9a',
     natural:'#d8b98a', camel:'#c19a6b', cognac:'#9a4f22', miel:'#c58b3c', cafe:'#6f4e37', caffe:'#6f4e37', cuoio:'#8b5a2b', moka:'#6b4f3f', cacao:'#5a3a29',
@@ -858,6 +868,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   function filtered(){
     const q = F.q.trim().toLowerCase();
     return S.catalog.items.filter(p => {
+      if (!inSes(p)) return false;
       const st = estadoOf(p.id);
       if (F.filter === 'pendientes' && st === 'listo') return false;
       if (F.filter === 'listos' && st !== 'listo') return false;
@@ -870,7 +881,11 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     $('f-fill').style.width = (total ? listos / total * 100 : 0) + '%';
     $('fichas-count').textContent = total - listos; $('fichas-count').hidden = !(total - listos);
     $('c-pendientes').textContent = total - listos; $('c-listos').textContent = listos; $('c-todos').textContent = total;
-    document.querySelectorAll('.fbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === F.filter)));
+    const ses = { s1:0, s2:0, sin:0 }; items.forEach(p => { const k = sesOf(p); if (k) ses[k]++; });
+    $('f-ses').hidden = !(ses.s1 + ses.s2 + ses.sin);
+    for (const k in ses) $('c-' + k).textContent = ses[k];
+    document.querySelectorAll('.fbtn[data-f]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === F.filter)));
+    document.querySelectorAll('.fbtn[data-s]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === F.ses)));
   }
   const EMPTY = { pendientes:['check-circle','¡Todas las fichas están listas!'], listos:['clipboard','Todavía no hay fichas listas. Cuando marques una, aparece aquí.'], todos:['bag','No hay productos'] };
   function renderGrid(){
@@ -883,9 +898,11 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
           ${st ? `<span class="pbadge ${st}">${st === 'listo' ? 'Lista' : 'Empezada'}</span>` : ''}</span>
         <span class="pbody"><span class="pc-name">${esc(nameOf(p))}</span><span class="pc-sub" style="display:block">${esc([p.marca, colorsOf(p).map(c => c.nombre).join(' · ')].filter(Boolean).join(' · '))}</span>${dotsOf(p)}</span>
       </button>`;
-    }).join('') || `<div class="fempty">${ic(F.q ? 'search' : EMPTY[F.filter][0])}${F.q ? 'Ningún producto coincide con la búsqueda.' : EMPTY[F.filter][1]}</div>`;
+    }).join('') || `<div class="fempty">${ic(F.q ? 'search' : EMPTY[F.filter][0])}${F.q ? 'Ningún producto coincide con la búsqueda.' : F.ses && F.filter !== 'pendientes' ? 'No hay fichas aquí en esta sesión.' : EMPTY[F.filter][1]}</div>`;
   }
-  document.querySelectorAll('.fbtn').forEach(b => b.addEventListener('click', () => { F.filter = b.dataset.f; renderGrid(); }));
+  document.querySelectorAll('.fbtn[data-f]').forEach(b => b.addEventListener('click', () => { F.filter = b.dataset.f; renderGrid(); }));
+  // la sesión se suma al filtro de estado y al buscador; tocar la sesión activa la quita
+  document.querySelectorAll('.fbtn[data-s]').forEach(b => b.addEventListener('click', () => { F.ses = F.ses === b.dataset.s ? null : b.dataset.s; renderGrid(); }));
   $('f-q').addEventListener('input', e => { F.q = e.target.value; renderGrid(); });
   $('pgrid').addEventListener('click', e => { const c = e.target.closest('[data-open]'); if (c) openFicha(c.dataset.open); });
 
@@ -901,7 +918,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     if (!$('gal').hidden) closeSheet('gal'); else if (!$('sheet').hidden) closeFicha();
   });
   function neighbours(){
-    const list = filtered().length ? filtered() : S.catalog.items, i = list.findIndex(p => p.id === F.current);
+    const list = filtered().length ? filtered() : S.catalog.items.filter(inSes), i = list.findIndex(p => p.id === F.current);
     return { list, i, prev: list[i - 1], next: list[i + 1] };
   }
   $('sh-prev').addEventListener('click', async () => { const n = neighbours(); if (n.prev) { if (F.saveT) await saveFicha(); openFicha(n.prev.id); } });
@@ -954,11 +971,11 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     $('sh-title').textContent = nameOf(p);
     $('ficha').innerHTML = `
       <div class="f-head"><div class="f-name" id="f-name">${esc(nameOf(p))}</div>
-        <div class="f-sub">${esc([p.marca, p.modelo, v.nombre && v.nombre !== p.nombre ? 'Ref: ' + p.nombre : ''].filter(Boolean).join(' · '))}</div>
+        <div class="f-sub">${esc([p.marca, p.modelo, v.nombre && v.nombre !== baseName(p) ? 'Ref: ' + baseName(p) : ''].filter(Boolean).join(' · '))}</div>
         <div class="f-save ${d.updated_at ? 'ok' : ''}" id="f-save">${d.updated_at ? ic('check') + 'Guardado ' + ago(d.updated_at) : 'Sin datos todavía'}</div></div>
       <div class="fgroup"><div class="fg-t">${ic('pencil')}Nombre</div>
-        <div class="grid">${textField('nombre','Nombre del producto', esc(p.nombre), 120, v.nombre, true)}</div>
-        <p class="hint">Así se va a llamar en la tienda. Si lo dejas vacío, queda "${esc(p.nombre)}".</p></div>
+        <div class="grid">${textField('nombre','Nombre del producto', esc(baseName(p)), 120, v.nombre, true)}</div>
+        <p class="hint">Así se va a llamar en la tienda. Si lo dejas vacío, queda "${esc(baseName(p))}".</p></div>
       <div class="fgroup"><div class="fg-t">${ic('palette')}Colores<small id="f-colors-n"></small></div><div id="f-colors"></div>
         <p class="hint">Un mismo producto en varios colores va en esta ficha. Toca el círculo para ajustar el tono.</p></div>
       <div class="fgroup"><div class="fg-t">${ic('image')}Fotos<small id="f-photos-n"></small></div><div id="f-photos"></div></div>
@@ -1012,7 +1029,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
       if (e.target.matches('[data-chex]')) { c.hex = e.target.value; c.auto = false; e.target.parentElement.style.background = c.hex; }
     }
     if (e.target.id === 'f-nombre') {
-      const t = e.target.value.trim() || S.catalog.items.find(x => x.id === F.current)?.nombre || '';
+      const t = e.target.value.trim() || baseName(S.catalog.items.find(x => x.id === F.current) || {});
       $('f-name').textContent = t; $('sh-title').textContent = t;
     }
     queueSave();
@@ -1039,7 +1056,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     else if (e.target.closest('#f-next'))   { if (F.saveT) await saveFicha(); goNext(false); }
   });
   function goNext(afterDone){
-    const all = S.catalog.items, i = all.findIndex(p => p.id === F.current);
+    const all = S.catalog.items.filter(inSes), i = all.findIndex(p => p.id === F.current);
     const pending = [...all.slice(i + 1), ...all.slice(0, i)].find(p => estadoOf(p.id) !== 'listo');
     const n = neighbours();
     const target = F.filter === 'pendientes' || afterDone ? pending : n.next;
