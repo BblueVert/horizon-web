@@ -438,11 +438,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
             <button class="fbtn" data-f="listos" aria-pressed="false">Listas <span class="c" id="c-listos"></span></button>
             <button class="fbtn" data-f="todos" aria-pressed="false">Todas <span class="c" id="c-todos"></span></button>
           </div>
-          <div class="filters ses" id="f-ses" role="group" aria-label="Filtrar por sesión" hidden>
-            <button class="fbtn" data-s="s1" aria-pressed="false">Sesión 1 <span class="c" id="c-s1"></span></button>
-            <button class="fbtn" data-s="s2" aria-pressed="false">Sesión 2 <span class="c" id="c-s2"></span></button>
-            <button class="fbtn" data-s="sin" aria-pressed="false">Sin sesión <span class="c" id="c-sin"></span></button>
-          </div>
+          <div class="filters ses" id="f-ses" role="group" aria-label="Filtrar por sesión" hidden></div>
           <label class="fsearch"><i class="hz-i" data-i="search"></i><input id="f-q" placeholder="Buscar producto" autocomplete="off" aria-label="Buscar producto"></label>
         </div>
       </div>
@@ -838,8 +834,9 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     const f = fotosOf(p.id)[0]; if (f) return photoById()[f].thumb_url;
     return p.imagen_url && /^https:\/\//.test(p.imagen_url) ? p.imagen_url : null;
   }
-  // Sesión de fotos: va como prefijo del nombre en catalog_items ("Sesión 1 · Cartera Roma", "Sin sesión · …")
-  const SES_RE = /^\s*(?:sesi[oó]n\s*([12])|(sin)\s+sesi[oó]n)\s*·\s*/i;
+  // Sesión de fotos: va como prefijo del nombre en catalog_items ("Sesión 1 · Cartera Roma", "Sin sesión · …").
+  // Un botón por cada sesión que exista (1, 2, 3…); el separador puede ser ·, -, – o :
+  const SES_RE = /^\s*(?:sesi[oó]n\s*(\d+)|(sin)\s+sesi[oó]n)\s*[·•\-–—:|]\s*/i;
   const sesOf = p => { const m = SES_RE.exec(p.nombre || ''); return m ? (m[2] ? 'sin' : 's' + m[1]) : null; };
   const baseName = p => String(p.nombre || '').replace(SES_RE, '');
   const inSes = p => !F.ses || sesOf(p) === F.ses;
@@ -881,9 +878,11 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
     $('f-fill').style.width = (total ? listos / total * 100 : 0) + '%';
     $('fichas-count').textContent = total - listos; $('fichas-count').hidden = !(total - listos);
     $('c-pendientes').textContent = total - listos; $('c-listos').textContent = listos; $('c-todos').textContent = total;
-    const ses = { s1:0, s2:0, sin:0 }; items.forEach(p => { const k = sesOf(p); if (k) ses[k]++; });
-    $('f-ses').hidden = !(ses.s1 + ses.s2 + ses.sin);
-    for (const k in ses) $('c-' + k).textContent = ses[k];
+    const ses = {}; items.forEach(p => { const k = sesOf(p); if (k) ses[k] = (ses[k] || 0) + 1; });
+    const keys = Object.keys(ses).sort((a, b) => (a === 'sin') - (b === 'sin') || Number(a.slice(1)) - Number(b.slice(1)));
+    if (F.ses && !ses[F.ses]) F.ses = null;
+    $('f-ses').hidden = !keys.length;
+    $('f-ses').innerHTML = keys.map(k => `<button class="fbtn" data-s="${k}" aria-pressed="false">${k === 'sin' ? 'Sin sesión' : 'Sesión ' + k.slice(1)} <span class="c">${ses[k]}</span></button>`).join('');
     document.querySelectorAll('.fbtn[data-f]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === F.filter)));
     document.querySelectorAll('.fbtn[data-s]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === F.ses)));
   }
@@ -902,7 +901,7 @@ textarea.ctl{resize:vertical;min-height:88px;line-height:1.5;}
   }
   document.querySelectorAll('.fbtn[data-f]').forEach(b => b.addEventListener('click', () => { F.filter = b.dataset.f; renderGrid(); }));
   // la sesión se suma al filtro de estado y al buscador; tocar la sesión activa la quita
-  document.querySelectorAll('.fbtn[data-s]').forEach(b => b.addEventListener('click', () => { F.ses = F.ses === b.dataset.s ? null : b.dataset.s; renderGrid(); }));
+  $('f-ses').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (b) { F.ses = F.ses === b.dataset.s ? null : b.dataset.s; renderGrid(); } });
   $('f-q').addEventListener('input', e => { F.q = e.target.value; renderGrid(); });
   $('pgrid').addEventListener('click', e => { const c = e.target.closest('[data-open]'); if (c) openFicha(c.dataset.open); });
 
