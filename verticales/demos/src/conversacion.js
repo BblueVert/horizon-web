@@ -164,6 +164,11 @@ export function crearConversacion({ estado, fichas, responder = responderIA, res
       if (['chat', 'ambos'].includes(destino)) salida.push({ jid, texto: `📲 _Así le llegaría este aviso al dueño de ${ficha.nombre}:_\n\n${aviso}` });
       if (['yo', 'ambos'].includes(destino) && jid !== yo) salida.push(...aYo(aviso));
       registrarAccion({ slug: ficha.slug, telefono, ...r.accion }).catch(e => log.warn('[demo] no se registró la acción:', e.message));
+      // Agente de ventas: al cerrar o derivar, el chat pasa a Benja y el bot se calla ahí (#bot on lo reactiva).
+      if (ficha.pausar_al_cerrar && ['consulta', 'derivar'].includes(r.accion.tipo) && jid !== yo) {
+        estado.pausar(jid, 'siempre');
+        salida.push(...aYo(`🤝 Te pasé el chat de +${telefono}: el bot ya no le responde ahí. Escríbele para el kickoff (#bot on lo reactiva).`));
+      }
     }
     return salida;
   }
