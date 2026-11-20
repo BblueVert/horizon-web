@@ -490,3 +490,38 @@ test('link de una prueba de 15 días: conecta el chat al motor Mesa Cero con el 
   assert.deepEqual(motor[0], { nombre: 'mesa-cero', tenant: 'prueba-48f854', mensaje: 'Hola' });
   assert.match(out[0].texto, /Binks burger/);
 });
+
+test('agente de ventas mesa-cero: ficha válida, sin decir que es demo y el aviso de cierre solo llega a tu chat', async () => {
+  const ventas = JSON.parse(readFileSync(new URL('../fichas/mesa-cero.json', import.meta.url), 'utf8'));
+  assert.deepEqual(validarFicha(ventas).errores, []);
+  const prompt = construirPrompt(ventas);
+  assert.match(prompt, /asistente virtual de ventas de Mesa Cero/);
+  assert.doesNotMatch(prompt, /asistente virtual de prueba/);
+  assert.match(prompt, /\$290\.000/);
+
+  const estado = crearEstado(join(mkdtempSync(join(tmpdir(), 'demos-')), 'estado.json'));
+  const accion = { tipo: 'consulta', resumen: 'Quiere el plan Pro', datos: { cliente: 'Ana', detalle: 'Pro · Sushi Ana, Rancagua · kickoff jueves 16:00' } };
+  const conv = crearConversacion({
+    estado,
+    fichas: { obtener: s => (s === 'mesa-cero' ? ventas : null), todas: () => [ventas] },
+    responder: async () => ({ respuestas: ['Listo, Benja te confirma el jueves 16:00'], accion }),
+    registrarAccion: async () => {},
+    log: silencioso,
+  });
+  conv.conectado(YO, '56900000001');
+  const salida = await conv.entrante({ jid: CLIENTE, telefono: '56911112222', texto: 'Hola, quiero saber más del sistema para mi restaurante (demo: mesa-cero)' });
+  const alCliente = salida.filter(m => m.jid === CLIENTE).map(m => m.texto).join('\n');
+  assert.doesNotMatch(alCliente, /Así le llegaría/);
+  assert.ok(salida.some(m => m.jid === YO && /Quiere el plan Pro/.test(m.texto)));
+});
+
+test('ficha con aviso inválido no se publica', () => {
+  assert.ok(validarFicha({ ...ejemplo, aviso: 'todos' }).errores.some(e => /aviso/.test(e)));
+});
+
+test('"una demo de mi local" no es un código; manda el "(demo: slug)" del link', () => {
+  assert.equal(codigoDemo('Hola, quiero agendar una demo de mi sistema para restaurante (demo: mesa-cero)'), 'mesa-cero');
+  assert.equal(codigoDemo('quiero agendar una demo para mi restaurante'), null);
+  assert.equal(codigoDemo('#demo tia-julia'), 'tia-julia');
+  assert.equal(codigoDemo('demo cafeteria'), 'cafeteria');
+});

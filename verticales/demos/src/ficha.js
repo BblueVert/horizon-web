@@ -21,6 +21,7 @@ export function validarFicha(f) {
   if (!RUBROS.includes(f.rubro)) errores.push(`"rubro" debe ser uno de: ${RUBROS.join(', ')}`);
   if (!FLUJOS.includes(f.flujo)) errores.push(`"flujo" debe ser: ${FLUJOS.join(' | ')}`);
 
+  if (f.aviso !== undefined && !['chat', 'yo', 'ambos'].includes(f.aviso)) errores.push('"aviso" debe ser: chat | yo | ambos');
   if (f.motor !== undefined && !SLUG.test(String(f.motor))) errores.push('"motor" debe ser un nombre como "mesa-cero" o "minimarket"');
   if (f.documento !== undefined) {
     const d = f.documento;
@@ -63,16 +64,21 @@ export function linkDemo(numero, ficha) {
 }
 
 // Detecta el código que trae el link: "... (demo: tia-julia)" o "demo tia-julia".
+// Manda "demo: slug" (con dos puntos); "demo slug" solo si no hay otro, así "quiero una demo de mi local" no lee "de".
+const CODIGO_DOS_PUNTOS = /\bdemo:\s*([a-z0-9][a-z0-9-]{1,40})\b/i;
+const CODIGO_SUELTO = /\bdemo\s+([a-z0-9][a-z0-9-]{1,40})\b/i;
+const PALABRAS = /^(de|del|para|por|con|en|y|o|que|a|al|la|el|los|las|un|una|mi|tu|su|gratis)$/i;
 export function codigoDemo(texto) {
-  const m = String(texto || '').match(/\bdemo[:\s]+([a-z0-9][a-z0-9-]{1,40})\b/i);
-  return m ? m[1].toLowerCase() : null;
+  const t = String(texto || '');
+  const m = t.match(CODIGO_DOS_PUNTOS) || t.match(CODIGO_SUELTO);
+  return m && !PALABRAS.test(m[1]) ? m[1].toLowerCase() : null;
 }
 
 // El mensaje del link sin el código. Si era solo el saludo genérico del link de demo, queda "Hola";
 // si trae algo más (ej. el resumen del cotizador de una web), se conserva para que el agente lo use.
 export function mensajeInicial(texto) {
   const limpio = String(texto || '')
-    .replace(/\(?\s*\bdemo[:\s]+[a-z0-9][a-z0-9-]{1,40}\b\s*\)?/i, ' ')
+    .replace(texto && CODIGO_DOS_PUNTOS.test(texto) ? /\(?\s*\bdemo:\s*[a-z0-9][a-z0-9-]{1,40}\b\s*\)?/i : /\(?\s*\bdemo\s+(?!(?:de|del|para|por|con|en|y|o|que|a|al|la|el|los|las|un|una|mi|tu|su|gratis)\b)[a-z0-9][a-z0-9-]{1,40}\b\s*\)?/i, ' ')
     .replace(/\s+/g, ' ').trim();
   if (!limpio || /^(hola!?\s*)?quiero probar el asistente de\b/i.test(limpio)) return 'Hola';
   return limpio;

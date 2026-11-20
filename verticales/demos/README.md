@@ -65,6 +65,10 @@ Si escribes a mano en un chat de demo, el bot se calla 30 min en ese chat.
 
 **Chats sin demo no se responden.** Es el número de la consultoría (está en todas las páginas de HORIZON): los prospectos que escriben sin link no reciben respuesta del bot y los atiendes tú. Deja `DEMO_POR_DEFECTO` vacío.
 
+## Agente de ventas de Mesa Cero (`mesa-cero`)
+
+`fichas/mesa-cero.json` no es la demo de un restaurante: es el **vendedor de Mesa Cero**. Le llegan los botones de WhatsApp de la landing `/` de Mesa Cero y el botón del panel de prueba (texto con `(demo: mesa-cero)`). Entiende el local, recomienda Esencial o Pro con los precios de `/prueba`, responde objeciones y deja agendado el kickoff. No arma agentes ni webs con la carta del lead: eso se hace después del kickoff. Con `"aviso": "yo"`, cuando el lead confirma el cierre el resumen llega solo a tu chat (el lead no ve "así le llegaría"). Si escribes a mano en ese chat, el bot se calla 30 min y sigues tú.
+
 ## Un solo puente para todo el número (Mesa Cero incluido)
 
 WhatsApp deja vincular varios dispositivos, pero si dos bots quedan conectados al mismo número, **los dos responden cada chat**. Por eso este bot reemplaza al kit `mesa-cero-whatsapp-bot`:

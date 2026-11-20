@@ -25,6 +25,8 @@ Ejemplo completo: `fichas/ejemplo-sangucheria.json`.
 | `reglas[]` | no | Cómo funciona el negocio y la atención ("siempre ofrece bebida", "reservas con 24 h") |
 | `datos_pedido[]` | no | Qué pedir para cerrar ("nombre", "dirección", "hora de retiro") |
 | `derivar_a` | no | Qué decir cuando no sabe algo |
+| `identidad` | no | Qué responde si le preguntan si es un bot (por defecto: asistente de prueba de HORIZON) |
+| `aviso` | no | Dónde llega el aviso al confirmar: `chat` (al mismo cliente, como demo) · `yo` (solo a tu chat) · `ambos`. Si falta, usa `DEMO_AVISO` |
 | `documento` | no | PDF que el bot manda al confirmar (propuesta, cotización): `{ titulo, plantilla, archivo, mensaje, al, marcas, datos, campos }`. Ver abajo |
 | `fuentes[]` | recomendado | URLs o "dictado por Benja" de donde salió cada dato |
 | `notas_internas` | no | Para Benja, el bot no lo usa |
